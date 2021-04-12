@@ -45,7 +45,7 @@
             </descriptorRefs>
             <archive>
               <manifest>
-                <mainClass>org.potassco.clingo.Example</mainClass>
+                <mainClass>Example</mainClass>
               </manifest>
             </archive>
           </configuration>

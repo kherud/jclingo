@@ -1,4 +1,3 @@
-package org.potassco.clingo;
 
 import java.util.Arrays;
 import java.util.List;
@@ -82,7 +81,7 @@ public class Example {
     }
 
     public interface CLibrary extends Library {
-        CLibrary INSTANCE = Native.load(("clingo"), CLibrary.class);
+        CLibrary INSTANCE = Native.load("d:\\js\\projects\\clingo4j\\windows\\x64\\clingo.dll", CLibrary.class);
 
         void printf(String format, Object... args);
         void clingo_version(IntByReference major, IntByReference minor, IntByReference patch);

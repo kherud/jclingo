@@ -1,6 +1,7 @@
 package org.potassco;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -8,14 +9,8 @@ import java.util.Set;
 
 import org.potassco.dto.Solution;
 import org.potassco.jna.ClingoLibrary;
-import org.potassco.jna.PartT;
-import org.potassco.jna.SizeT;
-import org.potassco.jna.SizeTByReference;
-import org.potassco.jna.SolveEventCallbackT;
 
-import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 
 public class Test {
 
@@ -38,11 +33,10 @@ public class Test {
 
 	@org.junit.Test
 	public void test3() {
-        Clingo clingo = new Clingo();
         String name = "base";
-		Control control = clingo.control(name, "a. b.");
-        control.ground(name);
-        Solution solution = control.solve();
+        Clingo clingo = new Clingo(name, "a. b.");
+        clingo.ground(name);
+        Solution solution = clingo.solve();
         assertEquals(2, solution.getSize());
         String[] strArray = {"a", "b"};
         Set<String> expected = new HashSet<String>(Arrays.asList(strArray));

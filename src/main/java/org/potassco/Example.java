@@ -1,6 +1,6 @@
 package org.potassco;
 
-import org.potassco.jna.CLibrary;
+import org.potassco.jna.ClingoLibrary;
 import org.potassco.jna.PartT;
 import org.potassco.jna.SizeT;
 import org.potassco.jna.SizeTByReference;
@@ -17,35 +17,35 @@ public class Example {
         IntByReference major = new IntByReference();
         IntByReference minor = new IntByReference();
         IntByReference patch = new IntByReference();
-        CLibrary.INSTANCE.clingo_version(major, minor, patch);
+        ClingoLibrary.INSTANCE.clingo_version(major, minor, patch);
         System.out.printf("clingo version: %d.%d.%d\n", major.getValue(), minor.getValue(), patch.getValue());
 
         PointerByReference ctl = new PointerByReference();
-        CLibrary.INSTANCE.clingo_control_new(null, new SizeT(0), null, null, 20, ctl);
+        ClingoLibrary.INSTANCE.clingo_control_new(null, new SizeT(0), null, null, 20, ctl);
         // add a program
-        CLibrary.INSTANCE.clingo_control_add(ctl.getValue(), "base", null, new SizeT(0), "a. b.");
+        ClingoLibrary.INSTANCE.clingo_control_add(ctl.getValue(), "base", null, new SizeT(0), "a. b.");
         // ground it
         PartT[] parts = new PartT [1];
         parts[0] = new PartT();
         parts[0].name = "base";
         parts[0].params = null;
         parts[0].size = new SizeT(0);
-        CLibrary.INSTANCE.clingo_control_ground(ctl.getValue(), parts, new SizeT(1), null, null);
+        ClingoLibrary.INSTANCE.clingo_control_ground(ctl.getValue(), parts, new SizeT(1), null, null);
         // solve it
         SolveEventCallbackT cb = new SolveEventCallbackT() {
             public boolean call(int type, Pointer event, Pointer goon) {
                 if (type == 0) {
                     SizeTByReference num = new SizeTByReference();
-                    CLibrary.INSTANCE.clingo_model_symbols_size(event, 2, num);
+                    ClingoLibrary.INSTANCE.clingo_model_symbols_size(event, 2, num);
                     System.out.printf("model: %d\n", num.getValue());
                     long[] symbols = new long [(int)num.getValue()];
-                    CLibrary.INSTANCE.clingo_model_symbols(event, 2, symbols, new SizeT(num.getValue()));
+                    ClingoLibrary.INSTANCE.clingo_model_symbols(event, 2, symbols, new SizeT(num.getValue()));
                     System.out.print("ANSWER:");
                     for (int i = 0; i < num.getValue(); ++i) {
                         SizeTByReference len = new SizeTByReference();
-                        CLibrary.INSTANCE.clingo_symbol_to_string_size(symbols[i], len);
+                        ClingoLibrary.INSTANCE.clingo_symbol_to_string_size(symbols[i], len);
                         byte[] str = new byte[(int)len.getValue()];
-                        CLibrary.INSTANCE.clingo_symbol_to_string(symbols[i], str, new SizeT(len.getValue()));
+                        ClingoLibrary.INSTANCE.clingo_symbol_to_string(symbols[i], str, new SizeT(len.getValue()));
                         System.out.format(" %s", new String(str));
                     }
                     System.out.println();
@@ -55,11 +55,11 @@ public class Example {
             }
         };
         PointerByReference hnd = new PointerByReference();
-        CLibrary.INSTANCE.clingo_control_solve(ctl.getValue(), 0, null, new SizeT(0), cb, null, hnd);
+        ClingoLibrary.INSTANCE.clingo_control_solve(ctl.getValue(), 0, null, new SizeT(0), cb, null, hnd);
         IntByReference res = new IntByReference();
-        CLibrary.INSTANCE.clingo_solve_handle_get(hnd.getValue(), res);
-        CLibrary.INSTANCE.clingo_solve_handle_close(hnd.getValue());
+        ClingoLibrary.INSTANCE.clingo_solve_handle_get(hnd.getValue(), res);
+        ClingoLibrary.INSTANCE.clingo_solve_handle_close(hnd.getValue());
         // clean up
-        CLibrary.INSTANCE.clingo_control_free(ctl.getValue());
+        ClingoLibrary.INSTANCE.clingo_control_free(ctl.getValue());
     }
 }

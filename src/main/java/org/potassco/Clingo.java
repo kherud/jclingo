@@ -1,6 +1,12 @@
 package org.potassco;
 
+import org.lorislab.clingo4j.api.c.ClingoLibrary.clingo_model;
+import org.lorislab.clingo4j.api.c.ClingoLibrary.clingo_solve_event_callback_t;
+import org.lorislab.clingo4j.api.c.ClingoLibrary.clingo_solve_handle;
+import org.lorislab.clingo4j.util.EnumValue;
+import org.potassco.callback.SolveEventHandler;
 import org.potassco.dto.Solution;
+import org.potassco.enums.SolveMode;
 import org.potassco.jna.ClingoLibrary;
 import org.potassco.jna.PartT;
 import org.potassco.jna.SizeT;
@@ -52,7 +58,19 @@ public class Clingo {
         clingoLibrary.clingo_control_ground(controlPointer.getValue(), parts, new SizeT(1), null, null);
 	}
 
-	public Solution solve() {
+    public SolveHandle solve() throws ClingoException {
+        return solve(null, SolveMode.YIELD);
+    }
+
+    public SolveHandle solve(SolveEventHandler handler, SolveMode ... modes) throws ClingoException {
+
+        int mode = 0;
+        if (modes != null && modes.length > 0) {
+            for (int i=0; i<modes.length; i++) {
+                mode |= modes[i].getValue();
+            }
+        }
+
     	Solution solution = new Solution();
         SolveEventCallbackT cb = new SolveEventCallbackT() {
             public boolean call(int type, Pointer event, Pointer goon) {
@@ -87,6 +105,38 @@ public class Clingo {
         // clean up
         clingoLibrary.clingo_control_free(controlPointer.getValue());
 		return solution;
-	}
+		
+		/*
+        Pointer<clingo_solve_event_callback_t> p_event = null;
+        if (handler != null) {
+            clingo_solve_event_callback_t event = new clingo_solve_event_callback_t() {
+                @Override
+                public boolean apply(int type, Pointer<?> event, Pointer<?> data, Pointer<Boolean> goon) {
+                    SolveEventType t = EnumValue.valueOfInt(SolveEventType.class, type);
+                    switch (t) {
+                        case MODEL:
+                            Model model = new Model((Pointer<clingo_model>) event);
+                            boolean tmp = handler.onModel(model);
+                            goon.set(tmp);
+                            break;
+                        case FINISH:
+                            Pointer<Integer> p_event = (Pointer<Integer>) event;
+                            handler.onFinish(new SolveResult(p_event.get()));
+                            goon.set(true);
+                            return true;
+                    }
+                    return apply(type, Pointer.getPeer(event), Pointer.getPeer(data), Pointer.getPeer(goon));
+                }
+            };
+            p_event = Pointer.allocate(ClingoLibrary.clingo_solve_event_callback_t.class);
+            p_event.set(event);
+        }
+
+        // get a solve handle        
+        final Pointer<Pointer<clingo_solve_handle>> handle = Pointer.allocatePointer(ClingoLibrary.clingo_solve_handle.class);
+        handleError(LIB.clingo_control_solve(pointer, mode, null, 0, p_event, null, handle), "Error execute control solve");
+        return new SolveHandle(handle.get());
+	*/
+    }
 
 }

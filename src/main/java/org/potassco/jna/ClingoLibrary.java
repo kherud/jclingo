@@ -57,6 +57,7 @@ public interface ClingoLibrary extends Library {
  // CLINGO_VISIBILITY_DEFAULT void clingo_control_free(clingo_control_t *control);
     //void clingo_control_free(clingo_control_t *control);
     void clingo_control_free(Pointer control);
+    
     //bool clingo_control_add(clingo_control_t *control, char const *name, char const * const * parameters, size_t parameters_size, char const *program);
     boolean clingo_control_add(Pointer control, String name, String[] parameters, SizeT parameters_size, String program);
     

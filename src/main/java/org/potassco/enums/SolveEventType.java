@@ -1,5 +1,8 @@
 package org.potassco.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -16,6 +19,21 @@ public enum SolveEventType {
     STATISTICS(2),
     /** Issued if the search has completed. */
     FINISH(3);
+
+    private static Map<Integer, SolveEventType> solveEventTypeMapping = new HashMap<>();
+    
+	static {
+	    for (SolveEventType solveEventType : SolveEventType.values()) {
+	    	solveEventTypeMapping.put(
+	          solveEventType.getValue(),
+	          solveEventType
+	        );
+	    }
+	}
+	
+	public static SolveEventType castIntToEnum(int timeToDelivery) {
+		return solveEventTypeMapping.get(timeToDelivery);
+	}
 
     private final int type;
 

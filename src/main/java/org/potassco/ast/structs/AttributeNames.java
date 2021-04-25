@@ -1,7 +1,7 @@
 package org.potassco.ast.structs;
 
 import org.potassco.cpp.clingo_h;
-import org.potassco.jna.SizeT;
+import org.potassco.jna.Size;
 
 import com.sun.jna.Structure;
 
@@ -12,5 +12,5 @@ import com.sun.jna.Structure;
  */
 public class AttributeNames extends Structure {
 //	  char const * const * names;
-	  private SizeT size;
+	  private Size size;
 }

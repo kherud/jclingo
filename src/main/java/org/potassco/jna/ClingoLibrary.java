@@ -1,4 +1,9 @@
 package org.potassco.jna;
+import org.potassco.cpp.bool;
+import org.potassco.cpp.c_char;
+import org.potassco.cpp.clingo_signature_t;
+import org.potassco.cpp.uint32_t;
+
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -21,6 +26,29 @@ public interface ClingoLibrary extends Library {
      * @param patch [out] revision revision number
      */
     void clingo_version(IntByReference major, IntByReference minor, IntByReference patch);
+
+  //! @name Signature Functions
+  //! @{
+
+  //! Create a new signature.
+  //!
+  //! @param[in] name name of the signature
+  //! @param[in] arity arity of the signature
+  //! @param[in] positive false if the signature has a classical negation sign
+  //! @param[out] signature the resulting signature
+  //! @return whether the call was successful; might set one of the following error codes:
+  //! - ::clingo_error_bad_alloc
+    // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_create(char const *name, uint32_t arity, bool positive, clingo_signature_t *signature);
+  int clingo_signature_create(final String p_name, int arity, int positive, PointerByReference p_signature);
+
+  //! Get the name of a signature.
+  //!
+  //! @note
+  //! The string is internalized and valid for the duration of the process.
+  //!
+  //! @param[in] signature the target signature
+  //! @return the name of the signature
+  public String clingo_signature_name(Pointer signature); // CLINGO_VISIBILITY_DEFAULT char const *clingo_signature_name(clingo_signature_t signature);
 
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
@@ -48,7 +76,7 @@ public interface ClingoLibrary extends Library {
      * - ::clingo_error_bad_alloc
      * - ::clingo_error_runtime if argument parsing fails
      */
-    boolean clingo_control_new(Pointer arguments, SizeT arguments_size, Pointer logger, Pointer logger_data, int message_limit, PointerByReference control);
+    boolean clingo_control_new(Pointer arguments, Size arguments_size, Pointer logger, Pointer logger_data, int message_limit, PointerByReference control);
     
     /**
      * Free a control object created with clingo_control_new().
@@ -59,7 +87,7 @@ public interface ClingoLibrary extends Library {
     void clingo_control_free(Pointer control);
     
     //bool clingo_control_add(clingo_control_t *control, char const *name, char const * const * parameters, size_t parameters_size, char const *program);
-    boolean clingo_control_add(Pointer control, String name, String[] parameters, SizeT parameters_size, String program);
+    boolean clingo_control_add(Pointer control, String name, String[] parameters, Size parameters_size, String program);
     
     /**Ground the selected @link ::clingo_part parts @endlink of the current (non-ground) logic program.
      * <p>
@@ -80,7 +108,7 @@ public interface ClingoLibrary extends Library {
      * bool clingo_control_ground(clingo_control_t *control, clingo_part_t const *parts, size_t parts_size, clingo_ground_callback_t ground_callback, void *ground_callback_data);
      *  CLINGO_VISIBILITY_DEFAULT bool clingo_control_ground(clingo_control_t *control, clingo_part_t const *parts, size_t parts_size, clingo_ground_callback_t ground_callback, void *ground_callback_data);
      */
-    boolean clingo_control_ground(Pointer control, PartT[] parts, SizeT parts_size, Pointer ground_callback, Pointer ground_callback_data);
+    boolean clingo_control_ground(Pointer control, Part[] parts, Size parts_size, Pointer ground_callback, Pointer ground_callback_data);
         
     /**
      * Solve the currently @link ::clingo_control_ground grounded @endlink logic program enumerating its models.
@@ -99,7 +127,7 @@ public interface ClingoLibrary extends Library {
      */
 //  CLINGO_VISIBILITY_DEFAULT bool clingo_control_solve(clingo_control_t *control, clingo_solve_mode_bitset_t mode, clingo_literal_t const *assumptions, size_t assumptions_size, clingo_solve_event_callback_t notify, void *data, clingo_solve_handle_t **handle);
     //bool clingo_control_solve(clingo_control_t *control, clingo_solve_mode_bitset_t mode, clingo_literal_t const *assumptions, size_t assumptions_size, clingo_solve_event_callback_t notify, void *data, clingo_solve_handle_t **handle);
-    boolean clingo_control_solve(Pointer control, int mode, Pointer assumptions, SizeT assumptions_size, SolveEventCallbackT notify, Pointer data, PointerByReference handle);
+    boolean clingo_control_solve(Pointer control, int mode, Pointer assumptions, Size assumptions_size, SolveEventCallbackT notify, Pointer data, PointerByReference handle);
     
     /**
      * Get the next solve result.
@@ -140,7 +168,7 @@ public interface ClingoLibrary extends Library {
      */
 //  CLINGO_VISIBILITY_DEFAULT bool clingo_model_symbols_size(clingo_model_t const *model, clingo_show_type_bitset_t show, size_t *size);
     //bool clingo_model_symbols_size(clingo_model_t const *model, clingo_show_type_bitset_t show, size_t *size);
-   boolean clingo_model_symbols_size(Pointer model, int show, SizeTByReference size);
+   boolean clingo_model_symbols_size(Pointer model, int show, SizeByReference size);
    
     /**
      * Get the symbols of the selected types in the model.
@@ -159,7 +187,7 @@ public interface ClingoLibrary extends Library {
      */
 // CLINGO_VISIBILITY_DEFAULT bool clingo_model_symbols(clingo_model_t const *model, clingo_show_type_bitset_t show, clingo_symbol_t *symbols, size_t size);
    //bool clingo_model_symbols(clingo_model_t const *model, clingo_show_type_bitset_t show, clingo_symbol_t *symbols, size_t size);
-    boolean clingo_model_symbols(Pointer model, int show, long[] symbols, SizeT size);
+    boolean clingo_model_symbols(Pointer model, int show, long[] symbols, Size size);
     
     /**
      * Get the size of the string representation of a symbol (including the terminating 0).
@@ -170,7 +198,7 @@ public interface ClingoLibrary extends Library {
      */
 //  CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_to_string_size(clingo_symbol_t symbol, size_t *size);
     //bool clingo_symbol_to_string_size(clingo_symbol_t symbol, size_t *size);
-    boolean clingo_symbol_to_string_size(long symbol, SizeTByReference size);
+    boolean clingo_symbol_to_string_size(long symbol, SizeByReference size);
     
     /**
      * Get the string representation of a symbol.
@@ -183,5 +211,5 @@ public interface ClingoLibrary extends Library {
      */
 //  CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_to_string(clingo_symbol_t symbol, char *string, size_t size);
     //bool clingo_symbol_to_string(clingo_symbol_t symbol, char *string, size_t size);
-    boolean clingo_symbol_to_string(long symbol, byte[] string, SizeT size);
+    boolean clingo_symbol_to_string(long symbol, byte[] string, Size size);
 }

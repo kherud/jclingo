@@ -19,7 +19,7 @@ public class Model {
 		this.pointer = pointer;
 	}
 
-	public ModelType type(Pointer p_type) {
-		clingoLibrary.clingo_model_type(this.pointer, p_type);
-	}
+//	public ModelType type(Pointer p_type) {
+//		clingoLibrary.clingo_model_type(this.pointer, p_type);
+//	}
 }

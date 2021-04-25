@@ -24,10 +24,10 @@ import com.sun.jna.Structure;
  * @author Josef Schneeberger
  * {@link clingo_h#clingo_part_t}
  */
-public class PartT extends Structure {
+public class Part extends Structure {
 	public String name;
 	public Pointer params;
-	public SizeT size;
+	public Size size;
 
 	protected List<String> getFieldOrder() {
 		return Arrays.asList("name", "params", "size");

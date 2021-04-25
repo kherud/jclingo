@@ -1,13 +1,11 @@
 package org.potassco;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.potassco.dto.Solution;
 import org.potassco.jna.ClingoLibrary;
 
 import com.sun.jna.ptr.IntByReference;

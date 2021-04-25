@@ -4,12 +4,12 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByReference;
 
-public class SizeTByReference extends ByReference {
-	public SizeTByReference() {
+public class SizeByReference extends ByReference {
+	public SizeByReference() {
 		this(0);
 	}
 
-	public SizeTByReference(long value) {
+	public SizeByReference(long value) {
 		super(Native.SIZE_T_SIZE);
 		setValue(value);
 	}

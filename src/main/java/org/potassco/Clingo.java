@@ -1,17 +1,24 @@
 package org.potassco;
 
+import org.potassco.cpp.clingo_h;
+import org.potassco.enums.ErrorCode;
 import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
 import org.potassco.jna.ClingoLibrary;
-import org.potassco.jna.PartT;
-import org.potassco.jna.SizeT;
-import org.potassco.jna.SizeTByReference;
+import org.potassco.jna.Part;
+import org.potassco.jna.Signature;
+import org.potassco.jna.Size;
+import org.potassco.jna.SizeByReference;
 import org.potassco.jna.SolveEventCallbackT;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
+/**
+ * @author Josef Schneeberger
+ *
+ */
 public class Clingo {
 	private ClingoLibrary clingoLibrary;
 	private PointerByReference controlPointer;
@@ -24,11 +31,15 @@ public class Clingo {
 	public Clingo(String name, String logicProgram) {
 		this();
         this.controlPointer = new PointerByReference();
-        clingoLibrary.clingo_control_new(null, new SizeT(0), null, null, 20, controlPointer);
+        clingoLibrary.clingo_control_new(null, new Size(0), null, null, 20, controlPointer);
         // add the program
-		clingoLibrary.clingo_control_add(controlPointer.getValue(), name, null, new SizeT(0), logicProgram);
+		clingoLibrary.clingo_control_add(controlPointer.getValue(), name, null, new Size(0), logicProgram);
 	}
 
+	/* *******
+	 * Version
+	 * ******* */
+	
 	public String version() {
         IntByReference major = new IntByReference();
         IntByReference minor = new IntByReference();
@@ -37,22 +48,71 @@ public class Clingo {
 		return major.getValue() + "." + minor.getValue() + "." + patch.getValue();
 	}
 
-	public void add(String name, String logicProgram) {
-        this.controlPointer = new PointerByReference();
-        clingoLibrary.clingo_control_new(null, new SizeT(0), null, null, 20, controlPointer);
-        // add the program
-		clingoLibrary.clingo_control_add(controlPointer.getValue(), name, null, new SizeT(0), logicProgram);
-	}
-	
-	public void ground(String name) {
-        PartT[] parts = new PartT [1];
-        parts[0] = new PartT();
-		parts[0].name = name;
-        parts[0].params = null;
-        parts[0].size = new SizeT(0);
-        clingoLibrary.clingo_control_ground(controlPointer.getValue(), parts, new SizeT(1), null, null);
+	/* *******
+	 * Signature Functions
+	 * ******* */
+
+	/**
+	 * Create a new signature.
+	 *
+	 * @param[in] name name of the signature
+	 * @param[in] arity arity of the signature
+	 * @param[in] positive false if the signature has a classical negation sign
+	 * @param[out] signature the resulting signature
+	 * @return whether the call was successful; might set one of the following error codes:
+	 * - ::clingo_error_bad_alloc
+	 * @return
+	 * {@link clingo_h#clingo_signature_create}
+	 * @throws ClingoException 
+	 */
+	public Pointer signatureCreate(String name, int arity, boolean positive) throws ClingoException {
+		PointerByReference sigPointer = new PointerByReference();
+		int success = clingoLibrary.clingo_signature_create(name, arity, positive ? 1 : 0, sigPointer);
+		if (ErrorCode.fromValue(success) == ErrorCode.BAD_ALLOC) {
+			throw new ClingoException();
+		}
+		return sigPointer.getPointer();
 	}
 
+	public String signatureName(Pointer signature) {
+		return clingoLibrary.clingo_signature_name(signature);
+	}
+	
+	/* *******
+	 * Solving
+	 * ******* */
+	
+	/**
+	 * @param name
+	 * @param logicProgram
+	 * {@link clingo_h#clingo_control_add}
+	 */
+	public void add(String name, String logicProgram) {
+        this.controlPointer = new PointerByReference();
+        clingoLibrary.clingo_control_new(null, new Size(0), null, null, 20, controlPointer);
+        // add the program
+		clingoLibrary.clingo_control_add(controlPointer.getValue(), name, null, new Size(0), logicProgram);
+	}
+	
+	/**
+	 * @param name
+	 * {@link clingo_h#clingo_control_ground}
+	 */
+	public void ground(String name) {
+        Part[] parts = new Part [1];
+        parts[0] = new Part();
+		parts[0].name = name;
+        parts[0].params = null;
+        parts[0].size = new Size(0);
+        clingoLibrary.clingo_control_ground(controlPointer.getValue(), parts, new Size(1), null, null);
+	}
+
+    /**
+     * @return
+     * @throws ClingoException
+     * 
+	 * {@link clingo_h#clingo_control_solve}
+     */
     public SolveHandle solve() throws ClingoException {
         return solve(new SolveEventHandler(), SolveMode.YIELD);
     }
@@ -72,16 +132,16 @@ public class Clingo {
                 SolveEventType t = SolveEventType.fromValue(type);
                 switch (t) {
                     case MODEL:
-                        SizeTByReference num = new SizeTByReference();
-                        clingoLibrary.clingo_model_symbols_size(event, 2, num);
-                        solveHandle.setSize((int) num.getValue());
-                        long[] symbols = new long [(int)num.getValue()];
-                        clingoLibrary.clingo_model_symbols(event, 2, symbols, new SizeT(num.getValue()));
-                        for (int i = 0; i < num.getValue(); ++i) {
-                            SizeTByReference len = new SizeTByReference();
+                        SizeByReference sizeRef = new SizeByReference();
+                        clingoLibrary.clingo_model_symbols_size(event, 2, sizeRef);
+                        solveHandle.setSize((int) sizeRef.getValue());
+                        long[] symbols = new long [(int)sizeRef.getValue()];
+                        clingoLibrary.clingo_model_symbols(event, 2, symbols, new Size(sizeRef.getValue()));
+                        for (int i = 0; i < sizeRef.getValue(); ++i) {
+                            SizeByReference len = new SizeByReference();
                             clingoLibrary.clingo_symbol_to_string_size(symbols[i], len);
                             byte[] str = new byte[(int)len.getValue()];
-                            clingoLibrary.clingo_symbol_to_string(symbols[i], str, new SizeT(len.getValue()));
+                            clingoLibrary.clingo_symbol_to_string(symbols[i], str, new Size(len.getValue()));
                             String symbol = new String(str);
                             solveHandle.addSymbol(symbol.trim());
                         }
@@ -100,7 +160,7 @@ public class Clingo {
             }
         };
         PointerByReference hnd = new PointerByReference();
-        clingoLibrary.clingo_control_solve(controlPointer.getValue(), 0, null, new SizeT(0), cb, null, hnd);
+        clingoLibrary.clingo_control_solve(controlPointer.getValue(), 0, null, new Size(0), cb, null, hnd);
         IntByReference res = new IntByReference();
         clingoLibrary.clingo_solve_handle_get(hnd.getValue(), res);
         clingoLibrary.clingo_solve_handle_close(hnd.getValue());

@@ -1,5 +1,8 @@
 package org.potassco.ast.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -7,18 +10,27 @@ import org.potassco.cpp.clingo_h;
  * @author Josef Schneeberger
  * {@link clingo_h#clingo_ast_unary_operator_e}
  */
-//! Enumeration of unary operators.
-/* enum clingo_ast_unary_operator_e {
-  clingo_ast_unary_operator_minus    = 0, //!< Operator "-".
-  clingo_ast_unary_operator_negation = 1, //!< Operator "~".
-  clingo_ast_unary_operator_absolute = 2  //!< Operator "|.|".
-}; */
 public enum UnaryOperator {
 
     ABSOLUTE(2,"|","|"),
     MINUS(0,"-",""),
     NEGATION(1,"~","");
-            
+
+    private static Map<Integer, UnaryOperator> mapping = new HashMap<>();
+    
+	static {
+	    for (UnaryOperator solveEventType : UnaryOperator.values()) {
+	    	mapping.put(
+	          solveEventType.getValue(),
+	          solveEventType
+	        );
+	    }
+	}
+	
+	public static UnaryOperator fromValue(int type) {
+		return mapping.get(type);
+	}
+
     private final int operator;
 
     private final String left;

@@ -1,5 +1,8 @@
 package org.potassco.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -21,6 +24,21 @@ public enum HeuristicType {
     TRUE(4, "True"),
 	/** set the level of an atom and choose a negative sign */
     FALSE(5, "False");
+
+    private static Map<Integer, HeuristicType> mapping = new HashMap<>();
+    
+	static {
+	    for (HeuristicType solveEventType : HeuristicType.values()) {
+	    	mapping.put(
+	          solveEventType.getValue(),
+	          solveEventType
+	        );
+	    }
+	}
+	
+	public static HeuristicType fromValue(int type) {
+		return mapping.get(type);
+	}
 
     private final int type;
 

@@ -1,5 +1,8 @@
 package org.potassco.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -16,6 +19,21 @@ public enum StatisticsType {
     ARRAY(2),
     /** the entry is a map */
     MAP(3);
+
+    private static Map<Integer, StatisticsType> mapping = new HashMap<>();
+    
+	static {
+	    for (StatisticsType solveEventType : StatisticsType.values()) {
+	    	mapping.put(
+	          solveEventType.getValue(),
+	          solveEventType
+	        );
+	    }
+	}
+	
+	public static StatisticsType fromValue(int type) {
+		return mapping.get(type);
+	}
 
     private int type;
 

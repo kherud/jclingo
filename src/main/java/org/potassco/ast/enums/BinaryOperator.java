@@ -1,5 +1,8 @@
 package org.potassco.ast.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -18,7 +21,22 @@ public enum BinaryOperator {
     DIVISION(6,"/"),
     MODULO(7,"\\"),
     POWER(8,"**");
-            
+
+    private static Map<Integer, BinaryOperator> mapping = new HashMap<>();
+    
+	static {
+	    for (BinaryOperator solveEventType : BinaryOperator.values()) {
+	    	mapping.put(
+	          solveEventType.getValue(),
+	          solveEventType
+	        );
+	    }
+	}
+	
+	public static BinaryOperator fromValue(int type) {
+		return mapping.get(type);
+	}
+
     private int operator;
     
     private String string;

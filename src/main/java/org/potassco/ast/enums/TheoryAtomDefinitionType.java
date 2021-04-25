@@ -1,5 +1,8 @@
 package org.potassco.ast.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -17,6 +20,21 @@ public enum TheoryAtomDefinitionType {
     ANY(2, "any"),
 	/** For theory atoms that must not have a body. */
     DIRECTIVE(3, "directive");
+
+    private static Map<Integer, TheoryAtomDefinitionType> mapping = new HashMap<>();
+    
+	static {
+	    for (TheoryAtomDefinitionType solveEventType : TheoryAtomDefinitionType.values()) {
+	    	mapping.put(
+	          solveEventType.getValue(),
+	          solveEventType
+	        );
+	    }
+	}
+	
+	public static TheoryAtomDefinitionType fromValue(int type) {
+		return mapping.get(type);
+	}
 
     private final int type;
 

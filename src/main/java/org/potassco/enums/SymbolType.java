@@ -1,5 +1,8 @@
 package org.potassco.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -18,7 +21,22 @@ public enum SymbolType {
     FUNCTION(5),
     /** the <tt>\#sup</tt> symbol */
     SUPREMUM(7);
+
+    private static Map<Integer, SymbolType> mapping = new HashMap<>();
     
+	static {
+	    for (SymbolType solveEventType : SymbolType.values()) {
+	    	mapping.put(
+	          solveEventType.getValue(),
+	          solveEventType
+	        );
+	    }
+	}
+	
+	public static SymbolType fromValue(int type) {
+		return mapping.get(type);
+	}
+
     private int type;
         
     private SymbolType(int type) {

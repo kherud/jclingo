@@ -1,5 +1,8 @@
 package org.potassco.ast.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -15,7 +18,22 @@ public enum ComparisonOperator {
     GREATER_EQUAL(3,">="),
     NOT_EQUAL(4, "!="),
     EQUAL(5, "==");
+
+    private static Map<Integer, ComparisonOperator> mapping = new HashMap<>();
     
+	static {
+	    for (ComparisonOperator solveEventType : ComparisonOperator.values()) {
+	    	mapping.put(
+	          solveEventType.getValue(),
+	          solveEventType
+	        );
+	    }
+	}
+	
+	public static ComparisonOperator fromValue(int type) {
+		return mapping.get(type);
+	}
+
     private final int operator;
 
     private final String string;

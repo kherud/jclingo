@@ -1,5 +1,8 @@
 package org.potassco.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -18,6 +21,21 @@ public enum PropagatorCheckMode {
     PARTIAL(2),
 	/** call @ref ::clingo_propagator::check() on propagation fixpoints and total assignments */
     BOTH(3);
+
+    private static Map<Integer, PropagatorCheckMode> mapping = new HashMap<>();
+    
+	static {
+	    for (PropagatorCheckMode solveEventType : PropagatorCheckMode.values()) {
+	    	mapping.put(
+	          solveEventType.getValue(),
+	          solveEventType
+	        );
+	    }
+	}
+	
+	public static PropagatorCheckMode fromValue(int type) {
+		return mapping.get(type);
+	}
 
     private int mode;
 

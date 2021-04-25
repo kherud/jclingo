@@ -1,5 +1,8 @@
 package org.potassco.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -15,6 +18,21 @@ public enum SolveMode {
     ASYNC(1),
     /** Yield models in calls to clingo_solve_handle_model. */
     YIELD(2);
+
+    private static Map<Integer, SolveMode> mapping = new HashMap<>();
+    
+	static {
+	    for (SolveMode solveEventType : SolveMode.values()) {
+	    	mapping.put(
+	          solveEventType.getValue(),
+	          solveEventType
+	        );
+	    }
+	}
+	
+	public static SolveMode fromValue(int type) {
+		return mapping.get(type);
+	}
 
     private final int mode;
 

@@ -1,5 +1,8 @@
 package org.potassco.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -19,7 +22,22 @@ public enum ClauseType {
     VOLATILE(2, "Volatile"),
     /** like ::clingo_clause_type_static but the clause is deleted after a solving step */
     VOLATILE_STATIC(3, "VolatileStatic");
-            
+
+    private static Map<Integer, ClauseType> mapping = new HashMap<>();
+    
+	static {
+	    for (ClauseType solveEventType : ClauseType.values()) {
+	    	mapping.put(
+	          solveEventType.getValue(),
+	          solveEventType
+	        );
+	    }
+	}
+	
+	public static ClauseType fromValue(int type) {
+		return mapping.get(type);
+	}
+
     private final int type;
     
     private final String string;

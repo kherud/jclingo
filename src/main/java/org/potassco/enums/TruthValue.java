@@ -1,5 +1,8 @@
 package org.potassco.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -14,6 +17,21 @@ public enum TruthValue {
     TRUE(1,"True"),
 	/** false */
     FALSE(2,"False");
+
+    private static Map<Integer, TruthValue> mapping = new HashMap<>();
+    
+	static {
+	    for (TruthValue solveEventType : TruthValue.values()) {
+	    	mapping.put(
+	          solveEventType.getValue(),
+	          solveEventType
+	        );
+	    }
+	}
+	
+	public static TruthValue fromValue(int type) {
+		return mapping.get(type);
+	}
 
     private int type;
 

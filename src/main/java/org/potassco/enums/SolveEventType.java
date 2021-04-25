@@ -20,19 +20,19 @@ public enum SolveEventType {
     /** Issued if the search has completed. */
     FINISH(3);
 
-    private static Map<Integer, SolveEventType> solveEventTypeMapping = new HashMap<>();
+    private static Map<Integer, SolveEventType> mapping = new HashMap<>();
     
 	static {
 	    for (SolveEventType solveEventType : SolveEventType.values()) {
-	    	solveEventTypeMapping.put(
+	    	mapping.put(
 	          solveEventType.getValue(),
 	          solveEventType
 	        );
 	    }
 	}
 	
-	public static SolveEventType castIntToEnum(int timeToDelivery) {
-		return solveEventTypeMapping.get(timeToDelivery);
+	public static SolveEventType fromValue(int type) {
+		return mapping.get(type);
 	}
 
     private final int type;

@@ -1,5 +1,8 @@
 package org.potassco.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -20,6 +23,21 @@ public enum TheoryTermType {
     NUMBER(4),
 	/** a symbol term, e.g., `c` */
     SYMBOL(5);
+
+    private static Map<Integer, TheoryTermType> mapping = new HashMap<>();
+    
+	static {
+	    for (TheoryTermType solveEventType : TheoryTermType.values()) {
+	    	mapping.put(
+	          solveEventType.getValue(),
+	          solveEventType
+	        );
+	    }
+	}
+	
+	public static TheoryTermType fromValue(int type) {
+		return mapping.get(type);
+	}
 
     private int type;
 

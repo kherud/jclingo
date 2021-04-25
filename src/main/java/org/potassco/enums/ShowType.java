@@ -1,5 +1,8 @@
 package org.potassco.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -22,7 +25,22 @@ public enum ShowType {
     ALL(31),
     /** Select false instead of true atoms (::clingo_show_type_atoms) or terms (::clingo_show_type_terms). */
     COMPLEMENT(32);
-        
+
+    private static Map<Integer, ShowType> mapping = new HashMap<>();
+    
+	static {
+	    for (ShowType solveEventType : ShowType.values()) {
+	    	mapping.put(
+	          solveEventType.getValue(),
+	          solveEventType
+	        );
+	    }
+	}
+	
+	public static ShowType fromValue(int type) {
+		return mapping.get(type);
+	}
+
     private int type;
 
     private ShowType(int type) {

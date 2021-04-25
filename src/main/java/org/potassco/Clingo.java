@@ -69,7 +69,7 @@ public class Clingo {
         SolveHandle solveHandle = new SolveHandle();
         SolveEventCallbackT cb = new SolveEventCallbackT() {
             public boolean call(int type, Pointer event, Pointer goon) {
-                SolveEventType t = SolveEventType.castIntToEnum(type);
+                SolveEventType t = SolveEventType.fromValue(type);
                 switch (t) {
                     case MODEL:
                         SizeTByReference num = new SizeTByReference();

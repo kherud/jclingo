@@ -1,5 +1,8 @@
 package org.potassco.ast.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -11,6 +14,21 @@ public enum ScriptType {
 
     LUA(0, "lua"),
     PYTHON(1, "python");
+
+    private static Map<Integer, ScriptType> mapping = new HashMap<>();
+    
+	static {
+	    for (ScriptType solveEventType : ScriptType.values()) {
+	    	mapping.put(
+	          solveEventType.getValue(),
+	          solveEventType
+	        );
+	    }
+	}
+	
+	public static ScriptType fromValue(int type) {
+		return mapping.get(type);
+	}
 
     private int type;
 

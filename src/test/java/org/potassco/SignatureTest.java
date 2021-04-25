@@ -7,19 +7,29 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.potassco.jna.ClingoLibrary;
+import org.potassco.jna.Size;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
 
 public class SignatureTest {
 
 	@org.junit.Test
 	public void test1() {
 		Clingo clingo = new Clingo();
-		String name = "test";
 		try {
-			Pointer signature = clingo.signatureCreate(name, 2, true);
+			String name = "test";
+			int arity = 2;
+			boolean positive = true;
+			Pointer signature = clingo.signatureCreate(name, arity, positive);
 			assertEquals(name, clingo.signatureName(signature));
+			assertEquals(arity, clingo.signatureArity(signature));
+			assertEquals(positive, clingo.signatureIsPositive(signature));
+			assertEquals(!positive, clingo.signatureIsNegative(signature));
+			assertTrue(clingo.signatureIsEqualTo(signature, clingo.signatureCreate("test", 2, true)));
+			assertTrue(clingo.signatureIsLessThan(signature, clingo.signatureCreate("test", 3, true)));
+//			assertEquals(!positive, clingo.signatureHash(signature));
 		} catch (ClingoException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

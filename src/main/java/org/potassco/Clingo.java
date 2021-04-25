@@ -1,5 +1,7 @@
 package org.potassco;
 
+import java.nio.charset.StandardCharsets;
+
 import org.potassco.cpp.clingo_h;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.SolveEventType;
@@ -61,23 +63,64 @@ public class Clingo {
 	 * @param[out] signature the resulting signature
 	 * @return whether the call was successful; might set one of the following error codes:
 	 * - ::clingo_error_bad_alloc
-	 * @return
 	 * {@link clingo_h#clingo_signature_create}
+	 * @return
 	 * @throws ClingoException 
 	 */
 	public Pointer signatureCreate(String name, int arity, boolean positive) throws ClingoException {
 		PointerByReference sigPointer = new PointerByReference();
-		int success = clingoLibrary.clingo_signature_create(name, arity, positive ? 1 : 0, sigPointer);
+		int pos = positive ? 1 : 0;
+		int success = clingoLibrary.clingo_signature_create(name, arity, pos, sigPointer);
 		if (ErrorCode.fromValue(success) == ErrorCode.BAD_ALLOC) {
 			throw new ClingoException();
 		}
-		return sigPointer.getPointer();
+		return sigPointer.getValue();
 	}
 
+	/**
+	 * Get the name of a signature.
+	 * 
+	 * @note The string is internalized and valid for the duration of the process.
+	 * 
+	 * {@link clingo_h#clingo_signature_name}
+	 * @param signature [in] signature the target signature
+	 * @return the name of the signature
+	 */
 	public String signatureName(Pointer signature) {
 		return clingoLibrary.clingo_signature_name(signature);
 	}
 	
+	/**
+	 * Get the arity of a signature.
+	 * {@link clingo_h#clingo_signature_arity}
+	 * @param signature [in] signature the target signature
+	 * @return the arity of the signature
+	 */
+	public int signatureArity(Pointer signature) {
+		return clingoLibrary.clingo_signature_arity(signature);
+	}
+
+	public boolean signatureIsPositive(Pointer signature) {
+		return clingoLibrary.clingo_signature_is_positive(signature) == 1;
+	}
+
+	public boolean signatureIsNegative(Pointer signature) {
+		return clingoLibrary.clingo_signature_is_negative(signature) == 1;
+	}
+
+	public boolean signatureIsEqualTo(Pointer a, Pointer b) {
+		return clingoLibrary.clingo_signature_is_equal_to(a, b) == 1;
+	}
+	
+	public boolean signatureIsLessThan(Pointer a, Pointer b) {
+		return clingoLibrary.clingo_signature_is_less_than(a, b) == 1;
+	}
+	
+	public Size signatureHash(Pointer signature) {
+		Size hash = clingoLibrary.clingo_signature_hash(signature);
+		return hash;
+	}
+
 	/* *******
 	 * Solving
 	 * ******* */

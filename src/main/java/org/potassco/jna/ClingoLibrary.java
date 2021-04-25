@@ -2,6 +2,7 @@ package org.potassco.jna;
 import org.potassco.cpp.bool;
 import org.potassco.cpp.c_char;
 import org.potassco.cpp.clingo_signature_t;
+import org.potassco.cpp.size_t;
 import org.potassco.cpp.uint32_t;
 
 import com.sun.jna.Library;
@@ -39,7 +40,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
     // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_create(char const *name, uint32_t arity, bool positive, clingo_signature_t *signature);
-  int clingo_signature_create(final String p_name, int arity, int positive, PointerByReference p_signature);
+  int clingo_signature_create(String p_name, int arity, int positive, PointerByReference p_signature);
 
   //! Get the name of a signature.
   //!
@@ -49,6 +50,48 @@ public interface ClingoLibrary extends Library {
   //! @param[in] signature the target signature
   //! @return the name of the signature
   public String clingo_signature_name(Pointer signature); // CLINGO_VISIBILITY_DEFAULT char const *clingo_signature_name(clingo_signature_t signature);
+
+  //! Get the arity of a signature.
+  //!
+  //! @param[in] signature the target signature
+  //! @return the arity of the signature
+  public int clingo_signature_arity(Pointer signature); // CLINGO_VISIBILITY_DEFAULT uint32_t clingo_signature_arity(clingo_signature_t signature);
+  
+  //! Whether the signature is positive (is not classically negated).
+  //!
+  //! @param[in] signature the target signature
+  //! @return whether the signature has no sign
+  public byte clingo_signature_is_positive(Pointer signature); // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_is_positive(clingo_signature_t signature);
+
+  //! Whether the signature is negative (is classically negated).
+  //!
+  //! @param[in] signature the target signature
+  //! @return whether the signature has a sign
+  public byte clingo_signature_is_negative(Pointer signature); // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_is_negative(clingo_signature_t signature);
+
+  //! Check if two signatures are equal.
+  //!
+  //! @param[in] a first signature
+  //! @param[in] b second signature
+  //! @return whether a == b
+  public byte clingo_signature_is_equal_to(Pointer a, Pointer b); // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_is_equal_to(clingo_signature_t a, clingo_signature_t b);
+  
+  //! Check if a signature is less than another signature.
+  //!
+  //! Signatures are compared first by sign (unsigned < signed), then by arity,
+  //! then by name.
+  //!
+  //! @param[in] a first signature
+  //! @param[in] b second signature
+  //! @return whether a < b
+
+  public byte clingo_signature_is_less_than(Pointer a, Pointer b); // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_is_less_than(clingo_signature_t a, clingo_signature_t b);
+
+  //! Calculate a hash code of a signature.
+  //!
+  //! @param[in] signature the target signature
+  //! @return the hash code of the signature
+  public Size clingo_signature_hash(Pointer signature); // CLINGO_VISIBILITY_DEFAULT size_t clingo_signature_hash(clingo_signature_t signature);
 
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc

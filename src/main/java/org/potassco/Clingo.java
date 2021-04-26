@@ -116,9 +116,9 @@ public class Clingo {
 		return clingoLibrary.clingo_signature_is_less_than(a, b) == 1;
 	}
 	
-	public Size signatureHash(Pointer signature) {
+	public int signatureHash(Pointer signature) {
 		Size hash = clingoLibrary.clingo_signature_hash(signature);
-		return hash;
+		return hash.intValue();
 	}
 
 	/* *******

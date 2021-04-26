@@ -29,7 +29,8 @@ public class SignatureTest {
 			assertEquals(!positive, clingo.signatureIsNegative(signature));
 			assertTrue(clingo.signatureIsEqualTo(signature, clingo.signatureCreate("test", 2, true)));
 			assertTrue(clingo.signatureIsLessThan(signature, clingo.signatureCreate("test", 3, true)));
-//			assertEquals(!positive, clingo.signatureHash(signature));
+			int hash = clingo.signatureHash(signature);
+			assertEquals(hash , clingo.signatureHash(signature)); // returns the same hash
 		} catch (ClingoException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

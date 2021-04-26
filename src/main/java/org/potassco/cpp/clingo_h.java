@@ -148,19 +148,19 @@ public static final typedef<int32_t> clingo_weight_t = null;
 //! Corresponding type to ::clingo_error.
 public static final typedef<c_int> clingo_error_t = null;
 //! Convert error code into string.
-public static c_char clingo_error_string(clingo_error_t code) {return null;}; // public static  // CLINGO_VISIBILITY_DEFAULT char const *clingo_error_string(clingo_error_t code);
+public c_char clingo_error_string(clingo_error_t code); // public static  // CLINGO_VISIBILITY_DEFAULT char const *clingo_error_string(clingo_error_t code);
 //! Get the last error code set by a clingo API call.
 //! @note Each thread has its own local error code.
 //! @return error code
-public static clingo_error_t clingo_error_code() {return null;}; // public static  // CLINGO_VISIBILITY_DEFAULT clingo_error_t clingo_error_code();
+public clingo_error_t clingo_error_code(); // public static  // CLINGO_VISIBILITY_DEFAULT clingo_error_t clingo_error_code();
 //! Get the last error message set if an API call fails.
 //! @note Each thread has its own local error message.
 //! @return error message or NULL
-public static c_char clingo_error_message() {return null;}; // public static  // CLINGO_VISIBILITY_DEFAULT char const *clingo_error_message();
+public c_char clingo_error_message(); // public static  // CLINGO_VISIBILITY_DEFAULT char const *clingo_error_message();
 //! Set a custom error code and message in the active thread.
 //! @param[in] code the error code
 //! @param[in] message the error message
-public static c_void clingo_set_error(clingo_error_t code, final c_char message) {return null;}; // public static  // CLINGO_VISIBILITY_DEFAULT void clingo_set_error(clingo_error_t code, char const *message);
+public c_void clingo_set_error(clingo_error_t code, final c_char message); // public static  // CLINGO_VISIBILITY_DEFAULT void clingo_set_error(clingo_error_t code, char const *message);
 
 //! Enumeration of warning codes.
 /* enum clingo_warning_e {

@@ -1,14 +1,11 @@
 package org.potassco;
 
-import java.nio.charset.StandardCharsets;
-
 import org.potassco.cpp.clingo_h;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
 import org.potassco.jna.ClingoLibrary;
 import org.potassco.jna.Part;
-import org.potassco.jna.Signature;
 import org.potassco.jna.Size;
 import org.potassco.jna.SizeByReference;
 import org.potassco.jna.SolveEventCallbackT;
@@ -50,9 +47,52 @@ public class Clingo {
 		return major.getValue() + "." + minor.getValue() + "." + patch.getValue();
 	}
 
-	/* *******
+	/* *******************************
+	 * Error message and code handling
+	 * ******************************* */
+	
+    /**
+     * Convert error code into string.
+     * @param code
+     * @return the error string
+     */
+    public String errorString(int code) {
+        return clingoLibrary.clingo_error_string(code);
+    }
+
+    /**
+     * @return the last error code set by a clingo API call.
+     */
+    public int errorCode() {
+        return clingoLibrary.clingo_error_code();
+    }
+    
+    /**
+     * @return the last error message set if an API call fails.
+     */
+    public String errorMessage() {
+        return clingoLibrary.clingo_error_message();
+    }
+
+    /**
+     * Set a custom error code and message in the active thread.
+     * @param code [in] code the error code
+     * @param message [in] message the error message
+     */
+    public void setError(int code, String message) {
+        clingoLibrary.clingo_set_error(code, message);
+    }
+
+    /**
+     * @return the last error code set if an API call fails.
+     */
+    public ErrorCode getError() {
+    	return ErrorCode.fromValue(clingoLibrary.clingo_error_code());
+    }
+    
+	/* *******************
 	 * Signature Functions
-	 * ******* */
+	 * ******************* */
 
 	/**
 	 * Create a new signature.

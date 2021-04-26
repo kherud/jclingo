@@ -2,21 +2,14 @@ package org.potassco;
 
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.potassco.jna.ClingoLibrary;
-import org.potassco.jna.Size;
+import org.potassco.enums.ErrorCode;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 
-public class SignatureTest {
+public class InfrastructureTest {
 
 	@org.junit.Test
-	public void test1() {
+	public void testSignature() {
 		Clingo clingo = new Clingo();
 		try {
 			String name = "test";
@@ -35,6 +28,26 @@ public class SignatureTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@org.junit.Test
+	public void testErrorMessage() {
+		Clingo clingo = new Clingo();
+		assertEquals("success", clingo.errorString(0));
+		assertEquals("runtime error", clingo.errorString(1));
+		assertEquals("logic error", clingo.errorString(2));
+		assertEquals("bad allocation", clingo.errorString(3));
+		assertEquals("unknown error", clingo.errorString(4));
+		
+		assertEquals(null, clingo.errorString(5));
+		int myCode = 42;
+		String myMessage = "jclingo error";
+		clingo.setError(myCode, myMessage);
+		assertEquals(myCode, clingo.errorCode());
+		assertEquals(myMessage, clingo.errorMessage());
+
+		clingo.setError(0, "");
+		assertEquals(ErrorCode.SUCCESS, clingo.getError());
 	}
 
 }

@@ -5,6 +5,8 @@ import org.potassco.cpp.c_void;
 import org.potassco.cpp.clingo_error_t;
 import org.potassco.cpp.clingo_h;
 import org.potassco.cpp.clingo_signature_t;
+import org.potassco.cpp.clingo_symbol_t;
+import org.potassco.cpp.clingo_symbol_type_t;
 import org.potassco.cpp.clingo_warning_t;
 import org.potassco.cpp.size_t;
 import org.potassco.cpp.uint32_t;
@@ -12,7 +14,9 @@ import org.potassco.cpp.uint32_t;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 public interface ClingoLibrary extends Library {
@@ -126,6 +130,174 @@ public interface ClingoLibrary extends Library {
     /** {@link clingo_h#clingo_signature_hash} */
     public Size clingo_signature_hash(Pointer signature); // CLINGO_VISIBILITY_DEFAULT size_t clingo_signature_hash(clingo_signature_t signature);
 
+    //! Construct a symbol representing a number.
+    //!
+    //! @param[in] number the number
+    //! @param[out] symbol the resulting symbol
+    /** {@link clingo_h#clingo_symbol_create_number} */
+    public void clingo_symbol_create_number(int number, SymbolByReference p_symbol);
+    //! Construct a symbol representing \#sup.
+    //!
+    //! @param[out] symbol the resulting symbol
+    /** {@link clingo_h#clingo_symbol_create_supremum} */
+    public void clingo_symbol_create_supremum(SymbolByReference p_symbol);
+    //! Construct a symbol representing <tt>\#inf</tt>.
+    //!
+    //! @param[out] symbol the resulting symbol
+    /** {@link clingo_h#clingo_symbol_create_infimum} */
+    public void clingo_symbol_create_infimum(SymbolByReference p_symbol);
+    //! Construct a symbol representing a string.
+    //!
+    //! @param[in] string the string
+    //! @param[out] symbol the resulting symbol
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    /** {@link clingo_h#clingo_symbol_create_string} */
+    public byte clingo_symbol_create_string(String p_string, SymbolByReference p_symbol);
+    //! Construct a symbol representing an id.
+    //!
+    //! @note This is just a shortcut for clingo_symbol_create_function() with
+    //! empty arguments.
+    //!
+    //! @param[in] name the name
+    //! @param[in] positive whether the symbol has a classical negation sign
+    //! @param[out] symbol the resulting symbol
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    /** {@link clingo_h#clingo_symbol_create_id} */
+    public byte clingo_symbol_create_id(String p_name, byte positive, SymbolByReference p_symbol);
+    //! Construct a symbol representing a function or tuple.
+    //!
+    //! @note To create tuples, the empty string has to be used as name.
+    //!
+    //! @param[in] name the name of the function
+    //! @param[in] arguments the arguments of the function
+    //! @param[in] arguments_size the number of arguments
+    //! @param[in] positive whether the symbol has a classical negation sign
+    //! @param[out] symbol the resulting symbol
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    /** {@link clingo_h#clingo_symbol_create_function} */
+    public byte clingo_symbol_create_function(PointerByReference p_name, SymbolByReference[] p_arguments, Size arguments_size, byte positive, SymbolByReference p_symbol);
+
+    //! @name Symbol Inspection Functions
+    
+    //! Get the number of a symbol.
+    //!
+    //! @param[in] symbol the target symbol
+    //! @param[out] number the resulting number
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_number
+    /** {@link clingo_h#clingo_symbol_number} */
+    public byte clingo_symbol_number(Symbol symbol, IntByReference p_number);
+    //! Get the name of a symbol.
+    //!
+    //! @note
+    //! The string is internalized and valid for the duration of the process.
+    //!
+    //! @param[in] symbol the target symbol
+    //! @param[out] name the resulting name
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_function
+    /** {@link clingo_h#clingo_symbol_name} */
+    public byte clingo_symbol_name(Symbol symbol, String[] p_p_name);
+    //! Get the string of a symbol.
+    //!
+    //! @note
+    //! The string is internalized and valid for the duration of the process.
+    //!
+    //! @param[in] symbol the target symbol
+    //! @param[out] string the resulting string
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_string
+    /** {@link clingo_h#clingo_symbol_string} */
+    public byte clingo_symbol_string(Symbol symbol, String[] p_p_string);
+    //! Check if a function is positive (does not have a sign).
+    //!
+    //! @param[in] symbol the target symbol
+    //! @param[out] positive the result
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_function
+    /** {@link clingo_h#clingo_symbol_is_positive} */
+    public byte clingo_symbol_is_positive(Symbol symbol, ByteByReference p_positive);
+    //! Check if a function is negative (has a sign).
+    //!
+    //! @param[in] symbol the target symbol
+    //! @param[out] negative the result
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_function
+    /** {@link clingo_h#clingo_symbol_is_negative} */
+    public byte clingo_symbol_is_negative(Symbol symbol, ByteByReference p_negative);
+    //! Get the arguments of a symbol.
+    //!
+    //! @param[in] symbol the target symbol
+    //! @param[out] arguments the resulting arguments
+    //! @param[out] arguments_size the number of arguments
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_function
+    /** {@link clingo_h#clingo_symbol_arguments} */
+    public byte clingo_symbol_arguments(Symbol symbol, PointerByReference p_p_arguments, SizeByReference p_arguments_size);
+    //! Get the type of a symbol.
+    //!
+    //! @param[in] symbol the target symbol
+    //! @return the type of the symbol
+    /** {@link clingo_h#clingo_symbol_type} */
+    public int clingo_symbol_type(Symbol symbol);
+    /**
+     * Get the size of the string representation of a symbol (including the terminating 0).
+     * @param symbol [in] symbol the target symbol
+     * @param size [out] size the resulting size
+     * @return whether the call was successful; might set one of the following error codes:
+     * - ::clingo_error_bad_alloc
+     * {@link clingo_h#clingo_symbol_to_string_size}
+     */
+    boolean clingo_symbol_to_string_size(long symbol, SizeByReference size);
+//    public byte clingo_symbol_to_string_size(Symbol symbol, SizeByReference p_size);
+    //! Get the string representation of a symbol.
+    //!
+    //! @param[in] symbol the target symbol
+    //! @param[out] string the resulting string
+    //! @param[in] size the size of the string
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    //!
+    //! @see clingo_symbol_to_string_size()
+    /** {@link clingo_h#clingo_symbol_to_string} */
+    public bool clingo_symbol_to_string(Symbol symbol, char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_to_string(clingo_symbol_t symbol, char *string, size_t size);
+    
+    //! @}
+    
+    //! @name Symbol Comparison Functions
+    //! @{
+    
+    //! Check if two symbols are equal.
+    //!
+    //! @param[in] a first symbol
+    //! @param[in] b second symbol
+    //! @return whether a == b
+    /** {@link clingo_h#clingo_symbol_is_equal_to} */
+    public bool clingo_symbol_is_equal_to(clingo_symbol_t a, clingo_symbol_t b); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_is_equal_to(clingo_symbol_t a, clingo_symbol_t b);
+    //! Check if a symbol is less than another symbol.
+    //!
+    //! Symbols are first compared by type.  If the types are equal, the values are
+    //! compared (where strings are compared using strcmp).  Functions are first
+    //! compared by signature and then lexicographically by arguments.
+    //!
+    //! @param[in] a first symbol
+    //! @param[in] b second symbol
+    //! @return whether a < b
+    /** {@link clingo_h#clingo_symbol_is_less_than} */
+    public bool clingo_symbol_is_less_than(clingo_symbol_t a, clingo_symbol_t b); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_is_less_than(clingo_symbol_t a, clingo_symbol_t b);
+    //! Calculate a hash code of a symbol.
+    //!
+    //! @param[in] symbol the target symbol
+    //! @return the hash code of the symbol
+    /** {@link clingo_h#clingo_symbol_hash} */
+    public size_t clingo_symbol_hash(clingo_symbol_t symbol); // CLINGO_VISIBILITY_DEFAULT size_t clingo_symbol_hash(clingo_symbol_t symbol);
+
+    
+    
+    
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_runtime if argument parsing fails
@@ -264,17 +436,6 @@ public interface ClingoLibrary extends Library {
 // CLINGO_VISIBILITY_DEFAULT bool clingo_model_symbols(clingo_model_t const *model, clingo_show_type_bitset_t show, clingo_symbol_t *symbols, size_t size);
    //bool clingo_model_symbols(clingo_model_t const *model, clingo_show_type_bitset_t show, clingo_symbol_t *symbols, size_t size);
     boolean clingo_model_symbols(Pointer model, int show, long[] symbols, Size size);
-    
-    /**
-     * Get the size of the string representation of a symbol (including the terminating 0).
-     * @param symbol [in] symbol the target symbol
-     * @param size [out] size the resulting size
-     * @return whether the call was successful; might set one of the following error codes:
-     * - ::clingo_error_bad_alloc
-     */
-//  CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_to_string_size(clingo_symbol_t symbol, size_t *size);
-    //bool clingo_symbol_to_string_size(clingo_symbol_t symbol, size_t *size);
-    boolean clingo_symbol_to_string_size(long symbol, SizeByReference size);
     
     /**
      * Get the string representation of a symbol.

@@ -1,5 +1,8 @@
 package org.potassco;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.potassco.cpp.clingo_h;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.SolveEventType;
@@ -9,8 +12,11 @@ import org.potassco.jna.Part;
 import org.potassco.jna.Size;
 import org.potassco.jna.SizeByReference;
 import org.potassco.jna.SolveEventCallbackT;
+import org.potassco.jna.Symbol;
+import org.potassco.jna.SymbolByReference;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -170,6 +176,96 @@ public class Clingo {
 		return hash.intValue();
 	}
 
+	/* *****************************
+	 * Symbol Construction Functions
+	 * ***************************** */
+
+	Symbol symbolCreateNumber(int number) {
+		SymbolByReference sbr = new SymbolByReference();
+		clingoLibrary.clingo_symbol_create_number(number, sbr);
+		return new Symbol(sbr.getValue());
+	}
+
+	Symbol symbolCreateSupremum() {
+		SymbolByReference pointer = new SymbolByReference();
+		clingoLibrary.clingo_symbol_create_supremum(pointer);
+		return new Symbol(pointer.getValue());
+	}
+
+	Symbol symbolCreateInfimum() {
+		SymbolByReference pointer = new SymbolByReference();
+		clingoLibrary.clingo_symbol_create_supremum(pointer);
+		return new Symbol(pointer.getValue());
+	}
+
+	Symbol symbolCreateString(String string) {
+		SymbolByReference symb = new SymbolByReference();
+		byte success = clingoLibrary.clingo_symbol_create_string(string, symb);
+		return new Symbol(symb.getValue());
+	}
+
+	Symbol symbolCreateId(String name, boolean positive) {
+		SymbolByReference symb = new SymbolByReference();
+		byte success = clingoLibrary.clingo_symbol_create_id(name, (byte) (positive ? 1 : 0), symb);
+		return new Symbol(symb.getValue());
+	}
+
+//	Symbol symbolCreateFunction(String name, List<Symbol> arguments, boolean positive) {
+//		LongByReference pointer = new LongByReference();
+//		LongByReference[] argumentsArray;
+//		clingoLibrary.clingo_symbol_create_function(name, arguments, argumentsSize, (byte) (positive ? 1 : 0), pointer);
+//		return new Symbol(name, SymbolType.FUNCTION);
+//	}
+
+	public int symbolNumber(Symbol symbol) {
+		IntByReference ibr = new IntByReference();
+		byte success = clingoLibrary.clingo_symbol_number(symbol, ibr);
+		return ibr.getValue();
+	}
+
+	public String symbolName(Symbol symbol) {
+		String[] pointer = new String[1];
+		byte success = clingoLibrary.clingo_symbol_name(symbol, pointer);
+		String v = pointer[0];
+		return v;
+	}
+	
+	public String symbolString(Symbol symbol) {
+		// https://stackoverflow.com/questions/29162569/jna-passing-string-by-reference-to-dll-but-non-return
+		String[] r1 = new String[1];
+		byte success = clingoLibrary.clingo_symbol_string(symbol, r1);
+		return r1[0];
+	}
+
+	public boolean symbolIsPositive(Symbol symbol) {
+		ByteByReference p_positive = new ByteByReference();
+		byte success = clingoLibrary.clingo_symbol_is_positive(symbol, p_positive);
+		byte v = p_positive.getValue();
+		return v == 1;
+	}
+
+	public boolean symbolIsNegative(Symbol symbol) {
+		ByteByReference p_positive = new ByteByReference();
+		byte success = clingoLibrary.clingo_symbol_is_negative(symbol, p_positive);
+		byte v = p_positive.getValue();
+		return v == 1;
+	}
+	
+	public void symbolArguments(Symbol symbol, List<Symbol> arguments, Long size) {
+		if (arguments == null) {
+			arguments = new LinkedList<Symbol>();
+		}
+//		if (size == null) {
+//			size = 0L;
+//		}
+		PointerByReference p_p_arguments = new PointerByReference();
+		SizeByReference p_arguments_size = new SizeByReference();
+		byte success = clingoLibrary.clingo_symbol_arguments(symbol, p_p_arguments, p_arguments_size);
+		size = p_arguments_size.getValue();
+		Pointer p = p_p_arguments.getPointer();
+// TODO: continue with p_p_arguments
+	}
+	
 	/* *******
 	 * Solving
 	 * ******* */

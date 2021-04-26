@@ -48,6 +48,16 @@ public class InfrastructureTest {
 
 		clingo.setError(0, "");
 		assertEquals(ErrorCode.SUCCESS, clingo.getError());
+
+		assertEquals("operation undefined", clingo.warningString(0));
+		// TODO: typo in clingo api
+		assertEquals("runtime errer", clingo.warningString(1));
+		assertEquals("atom undefined", clingo.warningString(2));
+		assertEquals("file included", clingo.warningString(3));
+		assertEquals("variable unbounded", clingo.warningString(4));
+		assertEquals("global variable", clingo.warningString(5));
+		assertEquals("other", clingo.warningString(6));
+		assertEquals("unknown message code", clingo.warningString(7));
 	}
 
 }

@@ -89,7 +89,16 @@ public class Clingo {
     public ErrorCode getError() {
     	return ErrorCode.fromValue(clingoLibrary.clingo_error_code());
     }
-    
+
+    /**
+     * Convert warning code into string.
+     * @param code
+     * @return the error string
+     */
+    public String warningString(int code) {
+        return clingoLibrary.clingo_warning_string(code);
+    }
+
 	/* *******************
 	 * Signature Functions
 	 * ******************* */

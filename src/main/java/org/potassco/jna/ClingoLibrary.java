@@ -5,6 +5,7 @@ import org.potassco.cpp.c_void;
 import org.potassco.cpp.clingo_error_t;
 import org.potassco.cpp.clingo_h;
 import org.potassco.cpp.clingo_signature_t;
+import org.potassco.cpp.clingo_warning_t;
 import org.potassco.cpp.size_t;
 import org.potassco.cpp.uint32_t;
 
@@ -49,6 +50,9 @@ public interface ClingoLibrary extends Library {
     //! @param[in] message the error message
     /** {@link clingo_h#clingo_set_error} */
     public void clingo_set_error(int code, String message);
+    //! Convert warning code into string.
+    /** {@link clingo_h#clingo_warning_string} */
+    public String clingo_warning_string(int code);
 
     //! @name Signature Functions
     //! @{

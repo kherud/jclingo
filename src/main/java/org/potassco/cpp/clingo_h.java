@@ -175,7 +175,7 @@ public c_void clingo_set_error(clingo_error_t code, final c_char message); // pu
 //! Corresponding type to ::clingo_warning.
 public static final typedef<c_int> clingo_warning_t = null;
 //! Convert warning code into string.
-public static c_char clingo_warning_string(clingo_warning_t code) {return null;}; // CLINGO_VISIBILITY_DEFAULT char const *clingo_warning_string(clingo_warning_t code);
+public c_char clingo_warning_string(clingo_warning_t code); // CLINGO_VISIBILITY_DEFAULT char const *clingo_warning_string(clingo_warning_t code);
 //! Callback to intercept warning messages.
 //!
 //! @param[in] code associated warning code

@@ -2,6 +2,7 @@ package org.potassco.jna;
 import org.potassco.cpp.bool;
 import org.potassco.cpp.c_char;
 import org.potassco.cpp.c_void;
+import org.potassco.cpp.clingo_control_t;
 import org.potassco.cpp.clingo_error_t;
 import org.potassco.cpp.clingo_h;
 import org.potassco.cpp.clingo_literal_t;
@@ -356,113 +357,127 @@ public interface ClingoLibrary extends Library {
     //! @param[out] size the number of atoms
     //! @return whether the call was successful
     /** {@link clingo_h#clingo_symbolic_atoms_size} */
-    public byte clingo_symbolic_atoms_size(SymbolicAtoms p_atoms, SizeByReference p_size);
-    
- //! Get a forward iterator to the beginning of the sequence of all symbolic
- //! atoms optionally restricted to a given signature.
- //!
- //! @param[in] atoms the target
- //! @param[in] signature optional signature
- //! @param[out] iterator the resulting iterator
- //! @return whether the call was successful
- public bool clingo_symbolic_atoms_begin(final clingo_symbolic_atoms_t p_atoms, final clingo_signature_t p_signature, clingo_symbolic_atom_iterator_t p_iterator); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_begin(clingo_symbolic_atoms_t const *atoms, clingo_signature_t const *signature, clingo_symbolic_atom_iterator_t *iterator);
- //! Iterator pointing to the end of the sequence of symbolic atoms.
- //!
- //! @param[in] atoms the target
- //! @param[out] iterator the resulting iterator
- //! @return whether the call was successful
- public bool clingo_symbolic_atoms_end(final clingo_symbolic_atoms_t p_atoms, clingo_symbolic_atom_iterator_t p_iterator); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_end(clingo_symbolic_atoms_t const *atoms, clingo_symbolic_atom_iterator_t *iterator);
- //! Find a symbolic atom given its symbolic representation.
- //!
- //! @param[in] atoms the target
- //! @param[in] symbol the symbol to lookup
- //! @param[out] iterator iterator pointing to the symbolic atom or to the end
- //! of the sequence if no corresponding atom is found
- //! @return whether the call was successful
- public bool clingo_symbolic_atoms_find(final clingo_symbolic_atoms_t p_atoms, clingo_symbol_t symbol, clingo_symbolic_atom_iterator_t p_iterator); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_find(clingo_symbolic_atoms_t const *atoms, clingo_symbol_t symbol, clingo_symbolic_atom_iterator_t *iterator);
- //! Check if two iterators point to the same element (or end of the sequence).
- //!
- //! @param[in] atoms the target
- //! @param[in] a the first iterator
- //! @param[in] b the second iterator
- //! @param[out] equal whether the two iterators are equal
- //! @return whether the call was successful
- public bool clingo_symbolic_atoms_iterator_is_equal_to(final clingo_symbolic_atoms_t p_atoms, clingo_symbolic_atom_iterator_t a, clingo_symbolic_atom_iterator_t b, bool p_equal); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_iterator_is_equal_to(clingo_symbolic_atoms_t const *atoms, clingo_symbolic_atom_iterator_t a, clingo_symbolic_atom_iterator_t b, bool *equal);
- //! Get the symbolic representation of an atom.
- //!
- //! @param[in] atoms the target
- //! @param[in] iterator iterator to the atom
- //! @param[out] symbol the resulting symbol
- //! @return whether the call was successful
- public bool clingo_symbolic_atoms_symbol(final clingo_symbolic_atoms_t p_atoms, clingo_symbolic_atom_iterator_t iterator, clingo_symbol_t p_symbol); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_symbol(clingo_symbolic_atoms_t const *atoms, clingo_symbolic_atom_iterator_t iterator, clingo_symbol_t *symbol);
- //! Check whether an atom is a fact.
- //!
- //! @note This does not determine if an atom is a cautious consequence. The
- //! grounding or solving component's simplifications can only detect this in
- //! some cases.
- //!
- //! @param[in] atoms the target
- //! @param[in] iterator iterator to the atom
- //! @param[out] fact whether the atom is a fact
- //! @return whether the call was successful
- public bool clingo_symbolic_atoms_is_fact(final clingo_symbolic_atoms_t p_atoms, clingo_symbolic_atom_iterator_t iterator, bool p_fact); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_is_fact(clingo_symbolic_atoms_t const *atoms, clingo_symbolic_atom_iterator_t iterator, bool *fact);
- //! Check whether an atom is external.
- //!
- //! An atom is external if it has been defined using an external directive and
- //! has not been released or defined by a rule.
- //!
- //! @param[in] atoms the target
- //! @param[in] iterator iterator to the atom
- //! @param[out] external whether the atom is a external
- //! @return whether the call was successful
- public bool clingo_symbolic_atoms_is_external(final clingo_symbolic_atoms_t p_atoms, clingo_symbolic_atom_iterator_t iterator, bool p_external); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_is_external(clingo_symbolic_atoms_t const *atoms, clingo_symbolic_atom_iterator_t iterator, bool *external);
- //! Returns the (numeric) aspif literal corresponding to the given symbolic atom.
- //!
- //! Such a literal can be mapped to a solver literal (see the \ref Propagator
- //! module) or be used in rules in aspif format (see the \ref ProgramBuilder
- //! module).
- //!
- //! @param[in] atoms the target
- //! @param[in] iterator iterator to the atom
- //! @param[out] literal the associated literal
- //! @return whether the call was successful
+    public byte clingo_symbolic_atoms_size(Pointer p_atoms, SizeByReference p_size);
+    //! Get a forward iterator to the beginning of the sequence of all symbolic
+    //! atoms optionally restricted to a given signature.
+    //!
+    //! @param[in] atoms the target
+    //! @param[in] signature optional signature
+    //! @param[out] iterator the resulting iterator
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_symbolic_atoms_begin} */
+    public byte clingo_symbolic_atoms_begin(Pointer p_atoms, Pointer p_signature, PointerByReference p_iterator);
+    //! Iterator pointing to the end of the sequence of symbolic atoms.
+    //!
+    //! @param[in] atoms the target
+    //! @param[out] iterator the resulting iterator
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_symbolic_atoms_end} */
+    public byte clingo_symbolic_atoms_end(Pointer p_atoms, PointerByReference p_iterator);
+    //! Find a symbolic atom given its symbolic representation.
+    //!
+    //! @param[in] atoms the target
+    //! @param[in] symbol the symbol to lookup
+    //! @param[out] iterator iterator pointing to the symbolic atom or to the end
+    //! of the sequence if no corresponding atom is found
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_symbolic_atoms_find} */
+    public byte clingo_symbolic_atoms_find(Pointer p_atoms, long symbol, PointerByReference p_iterator);
+    //! Check if two iterators point to the same element (or end of the sequence).
+    //!
+    //! @param[in] atoms the target
+    //! @param[in] a the first iterator
+    //! @param[in] b the second iterator
+    //! @param[out] equal whether the two iterators are equal
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_symbolic_atoms_iterator_is_equal_to} */
+    public byte clingo_symbolic_atoms_iterator_is_equal_to(Pointer p_atoms, Pointer a, Pointer b, ByteByReference p_equal);
+    //! Get the symbolic representation of an atom.
+    //!
+    //! @param[in] atoms the target
+    //! @param[in] iterator iterator to the atom
+    //! @param[out] symbol the resulting symbol
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_symbolic_atoms_symbol} */
+    public byte clingo_symbolic_atoms_symbol(Pointer p_atoms, Pointer iterator, LongByReference p_symbol);
+    //! Check whether an atom is a fact.
+    //!
+    //! @note This does not determine if an atom is a cautious consequence. The
+    //! grounding or solving component's simplifications can only detect this in
+    //! some cases.
+    //!
+    //! @param[in] atoms the target
+    //! @param[in] iterator iterator to the atom
+    //! @param[out] fact whether the atom is a fact
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_symbolic_atoms_is_fact} */
+    public byte clingo_symbolic_atoms_is_fact(Pointer p_atoms, Pointer iterator, ByteByReference p_fact);
+    //! Check whether an atom is external.
+    //!
+    //! An atom is external if it has been defined using an external directive and
+    //! has not been released or defined by a rule.
+    //!
+    //! @param[in] atoms the target
+    //! @param[in] iterator iterator to the atom
+    //! @param[out] external whether the atom is a external
+    //! @return whether the call was successful
+    public byte clingo_symbolic_atoms_is_external(Pointer p_atoms, Pointer iterator, ByteByReference p_external);
+    //! Returns the (numeric) aspif literal corresponding to the given symbolic atom.
+    //!
+    //! Such a literal can be mapped to a solver literal (see the \ref Propagator
+    //! module) or be used in rules in aspif format (see the \ref ProgramBuilder
+    //! module).
+    //!
+    //! @param[in] atoms the target
+    //! @param[in] iterator iterator to the atom
+    //! @param[out] literal the associated literal
+    //! @return whether the call was successful
  public bool clingo_symbolic_atoms_literal(final clingo_symbolic_atoms_t p_atoms, clingo_symbolic_atom_iterator_t iterator, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_literal(clingo_symbolic_atoms_t const *atoms, clingo_symbolic_atom_iterator_t iterator, clingo_literal_t *literal);
- //! Get the number of different predicate signatures used in the program.
- //!
- //! @param[in] atoms the target
- //! @param[out] size the number of signatures
- //! @return whether the call was successful
+    //! Get the number of different predicate signatures used in the program.
+    //!
+    //! @param[in] atoms the target
+    //! @param[out] size the number of signatures
+    //! @return whether the call was successful
  public bool clingo_symbolic_atoms_signatures_size(final clingo_symbolic_atoms_t p_atoms, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_signatures_size(clingo_symbolic_atoms_t const *atoms, size_t *size);
- //! Get the predicate signatures occurring in a logic program.
- //!
- //! @param[in] atoms the target
- //! @param[out] signatures the resulting signatures
- //! @param[in] size the number of signatures
- //! @return whether the call was successful; might set one of the following error codes:
- //! - ::clingo_error_bad_alloc
- //! - ::clingo_error_runtime if the size is too small
- //!
- //! @see clingo_symbolic_atoms_signatures_size()
+    //! Get the predicate signatures occurring in a logic program.
+    //!
+    //! @param[in] atoms the target
+    //! @param[out] signatures the resulting signatures
+    //! @param[in] size the number of signatures
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    //! - ::clingo_error_runtime if the size is too small
+    //!
+    //! @see clingo_symbolic_atoms_signatures_size()
  public bool clingo_symbolic_atoms_signatures(final clingo_symbolic_atoms_t p_atoms, clingo_signature_t p_signatures, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_signatures(clingo_symbolic_atoms_t const *atoms, clingo_signature_t *signatures, size_t size);
- //! Get an iterator to the next element in the sequence of symbolic atoms.
- //!
- //! @param[in] atoms the target
- //! @param[in] iterator the current iterator
- //! @param[out] next the succeeding iterator
- //! @return whether the call was successful
+    //! Get an iterator to the next element in the sequence of symbolic atoms.
+    //!
+    //! @param[in] atoms the target
+    //! @param[in] iterator the current iterator
+    //! @param[out] next the succeeding iterator
+    //! @return whether the call was successful
  public bool clingo_symbolic_atoms_next(final clingo_symbolic_atoms_t p_atoms, clingo_symbolic_atom_iterator_t iterator, clingo_symbolic_atom_iterator_t p_next); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_next(clingo_symbolic_atoms_t const *atoms, clingo_symbolic_atom_iterator_t iterator, clingo_symbolic_atom_iterator_t *next);
- //! Check whether the given iterator points to some element with the sequence
- //! of symbolic atoms or to the end of the sequence.
- //!
- //! @param[in] atoms the target
- //! @param[in] iterator the iterator
- //! @param[out] valid whether the iterator points to some element within the
- //! sequence
- //! @return whether the call was successful
+    //! Check whether the given iterator points to some element with the sequence
+    //! of symbolic atoms or to the end of the sequence.
+    //!
+    //! @param[in] atoms the target
+    //! @param[in] iterator the iterator
+    //! @param[out] valid whether the iterator points to some element within the
+    //! sequence
+    //! @return whether the call was successful
  public bool clingo_symbolic_atoms_is_valid(final clingo_symbolic_atoms_t p_atoms, clingo_symbolic_atom_iterator_t iterator, bool p_valid); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_is_valid(clingo_symbolic_atoms_t const *atoms, clingo_symbolic_atom_iterator_t iterator, bool *valid);
 
     
-    
+    //! Get an object to inspect symbolic atoms (the relevant Herbrand base) used
+    //! for grounding.
+    //!
+    //! See the @ref SymbolicAtoms module for more information.
+    //!
+    //! @param[in] control the target
+    //! @param[out] atoms the symbolic atoms object
+    //! @return whether the call was successful
+ 	public byte clingo_control_symbolic_atoms(Pointer p_control, PointerByReference p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_symbolic_atoms(clingo_control_t const *control, clingo_symbolic_atoms_t const **atoms);
+
     
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_bad_alloc

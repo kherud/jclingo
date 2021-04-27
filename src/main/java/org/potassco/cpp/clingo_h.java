@@ -1,7 +1,4 @@
 package org.potassco.cpp;
-
-import org.potassco.jna.SymbolicAtoms;
-
 // {{{ MIT License
 // Copyright 2017 Roland Kaminski
 
@@ -558,7 +555,7 @@ public static final typedef<uint64_t> clingo_symbolic_atom_iterator_t = null;
 //! @param[in] atoms the target
 //! @param[out] size the number of atoms
 //! @return whether the call was successful
-public bool clingo_symbolic_atoms_size(SymbolicAtoms p_atoms, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_size(clingo_symbolic_atoms_t const *atoms, size_t *size);
+public bool clingo_symbolic_atoms_size(final clingo_symbolic_atoms_t p_atoms, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_size(clingo_symbolic_atoms_t const *atoms, size_t *size);
 //! Get a forward iterator to the beginning of the sequence of all symbolic
 //! atoms optionally restricted to a given signature.
 //!

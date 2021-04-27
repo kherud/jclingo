@@ -1,4 +1,4 @@
-package org.potassco.structs;
+package org.potassco.jna;
 
 import org.potassco.cpp.clingo_h;
 

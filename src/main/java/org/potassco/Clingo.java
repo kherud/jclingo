@@ -9,6 +9,8 @@ import org.potassco.cpp.c_void;
 import org.potassco.cpp.clingo_h;
 import org.potassco.cpp.clingo_logger_t;
 import org.potassco.cpp.clingo_symbol_t;
+import org.potassco.cpp.clingo_symbolic_atoms_t;
+import org.potassco.cpp.size_t;
 import org.potassco.cpp.unsigned;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.SolveEventType;
@@ -20,6 +22,7 @@ import org.potassco.jna.Size;
 import org.potassco.jna.SizeByReference;
 import org.potassco.jna.SolveEventCallbackT;
 import org.potassco.jna.SymbolByReference;
+import org.potassco.jna.SymbolicAtoms;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
@@ -380,6 +383,24 @@ public class Clingo {
     	LongByReference symbol = new LongByReference();
     	byte success = clingoLibrary.clingo_parse_term(string, logger, loggerData, message, symbol);
 		return symbol.getValue();
+    }
+
+	/* **************
+	 * Symbolic atoms
+	 * ************** */
+	
+    //! Get the number of different atoms occurring in a logic program.
+    //!
+    //! @param[in] atoms the target
+    //! @param[out] size the number of atoms
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_symbolic_atoms_size} */
+    public bool clingo_symbolic_atoms_size(final clingo_symbolic_atoms_t p_atoms, size_t p_size);
+    
+    public long symbolicAtomsSize() {
+    	SymbolicAtoms atoms;
+		SizeByReference size = new SizeByReference();
+		byte success = clingoLibrary.clingo_symbolic_atoms_size(atoms, size );
     }
     
 	/* *******

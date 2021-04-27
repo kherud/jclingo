@@ -14,6 +14,7 @@ import org.potassco.cpp.uint32_t;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
@@ -178,7 +179,7 @@ public interface ClingoLibrary extends Library {
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_bad_alloc
     /** {@link clingo_h#clingo_symbol_create_function} */
-    public byte clingo_symbol_create_function(PointerByReference p_name, SymbolByReference[] p_arguments, Size arguments_size, byte positive, SymbolByReference p_symbol);
+    public byte clingo_symbol_create_function(String p_name, SymbolByReference[] p_arguments, Size arguments_size, byte positive, SymbolByReference p_symbol);
 
     //! @name Symbol Inspection Functions
     
@@ -251,19 +252,23 @@ public interface ClingoLibrary extends Library {
      * - ::clingo_error_bad_alloc
      * {@link clingo_h#clingo_symbol_to_string_size}
      */
-    boolean clingo_symbol_to_string_size(long symbol, SizeByReference size);
+    public boolean clingo_symbol_to_string_size(long symbol, SizeByReference p_size);
 //    public byte clingo_symbol_to_string_size(Symbol symbol, SizeByReference p_size);
-    //! Get the string representation of a symbol.
-    //!
-    //! @param[in] symbol the target symbol
-    //! @param[out] string the resulting string
-    //! @param[in] size the size of the string
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //!
-    //! @see clingo_symbol_to_string_size()
+
+    /**
+     * Get the string representation of a symbol.
+     * @param symbol [in] symbol the target symbol
+     * @param string [out] string the resulting string
+     * @param size [in] size the size of the string
+     * @return whether the call was successful; might set one of the following error codes:
+     * - ::clingo_error_bad_alloc
+     * @see clingo_symbol_to_string_size()
+     */
     /** {@link clingo_h#clingo_symbol_to_string} */
-    public bool clingo_symbol_to_string(Symbol symbol, char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_to_string(clingo_symbol_t symbol, char *string, size_t size);
+    public byte clingo_symbol_to_string(Symbol symbol, byte[] p_string, Size size);
+//  CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_to_string(clingo_symbol_t symbol, char *string, size_t size);
+    //bool clingo_symbol_to_string(clingo_symbol_t symbol, char *string, size_t size);
+    boolean clingo_symbol_to_string(long symbol, byte[] string, Size size);
     
     //! @}
     
@@ -276,7 +281,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] b second symbol
     //! @return whether a == b
     /** {@link clingo_h#clingo_symbol_is_equal_to} */
-    public bool clingo_symbol_is_equal_to(clingo_symbol_t a, clingo_symbol_t b); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_is_equal_to(clingo_symbol_t a, clingo_symbol_t b);
+    public byte clingo_symbol_is_equal_to(Symbol a, Symbol b);
     //! Check if a symbol is less than another symbol.
     //!
     //! Symbols are first compared by type.  If the types are equal, the values are
@@ -287,13 +292,13 @@ public interface ClingoLibrary extends Library {
     //! @param[in] b second symbol
     //! @return whether a < b
     /** {@link clingo_h#clingo_symbol_is_less_than} */
-    public bool clingo_symbol_is_less_than(clingo_symbol_t a, clingo_symbol_t b); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_is_less_than(clingo_symbol_t a, clingo_symbol_t b);
+    public byte clingo_symbol_is_less_than(Symbol a, Symbol b); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_is_less_than(clingo_symbol_t a, clingo_symbol_t b);
     //! Calculate a hash code of a symbol.
     //!
     //! @param[in] symbol the target symbol
     //! @return the hash code of the symbol
     /** {@link clingo_h#clingo_symbol_hash} */
-    public size_t clingo_symbol_hash(clingo_symbol_t symbol); // CLINGO_VISIBILITY_DEFAULT size_t clingo_symbol_hash(clingo_symbol_t symbol);
+    public Size clingo_symbol_hash(Symbol symbol); // CLINGO_VISIBILITY_DEFAULT size_t clingo_symbol_hash(clingo_symbol_t symbol);
 
     
     
@@ -437,16 +442,4 @@ public interface ClingoLibrary extends Library {
    //bool clingo_model_symbols(clingo_model_t const *model, clingo_show_type_bitset_t show, clingo_symbol_t *symbols, size_t size);
     boolean clingo_model_symbols(Pointer model, int show, long[] symbols, Size size);
     
-    /**
-     * Get the string representation of a symbol.
-     * @param symbol [in] symbol the target symbol
-     * @param string [out] string the resulting string
-     * @param size [in] size the size of the string
-     * @return whether the call was successful; might set one of the following error codes:
-     * - ::clingo_error_bad_alloc
-     * @see clingo_symbol_to_string_size()
-     */
-//  CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_to_string(clingo_symbol_t symbol, char *string, size_t size);
-    //bool clingo_symbol_to_string(clingo_symbol_t symbol, char *string, size_t size);
-    boolean clingo_symbol_to_string(long symbol, byte[] string, Size size);
 }

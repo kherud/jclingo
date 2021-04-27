@@ -3,10 +3,14 @@ package org.potassco;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.potassco.cpp.bool;
 import org.potassco.cpp.clingo_h;
+import org.potassco.cpp.clingo_symbol_t;
+import org.potassco.cpp.size_t;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
+import org.potassco.enums.SymbolType;
 import org.potassco.jna.ClingoLibrary;
 import org.potassco.jna.Part;
 import org.potassco.jna.Size;
@@ -210,12 +214,20 @@ public class Clingo {
 		return new Symbol(symb.getValue());
 	}
 
-//	Symbol symbolCreateFunction(String name, List<Symbol> arguments, boolean positive) {
-//		LongByReference pointer = new LongByReference();
-//		LongByReference[] argumentsArray;
-//		clingoLibrary.clingo_symbol_create_function(name, arguments, argumentsSize, (byte) (positive ? 1 : 0), pointer);
-//		return new Symbol(name, SymbolType.FUNCTION);
-//	}
+	Symbol symbolCreateFunction(String name, List<Symbol> arguments, boolean positive) {
+		SymbolByReference symb = new SymbolByReference();
+		int argSize = arguments.size();
+		Size argumentsSize = new Size(argSize);
+		SymbolByReference[] args = new SymbolByReference[argSize];
+		int i = 0;
+		for (Symbol s : arguments) {
+			args[i] = new SymbolByReference();
+			args[i].setValue(s.longValue());
+			i++;
+		}
+		byte success = clingoLibrary.clingo_symbol_create_function(name, args, argumentsSize, (byte) (positive ? 1 : 0), symb);
+		return new Symbol(symb.getValue());
+	}
 
 	public int symbolNumber(Symbol symbol) {
 		IntByReference ibr = new IntByReference();
@@ -251,21 +263,90 @@ public class Clingo {
 		return v == 1;
 	}
 	
+	/**
+	 * Infunctional
+	 * TODO: Output parameter p_p_arguments not yet accessed.
+	 * @param symbol [in]
+	 * @param arguments [out]
+	 * @param size [out]
+	 */
 	public void symbolArguments(Symbol symbol, List<Symbol> arguments, Long size) {
 		if (arguments == null) {
 			arguments = new LinkedList<Symbol>();
 		}
-//		if (size == null) {
-//			size = 0L;
-//		}
 		PointerByReference p_p_arguments = new PointerByReference();
 		SizeByReference p_arguments_size = new SizeByReference();
 		byte success = clingoLibrary.clingo_symbol_arguments(symbol, p_p_arguments, p_arguments_size);
 		size = p_arguments_size.getValue();
 		Pointer p = p_p_arguments.getPointer();
-// TODO: continue with p_p_arguments
+//		long[] adrs = p.getLongArray(8, 2);
 	}
 	
+    /**
+     * Get the type of a symbol.
+     * @param symbol [in] symbol the target symbol
+     * @return the type of the symbol
+     */
+    public SymbolType symbolType(Symbol symbol) {
+    	int t = clingoLibrary.clingo_symbol_type(symbol);
+    	return SymbolType.fromValue(t);
+    }
+    
+    public long symbolToStringSize(Symbol symbol) {
+    	SizeByReference size = new SizeByReference();
+		boolean success = clingoLibrary.clingo_symbol_to_string_size(symbol.longValue(), size);
+		return size.getValue();
+    }
+    
+    /**
+     * @param symbol [in] symbol the target symbol
+     * @param size [in] size the size of the string
+     * @return the resulting string
+     */
+    public String symbolToString(Symbol symbol, Size size) {
+        SizeByReference len = new SizeByReference();
+        clingoLibrary.clingo_symbol_to_string_size(symbol.longValue(), len);
+        int l = (int)len.getValue();
+		byte[] str = new byte[l];
+		byte success = clingoLibrary.clingo_symbol_to_string(symbol, str, new Size(l));
+		return new String(str);
+    }
+    
+   /**
+     * @param a first symbol
+     * @param b second symbol
+     * @return true if two symbols are equal.
+     */
+    public boolean symbolIsEqualTo(Symbol a, Symbol b) {
+    	byte success = clingoLibrary.clingo_symbol_is_equal_to(a, b);
+    	return success == 1;
+    }
+    
+    /**
+     * Check if a symbol is less than another symbol.
+     *
+     * Symbols are first compared by type.  If the types are equal, the values are
+     * compared (where strings are compared using strcmp).  Functions are first
+     * compared by signature and then lexicographically by arguments.
+     * @param a first symbol
+     * @param b second symbol
+     * @return
+     */
+    public boolean symbolIsLessThan(Symbol a, Symbol b) {
+    	byte success = clingoLibrary.clingo_symbol_is_less_than(a, b);
+    	return success == 1;
+    }
+    
+    /**
+     * Calculate a hash code of a symbol.
+     * @param symbol symbol the target symbol
+     * @return the hash code of the symbol
+     */
+    public int symbolHash(Symbol symbol) {
+		Size hash = clingoLibrary.clingo_symbol_hash(symbol);
+		return hash.intValue();
+    }
+    
 	/* *******
 	 * Solving
 	 * ******* */

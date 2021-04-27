@@ -2,8 +2,13 @@ package org.potassco;
 
 import static org.junit.Assert.*;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.junit.Test;
 import org.potassco.enums.ErrorCode;
+import org.potassco.enums.SymbolType;
+import org.potassco.jna.Size;
 import org.potassco.jna.Symbol;
 
 import com.sun.jna.Pointer;
@@ -85,6 +90,31 @@ public class InfrastructureTest {
 		assertEquals(true, clingo.symbolIsPositive(ps));
 		assertEquals(false, clingo.symbolIsNegative(ps));
 		clingo.symbolArguments(ps, null, null);
+	}
+
+	@Test
+	public void testSymbolCreateFunction() {
+		Clingo clingo = new Clingo();
+		int number = 42;
+		Symbol num = clingo.symbolCreateNumber(number);
+		String c = "clingo";
+		Symbol s = clingo.symbolCreateString(c);
+		String p = "potassco";
+		List<Symbol> args = new LinkedList<Symbol>();
+		args.add(num);
+		args.add(s);
+		Symbol f = clingo.symbolCreateFunction(p, args, true);
+		assertEquals(p, clingo.symbolName(f));
+		assertEquals(true, clingo.symbolIsPositive(f));
+//		clingo.symbolArguments(f, null, null); TODO: infuctional
+		assertEquals(SymbolType.FUNCTION, clingo.symbolType(f));
+		assertEquals(20, clingo.symbolToStringSize(f));
+//	TODO:	assertEquals(p, clingo.symbolToString(f, new Size(2)));
+		assertFalse(clingo.symbolIsEqualTo(s, f));
+		assertTrue(clingo.symbolIsEqualTo(num, clingo.symbolCreateNumber(number)));
+		assertTrue(clingo.symbolIsLessThan(s, f));
+		int hash = clingo.symbolHash(f);
+		assertEquals(hash, clingo.symbolHash(f));
 	}
 
 }

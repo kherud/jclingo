@@ -190,7 +190,7 @@ public interface ClingoLibrary extends Library {
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_number
     /** {@link clingo_h#clingo_symbol_number} */
-    public byte clingo_symbol_number(Symbol symbol, IntByReference p_number);
+    public byte clingo_symbol_number(long symbol, IntByReference p_number);
     //! Get the name of a symbol.
     //!
     //! @note
@@ -201,7 +201,7 @@ public interface ClingoLibrary extends Library {
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_function
     /** {@link clingo_h#clingo_symbol_name} */
-    public byte clingo_symbol_name(Symbol symbol, String[] p_p_name);
+    public byte clingo_symbol_name(long symbol, String[] p_p_name);
     //! Get the string of a symbol.
     //!
     //! @note
@@ -212,7 +212,7 @@ public interface ClingoLibrary extends Library {
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_string
     /** {@link clingo_h#clingo_symbol_string} */
-    public byte clingo_symbol_string(Symbol symbol, String[] p_p_string);
+    public byte clingo_symbol_string(long symbol, String[] p_p_string);
     //! Check if a function is positive (does not have a sign).
     //!
     //! @param[in] symbol the target symbol
@@ -220,7 +220,7 @@ public interface ClingoLibrary extends Library {
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_function
     /** {@link clingo_h#clingo_symbol_is_positive} */
-    public byte clingo_symbol_is_positive(Symbol symbol, ByteByReference p_positive);
+    public byte clingo_symbol_is_positive(long symbol, ByteByReference p_positive);
     //! Check if a function is negative (has a sign).
     //!
     //! @param[in] symbol the target symbol
@@ -228,7 +228,7 @@ public interface ClingoLibrary extends Library {
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_function
     /** {@link clingo_h#clingo_symbol_is_negative} */
-    public byte clingo_symbol_is_negative(Symbol symbol, ByteByReference p_negative);
+    public byte clingo_symbol_is_negative(long symbol, ByteByReference p_negative);
     //! Get the arguments of a symbol.
     //!
     //! @param[in] symbol the target symbol
@@ -237,13 +237,13 @@ public interface ClingoLibrary extends Library {
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_function
     /** {@link clingo_h#clingo_symbol_arguments} */
-    public byte clingo_symbol_arguments(Symbol symbol, PointerByReference p_p_arguments, SizeByReference p_arguments_size);
+    public byte clingo_symbol_arguments(long symbol, PointerByReference p_p_arguments, SizeByReference p_arguments_size);
     //! Get the type of a symbol.
     //!
     //! @param[in] symbol the target symbol
     //! @return the type of the symbol
     /** {@link clingo_h#clingo_symbol_type} */
-    public int clingo_symbol_type(Symbol symbol);
+    public int clingo_symbol_type(long symbol);
     /**
      * Get the size of the string representation of a symbol (including the terminating 0).
      * @param symbol [in] symbol the target symbol
@@ -265,10 +265,10 @@ public interface ClingoLibrary extends Library {
      * @see clingo_symbol_to_string_size()
      */
     /** {@link clingo_h#clingo_symbol_to_string} */
-    public byte clingo_symbol_to_string(Symbol symbol, byte[] p_string, Size size);
+    public byte clingo_symbol_to_string(long symbol, byte[] p_string, Size size);
 //  CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_to_string(clingo_symbol_t symbol, char *string, size_t size);
     //bool clingo_symbol_to_string(clingo_symbol_t symbol, char *string, size_t size);
-    boolean clingo_symbol_to_string(long symbol, byte[] string, Size size);
+//    boolean clingo_symbol_to_string(long symbol, byte[] string, Size size);
     
     //! @}
     
@@ -281,7 +281,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] b second symbol
     //! @return whether a == b
     /** {@link clingo_h#clingo_symbol_is_equal_to} */
-    public byte clingo_symbol_is_equal_to(Symbol a, Symbol b);
+    public byte clingo_symbol_is_equal_to(long a, long b);
     //! Check if a symbol is less than another symbol.
     //!
     //! Symbols are first compared by type.  If the types are equal, the values are
@@ -292,13 +292,13 @@ public interface ClingoLibrary extends Library {
     //! @param[in] b second symbol
     //! @return whether a < b
     /** {@link clingo_h#clingo_symbol_is_less_than} */
-    public byte clingo_symbol_is_less_than(Symbol a, Symbol b); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_is_less_than(clingo_symbol_t a, clingo_symbol_t b);
+    public byte clingo_symbol_is_less_than(long a, long b); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_is_less_than(clingo_symbol_t a, clingo_symbol_t b);
     //! Calculate a hash code of a symbol.
     //!
     //! @param[in] symbol the target symbol
     //! @return the hash code of the symbol
     /** {@link clingo_h#clingo_symbol_hash} */
-    public Size clingo_symbol_hash(Symbol symbol); // CLINGO_VISIBILITY_DEFAULT size_t clingo_symbol_hash(clingo_symbol_t symbol);
+    public Size clingo_symbol_hash(long symbol); // CLINGO_VISIBILITY_DEFAULT size_t clingo_symbol_hash(clingo_symbol_t symbol);
 
     
     

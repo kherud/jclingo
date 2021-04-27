@@ -3,10 +3,7 @@ package org.potassco;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.potassco.cpp.bool;
 import org.potassco.cpp.clingo_h;
-import org.potassco.cpp.clingo_symbol_t;
-import org.potassco.cpp.size_t;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
@@ -16,7 +13,6 @@ import org.potassco.jna.Part;
 import org.potassco.jna.Size;
 import org.potassco.jna.SizeByReference;
 import org.potassco.jna.SolveEventCallbackT;
-import org.potassco.jna.Symbol;
 import org.potassco.jna.SymbolByReference;
 
 import com.sun.jna.Pointer;
@@ -184,79 +180,79 @@ public class Clingo {
 	 * Symbol Construction Functions
 	 * ***************************** */
 
-	Symbol symbolCreateNumber(int number) {
+	long symbolCreateNumber(int number) {
 		SymbolByReference sbr = new SymbolByReference();
 		clingoLibrary.clingo_symbol_create_number(number, sbr);
-		return new Symbol(sbr.getValue());
+		return sbr.getValue();
 	}
 
-	Symbol symbolCreateSupremum() {
+	long symbolCreateSupremum() {
 		SymbolByReference pointer = new SymbolByReference();
 		clingoLibrary.clingo_symbol_create_supremum(pointer);
-		return new Symbol(pointer.getValue());
+		return pointer.getValue();
 	}
 
-	Symbol symbolCreateInfimum() {
+	long symbolCreateInfimum() {
 		SymbolByReference pointer = new SymbolByReference();
 		clingoLibrary.clingo_symbol_create_supremum(pointer);
-		return new Symbol(pointer.getValue());
+		return pointer.getValue();
 	}
 
-	Symbol symbolCreateString(String string) {
+	long symbolCreateString(String string) {
 		SymbolByReference symb = new SymbolByReference();
 		byte success = clingoLibrary.clingo_symbol_create_string(string, symb);
-		return new Symbol(symb.getValue());
+		return symb.getValue();
 	}
 
-	Symbol symbolCreateId(String name, boolean positive) {
+	long symbolCreateId(String name, boolean positive) {
 		SymbolByReference symb = new SymbolByReference();
 		byte success = clingoLibrary.clingo_symbol_create_id(name, (byte) (positive ? 1 : 0), symb);
-		return new Symbol(symb.getValue());
+		return symb.getValue();
 	}
 
-	Symbol symbolCreateFunction(String name, List<Symbol> arguments, boolean positive) {
+	long symbolCreateFunction(String name, List<Long> arguments, boolean positive) {
 		SymbolByReference symb = new SymbolByReference();
 		int argSize = arguments.size();
 		Size argumentsSize = new Size(argSize);
 		SymbolByReference[] args = new SymbolByReference[argSize];
 		int i = 0;
-		for (Symbol s : arguments) {
+		for (long s : arguments) {
 			args[i] = new SymbolByReference();
-			args[i].setValue(s.longValue());
+			args[i].setValue(s);
 			i++;
 		}
 		byte success = clingoLibrary.clingo_symbol_create_function(name, args, argumentsSize, (byte) (positive ? 1 : 0), symb);
-		return new Symbol(symb.getValue());
+		return symb.getValue();
 	}
 
-	public int symbolNumber(Symbol symbol) {
+	public int symbolNumber(long symbol) {
 		IntByReference ibr = new IntByReference();
 		byte success = clingoLibrary.clingo_symbol_number(symbol, ibr);
 		return ibr.getValue();
 	}
 
-	public String symbolName(Symbol symbol) {
+	public String symbolName(long symbol) {
 		String[] pointer = new String[1];
 		byte success = clingoLibrary.clingo_symbol_name(symbol, pointer);
 		String v = pointer[0];
 		return v;
 	}
 	
-	public String symbolString(Symbol symbol) {
+	public String symbolString(long symbol) {
 		// https://stackoverflow.com/questions/29162569/jna-passing-string-by-reference-to-dll-but-non-return
 		String[] r1 = new String[1];
 		byte success = clingoLibrary.clingo_symbol_string(symbol, r1);
 		return r1[0];
 	}
 
-	public boolean symbolIsPositive(Symbol symbol) {
+	public boolean symbolIsPositive(long symbol) {
 		ByteByReference p_positive = new ByteByReference();
 		byte success = clingoLibrary.clingo_symbol_is_positive(symbol, p_positive);
 		byte v = p_positive.getValue();
 		return v == 1;
 	}
 
-	public boolean symbolIsNegative(Symbol symbol) {
+	public boolean symbolIsNegative(long symbol) {
 		ByteByReference p_positive = new ByteByReference();
 		byte success = clingoLibrary.clingo_symbol_is_negative(symbol, p_positive);
 		byte v = p_positive.getValue();
@@ -270,9 +266,9 @@ public class Clingo {
 	 * @param arguments [out]
 	 * @param size [out]
 	 */
-	public void symbolArguments(Symbol symbol, List<Symbol> arguments, Long size) {
+	public void symbolArguments(long symbol, List<Long> arguments, Long size) {
 		if (arguments == null) {
-			arguments = new LinkedList<Symbol>();
+			arguments = new LinkedList<Long>();
 		}
 		PointerByReference p_p_arguments = new PointerByReference();
 		SizeByReference p_arguments_size = new SizeByReference();
@@ -287,14 +283,14 @@ public class Clingo {
      * @param symbol [in] symbol the target symbol
      * @return the type of the symbol
      */
-    public SymbolType symbolType(Symbol symbol) {
+    public SymbolType symbolType(long symbol) {
     	int t = clingoLibrary.clingo_symbol_type(symbol);
     	return SymbolType.fromValue(t);
     }
     
-    public long symbolToStringSize(Symbol symbol) {
+    public long symbolToStringSize(long symbol) {
     	SizeByReference size = new SizeByReference();
-		boolean success = clingoLibrary.clingo_symbol_to_string_size(symbol.longValue(), size);
+		boolean success = clingoLibrary.clingo_symbol_to_string_size(symbol, size);
 		return size.getValue();
     }
     
@@ -303,9 +299,9 @@ public class Clingo {
      * @param size [in] size the size of the string
      * @return the resulting string
      */
-    public String symbolToString(Symbol symbol, Size size) {
+    public String symbolToString(long symbol, Size size) {
         SizeByReference len = new SizeByReference();
-        clingoLibrary.clingo_symbol_to_string_size(symbol.longValue(), len);
+        clingoLibrary.clingo_symbol_to_string_size(symbol, len);
         int l = (int)len.getValue();
 		byte[] str = new byte[l];
 		byte success = clingoLibrary.clingo_symbol_to_string(symbol, str, new Size(l));
@@ -317,7 +313,7 @@ public class Clingo {
      * @param b second symbol
      * @return true if two symbols are equal.
      */
-    public boolean symbolIsEqualTo(Symbol a, Symbol b) {
+    public boolean symbolIsEqualTo(long a, long b) {
     	byte success = clingoLibrary.clingo_symbol_is_equal_to(a, b);
     	return success == 1;
     }
@@ -332,7 +328,7 @@ public class Clingo {
      * @param b second symbol
      * @return
      */
-    public boolean symbolIsLessThan(Symbol a, Symbol b) {
+    public boolean symbolIsLessThan(long a, long b) {
     	byte success = clingoLibrary.clingo_symbol_is_less_than(a, b);
     	return success == 1;
     }
@@ -342,7 +338,7 @@ public class Clingo {
      * @param symbol symbol the target symbol
      * @return the hash code of the symbol
      */
-    public int symbolHash(Symbol symbol) {
+    public int symbolHash(long symbol) {
 		Size hash = clingoLibrary.clingo_symbol_hash(symbol);
 		return hash.intValue();
     }

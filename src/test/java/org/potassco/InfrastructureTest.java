@@ -8,9 +8,6 @@ import java.util.List;
 import org.junit.Test;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.SymbolType;
-import org.potassco.jna.Size;
-import org.potassco.jna.Symbol;
-
 import com.sun.jna.Pointer;
 
 public class InfrastructureTest {
@@ -71,7 +68,7 @@ public class InfrastructureTest {
 	public void testSymbolHandling() {
 		Clingo clingo = new Clingo();
 		int number = 42;
-		Symbol num = clingo.symbolCreateNumber(number);
+		long num = clingo.symbolCreateNumber(number);
 		assertEquals(number, clingo.symbolNumber(num));
 		// TODO: Is this correct?
 		assertEquals(false, clingo.symbolIsPositive(num));
@@ -84,7 +81,7 @@ public class InfrastructureTest {
 //		assertEquals("", clingo.symbolString(clingo.symbolCreateInfimum()));
 		
 		String p = "potassco";
-		Symbol ps = clingo.symbolCreateId(p, true);
+		long ps = clingo.symbolCreateId(p, true);
 //		assertEquals(p, clingo.symbolString(ps));
 		assertEquals(p, clingo.symbolName(ps));
 		assertEquals(true, clingo.symbolIsPositive(ps));
@@ -96,14 +93,14 @@ public class InfrastructureTest {
 	public void testSymbolCreateFunction() {
 		Clingo clingo = new Clingo();
 		int number = 42;
-		Symbol num = clingo.symbolCreateNumber(number);
+		long num = clingo.symbolCreateNumber(number);
 		String c = "clingo";
-		Symbol s = clingo.symbolCreateString(c);
+		long s = clingo.symbolCreateString(c);
 		String p = "potassco";
-		List<Symbol> args = new LinkedList<Symbol>();
+		List<Long> args = new LinkedList<Long>();
 		args.add(num);
 		args.add(s);
-		Symbol f = clingo.symbolCreateFunction(p, args, true);
+		long f = clingo.symbolCreateFunction(p, args, true);
 		assertEquals(p, clingo.symbolName(f));
 		assertEquals(true, clingo.symbolIsPositive(f));
 //		clingo.symbolArguments(f, null, null); TODO: infuctional

@@ -113,5 +113,14 @@ public class InfrastructureTest {
 		int hash = clingo.symbolHash(f);
 		assertEquals(hash, clingo.symbolHash(f));
 	}
-
+	
+	@Test
+	public void test() {
+		Clingo clingo = new Clingo();
+		String c = "clingo";
+		assertEquals(c, clingo.addString(c));
+		String t = "f(a,42)";
+		long symbol = clingo.parseTerm(t);
+		assertEquals(SymbolType.FUNCTION, clingo.symbolType(symbol));
+	}
 }

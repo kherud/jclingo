@@ -4,12 +4,14 @@ import org.potassco.cpp.c_char;
 import org.potassco.cpp.c_void;
 import org.potassco.cpp.clingo_error_t;
 import org.potassco.cpp.clingo_h;
+import org.potassco.cpp.clingo_logger_t;
 import org.potassco.cpp.clingo_signature_t;
 import org.potassco.cpp.clingo_symbol_t;
 import org.potassco.cpp.clingo_symbol_type_t;
 import org.potassco.cpp.clingo_warning_t;
 import org.potassco.cpp.size_t;
 import org.potassco.cpp.uint32_t;
+import org.potassco.cpp.unsigned;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -300,12 +302,39 @@ public interface ClingoLibrary extends Library {
     /** {@link clingo_h#clingo_symbol_hash} */
     public Size clingo_symbol_hash(long symbol); // CLINGO_VISIBILITY_DEFAULT size_t clingo_symbol_hash(clingo_symbol_t symbol);
 
+    //! Internalize a string.
+    //!
+    //! This functions takes a string as input and returns an equal unique string
+    //! that is (at the moment) not freed until the program is closed.
+    //!
+    //! @param[in] string the string to internalize
+    //! @param[out] result the internalized string
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    /** {@link clingo_h#clingo_add_string} */
+    public byte clingo_add_string(String p_string, String[] p_p_result);
+    //! Parse a term in string form.
+    //!
+    //! The result of this function is a symbol. The input term can contain
+    //! unevaluated functions, which are evaluated during parsing.
+    //!
+    //! @param[in] string the string to parse
+    //! @param[in] logger optional logger to report warnings during parsing
+    //! @param[in] logger_data user data for the logger
+    //! @param[in] message_limit maximum number of times to call the logger
+    //! @param[out] symbol the resulting symbol
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    //! - ::clingo_error_runtime if parsing fails
+    /** {@link clingo_h#clingo_parse_term} */
+    public byte clingo_parse_term(String p_string, Pointer logger, PointerByReference p_logger_data, int message_limit, LongByReference p_symbol);
+
     
     
     
-  //! @return whether the call was successful; might set one of the following error codes:
-  //! - ::clingo_error_bad_alloc
-  //! - ::clingo_error_runtime if argument parsing fails
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    //! - ::clingo_error_runtime if argument parsing fails
 //  CLINGO_VISIBILITY_DEFAULT bool clingo_control_new(char const *const * arguments, size_t arguments_size, clingo_logger_t logger, void *logger_data, unsigned message_limit, clingo_control_t **control);
     //bool clingo_control_new(char const *const * arguments, size_t arguments_size, clingo_logger_t logger, void *logger_data, int message_limit, clingo_control_t **control);
     /**

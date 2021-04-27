@@ -3,7 +3,13 @@ package org.potassco;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.potassco.cpp.bool;
+import org.potassco.cpp.c_char;
+import org.potassco.cpp.c_void;
 import org.potassco.cpp.clingo_h;
+import org.potassco.cpp.clingo_logger_t;
+import org.potassco.cpp.clingo_symbol_t;
+import org.potassco.cpp.unsigned;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
@@ -18,6 +24,7 @@ import org.potassco.jna.SymbolByReference;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
@@ -341,6 +348,38 @@ public class Clingo {
     public int symbolHash(long symbol) {
 		Size hash = clingoLibrary.clingo_symbol_hash(symbol);
 		return hash.intValue();
+    }
+
+    /**
+     * Internalize a string.
+     *
+     * This functions takes a string as input and returns an equal unique string
+     * that is (at the moment) not freed until the program is closed.
+     * @param string the string to internalize
+     * @return the internalized string
+     */
+    public String addString(String string) {
+		String[] x = new String[1];
+    	byte success = clingoLibrary.clingo_add_string(string, x);
+		return x[0];
+    }
+
+    /**
+     * Parse a term in string form.
+     *
+     * The result of this function is a symbol. The input term can contain
+     * unevaluated functions, which are evaluated during parsing.
+     * @param string the string to parse
+     * @return the resulting symbol
+     */
+    public long parseTerm(String string) {
+		// TODO: logger
+		Pointer logger = null;
+		PointerByReference loggerData = null;
+		int message = 0;
+    	LongByReference symbol = new LongByReference();
+    	byte success = clingoLibrary.clingo_parse_term(string, logger, loggerData, message, symbol);
+		return symbol.getValue();
     }
     
 	/* *******

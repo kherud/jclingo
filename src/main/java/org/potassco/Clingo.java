@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.potassco.cpp.clingo_h;
 import org.potassco.enums.ErrorCode;
+import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
 import org.potassco.enums.SymbolType;
@@ -304,12 +305,9 @@ public class Clingo {
      * @param size [in] size the size of the string
      * @return the resulting string
      */
-    public String symbolToString(long symbol, Size size) {
-        SizeByReference len = new SizeByReference();
-        clingoLibrary.clingo_symbol_to_string_size(symbol, len);
-        int l = (int)len.getValue();
-		byte[] str = new byte[l];
-		byte success = clingoLibrary.clingo_symbol_to_string(symbol, str, new Size(l));
+    public String symbolToString(long symbol, long size) {
+		byte[] str = new byte[Math.toIntExact(size)];
+		byte success = clingoLibrary.clingo_symbol_to_string(symbol, str, size);
 		return new String(str);
     }
     
@@ -565,7 +563,37 @@ public class Clingo {
 	/* *******
 	 * Solving
 	 * ******* */
-	
+    
+    /**
+     * Get the number of symbols of the selected types in the model.
+     * @param model the target
+     * @param show which symbols to select
+     * @return the number symbols
+     */
+    public long modelSymbolsSize(Pointer model, int show) {
+    	SizeByReference size = new SizeByReference();
+		byte success = clingoLibrary.clingo_model_symbols_size(model, show, size);
+		return size.getValue();
+    }
+
+    /**
+     * Get the symbols of the selected types in the model.
+     * <p>
+     * @note CSP assignments are represented using functions with name "$"
+     * where the first argument is the name of the CSP variable and the second one its
+     * value.
+     * @param model [in] model the target
+     * @param show [in] show which symbols to select. Of {@link ShowType}
+     * @param size [in] size the number of selected symbols
+     * @return the resulting symbols as an array[size] of symbol references
+     * @see clingo_model_symbols_size()
+     */
+    public long[] modelSymbols(Pointer model, ShowType show, long size) {
+    	long[] symbols = new long[Math.toIntExact(size)];
+		byte success = clingoLibrary.clingo_model_symbols(model, show.getValue(), symbols, size);
+		return symbols;
+    }
+
 	/**
 	 * @param name
 	 * @param logicProgram
@@ -601,14 +629,14 @@ public class Clingo {
         return solve(new SolveEventHandler(), SolveMode.YIELD);
     }
 
-    public SolveHandle solve(SolveEventHandler handler, SolveMode ... modes) throws ClingoException {
+    public SolveHandle solve(SolveEventHandler handler, SolveMode... modes) throws ClingoException {
 
-        int mode = 0;
-        if (modes != null && modes.length > 0) {
-            for (int i=0; i<modes.length; i++) {
-                mode |= modes[i].getValue();
-            }
-        }
+//        int mode = 0;
+//        if (modes != null && modes.length > 0) {
+//            for (int i=0; i<modes.length; i++) {
+//                mode |= modes[i].getValue();
+//            }
+//        }
 
         SolveHandle solveHandle = new SolveHandle();
         SolveEventCallbackT cb = new SolveEventCallbackT() {
@@ -616,17 +644,12 @@ public class Clingo {
                 SolveEventType t = SolveEventType.fromValue(type);
                 switch (t) {
                     case MODEL:
-                        SizeByReference sizeRef = new SizeByReference();
-                        clingoLibrary.clingo_model_symbols_size(event, 2, sizeRef);
-                        solveHandle.setSize((int) sizeRef.getValue());
-                        long[] symbols = new long [(int)sizeRef.getValue()];
-                        clingoLibrary.clingo_model_symbols(event, 2, symbols, new Size(sizeRef.getValue()));
-                        for (int i = 0; i < sizeRef.getValue(); ++i) {
-                            SizeByReference len = new SizeByReference();
-                            clingoLibrary.clingo_symbol_to_string_size(symbols[i], len);
-                            byte[] str = new byte[(int)len.getValue()];
-                            clingoLibrary.clingo_symbol_to_string(symbols[i], str, new Size(len.getValue()));
-                            String symbol = new String(str);
+                    	long size = modelSymbolsSize(event, 2);
+                        solveHandle.setSize(size);
+                        long[] symbols = modelSymbols(event, ShowType.SHOWN, size);
+                        for (int i = 0; i < size; ++i) {
+                            long len = symbolToStringSize(symbols[i]);
+                            String symbol = symbolToString(symbols[i], len);
                             solveHandle.addSymbol(symbol.trim());
                         }
                         break;

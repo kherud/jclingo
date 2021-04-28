@@ -5,10 +5,10 @@ import java.util.Set;
 
 public class SolveHandle {
 
-	private int size;
+	private long size;
 	private Set<String> symbols = new HashSet<>();
 
-	public void setSize(int size) {
+	public void setSize(long size) {
 		this.size = size;
 	}
 
@@ -16,7 +16,7 @@ public class SolveHandle {
 		this.symbols.add(symbol);
 	}
 
-	public int getSize() {
+	public long getSize() {
 		return size;
 	}
 

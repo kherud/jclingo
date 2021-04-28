@@ -321,7 +321,7 @@ public interface ClingoLibrary extends Library {
      * @see clingo_symbol_to_string_size()
      */
     /** {@link clingo_h#clingo_symbol_to_string} */
-    public byte clingo_symbol_to_string(long symbol, byte[] p_string, Size size);
+    public byte clingo_symbol_to_string(long symbol, byte[] p_string, long size);
 //  CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_to_string(clingo_symbol_t symbol, char *string, size_t size);
     //bool clingo_symbol_to_string(clingo_symbol_t symbol, char *string, size_t size);
 //    boolean clingo_symbol_to_string(long symbol, byte[] string, Size size);
@@ -530,7 +530,7 @@ public interface ClingoLibrary extends Library {
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_bad_alloc
     //! @see ::clingo_ground_callback_t
-    public static final typedef<bool> clingo_symbol_callback_t = null; // typedef bool (*clingo_symbol_callback_t) (clingo_symbol_t const *symbols, size_t symbols_size, void *data);
+//  public static final typedef<bool> clingo_symbol_callback_t = null; // typedef bool (*clingo_symbol_callback_t) (clingo_symbol_t const *symbols, size_t symbols_size, void *data);
   //! @}
 
   // {{{1 theory atoms
@@ -597,7 +597,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] term id of the term
   //! @param[out] type the resulting type
   //! @return whether the call was successful
-  public bool clingo_theory_atoms_term_type(final clingo_theory_atoms_t p_atoms, clingo_id_t term, clingo_theory_term_type_t p_type); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_type(clingo_theory_atoms_t const *atoms, clingo_id_t term, clingo_theory_term_type_t *type);
+//  public bool clingo_theory_atoms_term_type(final clingo_theory_atoms_t p_atoms, clingo_id_t term, clingo_theory_term_type_t p_type); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_type(clingo_theory_atoms_t const *atoms, clingo_id_t term, clingo_theory_term_type_t *type);
   //! Get the number of the given numeric theory term.
   //!
   //! @pre The term must be of type ::clingo_theory_term_type_number.
@@ -605,7 +605,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] term id of the term
   //! @param[out] number the resulting number
   //! @return whether the call was successful
-  public bool clingo_theory_atoms_term_number(final clingo_theory_atoms_t p_atoms, clingo_id_t term, c_int p_number); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_number(clingo_theory_atoms_t const *atoms, clingo_id_t term, int *number);
+//  public bool clingo_theory_atoms_term_number(final clingo_theory_atoms_t p_atoms, clingo_id_t term, c_int p_number); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_number(clingo_theory_atoms_t const *atoms, clingo_id_t term, int *number);
   //! Get the name of the given constant or function theory term.
   //!
   //! @note
@@ -616,7 +616,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] term id of the term
   //! @param[out] name the resulting name
   //! @return whether the call was successful
-  public bool clingo_theory_atoms_term_name(final clingo_theory_atoms_t p_atoms, clingo_id_t term, final c_char p_p_name); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_name(clingo_theory_atoms_t const *atoms, clingo_id_t term, char const **name);
+//  public bool clingo_theory_atoms_term_name(final clingo_theory_atoms_t p_atoms, clingo_id_t term, final c_char p_p_name); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_name(clingo_theory_atoms_t const *atoms, clingo_id_t term, char const **name);
   //! Get the arguments of the given function theory term.
   //!
   //! @pre The term must be of type ::clingo_theory_term_type_function.
@@ -625,7 +625,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] arguments the resulting arguments in form of an array of term ids
   //! @param[out] size the number of arguments
   //! @return whether the call was successful
-  public bool clingo_theory_atoms_term_arguments(final clingo_theory_atoms_t p_atoms, clingo_id_t term, final clingo_id_t p_p_arguments, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_arguments(clingo_theory_atoms_t const *atoms, clingo_id_t term, clingo_id_t const **arguments, size_t *size);
+//  public bool clingo_theory_atoms_term_arguments(final clingo_theory_atoms_t p_atoms, clingo_id_t term, final clingo_id_t p_p_arguments, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_arguments(clingo_theory_atoms_t const *atoms, clingo_id_t term, clingo_id_t const **arguments, size_t *size);
   //! Get the size of the string representation of the given theory term (including the terminating 0).
   //!
   //! @param[in] atoms container where the term is stored
@@ -633,7 +633,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] size the resulting size
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_theory_atoms_term_to_string_size(final clingo_theory_atoms_t p_atoms, clingo_id_t term, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_to_string_size(clingo_theory_atoms_t const *atoms, clingo_id_t term, size_t *size);
+//  public bool clingo_theory_atoms_term_to_string_size(final clingo_theory_atoms_t p_atoms, clingo_id_t term, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_to_string_size(clingo_theory_atoms_t const *atoms, clingo_id_t term, size_t *size);
   //! Get the string representation of the given theory term.
   //!
   //! @param[in] atoms container where the term is stored
@@ -645,7 +645,7 @@ public interface ClingoLibrary extends Library {
   //! - ::clingo_error_bad_alloc
   //!
   //! @see clingo_theory_atoms_term_to_string_size()
-  public bool clingo_theory_atoms_term_to_string(final clingo_theory_atoms_t p_atoms, clingo_id_t term, c_char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_to_string(clingo_theory_atoms_t const *atoms, clingo_id_t term, char *string, size_t size);
+//  public bool clingo_theory_atoms_term_to_string(final clingo_theory_atoms_t p_atoms, clingo_id_t term, c_char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_to_string(clingo_theory_atoms_t const *atoms, clingo_id_t term, char *string, size_t size);
   //! @}
 
   //! @name Theory Element Inspection
@@ -658,7 +658,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] tuple the resulting array of term ids
   //! @param[out] size the number of term ids
   //! @return whether the call was successful
-  public bool clingo_theory_atoms_element_tuple(final clingo_theory_atoms_t p_atoms, clingo_id_t element, final clingo_id_t p_p_tuple, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_tuple(clingo_theory_atoms_t const *atoms, clingo_id_t element, clingo_id_t const **tuple, size_t *size);
+//  public bool clingo_theory_atoms_element_tuple(final clingo_theory_atoms_t p_atoms, clingo_id_t element, final clingo_id_t p_p_tuple, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_tuple(clingo_theory_atoms_t const *atoms, clingo_id_t element, clingo_id_t const **tuple, size_t *size);
   //! Get the condition (array of aspif literals) of the given theory element.
   //!
   //! @param[in] atoms container where the element is stored
@@ -666,7 +666,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] condition the resulting array of aspif literals
   //! @param[out] size the number of term literals
   //! @return whether the call was successful
-  public bool clingo_theory_atoms_element_condition(final clingo_theory_atoms_t p_atoms, clingo_id_t element, final clingo_literal_t p_p_condition, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_condition(clingo_theory_atoms_t const *atoms, clingo_id_t element, clingo_literal_t const **condition, size_t *size);
+//  public bool clingo_theory_atoms_element_condition(final clingo_theory_atoms_t p_atoms, clingo_id_t element, final clingo_literal_t p_p_condition, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_condition(clingo_theory_atoms_t const *atoms, clingo_id_t element, clingo_literal_t const **condition, size_t *size);
   //! Get the id of the condition of the given theory element.
   //!
   //! @note
@@ -678,7 +678,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] element id of the element
   //! @param[out] condition the resulting condition id
   //! @return whether the call was successful
-  public bool clingo_theory_atoms_element_condition_id(final clingo_theory_atoms_t p_atoms, clingo_id_t element, clingo_literal_t p_condition); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_condition_id(clingo_theory_atoms_t const *atoms, clingo_id_t element, clingo_literal_t *condition);
+//  public bool clingo_theory_atoms_element_condition_id(final clingo_theory_atoms_t p_atoms, clingo_id_t element, clingo_literal_t p_condition); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_condition_id(clingo_theory_atoms_t const *atoms, clingo_id_t element, clingo_literal_t *condition);
   //! Get the size of the string representation of the given theory element (including the terminating 0).
   //!
   //! @param[in] atoms container where the element is stored
@@ -686,7 +686,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] size the resulting size
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_theory_atoms_element_to_string_size(final clingo_theory_atoms_t p_atoms, clingo_id_t element, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_to_string_size(clingo_theory_atoms_t const *atoms, clingo_id_t element, size_t *size);
+//  public bool clingo_theory_atoms_element_to_string_size(final clingo_theory_atoms_t p_atoms, clingo_id_t element, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_to_string_size(clingo_theory_atoms_t const *atoms, clingo_id_t element, size_t *size);
   //! Get the string representation of the given theory element.
   //!
   //! @param[in] atoms container where the element is stored
@@ -696,7 +696,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime if the size is too small
   //! - ::clingo_error_bad_alloc
-  public bool clingo_theory_atoms_element_to_string(final clingo_theory_atoms_t p_atoms, clingo_id_t element, c_char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_to_string(clingo_theory_atoms_t const *atoms, clingo_id_t element, char *string, size_t size);
+//  public bool clingo_theory_atoms_element_to_string(final clingo_theory_atoms_t p_atoms, clingo_id_t element, c_char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_to_string(clingo_theory_atoms_t const *atoms, clingo_id_t element, char *string, size_t size);
   //! @}
 
   //! @name Theory Atom Inspection
@@ -707,14 +707,14 @@ public interface ClingoLibrary extends Library {
   //! @param[in] atoms the target
   //! @param[out] size the resulting number
   //! @return whether the call was successful
-  public bool clingo_theory_atoms_size(final clingo_theory_atoms_t p_atoms, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_size(clingo_theory_atoms_t const *atoms, size_t *size);
+//  public bool clingo_theory_atoms_size(final clingo_theory_atoms_t p_atoms, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_size(clingo_theory_atoms_t const *atoms, size_t *size);
   //! Get the theory term associated with the theory atom.
   //!
   //! @param[in] atoms container where the atom is stored
   //! @param[in] atom id of the atom
   //! @param[out] term the resulting term id
   //! @return whether the call was successful
-  public bool clingo_theory_atoms_atom_term(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, clingo_id_t p_term); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_term(clingo_theory_atoms_t const *atoms, clingo_id_t atom, clingo_id_t *term);
+//  public bool clingo_theory_atoms_atom_term(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, clingo_id_t p_term); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_term(clingo_theory_atoms_t const *atoms, clingo_id_t atom, clingo_id_t *term);
   //! Get the theory elements associated with the theory atom.
   //!
   //! @param[in] atoms container where the atom is stored
@@ -722,14 +722,14 @@ public interface ClingoLibrary extends Library {
   //! @param[out] elements the resulting array of elements
   //! @param[out] size the number of elements
   //! @return whether the call was successful
-  public bool clingo_theory_atoms_atom_elements(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, final clingo_id_t p_p_elements, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_elements(clingo_theory_atoms_t const *atoms, clingo_id_t atom, clingo_id_t const **elements, size_t *size);
+//  public bool clingo_theory_atoms_atom_elements(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, final clingo_id_t p_p_elements, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_elements(clingo_theory_atoms_t const *atoms, clingo_id_t atom, clingo_id_t const **elements, size_t *size);
   //! Whether the theory atom has a guard.
   //!
   //! @param[in] atoms container where the atom is stored
   //! @param[in] atom id of the atom
   //! @param[out] has_guard whether the theory atom has a guard
   //! @return whether the call was successful
-  public bool clingo_theory_atoms_atom_has_guard(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, bool p_has_guard); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_has_guard(clingo_theory_atoms_t const *atoms, clingo_id_t atom, bool *has_guard);
+//  public bool clingo_theory_atoms_atom_has_guard(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, bool p_has_guard); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_has_guard(clingo_theory_atoms_t const *atoms, clingo_id_t atom, bool *has_guard);
   //! Get the guard consisting of a theory operator and a theory term of the given theory atom.
   //!
   //! @note
@@ -740,14 +740,14 @@ public interface ClingoLibrary extends Library {
   //! @param[out] connective the resulting theory operator
   //! @param[out] term the resulting term
   //! @return whether the call was successful
-  public bool clingo_theory_atoms_atom_guard(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, final c_char p_p_connective, clingo_id_t p_term); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_guard(clingo_theory_atoms_t const *atoms, clingo_id_t atom, char const **connective, clingo_id_t *term);
+//  public bool clingo_theory_atoms_atom_guard(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, final c_char p_p_connective, clingo_id_t p_term); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_guard(clingo_theory_atoms_t const *atoms, clingo_id_t atom, char const **connective, clingo_id_t *term);
   //! Get the aspif literal associated with the given theory atom.
   //!
   //! @param[in] atoms container where the atom is stored
   //! @param[in] atom id of the atom
   //! @param[out] literal the resulting literal
   //! @return whether the call was successful
-  public bool clingo_theory_atoms_atom_literal(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_literal(clingo_theory_atoms_t const *atoms, clingo_id_t atom, clingo_literal_t *literal);
+//  public bool clingo_theory_atoms_atom_literal(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_literal(clingo_theory_atoms_t const *atoms, clingo_id_t atom, clingo_literal_t *literal);
   //! Get the size of the string representation of the given theory atom (including the terminating 0).
   //!
   //! @param[in] atoms container where the atom is stored
@@ -755,7 +755,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] size the resulting size
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_theory_atoms_atom_to_string_size(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_to_string_size(clingo_theory_atoms_t const *atoms, clingo_id_t atom, size_t *size);
+//  public bool clingo_theory_atoms_atom_to_string_size(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_to_string_size(clingo_theory_atoms_t const *atoms, clingo_id_t atom, size_t *size);
   //! Get the string representation of the given theory atom.
   //!
   //! @param[in] atoms container where the atom is stored
@@ -765,7 +765,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime if the size is too small
   //! - ::clingo_error_bad_alloc
-  public bool clingo_theory_atoms_atom_to_string(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_to_string(clingo_theory_atoms_t const *atoms, clingo_id_t atom, char *string, size_t size);
+//  public bool clingo_theory_atoms_atom_to_string(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_to_string(clingo_theory_atoms_t const *atoms, clingo_id_t atom, char *string, size_t size);
   //! @}
 
   //! @}
@@ -802,7 +802,7 @@ public interface ClingoLibrary extends Library {
   //! Assignments to all other literals on the same level are consequences implied by the current and possibly previous decisions.
   //! Assignments on level zero are immediate consequences of the current program.
   //! Decision levels are consecutive numbers starting with zero up to and including the @link clingo_assignment_decision_level() current decision level@endlink.
-  public static final typedef<struct> clingo_assignment_t = null;
+//  public static final typedef<struct> clingo_assignment_t = null;
 
   //! @name Assignment Functions
   //! @{
@@ -811,46 +811,46 @@ public interface ClingoLibrary extends Library {
   //!
   //! @param[in] assignment the target assignment
   //! @return the decision level
-  public uint32_t clingo_assignment_decision_level(final clingo_assignment_t p_assignment); // CLINGO_VISIBILITY_DEFAULT uint32_t clingo_assignment_decision_level(clingo_assignment_t const *assignment);
+//  public uint32_t clingo_assignment_decision_level(final clingo_assignment_t p_assignment); // CLINGO_VISIBILITY_DEFAULT uint32_t clingo_assignment_decision_level(clingo_assignment_t const *assignment);
   //! Get the current root level.
   //!
   //! Decisions levels smaller or equal to the root level are not backtracked during solving.
   //!
   //! @param[in] assignment the target assignment
   //! @return the decision level
-  public uint32_t clingo_assignment_root_level(final clingo_assignment_t p_assignment); // CLINGO_VISIBILITY_DEFAULT uint32_t clingo_assignment_root_level(clingo_assignment_t const *assignment);
+//  public uint32_t clingo_assignment_root_level(final clingo_assignment_t p_assignment); // CLINGO_VISIBILITY_DEFAULT uint32_t clingo_assignment_root_level(clingo_assignment_t const *assignment);
   //! Check if the given assignment is conflicting.
   //!
   //! @param[in] assignment the target assignment
   //! @return whether the assignment is conflicting
-  public bool clingo_assignment_has_conflict(final clingo_assignment_t p_assignment); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_has_conflict(clingo_assignment_t const *assignment);
+//  public bool clingo_assignment_has_conflict(final clingo_assignment_t p_assignment); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_has_conflict(clingo_assignment_t const *assignment);
   //! Check if the given literal is part of a (partial) assignment.
   //!
   //! @param[in] assignment the target assignment
   //! @param[in] literal the literal
   //! @return whether the literal is valid
-  public bool clingo_assignment_has_literal(final clingo_assignment_t p_assignment, clingo_literal_t literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_has_literal(clingo_assignment_t const *assignment, clingo_literal_t literal);
+//  public bool clingo_assignment_has_literal(final clingo_assignment_t p_assignment, clingo_literal_t literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_has_literal(clingo_assignment_t const *assignment, clingo_literal_t literal);
   //! Determine the decision level of a given literal.
   //!
   //! @param[in] assignment the target assignment
   //! @param[in] literal the literal
   //! @param[out] level the resulting level
   //! @return whether the call was successful
-  public bool clingo_assignment_level(final clingo_assignment_t p_assignment, clingo_literal_t literal, uint32_t p_level); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_level(clingo_assignment_t const *assignment, clingo_literal_t literal, uint32_t *level);
+//  public bool clingo_assignment_level(final clingo_assignment_t p_assignment, clingo_literal_t literal, uint32_t p_level); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_level(clingo_assignment_t const *assignment, clingo_literal_t literal, uint32_t *level);
   //! Determine the decision literal given a decision level.
   //!
   //! @param[in] assignment the target assignment
   //! @param[in] level the level
   //! @param[out] literal the resulting literal
   //! @return whether the call was successful
-  public bool clingo_assignment_decision(final clingo_assignment_t p_assignment, uint32_t level, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_decision(clingo_assignment_t const *assignment, uint32_t level, clingo_literal_t *literal);
+//  public bool clingo_assignment_decision(final clingo_assignment_t p_assignment, uint32_t level, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_decision(clingo_assignment_t const *assignment, uint32_t level, clingo_literal_t *literal);
   //! Check if a literal has a fixed truth value.
   //!
   //! @param[in] assignment the target assignment
   //! @param[in] literal the literal
   //! @param[out] is_fixed whether the literal is fixed
   //! @return whether the call was successful
-  public bool clingo_assignment_is_fixed(final clingo_assignment_t p_assignment, clingo_literal_t literal, bool p_is_fixed); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_is_fixed(clingo_assignment_t const *assignment, clingo_literal_t literal, bool *is_fixed);
+//  public bool clingo_assignment_is_fixed(final clingo_assignment_t p_assignment, clingo_literal_t literal, bool p_is_fixed); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_is_fixed(clingo_assignment_t const *assignment, clingo_literal_t literal, bool *is_fixed);
   //! Check if a literal is true.
   //!
   //! @param[in] assignment the target assignment
@@ -858,7 +858,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] is_true whether the literal is true
   //! @return whether the call was successful
   //! @see clingo_assignment_truth_value()
-  public bool clingo_assignment_is_true(final clingo_assignment_t p_assignment, clingo_literal_t literal, bool p_is_true); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_is_true(clingo_assignment_t const *assignment, clingo_literal_t literal, bool *is_true);
+//  public bool clingo_assignment_is_true(final clingo_assignment_t p_assignment, clingo_literal_t literal, bool p_is_true); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_is_true(clingo_assignment_t const *assignment, clingo_literal_t literal, bool *is_true);
   //! Check if a literal has a fixed truth value.
   //!
   //! @param[in] assignment the target assignment
@@ -866,37 +866,37 @@ public interface ClingoLibrary extends Library {
   //! @param[out] is_false whether the literal is false
   //! @return whether the call was successful
   //! @see clingo_assignment_truth_value()
-  public bool clingo_assignment_is_false(final clingo_assignment_t p_assignment, clingo_literal_t literal, bool p_is_false); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_is_false(clingo_assignment_t const *assignment, clingo_literal_t literal, bool *is_false);
+//  public bool clingo_assignment_is_false(final clingo_assignment_t p_assignment, clingo_literal_t literal, bool p_is_false); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_is_false(clingo_assignment_t const *assignment, clingo_literal_t literal, bool *is_false);
   //! Determine the truth value of a given literal.
   //!
   //! @param[in] assignment the target assignment
   //! @param[in] literal the literal
   //! @param[out] value the resulting truth value
   //! @return whether the call was successful
-  public bool clingo_assignment_truth_value(final clingo_assignment_t p_assignment, clingo_literal_t literal, clingo_truth_value_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_truth_value(clingo_assignment_t const *assignment, clingo_literal_t literal, clingo_truth_value_t *value);
+//  public bool clingo_assignment_truth_value(final clingo_assignment_t p_assignment, clingo_literal_t literal, clingo_truth_value_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_truth_value(clingo_assignment_t const *assignment, clingo_literal_t literal, clingo_truth_value_t *value);
   //! The number of (positive) literals in the assignment.
   //!
   //! @param[in] assignment the target
   //! @return the number of literals
-  public size_t clingo_assignment_size(final clingo_assignment_t p_assignment); // CLINGO_VISIBILITY_DEFAULT size_t clingo_assignment_size(clingo_assignment_t const *assignment);
+//  public size_t clingo_assignment_size(final clingo_assignment_t p_assignment); // CLINGO_VISIBILITY_DEFAULT size_t clingo_assignment_size(clingo_assignment_t const *assignment);
   //! The (positive) literal at the given offset in the assignment.
   //!
   //! @param[in] assignment the target
   //! @param[in] offset the offset of the literal
   //! @param[out] literal the literal
   //! @return whether the call was successful
-  public bool clingo_assignment_at(final clingo_assignment_t p_assignment, size_t offset, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_at(clingo_assignment_t const *assignment, size_t offset, clingo_literal_t *literal);
+//  public bool clingo_assignment_at(final clingo_assignment_t p_assignment, size_t offset, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_at(clingo_assignment_t const *assignment, size_t offset, clingo_literal_t *literal);
   //! Check if the assignment is total, i.e. there are no free literal.
   //!
   //! @param[in] assignment the target
   //! @return wheather the assignment is total
-  public bool clingo_assignment_is_total(final clingo_assignment_t p_assignment); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_is_total(clingo_assignment_t const *assignment);
+//  public bool clingo_assignment_is_total(final clingo_assignment_t p_assignment); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_is_total(clingo_assignment_t const *assignment);
   //! Returns the number of literals in the trail, i.e., the number of assigned literals.
   //!
   //! @param[in] assignment the target
   //! @param[out] size the number of literals in the trail
   //! @return whether the call was successful
-  public bool clingo_assignment_trail_size(final clingo_assignment_t p_assignment, uint32_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_trail_size(clingo_assignment_t const *assignment, uint32_t *size);
+//  public bool clingo_assignment_trail_size(final clingo_assignment_t p_assignment, uint32_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_trail_size(clingo_assignment_t const *assignment, uint32_t *size);
   //! Returns the offset of the decision literal with the given decision level in
   //! the trail.
   //!
@@ -910,7 +910,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] level the decision level
   //! @param[out] offset the offset of the decision literal
   //! @return whether the call was successful
-  public bool clingo_assignment_trail_begin(final clingo_assignment_t p_assignment, uint32_t level, uint32_t p_offset); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_trail_begin(clingo_assignment_t const *assignment, uint32_t level, uint32_t *offset);
+//  public bool clingo_assignment_trail_begin(final clingo_assignment_t p_assignment, uint32_t level, uint32_t p_offset); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_trail_begin(clingo_assignment_t const *assignment, uint32_t level, uint32_t *offset);
   //! Returns the offset following the last literal with the given decision level.
   //!
   //! @note This function is the counter part to clingo_assignment_trail_begin().
@@ -919,14 +919,14 @@ public interface ClingoLibrary extends Library {
   //! @param[in] level the decision level
   //! @param[out] offset the offset
   //! @return whether the call was successful
-  public bool clingo_assignment_trail_end(final clingo_assignment_t p_assignment, uint32_t level, uint32_t p_offset); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_trail_end(clingo_assignment_t const *assignment, uint32_t level, uint32_t *offset);
+//  public bool clingo_assignment_trail_end(final clingo_assignment_t p_assignment, uint32_t level, uint32_t p_offset); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_trail_end(clingo_assignment_t const *assignment, uint32_t level, uint32_t *offset);
   //! Returns the literal at the given position in the trail.
   //!
   //! @param[in] assignment the target
   //! @param[in] offset the offset of the literal
   //! @param[out] literal the literal
   //! @return whether the call was successful
-  public bool clingo_assignment_trail_at(final clingo_assignment_t p_assignment, uint32_t offset, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_trail_at(clingo_assignment_t const *assignment, uint32_t offset, clingo_literal_t *literal);
+//  public bool clingo_assignment_trail_at(final clingo_assignment_t p_assignment, uint32_t offset, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_trail_at(clingo_assignment_t const *assignment, uint32_t offset, clingo_literal_t *literal);
 
   //! @}
 
@@ -941,7 +941,7 @@ public interface ClingoLibrary extends Library {
       clingo_propagator_check_mode_both     = 3, //!< call @ref ::clingo_propagator::check() on propagation fixpoints and total assignments
   }; */ public static final typedef<c_enum> clingo_propagator_check_mode_e = null;
   //! Corresponding type to ::clingo_propagator_check_mode.
-  public static final typedef<c_int> clingo_propagator_check_mode_t = null;
+//  public static final typedef<c_int> clingo_propagator_check_mode_t = null;
 
   //! Enumeration of weight_constraint_types.
   /* enum clingo_weight_constraint_type_e {
@@ -950,7 +950,7 @@ public interface ClingoLibrary extends Library {
       clingo_weight_constraint_type_equivalence       =  0, //!< the weight constraint is equivalent to the literal
   }; */ public static final typedef<c_enum> clingo_weight_constraint_type_e = null;
   //! Corresponding type to ::clingo_weight_constraint_type.
-  public static final typedef<c_int> clingo_weight_constraint_type_t = null;
+//  public static final typedef<c_int> clingo_weight_constraint_type_t = null;
 
   //! Object to initialize a user-defined propagator before each solving step.
   //!
@@ -961,7 +961,7 @@ public interface ClingoLibrary extends Library {
   //!
   //! All methods called during propagation use solver literals whereas clingo_symbolic_atoms_literal() and clingo_theory_atoms_atom_literal() return program literals.
   //! The function clingo_propagate_init_solver_literal() can be used to map program literals or @link clingo_theory_atoms_element_condition_id() condition ids@endlink to solver literals.
-  public static final typedef<struct> clingo_propagate_init_t = null;
+//  public static final typedef<struct> clingo_propagate_init_t = null;
 
   //! @name Initialization Functions
   //! @{
@@ -972,55 +972,55 @@ public interface ClingoLibrary extends Library {
   //! @param[in] aspif_literal the aspif literal to map
   //! @param[out] solver_literal the resulting solver literal
   //! @return whether the call was successful
-  public bool clingo_propagate_init_solver_literal(final clingo_propagate_init_t p_init, clingo_literal_t aspif_literal, clingo_literal_t p_solver_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_solver_literal(clingo_propagate_init_t const *init, clingo_literal_t aspif_literal, clingo_literal_t *solver_literal);
+//  public bool clingo_propagate_init_solver_literal(final clingo_propagate_init_t p_init, clingo_literal_t aspif_literal, clingo_literal_t p_solver_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_solver_literal(clingo_propagate_init_t const *init, clingo_literal_t aspif_literal, clingo_literal_t *solver_literal);
   //! Add a watch for the solver literal in the given phase.
   //!
   //! @param[in] init the target
   //! @param[in] solver_literal the solver literal
   //! @return whether the call was successful
-  public bool clingo_propagate_init_add_watch(clingo_propagate_init_t p_init, clingo_literal_t solver_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_watch(clingo_propagate_init_t *init, clingo_literal_t solver_literal);
+//  public bool clingo_propagate_init_add_watch(clingo_propagate_init_t p_init, clingo_literal_t solver_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_watch(clingo_propagate_init_t *init, clingo_literal_t solver_literal);
   //! Add a watch for the solver literal in the given phase to the given solver thread.
   //!
   //! @param[in] init the target
   //! @param[in] solver_literal the solver literal
   //! @param[in] thread_id the id of the solver thread
   //! @return whether the call was successful
-  public bool clingo_propagate_init_add_watch_to_thread(clingo_propagate_init_t p_init, clingo_literal_t solver_literal, clingo_id_t thread_id); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_watch_to_thread(clingo_propagate_init_t *init, clingo_literal_t solver_literal, clingo_id_t thread_id);
+//  public bool clingo_propagate_init_add_watch_to_thread(clingo_propagate_init_t p_init, clingo_literal_t solver_literal, clingo_id_t thread_id); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_watch_to_thread(clingo_propagate_init_t *init, clingo_literal_t solver_literal, clingo_id_t thread_id);
   //! Get an object to inspect the symbolic atoms.
   //!
   //! @param[in] init the target
   //! @param[out] atoms the resulting object
   //! @return whether the call was successful
-  public bool clingo_propagate_init_symbolic_atoms(final clingo_propagate_init_t p_init, final clingo_symbolic_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_symbolic_atoms(clingo_propagate_init_t const *init, clingo_symbolic_atoms_t const **atoms);
+//  public bool clingo_propagate_init_symbolic_atoms(final clingo_propagate_init_t p_init, final clingo_symbolic_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_symbolic_atoms(clingo_propagate_init_t const *init, clingo_symbolic_atoms_t const **atoms);
   //! Get an object to inspect the theory atoms.
   //!
   //! @param[in] init the target
   //! @param[out] atoms the resulting object
   //! @return whether the call was successful
-  public bool clingo_propagate_init_theory_atoms(final clingo_propagate_init_t p_init, final clingo_theory_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_theory_atoms(clingo_propagate_init_t const *init, clingo_theory_atoms_t const **atoms);
+//  public bool clingo_propagate_init_theory_atoms(final clingo_propagate_init_t p_init, final clingo_theory_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_theory_atoms(clingo_propagate_init_t const *init, clingo_theory_atoms_t const **atoms);
   //! Get the number of threads used in subsequent solving.
   //!
   //! @param[in] init the target
   //! @return the number of threads
   //! @see clingo_propagate_control_thread_id()
-  public int clingo_propagate_init_number_of_threads(final clingo_propagate_init_t p_init); // CLINGO_VISIBILITY_DEFAULT int clingo_propagate_init_number_of_threads(clingo_propagate_init_t const *init);
+//  public int clingo_propagate_init_number_of_threads(final clingo_propagate_init_t p_init); // CLINGO_VISIBILITY_DEFAULT int clingo_propagate_init_number_of_threads(clingo_propagate_init_t const *init);
   //! Configure when to call the check method of the propagator.
   //!
   //! @param[in] init the target
   //! @param[in] mode bitmask when to call the propagator
   //! @see @ref ::clingo_propagator::check()
-  public void clingo_propagate_init_set_check_mode(clingo_propagate_init_t p_init, clingo_propagator_check_mode_t mode); // CLINGO_VISIBILITY_DEFAULT void clingo_propagate_init_set_check_mode(clingo_propagate_init_t *init, clingo_propagator_check_mode_t mode);
+//  public void clingo_propagate_init_set_check_mode(clingo_propagate_init_t p_init, clingo_propagator_check_mode_t mode); // CLINGO_VISIBILITY_DEFAULT void clingo_propagate_init_set_check_mode(clingo_propagate_init_t *init, clingo_propagator_check_mode_t mode);
   //! Get the current check mode of the propagator.
   //!
   //! @param[in] init the target
   //! @return bitmask when to call the propagator
   //! @see clingo_propagate_init_set_check_mode()
-  public clingo_propagator_check_mode_t clingo_propagate_init_get_check_mode(final clingo_propagate_init_t p_init); // CLINGO_VISIBILITY_DEFAULT clingo_propagator_check_mode_t clingo_propagate_init_get_check_mode(clingo_propagate_init_t const *init);
+//  public clingo_propagator_check_mode_t clingo_propagate_init_get_check_mode(final clingo_propagate_init_t p_init); // CLINGO_VISIBILITY_DEFAULT clingo_propagator_check_mode_t clingo_propagate_init_get_check_mode(clingo_propagate_init_t const *init);
   //! Get the top level assignment solver.
   //!
   //! @param[in] init the target
   //! @return the assignment
-  public clingo_assignment_t clingo_propagate_init_assignment(final clingo_propagate_init_t p_init); // CLINGO_VISIBILITY_DEFAULT clingo_assignment_t const *clingo_propagate_init_assignment(clingo_propagate_init_t const *init);
+//  public clingo_assignment_t clingo_propagate_init_assignment(final clingo_propagate_init_t p_init); // CLINGO_VISIBILITY_DEFAULT clingo_assignment_t const *clingo_propagate_init_assignment(clingo_propagate_init_t const *init);
   //! Add a literal to the solver.
   //!
   //! To be able to use the variable in clauses during propagation or add watches to it, it has to be frozen.
@@ -1034,7 +1034,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] result the added literal
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_propagate_init_add_literal(clingo_propagate_init_t p_init, bool freeze, clingo_literal_t p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_literal(clingo_propagate_init_t *init, bool freeze, clingo_literal_t *result);
+//  public bool clingo_propagate_init_add_literal(clingo_propagate_init_t p_init, bool freeze, clingo_literal_t p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_literal(clingo_propagate_init_t *init, bool freeze, clingo_literal_t *result);
   //! Add the given clause to the solver.
   //!
   //! @attention No further calls on the init object or functions on the assignment should be called when the result of this method is false.
@@ -1045,7 +1045,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] result result indicating whether the problem became unsatisfiable
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_propagate_init_add_clause(clingo_propagate_init_t p_init, final clingo_literal_t p_clause, size_t size, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_clause(clingo_propagate_init_t *init, clingo_literal_t const *clause, size_t size, bool *result);
+//  public bool clingo_propagate_init_add_clause(clingo_propagate_init_t p_init, final clingo_literal_t p_clause, size_t size, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_clause(clingo_propagate_init_t *init, clingo_literal_t const *clause, size_t size, bool *result);
   //! Add the given weight constraint to the solver.
   //!
   //! This function adds a constraint of form `literal <=> { lit=weight | (lit, weight) in literals } >= bound` to the solver.
@@ -1063,7 +1063,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] result result indicating whether the problem became unsatisfiable
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_propagate_init_add_weight_constraint(clingo_propagate_init_t p_init, clingo_literal_t literal, final clingo_weighted_literal_t p_literals, size_t size, clingo_weight_t bound, clingo_weight_constraint_type_t type, bool compare_equal, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_weight_constraint(clingo_propagate_init_t *init, clingo_literal_t literal, clingo_weighted_literal_t const *literals, size_t size, clingo_weight_t bound, clingo_weight_constraint_type_t type, bool compare_equal, bool *result);
+//  public bool clingo_propagate_init_add_weight_constraint(clingo_propagate_init_t p_init, clingo_literal_t literal, final clingo_weighted_literal_t p_literals, size_t size, clingo_weight_t bound, clingo_weight_constraint_type_t type, bool compare_equal, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_weight_constraint(clingo_propagate_init_t *init, clingo_literal_t literal, clingo_weighted_literal_t const *literals, size_t size, clingo_weight_t bound, clingo_weight_constraint_type_t type, bool compare_equal, bool *result);
   //! Add the given literal to minimize to the solver.
   //!
   //! This corresponds to a weak constraint of form `:~ literal. [weight@priority]`.
@@ -1074,7 +1074,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] priority the priority of the literal
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_propagate_init_add_minimize(clingo_propagate_init_t p_init, clingo_literal_t literal, clingo_weight_t weight, clingo_weight_t priority); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_minimize(clingo_propagate_init_t *init, clingo_literal_t literal, clingo_weight_t weight, clingo_weight_t priority);
+//  public bool clingo_propagate_init_add_minimize(clingo_propagate_init_t p_init, clingo_literal_t literal, clingo_weight_t weight, clingo_weight_t priority); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_minimize(clingo_propagate_init_t *init, clingo_literal_t literal, clingo_weight_t weight, clingo_weight_t priority);
   //! Propagates consequences of the underlying problem excluding registered propagators.
   //!
   //! @note The function has no effect if SAT-preprocessing is enabled.
@@ -1084,7 +1084,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] result result indicating whether the problem became unsatisfiable
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_propagate_init_propagate(clingo_propagate_init_t p_init, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_propagate(clingo_propagate_init_t *init, bool *result);
+//  public bool clingo_propagate_init_propagate(clingo_propagate_init_t p_init, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_propagate(clingo_propagate_init_t *init, bool *result);
 
   //! @}
 
@@ -1099,10 +1099,10 @@ public interface ClingoLibrary extends Library {
       clingo_clause_type_volatile_static = 3  //!< like ::clingo_clause_type_static but the clause is deleted after a solving step
   }; */ public static final typedef<c_enum> clingo_clause_type_e = null;
   //! Corresponding type to ::clingo_clause_type.
-  public static final typedef<c_int> clingo_clause_type_t = null;
+//  public static final typedef<c_int> clingo_clause_type_t = null;
 
   //! This object can be used to add clauses and propagate literals while solving.
-  public static final typedef<struct> clingo_propagate_control_t = null;
+//  public static final typedef<struct> clingo_propagate_control_t = null;
 
   //! @name Propagation Functions
   //! @{
@@ -1113,12 +1113,12 @@ public interface ClingoLibrary extends Library {
   //!
   //! @param[in] control the target
   //! @return the thread id
-  public clingo_id_t clingo_propagate_control_thread_id(final clingo_propagate_control_t p_control); // CLINGO_VISIBILITY_DEFAULT clingo_id_t clingo_propagate_control_thread_id(clingo_propagate_control_t const *control);
+//  public clingo_id_t clingo_propagate_control_thread_id(final clingo_propagate_control_t p_control); // CLINGO_VISIBILITY_DEFAULT clingo_id_t clingo_propagate_control_thread_id(clingo_propagate_control_t const *control);
   //! Get the assignment associated with the underlying solver.
   //!
   //! @param[in] control the target
   //! @return the assignment
-  public clingo_assignment_t clingo_propagate_control_assignment(final clingo_propagate_control_t p_control); // CLINGO_VISIBILITY_DEFAULT clingo_assignment_t const *clingo_propagate_control_assignment(clingo_propagate_control_t const *control);
+//  public clingo_assignment_t clingo_propagate_control_assignment(final clingo_propagate_control_t p_control); // CLINGO_VISIBILITY_DEFAULT clingo_assignment_t const *clingo_propagate_control_assignment(clingo_propagate_control_t const *control);
   //! Adds a new volatile literal to the underlying solver thread.
   //!
   //! @attention The literal is only valid within the current solving step and solver thread.
@@ -1129,7 +1129,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_logic if the assignment is conflicting
-  public bool clingo_propagate_control_add_literal(clingo_propagate_control_t p_control, clingo_literal_t p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_control_add_literal(clingo_propagate_control_t *control, clingo_literal_t *result);
+//  public bool clingo_propagate_control_add_literal(clingo_propagate_control_t p_control, clingo_literal_t p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_control_add_literal(clingo_propagate_control_t *control, clingo_literal_t *result);
   //! Add a watch for the solver literal in the given phase.
   //!
   //! @note Unlike @ref clingo_propagate_init_add_watch() this does not add a watch to all solver threads but just the current one.
@@ -1140,21 +1140,21 @@ public interface ClingoLibrary extends Library {
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_logic if the literal is invalid
   //! @see clingo_propagate_control_remove_watch()
-  public bool clingo_propagate_control_add_watch(clingo_propagate_control_t p_control, clingo_literal_t literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_control_add_watch(clingo_propagate_control_t *control, clingo_literal_t literal);
+//  public bool clingo_propagate_control_add_watch(clingo_propagate_control_t p_control, clingo_literal_t literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_control_add_watch(clingo_propagate_control_t *control, clingo_literal_t literal);
   //! Check whether a literal is watched in the current solver thread.
   //!
   //! @param[in] control the target
   //! @param[in] literal the literal to check
   //!
   //! @return whether the literal is watched
-  public bool clingo_propagate_control_has_watch(final clingo_propagate_control_t p_control, clingo_literal_t literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_control_has_watch(clingo_propagate_control_t const *control, clingo_literal_t literal);
+//  public bool clingo_propagate_control_has_watch(final clingo_propagate_control_t p_control, clingo_literal_t literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_control_has_watch(clingo_propagate_control_t const *control, clingo_literal_t literal);
   //! Removes the watch (if any) for the given solver literal.
   //!
   //! @note Similar to @ref clingo_propagate_init_add_watch() this just removes the watch in the current solver thread.
   //!
   //! @param[in] control the target
   //! @param[in] literal the literal to remove
-  public void clingo_propagate_control_remove_watch(clingo_propagate_control_t p_control, clingo_literal_t literal); // CLINGO_VISIBILITY_DEFAULT void clingo_propagate_control_remove_watch(clingo_propagate_control_t *control, clingo_literal_t literal);
+//  public void clingo_propagate_control_remove_watch(clingo_propagate_control_t p_control, clingo_literal_t literal); // CLINGO_VISIBILITY_DEFAULT void clingo_propagate_control_remove_watch(clingo_propagate_control_t *control, clingo_literal_t literal);
   //! Add the given clause to the solver.
   //!
   //! This method sets its result to false if the current propagation must be stopped for the solver to backtrack.
@@ -1168,7 +1168,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] result result indicating whether propagation has to be stopped
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_propagate_control_add_clause(clingo_propagate_control_t p_control, final clingo_literal_t p_clause, size_t size, clingo_clause_type_t type, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_control_add_clause(clingo_propagate_control_t *control, clingo_literal_t const *clause, size_t size, clingo_clause_type_t type, bool *result);
+//  public bool clingo_propagate_control_add_clause(clingo_propagate_control_t p_control, final clingo_literal_t p_clause, size_t size, clingo_clause_type_t type, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_control_add_clause(clingo_propagate_control_t *control, clingo_literal_t const *clause, size_t size, clingo_clause_type_t type, bool *result);
   //! Propagate implied literals (resulting from added clauses).
   //!
   //! This method sets its result to false if the current propagation must be stopped for the solver to backtrack.
@@ -1179,21 +1179,21 @@ public interface ClingoLibrary extends Library {
   //! @param[out] result result indicating whether propagation has to be stopped
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_propagate_control_propagate(clingo_propagate_control_t p_control, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_control_propagate(clingo_propagate_control_t *control, bool *result);
+//  public bool clingo_propagate_control_propagate(clingo_propagate_control_t p_control, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_control_propagate(clingo_propagate_control_t *control, bool *result);
 
   //! @}
 
   //! Typedef for @ref ::clingo_propagator::init().
-  public static final typedef<bool> clingo_propagator_init_callback_t = null; // typedef bool (*clingo_propagator_init_callback_t) (clingo_propagate_init_t *, void *);
+//  public static final typedef<bool> clingo_propagator_init_callback_t = null; // typedef bool (*clingo_propagator_init_callback_t) (clingo_propagate_init_t *, void *);
 
   //! Typedef for @ref ::clingo_propagator::propagate().
-  public static final typedef<bool> clingo_propagator_propagate_callback_t = null; // typedef bool (*clingo_propagator_propagate_callback_t) (clingo_propagate_control_t *, clingo_literal_t const *, size_t, void *);
+//  public static final typedef<bool> clingo_propagator_propagate_callback_t = null; // typedef bool (*clingo_propagator_propagate_callback_t) (clingo_propagate_control_t *, clingo_literal_t const *, size_t, void *);
 
   //! Typedef for @ref ::clingo_propagator::undo().
-  public static final typedef<c_void> clingo_propagator_undo_callback_t = null; // typedef void (*clingo_propagator_undo_callback_t) (clingo_propagate_control_t const *, clingo_literal_t const *, size_t, void *);
+//  public static final typedef<c_void> clingo_propagator_undo_callback_t = null; // typedef void (*clingo_propagator_undo_callback_t) (clingo_propagate_control_t const *, clingo_literal_t const *, size_t, void *);
 
   //! Typedef for @ref ::clingo_propagator::check().
-  public static final typedef<bool> clingo_propagator_check_callback_t = null; // typedef bool (*clingo_propagator_check_callback_t) (clingo_propagate_control_t *, void *);
+//  public static final typedef<bool> clingo_propagator_check_callback_t = null; // typedef bool (*clingo_propagator_check_callback_t) (clingo_propagate_control_t *, void *);
 
   //! An instance of this struct has to be registered with a solver to implement a custom propagator.
   //!
@@ -1333,7 +1333,7 @@ public interface ClingoLibrary extends Library {
   }; */ public static final typedef<c_enum> clingo_heuristic_type_e = null;
   //! Corresponding type to ::clingo_heuristic_type.
   //! @ingroup ProgramInspection
-  public static final typedef<c_int> clingo_heuristic_type_t = null;
+//  public static final typedef<c_int> clingo_heuristic_type_t = null;
 
   //! Enumeration of different external statements.
   //! @ingroup ProgramInspection
@@ -1345,10 +1345,10 @@ public interface ClingoLibrary extends Library {
   }; */ public static final typedef<c_enum> clingo_external_type_e = null;
   //! Corresponding type to ::clingo_external_type.
   //! @ingroup ProgramInspection
-  public static final typedef<c_int> clingo_external_type_t = null;
+//  public static final typedef<c_int> clingo_external_type_t = null;
 
   //! Handle to the backend to add directives in aspif format.
-  public static final typedef<struct> clingo_backend_t = null;
+//  public static final typedef<struct> clingo_backend_t = null;
 
   //! Prepare the backend for usage.
   //!
@@ -1356,14 +1356,14 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_runtime
-  public bool clingo_backend_begin(clingo_backend_t p_backend); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_begin(clingo_backend_t *backend);
+//  public bool clingo_backend_begin(clingo_backend_t p_backend); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_begin(clingo_backend_t *backend);
   //! Finalize the backend after using it.
   //!
   //! @param[in] backend the target backend
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_runtime
-  public bool clingo_backend_end(clingo_backend_t p_backend); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_end(clingo_backend_t *backend);
+//  public bool clingo_backend_end(clingo_backend_t p_backend); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_end(clingo_backend_t *backend);
   //! Add a rule to the program.
   //!
   //! @param[in] backend the target backend
@@ -1374,7 +1374,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] body_size the number of literals in the body
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_backend_rule(clingo_backend_t p_backend, bool choice, final clingo_atom_t p_head, size_t head_size, final clingo_literal_t p_body, size_t body_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_rule(clingo_backend_t *backend, bool choice, clingo_atom_t const *head, size_t head_size, clingo_literal_t const *body, size_t body_size);
+//  public bool clingo_backend_rule(clingo_backend_t p_backend, bool choice, final clingo_atom_t p_head, size_t head_size, final clingo_literal_t p_body, size_t body_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_rule(clingo_backend_t *backend, bool choice, clingo_atom_t const *head, size_t head_size, clingo_literal_t const *body, size_t body_size);
   //! Add a weight rule to the program.
   //!
   //! @attention All weights and the lower bound must be positive.
@@ -1387,7 +1387,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] body_size the number of weighted literals in the body
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_backend_weight_rule(clingo_backend_t p_backend, bool choice, final clingo_atom_t p_head, size_t head_size, clingo_weight_t lower_bound, final clingo_weighted_literal_t p_body, size_t body_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_weight_rule(clingo_backend_t *backend, bool choice, clingo_atom_t const *head, size_t head_size, clingo_weight_t lower_bound, clingo_weighted_literal_t const *body, size_t body_size);
+//  public bool clingo_backend_weight_rule(clingo_backend_t p_backend, bool choice, final clingo_atom_t p_head, size_t head_size, clingo_weight_t lower_bound, final clingo_weighted_literal_t p_body, size_t body_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_weight_rule(clingo_backend_t *backend, bool choice, clingo_atom_t const *head, size_t head_size, clingo_weight_t lower_bound, clingo_weighted_literal_t const *body, size_t body_size);
   //! Add a minimize constraint (or weak constraint) to the program.
   //!
   //! @param[in] backend the target backend
@@ -1396,7 +1396,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] size the number of weighted literals
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_backend_minimize(clingo_backend_t p_backend, clingo_weight_t priority, final clingo_weighted_literal_t p_literals, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_minimize(clingo_backend_t *backend, clingo_weight_t priority, clingo_weighted_literal_t const* literals, size_t size);
+//  public bool clingo_backend_minimize(clingo_backend_t p_backend, clingo_weight_t priority, final clingo_weighted_literal_t p_literals, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_minimize(clingo_backend_t *backend, clingo_weight_t priority, clingo_weighted_literal_t const* literals, size_t size);
   //! Add a projection directive.
   //!
   //! @param[in] backend the target backend
@@ -1404,7 +1404,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] size the number of atoms
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_backend_project(clingo_backend_t p_backend, final clingo_atom_t p_atoms, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_project(clingo_backend_t *backend, clingo_atom_t const *atoms, size_t size);
+//  public bool clingo_backend_project(clingo_backend_t p_backend, final clingo_atom_t p_atoms, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_project(clingo_backend_t *backend, clingo_atom_t const *atoms, size_t size);
   //! Add an external statement.
   //!
   //! @param[in] backend the target backend
@@ -1412,7 +1412,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] type the type of the external statement
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_backend_external(clingo_backend_t p_backend, clingo_atom_t atom, clingo_external_type_t type); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_external(clingo_backend_t *backend, clingo_atom_t atom, clingo_external_type_t type);
+//  public bool clingo_backend_external(clingo_backend_t p_backend, clingo_atom_t atom, clingo_external_type_t type); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_external(clingo_backend_t *backend, clingo_atom_t atom, clingo_external_type_t type);
   //! Add an assumption directive.
   //!
   //! @param[in] backend the target backend
@@ -1420,7 +1420,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] size the number of atoms
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_backend_assume(clingo_backend_t p_backend, final clingo_literal_t p_literals, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_assume(clingo_backend_t *backend, clingo_literal_t const *literals, size_t size);
+//  public bool clingo_backend_assume(clingo_backend_t p_backend, final clingo_literal_t p_literals, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_assume(clingo_backend_t *backend, clingo_literal_t const *literals, size_t size);
   //! Add an heuristic directive.
   //!
   //! @param[in] backend the target backend
@@ -1432,7 +1432,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] size the number of atoms in the condition
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_backend_heuristic(clingo_backend_t p_backend, clingo_atom_t atom, clingo_heuristic_type_t type, int bias, unsigned priority, final clingo_literal_t p_condition, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_heuristic(clingo_backend_t *backend, clingo_atom_t atom, clingo_heuristic_type_t type, int bias, unsigned priority, clingo_literal_t const *condition, size_t size);
+//  public bool clingo_backend_heuristic(clingo_backend_t p_backend, clingo_atom_t atom, clingo_heuristic_type_t type, int bias, unsigned priority, final clingo_literal_t p_condition, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_heuristic(clingo_backend_t *backend, clingo_atom_t atom, clingo_heuristic_type_t type, int bias, unsigned priority, clingo_literal_t const *condition, size_t size);
   //! Add an edge directive.
   //!
   //! @param[in] backend the target backend
@@ -1442,14 +1442,14 @@ public interface ClingoLibrary extends Library {
   //! @param[in] size the number of atoms in the condition
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_backend_acyc_edge(clingo_backend_t p_backend, int node_u, int node_v, final clingo_literal_t p_condition, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_acyc_edge(clingo_backend_t *backend, int node_u, int node_v, clingo_literal_t const *condition, size_t size);
+//  public bool clingo_backend_acyc_edge(clingo_backend_t p_backend, int node_u, int node_v, final clingo_literal_t p_condition, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_acyc_edge(clingo_backend_t *backend, int node_u, int node_v, clingo_literal_t const *condition, size_t size);
   //! Get a fresh atom to be used in aspif directives.
   //!
   //! @param[in] backend the target backend
   //! @param[in] symbol optional symbol to associate the atom with
   //! @param[out] atom the resulting atom
   //! @return whether the call was successful
-  public bool clingo_backend_add_atom(clingo_backend_t p_backend, clingo_symbol_t p_symbol, clingo_atom_t p_atom); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_add_atom(clingo_backend_t *backend, clingo_symbol_t *symbol, clingo_atom_t *atom);
+//  public bool clingo_backend_add_atom(clingo_backend_t p_backend, clingo_symbol_t p_symbol, clingo_atom_t p_atom); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_add_atom(clingo_backend_t *backend, clingo_symbol_t *symbol, clingo_atom_t *atom);
 
   //! @}
 
@@ -1492,17 +1492,17 @@ public interface ClingoLibrary extends Library {
       clingo_configuration_type_map   = 4  //!< the entry is a map
   }; */ public static final typedef<c_enum> clingo_configuration_type_e = null;
   //! Bitset for values of type ::clingo_configuration_type.
-  public static final typedef<unsigned> clingo_configuration_type_bitset_t = null;
+//  public static final typedef<unsigned> clingo_configuration_type_bitset_t = null;
 
   //! Handle for to the solver configuration.
-  public static final typedef<struct> clingo_configuration_t = null;
+//  public static final typedef<struct> clingo_configuration_t = null;
 
   //! Get the root key of the configuration.
   //!
   //! @param[in] configuration the target configuration
   //! @param[out] key the root key
   //! @return whether the call was successful
-  public bool clingo_configuration_root(final clingo_configuration_t p_configuration, clingo_id_t p_key); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_root(clingo_configuration_t const *configuration, clingo_id_t *key);
+//  public bool clingo_configuration_root(final clingo_configuration_t p_configuration, clingo_id_t p_key); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_root(clingo_configuration_t const *configuration, clingo_id_t *key);
   //! Get the type of a key.
   //!
   //! @note The type is bitset, an entry can have multiple (but at least one) type.
@@ -1511,14 +1511,14 @@ public interface ClingoLibrary extends Library {
   //! @param[in] key the key
   //! @param[out] type the resulting type
   //! @return whether the call was successful
-  public bool clingo_configuration_type(final clingo_configuration_t p_configuration, clingo_id_t key, clingo_configuration_type_bitset_t p_type); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_type(clingo_configuration_t const *configuration, clingo_id_t key, clingo_configuration_type_bitset_t *type);
+//  public bool clingo_configuration_type(final clingo_configuration_t p_configuration, clingo_id_t key, clingo_configuration_type_bitset_t p_type); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_type(clingo_configuration_t const *configuration, clingo_id_t key, clingo_configuration_type_bitset_t *type);
   //! Get the description of an entry.
   //!
   //! @param[in] configuration the target configuration
   //! @param[in] key the key
   //! @param[out] description the description
   //! @return whether the call was successful
-  public bool clingo_configuration_description(final clingo_configuration_t p_configuration, clingo_id_t key, final c_char p_p_description); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_description(clingo_configuration_t const *configuration, clingo_id_t key, char const **description);
+//  public bool clingo_configuration_description(final clingo_configuration_t p_configuration, clingo_id_t key, final c_char p_p_description); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_description(clingo_configuration_t const *configuration, clingo_id_t key, char const **description);
 
   //! @name Functions to access arrays
   //! @{
@@ -1530,7 +1530,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] key the key
   //! @param[out] size the resulting size
   //! @return whether the call was successful
-  public bool clingo_configuration_array_size(final clingo_configuration_t p_configuration, clingo_id_t key, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_array_size(clingo_configuration_t const *configuration, clingo_id_t key, size_t *size);
+//  public bool clingo_configuration_array_size(final clingo_configuration_t p_configuration, clingo_id_t key, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_array_size(clingo_configuration_t const *configuration, clingo_id_t key, size_t *size);
   //! Get the subkey at the given offset of an array entry.
   //!
   //! @note Some array entries, like fore example the solver configuration, can be accessed past there actual size to add subentries.
@@ -1540,7 +1540,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] offset the offset in the array
   //! @param[out] subkey the resulting subkey
   //! @return whether the call was successful
-  public bool clingo_configuration_array_at(final clingo_configuration_t p_configuration, clingo_id_t key, size_t offset, clingo_id_t p_subkey); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_array_at(clingo_configuration_t const *configuration, clingo_id_t key, size_t offset, clingo_id_t *subkey);
+//  public bool clingo_configuration_array_at(final clingo_configuration_t p_configuration, clingo_id_t key, size_t offset, clingo_id_t p_subkey); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_array_at(clingo_configuration_t const *configuration, clingo_id_t key, size_t offset, clingo_id_t *subkey);
   //! @}
 
   //! @name Functions to access maps
@@ -1553,7 +1553,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] key the key
   //! @param[out] size the resulting number
   //! @return whether the call was successful
-  public bool clingo_configuration_map_size(final clingo_configuration_t p_configuration, clingo_id_t key, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_map_size(clingo_configuration_t const *configuration, clingo_id_t key, size_t* size);
+//  public bool clingo_configuration_map_size(final clingo_configuration_t p_configuration, clingo_id_t key, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_map_size(clingo_configuration_t const *configuration, clingo_id_t key, size_t* size);
   //! Query whether the map has a key.
   //!
   //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
@@ -1563,7 +1563,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] name the name to lookup the subkey
   //! @param[out] result whether the key is in the map
   //! @return whether the call was successful
-  public bool clingo_configuration_map_has_subkey(final clingo_configuration_t p_configuration, clingo_id_t key, final c_char p_name, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_map_has_subkey(clingo_configuration_t const *configuration, clingo_id_t key, char const *name, bool *result);
+//  public bool clingo_configuration_map_has_subkey(final clingo_configuration_t p_configuration, clingo_id_t key, final c_char p_name, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_map_has_subkey(clingo_configuration_t const *configuration, clingo_id_t key, char const *name, bool *result);
   //! Get the name associated with the offset-th subkey.
   //!
   //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
@@ -1572,7 +1572,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] offset the offset of the name
   //! @param[out] name the resulting name
   //! @return whether the call was successful
-  public bool clingo_configuration_map_subkey_name(final clingo_configuration_t p_configuration, clingo_id_t key, size_t offset, final c_char p_p_name); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_map_subkey_name(clingo_configuration_t const *configuration, clingo_id_t key, size_t offset, char const **name);
+//  public bool clingo_configuration_map_subkey_name(final clingo_configuration_t p_configuration, clingo_id_t key, size_t offset, final c_char p_p_name); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_map_subkey_name(clingo_configuration_t const *configuration, clingo_id_t key, size_t offset, char const **name);
   //! Lookup a subkey under the given name.
   //!
   //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
@@ -1582,7 +1582,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] name the name to lookup the subkey
   //! @param[out] subkey the resulting subkey
   //! @return whether the call was successful
-  public bool clingo_configuration_map_at(final clingo_configuration_t p_configuration, clingo_id_t key, final c_char p_name, clingo_id_t p_subkey); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_map_at(clingo_configuration_t const *configuration, clingo_id_t key, char const *name, clingo_id_t* subkey);
+//  public bool clingo_configuration_map_at(final clingo_configuration_t p_configuration, clingo_id_t key, final c_char p_name, clingo_id_t p_subkey); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_map_at(clingo_configuration_t const *configuration, clingo_id_t key, char const *name, clingo_id_t* subkey);
   //! @}
 
   //! @name Functions to access values
@@ -1595,7 +1595,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] key the key
   //! @param[out] assigned whether the entry has a value
   //! @return whether the call was successful
-  public bool clingo_configuration_value_is_assigned(final clingo_configuration_t p_configuration, clingo_id_t key, bool p_assigned); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_value_is_assigned(clingo_configuration_t const *configuration, clingo_id_t key, bool *assigned);
+//  public bool clingo_configuration_value_is_assigned(final clingo_configuration_t p_configuration, clingo_id_t key, bool p_assigned); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_value_is_assigned(clingo_configuration_t const *configuration, clingo_id_t key, bool *assigned);
   //! Get the size of the string value of the given entry.
   //!
   //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
@@ -1603,7 +1603,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] key the key
   //! @param[out] size the resulting size
   //! @return whether the call was successful
-  public bool clingo_configuration_value_get_size(final clingo_configuration_t p_configuration, clingo_id_t key, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_value_get_size(clingo_configuration_t const *configuration, clingo_id_t key, size_t *size);
+//  public bool clingo_configuration_value_get_size(final clingo_configuration_t p_configuration, clingo_id_t key, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_value_get_size(clingo_configuration_t const *configuration, clingo_id_t key, size_t *size);
   //! Get the string value of the given entry.
   //!
   //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
@@ -1613,7 +1613,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] value the resulting string value
   //! @param[in] size the size of the given char array
   //! @return whether the call was successful
-  public bool clingo_configuration_value_get(final clingo_configuration_t p_configuration, clingo_id_t key, c_char p_value, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_value_get(clingo_configuration_t const *configuration, clingo_id_t key, char *value, size_t size);
+//  public bool clingo_configuration_value_get(final clingo_configuration_t p_configuration, clingo_id_t key, c_char p_value, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_value_get(clingo_configuration_t const *configuration, clingo_id_t key, char *value, size_t size);
   //! Set the value of an entry.
   //!
   //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
@@ -1621,7 +1621,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] key the key
   //! @param[in] value the value to set
   //! @return whether the call was successful
-  public bool clingo_configuration_value_set(clingo_configuration_t p_configuration, clingo_id_t key, final c_char p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_value_set(clingo_configuration_t *configuration, clingo_id_t key, char const *value);
+//  public bool clingo_configuration_value_set(clingo_configuration_t p_configuration, clingo_id_t key, final c_char p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_value_set(clingo_configuration_t *configuration, clingo_id_t key, char const *value);
   //! @}
 
   //! @}
@@ -1676,24 +1676,24 @@ public interface ClingoLibrary extends Library {
       clingo_statistics_type_map   = 3  //!< the entry is a map
   }; */ public static final typedef<c_enum> clingo_statistics_type_e = null;
   //! Corresponding type to ::clingo_statistics_type.
-  public static final typedef<c_int> clingo_statistics_type_t = null;
+//  public static final typedef<c_int> clingo_statistics_type_t = null;
 
   //! Handle for the solver statistics.
-  public static final typedef<struct> clingo_statistics_t = null;
+//  public static final typedef<struct> clingo_statistics_t = null;
 
   //! Get the root key of the statistics.
   //!
   //! @param[in] statistics the target statistics
   //! @param[out] key the root key
   //! @return whether the call was successful
-  public bool clingo_statistics_root(final clingo_statistics_t p_statistics, uint64_t p_key); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_root(clingo_statistics_t const *statistics, uint64_t *key);
+//  public bool clingo_statistics_root(final clingo_statistics_t p_statistics, uint64_t p_key); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_root(clingo_statistics_t const *statistics, uint64_t *key);
   //! Get the type of a key.
   //!
   //! @param[in] statistics the target statistics
   //! @param[in] key the key
   //! @param[out] type the resulting type
   //! @return whether the call was successful
-  public bool clingo_statistics_type(final clingo_statistics_t p_statistics, uint64_t key, clingo_statistics_type_t p_type); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_type(clingo_statistics_t const *statistics, uint64_t key, clingo_statistics_type_t *type);
+//  public bool clingo_statistics_type(final clingo_statistics_t p_statistics, uint64_t key, clingo_statistics_type_t p_type); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_type(clingo_statistics_t const *statistics, uint64_t key, clingo_statistics_type_t *type);
 
   //! @name Functions to access arrays
   //! @{
@@ -1705,7 +1705,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] key the key
   //! @param[out] size the resulting size
   //! @return whether the call was successful
-  public bool clingo_statistics_array_size(final clingo_statistics_t p_statistics, uint64_t key, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_array_size(clingo_statistics_t const *statistics, uint64_t key, size_t *size);
+//  public bool clingo_statistics_array_size(final clingo_statistics_t p_statistics, uint64_t key, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_array_size(clingo_statistics_t const *statistics, uint64_t key, size_t *size);
   //! Get the subkey at the given offset of an array entry.
   //!
   //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_array.
@@ -1714,7 +1714,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] offset the offset in the array
   //! @param[out] subkey the resulting subkey
   //! @return whether the call was successful
-  public bool clingo_statistics_array_at(final clingo_statistics_t p_statistics, uint64_t key, size_t offset, uint64_t p_subkey); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_array_at(clingo_statistics_t const *statistics, uint64_t key, size_t offset, uint64_t *subkey);
+//  public bool clingo_statistics_array_at(final clingo_statistics_t p_statistics, uint64_t key, size_t offset, uint64_t p_subkey); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_array_at(clingo_statistics_t const *statistics, uint64_t key, size_t offset, uint64_t *subkey);
   //! Create the subkey at the end of an array entry.
   //!
   //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_array.
@@ -1723,7 +1723,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] type the type of the new subkey
   //! @param[out] subkey the resulting subkey
   //! @return whether the call was successful
-  public bool clingo_statistics_array_push(clingo_statistics_t p_statistics, uint64_t key, clingo_statistics_type_t type, uint64_t p_subkey); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_array_push(clingo_statistics_t *statistics, uint64_t key, clingo_statistics_type_t type, uint64_t *subkey);
+//  public bool clingo_statistics_array_push(clingo_statistics_t p_statistics, uint64_t key, clingo_statistics_type_t type, uint64_t p_subkey); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_array_push(clingo_statistics_t *statistics, uint64_t key, clingo_statistics_type_t type, uint64_t *subkey);
   //! @}
 
   //! @name Functions to access maps
@@ -1736,7 +1736,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] key the key
   //! @param[out] size the resulting number
   //! @return whether the call was successful
-  public bool clingo_statistics_map_size(final clingo_statistics_t p_statistics, uint64_t key, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_map_size(clingo_statistics_t const *statistics, uint64_t key, size_t *size);
+//  public bool clingo_statistics_map_size(final clingo_statistics_t p_statistics, uint64_t key, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_map_size(clingo_statistics_t const *statistics, uint64_t key, size_t *size);
   //! Test if the given map contains a specific subkey.
   //!
   //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
@@ -1745,7 +1745,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] name name of the subkey
   //! @param[out] result true if the map has a subkey with the given name
   //! @return whether the call was successful
-  public bool clingo_statistics_map_has_subkey(final clingo_statistics_t p_statistics, uint64_t key, final c_char p_name, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_map_has_subkey(clingo_statistics_t const *statistics, uint64_t key, char const *name, bool* result);
+//  public bool clingo_statistics_map_has_subkey(final clingo_statistics_t p_statistics, uint64_t key, final c_char p_name, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_map_has_subkey(clingo_statistics_t const *statistics, uint64_t key, char const *name, bool* result);
   //! Get the name associated with the offset-th subkey.
   //!
   //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
@@ -1754,7 +1754,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] offset the offset of the name
   //! @param[out] name the resulting name
   //! @return whether the call was successful
-  public bool clingo_statistics_map_subkey_name(final clingo_statistics_t p_statistics, uint64_t key, size_t offset, final c_char p_p_name); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_map_subkey_name(clingo_statistics_t const *statistics, uint64_t key, size_t offset, char const **name);
+//  public bool clingo_statistics_map_subkey_name(final clingo_statistics_t p_statistics, uint64_t key, size_t offset, final c_char p_p_name); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_map_subkey_name(clingo_statistics_t const *statistics, uint64_t key, size_t offset, char const **name);
   //! Lookup a subkey under the given name.
   //!
   //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
@@ -1764,7 +1764,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] name the name to lookup the subkey
   //! @param[out] subkey the resulting subkey
   //! @return whether the call was successful
-  public bool clingo_statistics_map_at(final clingo_statistics_t p_statistics, uint64_t key, final c_char p_name, uint64_t p_subkey); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_map_at(clingo_statistics_t const *statistics, uint64_t key, char const *name, uint64_t *subkey);
+//  public bool clingo_statistics_map_at(final clingo_statistics_t p_statistics, uint64_t key, final c_char p_name, uint64_t p_subkey); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_map_at(clingo_statistics_t const *statistics, uint64_t key, char const *name, uint64_t *subkey);
   //! Add a subkey with the given name.
   //!
   //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
@@ -1774,7 +1774,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] type the type of the new subkey
   //! @param[out] subkey the index of the resulting subkey
   //! @return whether the call was successful
-  public bool clingo_statistics_map_add_subkey(clingo_statistics_t p_statistics, uint64_t key, final c_char p_name, clingo_statistics_type_t type, uint64_t p_subkey); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_map_add_subkey(clingo_statistics_t *statistics, uint64_t key, char const *name, clingo_statistics_type_t type, uint64_t *subkey);
+//  public bool clingo_statistics_map_add_subkey(clingo_statistics_t p_statistics, uint64_t key, final c_char p_name, clingo_statistics_type_t type, uint64_t p_subkey); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_map_add_subkey(clingo_statistics_t *statistics, uint64_t key, char const *name, clingo_statistics_type_t type, uint64_t *subkey);
   //! @}
 
   //! @name Functions to inspect and change values
@@ -1787,7 +1787,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] key the key
   //! @param[out] value the resulting value
   //! @return whether the call was successful
-  public bool clingo_statistics_value_get(final clingo_statistics_t p_statistics, uint64_t key, double p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_value_get(clingo_statistics_t const *statistics, uint64_t key, double *value);
+//  public bool clingo_statistics_value_get(final clingo_statistics_t p_statistics, uint64_t key, double p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_value_get(clingo_statistics_t const *statistics, uint64_t key, double *value);
   //! Set the value of the given entry.
   //!
   //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_value.
@@ -1795,7 +1795,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] key the key
   //! @param[out] value the new value
   //! @return whether the call was successful
-  public bool clingo_statistics_value_set(clingo_statistics_t p_statistics, uint64_t key, double value); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_value_set(clingo_statistics_t *statistics, uint64_t key, double value);
+//  public bool clingo_statistics_value_set(clingo_statistics_t p_statistics, uint64_t key, double value); // CLINGO_VISIBILITY_DEFAULT bool clingo_statistics_value_set(clingo_statistics_t *statistics, uint64_t key, double value);
   //! @}
 
   //! @}
@@ -1833,10 +1833,10 @@ public interface ClingoLibrary extends Library {
   //! @{
 
   //! Object to add clauses during search.
-  public static final typedef<struct> clingo_solve_control_t = null;
+//  public static final typedef<struct> clingo_solve_control_t = null;
 
   //! Object representing a model.
-  public static final typedef<struct> clingo_model_t = null;
+//  public static final typedef<struct> clingo_model_t = null;
 
   //! Enumeration for the different model types.
   /* enum clingo_model_type_e {
@@ -1845,7 +1845,7 @@ public interface ClingoLibrary extends Library {
       clingo_model_type_cautious_consequences = 2  //!< The model represents a set of cautious consequences.
   }; */ public static final typedef<c_enum> clingo_model_type_e = null;
   //! Corresponding type to ::clingo_model_type.
-  public static final typedef<c_int> clingo_model_type_t = null;
+//  public static final typedef<c_int> clingo_model_type_t = null;
 
   //! Enumeration of bit flags to select symbols in models.
   /* enum clingo_show_type_e {
@@ -1858,7 +1858,7 @@ public interface ClingoLibrary extends Library {
       clingo_show_type_complement = 32  //!< Select false instead of true atoms (::clingo_show_type_atoms) or terms (::clingo_show_type_terms).
   }; */ public static final typedef<c_enum> clingo_show_type_e = null;
   //! Corresponding type to ::clingo_show_type.
-  public static final typedef<unsigned> clingo_show_type_bitset_t = null;
+//  public static final typedef<unsigned> clingo_show_type_bitset_t = null;
 
   //! @name Functions for Inspecting Models
   //! @{
@@ -1868,57 +1868,59 @@ public interface ClingoLibrary extends Library {
   //! @param[in] model the target
   //! @param[out] type the type of the model
   //! @return whether the call was successful
-  public bool clingo_model_type(final clingo_model_t p_model, clingo_model_type_t p_type); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_type(clingo_model_t const *model, clingo_model_type_t *type);
+//  public bool clingo_model_type(final clingo_model_t p_model, clingo_model_type_t p_type); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_type(clingo_model_t const *model, clingo_model_type_t *type);
   //! Get the running number of the model.
   //!
   //! @param[in] model the target
   //! @param[out] number the number of the model
   //! @return whether the call was successful
-  public bool clingo_model_number(final clingo_model_t p_model, uint64_t p_number); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_number(clingo_model_t const *model, uint64_t *number);
-  //! Get the number of symbols of the selected types in the model.
-  //!
-  //! @param[in] model the target
-  //! @param[in] show which symbols to select
-  //! @param[out] size the number symbols
-  //! @return whether the call was successful; might set one of the following error codes:
-  //! - ::clingo_error_bad_alloc
-  public bool clingo_model_symbols_size(final clingo_model_t p_model, clingo_show_type_bitset_t show, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_symbols_size(clingo_model_t const *model, clingo_show_type_bitset_t show, size_t *size);
-  //! Get the symbols of the selected types in the model.
-  //!
-  //! @note CSP assignments are represented using functions with name "$"
-  //! where the first argument is the name of the CSP variable and the second one its
-  //! value.
-  //!
-  //! @param[in] model the target
-  //! @param[in] show which symbols to select
-  //! @param[out] symbols the resulting symbols
-  //! @param[in] size the number of selected symbols
-  //! @return whether the call was successful; might set one of the following error codes:
-  //! - ::clingo_error_bad_alloc
-  //! - ::clingo_error_runtime if the size is too small
-  //!
-  //! @see clingo_model_symbols_size()
-  public bool clingo_model_symbols(final clingo_model_t p_model, clingo_show_type_bitset_t show, clingo_symbol_t p_symbols, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_symbols(clingo_model_t const *model, clingo_show_type_bitset_t show, clingo_symbol_t *symbols, size_t size);
+//  public bool clingo_model_number(final clingo_model_t p_model, uint64_t p_number); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_number(clingo_model_t const *model, uint64_t *number);
+    //! Get the number of symbols of the selected types in the model.
+    //!
+    //! @param[in] model the target
+    //! @param[in] show which symbols to select
+    //! @param[out] size the number symbols
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    /** {@link clingo_h#clingo_model_symbols_size} */
+    public byte clingo_model_symbols_size(Pointer model, int show, SizeByReference size);
+    //! Get the symbols of the selected types in the model.
+    //!
+    //! @note CSP assignments are represented using functions with name "$"
+    //! where the first argument is the name of the CSP variable and the second one its
+    //! value.
+    //!
+    //! @param[in] model the target
+    //! @param[in] show which symbols to select
+    //! @param[out] symbols the resulting symbols. Requires an empty array of the right size as input.
+    //! @param[in] size the number of selected symbols
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    //! - ::clingo_error_runtime if the size is too small
+    //!
+    //! @see clingo_model_symbols_size()
+    /** {@link clingo_h#clingo_model_symbols} */
+    public byte clingo_model_symbols(Pointer p_model, int show, long[] p_symbols, long size);
   //! Constant time lookup to test whether an atom is in a model.
   //!
   //! @param[in] model the target
   //! @param[in] atom the atom to lookup
   //! @param[out] contained whether the atom is contained
   //! @return whether the call was successful
-  public bool clingo_model_contains(final clingo_model_t p_model, clingo_symbol_t atom, bool p_contained); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_contains(clingo_model_t const *model, clingo_symbol_t atom, bool *contained);
+//  public bool clingo_model_contains(final clingo_model_t p_model, clingo_symbol_t atom, bool p_contained); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_contains(clingo_model_t const *model, clingo_symbol_t atom, bool *contained);
   //! Check if a program literal is true in a model.
   //!
   //! @param[in] model the target
   //! @param[in] literal the literal to lookup
   //! @param[out] result whether the literal is true
   //! @return whether the call was successful
-  public bool clingo_model_is_true(final clingo_model_t p_model, clingo_literal_t literal, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_is_true(clingo_model_t const *model, clingo_literal_t literal, bool *result);
+//  public bool clingo_model_is_true(final clingo_model_t p_model, clingo_literal_t literal, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_is_true(clingo_model_t const *model, clingo_literal_t literal, bool *result);
   //! Get the number of cost values of a model.
   //!
   //! @param[in] model the target
   //! @param[out] size the number of costs
   //! @return whether the call was successful
-  public bool clingo_model_cost_size(final clingo_model_t p_model, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_cost_size(clingo_model_t const *model, size_t *size);
+//  public bool clingo_model_cost_size(final clingo_model_t p_model, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_cost_size(clingo_model_t const *model, size_t *size);
   //! Get the cost vector of a model.
   //!
   //! @param[in] model the target
@@ -1930,7 +1932,7 @@ public interface ClingoLibrary extends Library {
   //!
   //! @see clingo_model_cost_size()
   //! @see clingo_model_optimality_proven()
-  public bool clingo_model_cost(final clingo_model_t p_model, int64_t p_costs, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_cost(clingo_model_t const *model, int64_t *costs, size_t size);
+//  public bool clingo_model_cost(final clingo_model_t p_model, int64_t p_costs, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_cost(clingo_model_t const *model, int64_t *costs, size_t size);
   //! Whether the optimality of a model has been proven.
   //!
   //! @param[in] model the target
@@ -1938,13 +1940,13 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful
   //!
   //! @see clingo_model_cost()
-  public bool clingo_model_optimality_proven(final clingo_model_t p_model, bool p_proven); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_optimality_proven(clingo_model_t const *model, bool *proven);
+//  public bool clingo_model_optimality_proven(final clingo_model_t p_model, bool p_proven); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_optimality_proven(clingo_model_t const *model, bool *proven);
   //! Get the id of the solver thread that found the model.
   //!
   //! @param[in] model the target
   //! @param[out] id the resulting thread id
   //! @return whether the call was successful
-  public bool clingo_model_thread_id(final clingo_model_t p_model, clingo_id_t p_id); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_thread_id(clingo_model_t const *model, clingo_id_t *id);
+//  public bool clingo_model_thread_id(final clingo_model_t p_model, clingo_id_t p_id); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_thread_id(clingo_model_t const *model, clingo_id_t *id);
   //! Add symbols to the model.
   //!
   //! These symbols will appear in clingo's output, which means that this
@@ -1955,7 +1957,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] symbols the symbols to add
   //! @param[in] size the number of symbols to add
   //! @return whether the call was successful
-  public bool clingo_model_extend(clingo_model_t p_model, final clingo_symbol_t p_symbols, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_extend(clingo_model_t *model, clingo_symbol_t const *symbols, size_t size);
+//  public bool clingo_model_extend(clingo_model_t p_model, final clingo_symbol_t p_symbols, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_extend(clingo_model_t *model, clingo_symbol_t const *symbols, size_t size);
   //! @}
 
   //! @name Functions for Adding Clauses
@@ -1967,13 +1969,13 @@ public interface ClingoLibrary extends Library {
   //! @param[in] model the target
   //! @param[out] control the resulting solve control object
   //! @return whether the call was successful
-  public bool clingo_model_context(final clingo_model_t p_model, clingo_solve_control_t p_p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_context(clingo_model_t const *model, clingo_solve_control_t **control);
+//  public bool clingo_model_context(final clingo_model_t p_model, clingo_solve_control_t p_p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_context(clingo_model_t const *model, clingo_solve_control_t **control);
   //! Get an object to inspect the symbolic atoms.
   //!
   //! @param[in] control the target
   //! @param[out] atoms the resulting object
   //! @return whether the call was successful
-  public bool clingo_solve_control_symbolic_atoms(final clingo_solve_control_t p_control, final clingo_symbolic_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_control_symbolic_atoms(clingo_solve_control_t const *control, clingo_symbolic_atoms_t const **atoms);
+//  public bool clingo_solve_control_symbolic_atoms(final clingo_solve_control_t p_control, final clingo_symbolic_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_control_symbolic_atoms(clingo_solve_control_t const *control, clingo_symbolic_atoms_t const **atoms);
   //! Add a clause that applies to the current solving step during model
   //! enumeration.
   //!
@@ -1986,7 +1988,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_runtime if adding the clause fails
-  public bool clingo_solve_control_add_clause(clingo_solve_control_t p_control, final clingo_literal_t p_clause, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_control_add_clause(clingo_solve_control_t *control, clingo_literal_t const *clause, size_t size);
+//  public bool clingo_solve_control_add_clause(clingo_solve_control_t p_control, final clingo_literal_t p_clause, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_control_add_clause(clingo_solve_control_t *control, clingo_literal_t const *clause, size_t size);
   //! @}
 
   //! @}
@@ -2000,7 +2002,7 @@ public interface ClingoLibrary extends Library {
       clingo_solve_result_exhausted     = 4,
       clingo_solve_result_interrupted   = 8
   }; */ public static final typedef<c_enum> clingo_solve_result_e = null;
-  public static final typedef<unsigned> clingo_solve_result_bitset_t = null;
+//  public static final typedef<unsigned> clingo_solve_result_bitset_t = null;
 
   // {{{1 solve handle
 
@@ -2043,7 +2045,7 @@ public interface ClingoLibrary extends Library {
       clingo_solve_mode_yield = 2, //!< Yield models in calls to clingo_solve_handle_model.
   }; */ public static final typedef<c_enum> clingo_solve_mode_e = null;
   //! Corresponding type to ::clingo_solve_mode.
-  public static final typedef<unsigned> clingo_solve_mode_bitset_t = null;
+//  public static final typedef<unsigned> clingo_solve_mode_bitset_t = null;
 
   //! Enumeration of solve events.
   /* enum clingo_solve_event_type_e {
@@ -2053,7 +2055,7 @@ public interface ClingoLibrary extends Library {
       clingo_solve_event_type_finish     = 3, //!< Issued if the search has completed.
   }; */ public static final typedef<c_enum> clingo_solve_event_type_e = null;
   //! Corresponding type to ::clingo_solve_event_type.
-  public static final typedef<unsigned> clingo_solve_event_type_t = null;
+//  public static final typedef<unsigned> clingo_solve_event_type_t = null;
 
   //! Callback function called during search to notify when the search is finished or a model is ready.
   //!
@@ -2069,12 +2071,12 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful
   //!
   //! @see clingo_control_solve()
-  public static final typedef<bool> clingo_solve_event_callback_t = null; // typedef bool (*clingo_solve_event_callback_t) (clingo_solve_event_type_t type, void *event, void *data, bool *goon);
+//  public static final typedef<bool> clingo_solve_event_callback_t = null; // typedef bool (*clingo_solve_event_callback_t) (clingo_solve_event_type_t type, void *event, void *data, bool *goon);
 
   //! Search handle to a solve call.
   //!
   //! @see clingo_control_solve()
-  public static final typedef<struct> clingo_solve_handle_t = null; // typedef struct clingo_solve_handle clingo_solve_handle_t;
+//  public static final typedef<struct> clingo_solve_handle_t = null; // typedef struct clingo_solve_handle clingo_solve_handle_t;
 
   //! Get the next solve result.
   //!
@@ -2087,7 +2089,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_runtime if solving fails
-  public bool clingo_solve_handle_get(clingo_solve_handle_t p_handle, clingo_solve_result_bitset_t p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_get(clingo_solve_handle_t *handle, clingo_solve_result_bitset_t *result);
+//  public bool clingo_solve_handle_get(clingo_solve_handle_t p_handle, clingo_solve_result_bitset_t p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_get(clingo_solve_handle_t *handle, clingo_solve_result_bitset_t *result);
   //! Wait for the specified amount of time to check if the next result is ready.
   //!
   //! If the time is set to zero, this function can be used to poll if the search is still active.
@@ -2096,7 +2098,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] handle the target
   //! @param[in] timeout the maximum time to wait
   //! @param[out] result whether the search has finished
-  public void clingo_solve_handle_wait(clingo_solve_handle_t p_handle, double timeout, bool p_result); // CLINGO_VISIBILITY_DEFAULT void clingo_solve_handle_wait(clingo_solve_handle_t *handle, double timeout, bool *result);
+//  public void clingo_solve_handle_wait(clingo_solve_handle_t p_handle, double timeout, bool p_result); // CLINGO_VISIBILITY_DEFAULT void clingo_solve_handle_wait(clingo_solve_handle_t *handle, double timeout, bool *result);
   //! Get the next model (or zero if there are no more models).
   //!
   //! @param[in] handle the target
@@ -2104,7 +2106,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_runtime if solving fails
-  public bool clingo_solve_handle_model(clingo_solve_handle_t p_handle, final clingo_model_t p_p_model); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_model(clingo_solve_handle_t *handle, clingo_model_t const **model);
+//  public bool clingo_solve_handle_model(clingo_solve_handle_t p_handle, final clingo_model_t p_p_model); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_model(clingo_solve_handle_t *handle, clingo_model_t const **model);
   //! When a problem is unsatisfiable, get a subset of the assumptions that made the problem unsatisfiable.
   //!
   //! If the program is not unsatisfiable, core is set to NULL and size to zero.
@@ -2114,7 +2116,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] size size of the given array
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_solve_handle_core(clingo_solve_handle_t p_handle, final clingo_literal_t p_p_core, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_core(clingo_solve_handle_t *handle, clingo_literal_t const **core, size_t *size);
+//  public bool clingo_solve_handle_core(clingo_solve_handle_t p_handle, final clingo_literal_t p_p_core, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_core(clingo_solve_handle_t *handle, clingo_literal_t const **core, size_t *size);
   //! Discards the last model and starts the search for the next one.
   //!
   //! If the search has been started asynchronously, this function continues the search in the background.
@@ -2125,14 +2127,14 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_runtime if solving fails
-  public bool clingo_solve_handle_resume(clingo_solve_handle_t p_handle); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_resume(clingo_solve_handle_t *handle);
+//  public bool clingo_solve_handle_resume(clingo_solve_handle_t p_handle); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_resume(clingo_solve_handle_t *handle);
   //! Stop the running search and block until done.
   //!
   //! @param[in] handle the target
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_runtime if solving fails
-  public bool clingo_solve_handle_cancel(clingo_solve_handle_t p_handle); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_cancel(clingo_solve_handle_t *handle);
+//  public bool clingo_solve_handle_cancel(clingo_solve_handle_t p_handle); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_cancel(clingo_solve_handle_t *handle);
   //! Stops the running search and releases the handle.
   //!
   //! Blocks until the search is stopped (as if an implicit cancel was called before the handle is released).
@@ -2141,7 +2143,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_runtime if solving fails
-  public bool clingo_solve_handle_close(clingo_solve_handle_t p_handle); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_close(clingo_solve_handle_t *handle);
+//  public bool clingo_solve_handle_close(clingo_solve_handle_t p_handle); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_close(clingo_solve_handle_t *handle);
 
   //! @}
   // {{{1 ast v2
@@ -2177,7 +2179,7 @@ public interface ClingoLibrary extends Library {
       clingo_ast_theory_sequence_type_set    //!< Theory sets "{t1,...,tn}".
   }; */ public static final typedef<c_enum> clingo_ast_theory_sequence_type_e = null;
   //! Corresponding type to ::clingo_ast_theory_sequence_type.
-  public static final typedef<c_int> clingo_ast_theory_sequence_type_t = null;
+//  public static final typedef<c_int> clingo_ast_theory_sequence_type_t = null;
 
   //! Enumeration of comparison relations.
   /* enum clingo_ast_comparison_operator_e {
@@ -2189,7 +2191,7 @@ public interface ClingoLibrary extends Library {
       clingo_ast_comparison_operator_equal         = 5  //!< Operator "==".
   }; */ public static final typedef<c_enum> clingo_ast_comparison_operator_e = null;
   //! Corresponding type to ::clingo_ast_comparison_operator.
-  public static final typedef<c_int> clingo_ast_comparison_operator_t = null;
+//  public static final typedef<c_int> clingo_ast_comparison_operator_t = null;
 
   //! Enumeration of signs.
   /* enum clingo_ast_sign_e {
@@ -2198,7 +2200,7 @@ public interface ClingoLibrary extends Library {
       clingo_ast_sign_double_negation = 2  //!< For double negated literals (prefix "not not").
   }; */ public static final typedef<c_enum> clingo_ast_sign_e = null;
   //! Corresponding type to ::clingo_ast_sign_t.
-  public static final typedef<c_int> clingo_ast_sign_t = null;
+//  public static final typedef<c_int> clingo_ast_sign_t = null;
 
   //! Enumeration of unary operators.
   /* enum clingo_ast_unary_operator_e {
@@ -2207,7 +2209,7 @@ public interface ClingoLibrary extends Library {
       clingo_ast_unary_operator_absolute = 2  //!< Operator "|.|".
   }; */ public static final typedef<c_enum> clingo_ast_unary_operator_e = null;
   //! Corresponding type to ::clingo_ast_unary_operator.
-  public static final typedef<c_int> clingo_ast_unary_operator_t = null;
+//  public static final typedef<c_int> clingo_ast_unary_operator_t = null;
 
   //! Enumeration of binary operators.
   /* enum clingo_ast_binary_operator_e {
@@ -2222,7 +2224,7 @@ public interface ClingoLibrary extends Library {
       clingo_ast_binary_operator_power          = 8  //!< Operator "**".
   }; */ public static final typedef<c_enum> clingo_ast_binary_operator_e = null;
   //! Corresponding type to ::clingo_ast_binary_operator.
-  public static final typedef<c_int> clingo_ast_binary_operator_t = null;
+//  public static final typedef<c_int> clingo_ast_binary_operator_t = null;
 
   //! Enumeration of aggregate functions.
   /* enum clingo_ast_aggregate_function_e {
@@ -2233,7 +2235,7 @@ public interface ClingoLibrary extends Library {
       clingo_ast_aggregate_function_max   = 4  //!< Operator "-".
   }; */ public static final typedef<c_enum> clingo_ast_aggregate_function_e = null;
   //! Corresponding type to ::clingo_ast_aggregate_function.
-  public static final typedef<c_int> clingo_ast_aggregate_function_t = null;
+//  public static final typedef<c_int> clingo_ast_aggregate_function_t = null;
 
   //! Enumeration of theory operators.
   /* enum clingo_ast_theory_operator_type_e {
@@ -2242,7 +2244,7 @@ public interface ClingoLibrary extends Library {
        clingo_ast_theory_operator_type_binary_right = 2  //!< A right associative binary operator.
   }; */ public static final typedef<c_enum> clingo_ast_theory_operator_type_e = null;
   //! Corresponding type to ::clingo_ast_theory_operator_type.
-  public static final typedef<c_int> clingo_ast_theory_operator_type_t = null;
+//  public static final typedef<c_int> clingo_ast_theory_operator_type_t = null;
 
   //! Enumeration of the theory atom types.
   /* enum clingo_ast_theory_atom_definition_type_e {
@@ -2252,7 +2254,7 @@ public interface ClingoLibrary extends Library {
       clingo_ast_theory_atom_definition_type_directive = 3  //!< For theory atoms that must not have a body.
   }; */ public static final typedef<c_enum> clingo_ast_theory_atom_definition_type_e = null;
   //! Corresponding type to ::clingo_ast_theory_atom_definition_type.
-  public static final typedef<c_int> clingo_ast_theory_atom_definition_type_t = null;
+//  public static final typedef<c_int> clingo_ast_theory_atom_definition_type_t = null;
 
   //! Enumeration of script types.
   /* enum clingo_ast_script_type_e {
@@ -2260,7 +2262,7 @@ public interface ClingoLibrary extends Library {
       clingo_ast_script_type_python = 1  //!< For Python scripts.
   }; */ public static final typedef<c_enum> clingo_ast_script_type_e = null;
   //! Corresponding type to ::clingo_ast_script_type.
-  public static final typedef<c_int> clingo_ast_script_type_t = null;
+//  public static final typedef<c_int> clingo_ast_script_type_t = null;
 
   //! Enumeration of AST types.
   /* enum clingo_ast_type_e {
@@ -2325,7 +2327,7 @@ public interface ClingoLibrary extends Library {
       clingo_ast_type_theory_definition
   }; */ public static final typedef<c_enum> clingo_ast_type_e = null;
   //! Corresponding type to ::clingo_ast_type.
-  public static final typedef<c_int> clingo_ast_type_t = null;
+//  public static final typedef<c_int> clingo_ast_type_t = null;
 
   //! Enumeration of attributes types used by the AST.
   /* enum clingo_ast_attribute_type_e {
@@ -2339,7 +2341,7 @@ public interface ClingoLibrary extends Library {
       clingo_ast_attribute_type_ast_array    = 7, //!< For an attribute of type "clingo_ast_t **".
   }; */ public static final typedef<c_enum> clingo_ast_attribute_type_e = null;
   //! Corresponding type to ::clingo_ast_attribute_type.
-  public static final typedef<c_int> clingo_ast_attribute_type_t = null;
+//  public static final typedef<c_int> clingo_ast_attribute_type_t = null;
 
   //! Enumeration of attributes used by the AST.
   /* enum clingo_ast_attribute_e {
@@ -2391,7 +2393,7 @@ public interface ClingoLibrary extends Library {
       clingo_ast_attribute_weight,
   }; */ public static final typedef<c_enum> clingo_ast_attribute_e = null;
   //! Corresponding type to ::clingo_ast_attribute.
-  public static final typedef<c_int> clingo_ast_attribute_t = null;
+//  public static final typedef<c_int> clingo_ast_attribute_t = null;
 
   //! Struct to map attributes to their string representation.
   /* typedef struct clingo_ast_attribute_names {
@@ -2400,7 +2402,7 @@ public interface ClingoLibrary extends Library {
   } clingo_ast_attribute_names_t; */ public static final typedef<struct> clingo_ast_attribute_names_t = null;
 
   //! A map from attributes to their string representation.
-  public static clingo_ast_attribute_names_t g_clingo_ast_attribute_names = null; // CLINGO_VISIBILITY_DEFAULT extern clingo_ast_attribute_names_t g_clingo_ast_attribute_names;
+//  public static clingo_ast_attribute_names_t g_clingo_ast_attribute_names = null; // CLINGO_VISIBILITY_DEFAULT extern clingo_ast_attribute_names_t g_clingo_ast_attribute_names;
 
   //! Struct to define an argument that consists of a name and a type.
   /* typedef struct clingo_ast_argument {
@@ -2424,10 +2426,10 @@ public interface ClingoLibrary extends Library {
   //! A map from AST types to their constructors.
   //!
   //! @note The idea of this variable is to provide enough information to auto-generate code for language bindings.
-  public static final clingo_ast_constructors_t g_clingo_ast_constructors = null; // CLINGO_VISIBILITY_DEFAULT extern clingo_ast_constructors_t g_clingo_ast_constructors;
+//  public static final clingo_ast_constructors_t g_clingo_ast_constructors = null; // CLINGO_VISIBILITY_DEFAULT extern clingo_ast_constructors_t g_clingo_ast_constructors;
 
   //! This struct provides a view to nodes in the AST.
-  public static final typedef<struct> clingo_ast_t = null;
+//  public static final typedef<struct> clingo_ast_t = null;
 
   //! @name Functions to construct ASTs
   //! @{
@@ -2441,7 +2443,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_runtime if one of the arguments is incompatible with the type
-  public bool clingo_ast_build(clingo_ast_type_t type, clingo_ast_t p_p_ast, Object... objects); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_build(clingo_ast_type_t type, clingo_ast_t **ast, ...);
+//  public bool clingo_ast_build(clingo_ast_type_t type, clingo_ast_t p_p_ast, Object... objects); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_build(clingo_ast_type_t type, clingo_ast_t **ast, ...);
 
   //! @}
 
@@ -2454,13 +2456,13 @@ public interface ClingoLibrary extends Library {
   //! The reference count of callback arguments is not incremented.
   //!
   //! @param[in] ast the target AST
-  public void clingo_ast_acquire(clingo_ast_t p_ast); // CLINGO_VISIBILITY_DEFAULT void clingo_ast_acquire(clingo_ast_t *ast);
+//  public void clingo_ast_acquire(clingo_ast_t p_ast); // CLINGO_VISIBILITY_DEFAULT void clingo_ast_acquire(clingo_ast_t *ast);
   //! Decrement the reference count of an AST node.
   //!
   //! @note The node is deleted if the reference count reaches zero.
   //!
   //! @param[in] ast the target AST
-  public void clingo_ast_release(clingo_ast_t p_ast); // CLINGO_VISIBILITY_DEFAULT void clingo_ast_release(clingo_ast_t *ast);
+//  public void clingo_ast_release(clingo_ast_t p_ast); // CLINGO_VISIBILITY_DEFAULT void clingo_ast_release(clingo_ast_t *ast);
 
   //! @}
 
@@ -2473,14 +2475,14 @@ public interface ClingoLibrary extends Library {
   //! @param[out] copy the resulting AST
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_ast_copy(clingo_ast_t p_ast, clingo_ast_t p_p_copy); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_copy(clingo_ast_t *ast, clingo_ast_t **copy);
+//  public bool clingo_ast_copy(clingo_ast_t p_ast, clingo_ast_t p_p_copy); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_copy(clingo_ast_t *ast, clingo_ast_t **copy);
   //! Create a shallow copy of an AST node.
   //!
   //! @param[in] ast the AST to copy
   //! @param[out] copy the resulting AST
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_ast_deep_copy(clingo_ast_t p_ast, clingo_ast_t p_p_copy); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_deep_copy(clingo_ast_t *ast, clingo_ast_t **copy);
+//  public bool clingo_ast_deep_copy(clingo_ast_t p_ast, clingo_ast_t p_p_copy); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_deep_copy(clingo_ast_t *ast, clingo_ast_t **copy);
 
   //! @}
 
@@ -2492,18 +2494,18 @@ public interface ClingoLibrary extends Library {
   //! @param[in] a the left-hand-side AST
   //! @param[in] b the right-hand-side AST
   //! @return the result of the comparison
-  public bool clingo_ast_less_than(clingo_ast_t p_a, clingo_ast_t p_b); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_less_than(clingo_ast_t *a, clingo_ast_t *b);
+//  public bool clingo_ast_less_than(clingo_ast_t p_a, clingo_ast_t p_b); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_less_than(clingo_ast_t *a, clingo_ast_t *b);
   //! Equality compare two AST nodes.
   //!
   //! @param[in] a the left-hand-side AST
   //! @param[in] b the right-hand-side AST
   //! @return the result of the comparison
-  public bool clingo_ast_equal(clingo_ast_t p_a, clingo_ast_t p_b); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_equal(clingo_ast_t *a, clingo_ast_t *b);
+//  public bool clingo_ast_equal(clingo_ast_t p_a, clingo_ast_t p_b); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_equal(clingo_ast_t *a, clingo_ast_t *b);
   //! Compute a hash for an AST node.
   //!
   //! @param[in] ast the target AST
   //! @return the resulting hash code
-  public size_t clingo_ast_hash(clingo_ast_t p_ast); // CLINGO_VISIBILITY_DEFAULT size_t clingo_ast_hash(clingo_ast_t *ast);
+//  public size_t clingo_ast_hash(clingo_ast_t p_ast); // CLINGO_VISIBILITY_DEFAULT size_t clingo_ast_hash(clingo_ast_t *ast);
 
   //! @}
 
@@ -2516,7 +2518,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] size the size of the string representation
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_to_string_size(clingo_ast_t p_ast, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_to_string_size(clingo_ast_t *ast, size_t *size);
+//  public bool clingo_ast_to_string_size(clingo_ast_t p_ast, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_to_string_size(clingo_ast_t *ast, size_t *size);
   //! Get the string representation of an AST node.
   //!
   //! @param[in] ast the target AST
@@ -2524,7 +2526,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] size the size of the string representation
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_to_string(clingo_ast_t p_ast, char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_to_string(clingo_ast_t *ast, char *string, size_t size);
+//  public bool clingo_ast_to_string(clingo_ast_t p_ast, char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_to_string(clingo_ast_t *ast, char *string, size_t size);
 
   //! @}
 
@@ -2537,7 +2539,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] type the resulting type
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_get_type(clingo_ast_t p_ast, clingo_ast_type_t p_type); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_get_type(clingo_ast_t *ast, clingo_ast_type_t *type);
+//  public bool clingo_ast_get_type(clingo_ast_t p_ast, clingo_ast_type_t p_type); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_get_type(clingo_ast_t *ast, clingo_ast_type_t *type);
   //! Check if an AST has the given attribute.
   //!
   //! @param[in] ast the target AST
@@ -2545,7 +2547,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] has_attribute the result
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_has_attribute(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, bool p_has_attribute); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_has_attribute(clingo_ast_t *ast, clingo_ast_attribute_t attribute, bool *has_attribute);
+//  public bool clingo_ast_has_attribute(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, bool p_has_attribute); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_has_attribute(clingo_ast_t *ast, clingo_ast_attribute_t attribute, bool *has_attribute);
   //! Get the type of the given AST.
   //!
   //! @param[in] ast the target AST
@@ -2553,7 +2555,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] type the resulting type
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_type(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_ast_attribute_type_t p_type); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_type(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_ast_attribute_type_t *type);
+//  public bool clingo_ast_attribute_type(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_ast_attribute_type_t p_type); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_type(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_ast_attribute_type_t *type);
 
   //! @}
 
@@ -2567,7 +2569,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] value the resulting value
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_get_number(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, int p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_number(clingo_ast_t *ast, clingo_ast_attribute_t attribute, int *value);
+//  public bool clingo_ast_attribute_get_number(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, int p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_number(clingo_ast_t *ast, clingo_ast_attribute_t attribute, int *value);
   //! Set the value of an attribute of type "clingo_ast_attribute_type_number".
   //!
   //! @param[in] ast the target AST
@@ -2575,7 +2577,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] value the value
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_set_number(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, int value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_number(clingo_ast_t *ast, clingo_ast_attribute_t attribute, int value);
+//  public bool clingo_ast_attribute_set_number(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, int value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_number(clingo_ast_t *ast, clingo_ast_attribute_t attribute, int value);
 
   //! @}
 
@@ -2589,7 +2591,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] value the resulting value
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_get_symbol(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_symbol_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_symbol(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_symbol_t *value);
+//  public bool clingo_ast_attribute_get_symbol(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_symbol_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_symbol(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_symbol_t *value);
   //! Set the value of an attribute of type "clingo_ast_attribute_type_symbol".
   //!
   //! @param[in] ast the target AST
@@ -2597,7 +2599,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] value the value
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_set_symbol(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_symbol_t value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_symbol(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_symbol_t value);
+//  public bool clingo_ast_attribute_set_symbol(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_symbol_t value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_symbol(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_symbol_t value);
 
   //! @}
 
@@ -2611,7 +2613,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] value the resulting value
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_get_location(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_location_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_location(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_location_t *value);
+//  public bool clingo_ast_attribute_get_location(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_location_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_location(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_location_t *value);
   //! Set the value of an attribute of type "clingo_ast_attribute_type_location".
   //!
   //! @param[in] ast the target AST
@@ -2619,7 +2621,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] value the value
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_set_location(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, final clingo_location_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_location(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_location_t const *value);
+//  public bool clingo_ast_attribute_set_location(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, final clingo_location_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_location(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_location_t const *value);
 
   //! @}
 
@@ -2633,7 +2635,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] value the resulting value
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_get_string(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, final c_char p_p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_string(clingo_ast_t *ast, clingo_ast_attribute_t attribute, char const **value);
+//  public bool clingo_ast_attribute_get_string(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, final c_char p_p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_string(clingo_ast_t *ast, clingo_ast_attribute_t attribute, char const **value);
   //! Set the value of an attribute of type "clingo_ast_attribute_type_string".
   //!
   //! @param[in] ast the target AST
@@ -2641,7 +2643,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] value the value
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_set_string(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, final c_char p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_string(clingo_ast_t *ast, clingo_ast_attribute_t attribute, char const *value);
+//  public bool clingo_ast_attribute_set_string(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, final c_char p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_string(clingo_ast_t *ast, clingo_ast_attribute_t attribute, char const *value);
 
   //! @}
 
@@ -2655,7 +2657,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] value the resulting value
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_get_ast(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_ast_t p_p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_ast(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_ast_t **value);
+//  public bool clingo_ast_attribute_get_ast(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_ast_t p_p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_ast(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_ast_t **value);
   //! Set the value of an attribute of type "clingo_ast_attribute_type_ast".
   //!
   //! @param[in] ast the target AST
@@ -2663,7 +2665,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] value the value
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_set_ast(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_ast_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_ast(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_ast_t *value);
+//  public bool clingo_ast_attribute_set_ast(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_ast_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_ast(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_ast_t *value);
 
   //! @}
 
@@ -2679,7 +2681,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] value the resulting value
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_get_optional_ast(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_ast_t p_p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_optional_ast(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_ast_t **value);
+//  public bool clingo_ast_attribute_get_optional_ast(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_ast_t p_p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_optional_ast(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_ast_t **value);
   //! Set the value of an attribute of type "clingo_ast_attribute_type_optional_ast".
   //!
   //! @note The value might be "NULL".
@@ -2689,7 +2691,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] value the value
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_set_optional_ast(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_ast_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_optional_ast(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_ast_t *value);
+//  public bool clingo_ast_attribute_set_optional_ast(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, clingo_ast_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_optional_ast(clingo_ast_t *ast, clingo_ast_attribute_t attribute, clingo_ast_t *value);
 
   //! @}
 
@@ -2704,7 +2706,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] value the resulting value
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_get_string_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index, final c_char p_p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_string_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index, char const **value);
+//  public bool clingo_ast_attribute_get_string_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index, final c_char p_p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_string_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index, char const **value);
   //! Set the value of an attribute of type "clingo_ast_attribute_type_string_array" at the given index.
   //!
   //! @param[in] ast the target AST
@@ -2714,7 +2716,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
   //! - ::clingo_error_bad_alloc
-  public bool clingo_ast_attribute_set_string_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index, final c_char p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_string_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index, char const *value);
+//  public bool clingo_ast_attribute_set_string_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index, final c_char p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_string_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index, char const *value);
   //! Remove an element from an attribute of type "clingo_ast_attribute_type_string_array" at the given index.
   //!
   //! @param[in] ast the target AST
@@ -2722,7 +2724,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] index the target index
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_delete_string_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_delete_string_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index);
+//  public bool clingo_ast_attribute_delete_string_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_delete_string_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index);
   //! Get the size of an attribute of type "clingo_ast_attribute_type_string_array".
   //!
   //! @param[in] ast the target AST
@@ -2730,7 +2732,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] size the resulting size
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_size_string_array(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_size_string_array(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t *size);
+//  public bool clingo_ast_attribute_size_string_array(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_size_string_array(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t *size);
   //! Insert a value into an attribute of type "clingo_ast_attribute_type_string_array" at the given index.
   //!
   //! @param[in] ast the target AST
@@ -2740,7 +2742,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
   //! - ::clingo_error_bad_alloc
-  public bool clingo_ast_attribute_insert_string_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index, final c_char p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_insert_string_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index, char const *value);
+//  public bool clingo_ast_attribute_insert_string_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index, final c_char p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_insert_string_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index, char const *value);
 
   //! @}
 
@@ -2755,7 +2757,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] value the resulting value
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_get_ast_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index, clingo_ast_t p_p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_ast_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index, clingo_ast_t **value);
+//  public bool clingo_ast_attribute_get_ast_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index, clingo_ast_t p_p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_get_ast_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index, clingo_ast_t **value);
   //! Set the value of an attribute of type "clingo_ast_attribute_type_ast_array" at the given index.
   //!
   //! @param[in] ast the target AST
@@ -2765,7 +2767,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
   //! - ::clingo_error_bad_alloc
-  public bool clingo_ast_attribute_set_ast_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index, clingo_ast_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_ast_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index, clingo_ast_t *value);
+//  public bool clingo_ast_attribute_set_ast_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index, clingo_ast_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_set_ast_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index, clingo_ast_t *value);
   //! Remove an element from an attribute of type "clingo_ast_attribute_type_ast_array" at the given index.
   //!
   //! @param[in] ast the target AST
@@ -2773,7 +2775,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] index the target index
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_delete_ast_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_delete_ast_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index);
+//  public bool clingo_ast_attribute_delete_ast_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_delete_ast_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index);
   //! Get the size of an attribute of type "clingo_ast_attribute_type_ast_array".
   //!
   //! @param[in] ast the target AST
@@ -2781,7 +2783,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] size the resulting size
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
-  public bool clingo_ast_attribute_size_ast_array(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_size_ast_array(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t *size);
+//  public bool clingo_ast_attribute_size_ast_array(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_size_ast_array(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t *size);
   //! Insert a value into an attribute of type "clingo_ast_attribute_type_ast_array" at the given index.
   //!
   //! @param[in] ast the target AST
@@ -2791,7 +2793,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime
   //! - ::clingo_error_bad_alloc
-  public bool clingo_ast_attribute_insert_ast_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index, clingo_ast_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_insert_ast_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index, clingo_ast_t *value);
+//  public bool clingo_ast_attribute_insert_ast_at(clingo_ast_t p_ast, clingo_ast_attribute_t attribute, size_t index, clingo_ast_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_attribute_insert_ast_at(clingo_ast_t *ast, clingo_ast_attribute_t attribute, size_t index, clingo_ast_t *value);
 
   //! @}
 
@@ -2803,7 +2805,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] ast the AST
   //! @param[in] data a user data pointer
   //! @return whether the call was successful
-  public static final typedef<bool> clingo_ast_callback_t = null; // typedef bool (*clingo_ast_callback_t) (clingo_ast_t *ast, void *data);
+//  public static final typedef<bool> clingo_ast_callback_t = null; // typedef bool (*clingo_ast_callback_t) (clingo_ast_t *ast, void *data);
   //! Parse the given program and return an abstract syntax tree for each statement via a callback.
   //!
   //! @param[in] program the program in gringo syntax
@@ -2815,7 +2817,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime if parsing fails
   //! - ::clingo_error_bad_alloc
-  public bool clingo_ast_parse_string(final c_char p_program, clingo_ast_callback_t callback, c_void p_callback_data, clingo_logger_t logger, c_void p_logger_data, unsigned message_limit); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_parse_string(char const *program, clingo_ast_callback_t callback, void *callback_data, clingo_logger_t logger, void *logger_data, unsigned message_limit);
+//  public bool clingo_ast_parse_string(final c_char p_program, clingo_ast_callback_t callback, c_void p_callback_data, clingo_logger_t logger, c_void p_logger_data, unsigned message_limit); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_parse_string(char const *program, clingo_ast_callback_t callback, void *callback_data, clingo_logger_t logger, void *logger_data, unsigned message_limit);
   //! Parse the programs in the given list of files and return an abstract syntax tree for each statement via a callback.
   //!
   //! The function follows clingo's handling of files on the command line.
@@ -2831,12 +2833,12 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime if parsing fails
   //! - ::clingo_error_bad_alloc
-  public bool clingo_ast_parse_files(c_char const_p_const_p_files, size_t size, clingo_ast_callback_t callback, c_void p_callback_data, clingo_logger_t logger, c_void p_logger_data, unsigned message_limit); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_parse_files(char const * const *files, size_t size, clingo_ast_callback_t callback, void *callback_data, clingo_logger_t logger, void *logger_data, unsigned message_limit);
+//  public bool clingo_ast_parse_files(c_char const_p_const_p_files, size_t size, clingo_ast_callback_t callback, c_void p_callback_data, clingo_logger_t logger, c_void p_logger_data, unsigned message_limit); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_parse_files(char const * const *files, size_t size, clingo_ast_callback_t callback, void *callback_data, clingo_logger_t logger, void *logger_data, unsigned message_limit);
 
   //! @}
 
   //! Object to build non-ground programs.
-  public static final typedef<struct> clingo_program_builder_t = null; // typedef struct clingo_program_builder clingo_program_builder_t;
+//  public static final typedef<struct> clingo_program_builder_t = null; // typedef struct clingo_program_builder clingo_program_builder_t;
 
   //! @name Functions to add ASTs to logic programs
   //! @{
@@ -2845,12 +2847,12 @@ public interface ClingoLibrary extends Library {
   //!
   //! @param[in] builder the target program builder
   //! @return whether the call was successful
-  public bool clingo_program_builder_begin(clingo_program_builder_t p_builder); // CLINGO_VISIBILITY_DEFAULT bool clingo_program_builder_begin(clingo_program_builder_t *builder);
+//  public bool clingo_program_builder_begin(clingo_program_builder_t p_builder); // CLINGO_VISIBILITY_DEFAULT bool clingo_program_builder_begin(clingo_program_builder_t *builder);
   //! End building a program.
   //!
   //! @param[in] builder the target program builder
   //! @return whether the call was successful
-  public bool clingo_program_builder_end(clingo_program_builder_t p_builder); // CLINGO_VISIBILITY_DEFAULT bool clingo_program_builder_end(clingo_program_builder_t *builder);
+//  public bool clingo_program_builder_end(clingo_program_builder_t p_builder); // CLINGO_VISIBILITY_DEFAULT bool clingo_program_builder_end(clingo_program_builder_t *builder);
   //! Adds a statement to the program.
   //!
   //! @attention @ref clingo_program_builder_begin() must be called before adding statements and @ref clingo_program_builder_end() must be called after all statements have been added.
@@ -2859,7 +2861,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_runtime for statements of invalid form or AST nodes that do not represent statements
   //! - ::clingo_error_bad_alloc
-  public bool clingo_program_builder_add(clingo_program_builder_t p_builder, clingo_ast_t p_ast); // CLINGO_VISIBILITY_DEFAULT bool clingo_program_builder_add(clingo_program_builder_t *builder, clingo_ast_t *ast);
+//  public bool clingo_program_builder_add(clingo_program_builder_t p_builder, clingo_ast_t p_ast); // CLINGO_VISIBILITY_DEFAULT bool clingo_program_builder_add(clingo_program_builder_t *builder, clingo_ast_t *ast);
 
   //! @}
 
@@ -2873,7 +2875,7 @@ public interface ClingoLibrary extends Library {
       clingo_ast_unpool_type_all = 3,       //!< To unpool everything.
   }; */ public static final typedef<c_enum> clingo_ast_unpool_type_e = null;
   //! Corresponding type to ::clingo_ast_unpool_type.
-  public static final typedef<c_int> clingo_ast_unpool_type_bitset_t = null;
+//  public static final typedef<c_int> clingo_ast_unpool_type_bitset_t = null;
 
   //! Unpool the given AST.
   //!
@@ -2883,7 +2885,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] callback_data user data for the callback
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_ast_unpool(clingo_ast_t p_ast, clingo_ast_unpool_type_bitset_t unpool_type, clingo_ast_callback_t callback, c_void p_callback_data); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_unpool(clingo_ast_t *ast, clingo_ast_unpool_type_bitset_t unpool_type, clingo_ast_callback_t callback, void *callback_data);
+//  public bool clingo_ast_unpool(clingo_ast_t p_ast, clingo_ast_unpool_type_bitset_t unpool_type, clingo_ast_callback_t callback, c_void p_callback_data); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_unpool(clingo_ast_t *ast, clingo_ast_unpool_type_bitset_t unpool_type, clingo_ast_callback_t callback, void *callback_data);
 
   //! @}
 
@@ -3196,10 +3198,10 @@ public interface ClingoLibrary extends Library {
   //!   return false;
   //! }
   //! ~~~~~~~~~~~~~~~
-  public static final typedef<bool> clingo_ground_callback_t = null; // typedef bool (*clingo_ground_callback_t) (clingo_location_t const *location, char const *name, clingo_symbol_t const *arguments, size_t arguments_size, void *data, clingo_symbol_callback_t symbol_callback, void *symbol_callback_data);
+//  public static final typedef<bool> clingo_ground_callback_t = null; // typedef bool (*clingo_ground_callback_t) (clingo_location_t const *location, char const *name, clingo_symbol_t const *arguments, size_t arguments_size, void *data, clingo_symbol_callback_t symbol_callback, void *symbol_callback_data);
 
   //! Control object holding grounding and solving state.
-  public static final typedef<struct> clingo_control_t = null; // typedef struct clingo_control clingo_control_t;
+//  public static final typedef<struct> clingo_control_t = null; // typedef struct clingo_control clingo_control_t;
 
   //! Create a new control object.
   //!
@@ -3221,11 +3223,11 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_runtime if argument parsing fails
-  public bool clingo_control_new(c_char const_p_const_p_arguments, size_t arguments_size, clingo_logger_t logger, c_void p_logger_data, unsigned message_limit, clingo_control_t p_p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_new(char const *const * arguments, size_t arguments_size, clingo_logger_t logger, void *logger_data, unsigned message_limit, clingo_control_t **control);
+//  public bool clingo_control_new(c_char const_p_const_p_arguments, size_t arguments_size, clingo_logger_t logger, c_void p_logger_data, unsigned message_limit, clingo_control_t p_p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_new(char const *const * arguments, size_t arguments_size, clingo_logger_t logger, void *logger_data, unsigned message_limit, clingo_control_t **control);
 
   //! Free a control object created with clingo_control_new().
   //! @param[in] control the target
-  public void clingo_control_free(clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT void clingo_control_free(clingo_control_t *control);
+//  public void clingo_control_free(clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT void clingo_control_free(clingo_control_t *control);
 
   //! @name Grounding Functions
   //! @{
@@ -3237,7 +3239,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_runtime if parsing or checking fails
-  public bool clingo_control_load(clingo_control_t p_control, final c_char p_file); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_load(clingo_control_t *control, char const *file);
+//  public bool clingo_control_load(clingo_control_t p_control, final c_char p_file); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_load(clingo_control_t *control, char const *file);
 
   //! Extend the logic program with the given non-ground logic program in string form.
   //!
@@ -3253,7 +3255,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_runtime if parsing fails
-  public bool clingo_control_add(clingo_control_t p_control, final c_char p_name, c_char const_p_const_p_parameters, size_t parameters_size, final c_char p_program); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_add(clingo_control_t *control, char const *name, char const * const * parameters, size_t parameters_size, char const *program);
+//  public bool clingo_control_add(clingo_control_t p_control, final c_char p_name, c_char const_p_const_p_parameters, size_t parameters_size, final c_char p_program); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_add(clingo_control_t *control, char const *name, char const * const * parameters, size_t parameters_size, char const *program);
 
   //! Ground the selected @link ::clingo_part parts @endlink of the current (non-ground) logic program.
   //!
@@ -3273,7 +3275,7 @@ public interface ClingoLibrary extends Library {
   //! - error code of ground callback
   //!
   //! @see clingo_part
-  public bool clingo_control_ground(clingo_control_t p_control, final clingo_part_t p_parts, size_t parts_size, clingo_ground_callback_t ground_callback, c_void p_ground_callback_data); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_ground(clingo_control_t *control, clingo_part_t const *parts, size_t parts_size, clingo_ground_callback_t ground_callback, void *ground_callback_data);
+//  public bool clingo_control_ground(clingo_control_t p_control, final clingo_part_t p_parts, size_t parts_size, clingo_ground_callback_t ground_callback, c_void p_ground_callback_data); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_ground(clingo_control_t *control, clingo_part_t const *parts, size_t parts_size, clingo_ground_callback_t ground_callback, void *ground_callback_data);
 
   //! @}
 
@@ -3294,7 +3296,7 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
   //! - ::clingo_error_runtime if solving could not be started
-  public bool clingo_control_solve(clingo_control_t p_control, clingo_solve_mode_bitset_t mode, final clingo_literal_t p_assumptions, size_t assumptions_size, clingo_solve_event_callback_t notify, c_void p_data, clingo_solve_handle_t p_p_handle); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_solve(clingo_control_t *control, clingo_solve_mode_bitset_t mode, clingo_literal_t const *assumptions, size_t assumptions_size, clingo_solve_event_callback_t notify, void *data, clingo_solve_handle_t **handle);
+//  public bool clingo_control_solve(clingo_control_t p_control, clingo_solve_mode_bitset_t mode, final clingo_literal_t p_assumptions, size_t assumptions_size, clingo_solve_event_callback_t notify, c_void p_data, clingo_solve_handle_t p_p_handle); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_solve(clingo_control_t *control, clingo_solve_mode_bitset_t mode, clingo_literal_t const *assumptions, size_t assumptions_size, clingo_solve_event_callback_t notify, void *data, clingo_solve_handle_t **handle);
   //! Clean up the domains of the grounding component using the solving
   //! component's top level assignment.
   //!
@@ -3312,7 +3314,7 @@ public interface ClingoLibrary extends Library {
   //!
   //! @see clingo_control_get_enable_cleanup()
   //! @see clingo_control_set_enable_cleanup()
-  public bool clingo_control_cleanup(clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_cleanup(clingo_control_t *control);
+//  public bool clingo_control_cleanup(clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_cleanup(clingo_control_t *control);
   //! Assign a truth value to an external atom.
   //!
   //! If a negative literal is passed, the corresponding atom is assigned the
@@ -3325,7 +3327,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] value the truth value
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_control_assign_external(clingo_control_t p_control, clingo_literal_t literal, clingo_truth_value_t value); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_assign_external(clingo_control_t *control, clingo_literal_t literal, clingo_truth_value_t value);
+//  public bool clingo_control_assign_external(clingo_control_t p_control, clingo_literal_t literal, clingo_truth_value_t value); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_assign_external(clingo_control_t *control, clingo_literal_t literal, clingo_truth_value_t value);
   //! Release an external atom.
   //!
   //! If a negative literal is passed, the corresponding atom is released.
@@ -3338,7 +3340,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] literal literal to release
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_control_release_external(clingo_control_t p_control, clingo_literal_t literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_release_external(clingo_control_t *control, clingo_literal_t literal);
+//  public bool clingo_control_release_external(clingo_control_t p_control, clingo_literal_t literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_release_external(clingo_control_t *control, clingo_literal_t literal);
   //! Register a custom propagator with the control object.
   //!
   //! If the sequential flag is set to true, the propagator is called
@@ -3352,7 +3354,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] sequential whether the propagator should be called sequentially
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_control_register_propagator(clingo_control_t p_control, final clingo_propagator_t p_propagator, c_void p_data, bool sequential); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_register_propagator(clingo_control_t *control, clingo_propagator_t const *propagator, void *data, bool sequential);
+//  public bool clingo_control_register_propagator(clingo_control_t p_control, final clingo_propagator_t p_propagator, c_void p_data, bool sequential); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_register_propagator(clingo_control_t *control, clingo_propagator_t const *propagator, void *data, bool sequential);
   //! Check if the solver has determined that the internal program representation is conflicting.
   //!
   //! If this function returns true, solve calls will return immediately with an unsatisfiable solve result.
@@ -3363,7 +3365,7 @@ public interface ClingoLibrary extends Library {
   //!
   //! @param[in] control the target
   //! @return whether the program representation is conflicting
-  public bool clingo_control_is_conflicting(final clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_is_conflicting(clingo_control_t const *control);
+//  public bool clingo_control_is_conflicting(final clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_is_conflicting(clingo_control_t const *control);
 
   //! Get a statistics object to inspect solver statistics.
   //!
@@ -3384,11 +3386,11 @@ public interface ClingoLibrary extends Library {
   //! @param[out] statistics the statistics object
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_control_statistics(final clingo_control_t p_control, final clingo_statistics_t p_p_statistics); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_statistics(clingo_control_t const *control, clingo_statistics_t const **statistics);
+//  public bool clingo_control_statistics(final clingo_control_t p_control, final clingo_statistics_t p_p_statistics); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_statistics(clingo_control_t const *control, clingo_statistics_t const **statistics);
   //! Interrupt the active solve call (or the following solve call right at the beginning).
   //!
   //! @param[in] control the target
-  public void clingo_control_interrupt(clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT void clingo_control_interrupt(clingo_control_t *control);
+//  public void clingo_control_interrupt(clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT void clingo_control_interrupt(clingo_control_t *control);
   //! Get low-level access to clasp.
   //!
   //! @attention
@@ -3400,7 +3402,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] control the target
   //! @param[out] clasp pointer to the ClaspFacade object (may be <code>nullptr</code>)
   //! @return whether the call was successful
-  public bool clingo_control_clasp_facade(clingo_control_t p_control, c_void p_p_clasp); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_clasp_facade(clingo_control_t *control, void **clasp);
+//  public bool clingo_control_clasp_facade(clingo_control_t p_control, c_void p_p_clasp); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_clasp_facade(clingo_control_t *control, void **clasp);
 
   //! @}
 
@@ -3414,7 +3416,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] control the target
   //! @param[out] configuration the configuration object
   //! @return whether the call was successful
-  public bool clingo_control_configuration(clingo_control_t p_control, clingo_configuration_t p_p_configuration); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_configuration(clingo_control_t *control, clingo_configuration_t **configuration);
+//  public bool clingo_control_configuration(clingo_control_t p_control, clingo_configuration_t p_p_configuration); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_configuration(clingo_control_t *control, clingo_configuration_t **configuration);
 
   //! Configure how learnt constraints are handled during enumeration.
   //!
@@ -3431,13 +3433,13 @@ public interface ClingoLibrary extends Library {
   //! @param[in] control the target
   //! @param[in] enable whether to enable the assumption
   //! @return whether the call was successful
-  public bool clingo_control_set_enable_enumeration_assumption(clingo_control_t p_control, bool enable); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_set_enable_enumeration_assumption(clingo_control_t *control, bool enable);
+//  public bool clingo_control_set_enable_enumeration_assumption(clingo_control_t p_control, bool enable); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_set_enable_enumeration_assumption(clingo_control_t *control, bool enable);
   //! Check whether the enumeration assumption is enabled.
   //!
   //! See ::clingo_control_set_enable_enumeration_assumption().
   //! @param[in] control the target
   //! @return whether using the enumeration assumption is enabled
-  public bool clingo_control_get_enable_enumeration_assumption(clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_get_enable_enumeration_assumption(clingo_control_t *control);
+//  public bool clingo_control_get_enable_enumeration_assumption(clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_get_enable_enumeration_assumption(clingo_control_t *control);
 
   //! Enable automatic cleanup after solving.
   //!
@@ -3449,7 +3451,7 @@ public interface ClingoLibrary extends Library {
   //!
   //! @see clingo_control_cleanup()
   //! @see clingo_control_get_enable_cleanup()
-  public bool clingo_control_set_enable_cleanup(clingo_control_t p_control, bool enable); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_set_enable_cleanup(clingo_control_t *control, bool enable);
+//  public bool clingo_control_set_enable_cleanup(clingo_control_t p_control, bool enable); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_set_enable_cleanup(clingo_control_t *control, bool enable);
   //! Check whether automatic cleanup is enabled.
   //!
   //! See ::clingo_control_set_enable_cleanup().
@@ -3458,7 +3460,7 @@ public interface ClingoLibrary extends Library {
   //!
   //! @see clingo_control_cleanup()
   //! @see clingo_control_set_enable_cleanup()
-  public bool clingo_control_get_enable_cleanup(clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_get_enable_cleanup(clingo_control_t *control);
+//  public bool clingo_control_get_enable_cleanup(clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_get_enable_cleanup(clingo_control_t *control);
 
   //! @}
 
@@ -3471,7 +3473,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] name the name of the constant
   //! @param[out] symbol the resulting symbol
   //! @return whether the call was successful
-  public bool clingo_control_get_const(final clingo_control_t p_control, final c_char p_name, clingo_symbol_t p_symbol); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_get_const(clingo_control_t const *control, char const *name, clingo_symbol_t *symbol);
+//  public bool clingo_control_get_const(final clingo_control_t p_control, final c_char p_name, clingo_symbol_t p_symbol); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_get_const(clingo_control_t const *control, char const *name, clingo_symbol_t *symbol);
   //! Check if there is a constant definition for the given constant.
   //!
   //! @param[in] control the target
@@ -3481,7 +3483,7 @@ public interface ClingoLibrary extends Library {
   //! - ::clingo_error_runtime if constant definition does not exist
   //!
   //! @see clingo_control_get_const()
-  public bool clingo_control_has_const(final clingo_control_t p_control, final c_char p_name, bool p_exists); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_has_const(clingo_control_t const *control, char const *name, bool *exists);
+//  public bool clingo_control_has_const(final clingo_control_t p_control, final c_char p_name, bool p_exists); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_has_const(clingo_control_t const *control, char const *name, bool *exists);
   //! Get an object to inspect symbolic atoms (the relevant Herbrand base) used
   //! for grounding.
   //!
@@ -3490,7 +3492,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] control the target
   //! @param[out] atoms the symbolic atoms object
   //! @return whether the call was successful
-  public bool clingo_control_symbolic_atoms(final clingo_control_t p_control, final clingo_symbolic_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_symbolic_atoms(clingo_control_t const *control, clingo_symbolic_atoms_t const **atoms);
+//  public bool clingo_control_symbolic_atoms(final clingo_control_t p_control, final clingo_symbolic_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_symbolic_atoms(clingo_control_t const *control, clingo_symbolic_atoms_t const **atoms);
   //! Get an object to inspect theory atoms that occur in the grounding.
   //!
   //! See the @ref TheoryAtoms module for more information.
@@ -3498,7 +3500,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] control the target
   //! @param[out] atoms the theory atoms object
   //! @return whether the call was successful
-  public bool clingo_control_theory_atoms(final clingo_control_t p_control, final clingo_theory_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_theory_atoms(clingo_control_t const *control, clingo_theory_atoms_t const **atoms);
+//  public bool clingo_control_theory_atoms(final clingo_control_t p_control, final clingo_theory_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_theory_atoms(clingo_control_t const *control, clingo_theory_atoms_t const **atoms);
   //! Register a program observer with the control object.
   //!
   //! @param[in] control the target
@@ -3506,7 +3508,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] replace just pass the grounding to the observer but not the solver
   //! @param[in] data user data passed to the observer functions
   //! @return whether the call was successful
-  public bool clingo_control_register_observer(clingo_control_t p_control, final clingo_ground_program_observer_t p_observer, bool replace, c_void p_data); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_register_observer(clingo_control_t *control, clingo_ground_program_observer_t const *observer, bool replace, void *data);
+//  public bool clingo_control_register_observer(clingo_control_t p_control, final clingo_ground_program_observer_t p_observer, bool replace, c_void p_data); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_register_observer(clingo_control_t *control, clingo_ground_program_observer_t const *observer, bool replace, void *data);
   //! @}
 
   //! @name Program Modification Functions
@@ -3520,7 +3522,7 @@ public interface ClingoLibrary extends Library {
   //! @param[out] backend the backend object
   //! @return whether the call was successful; might set one of the following error codes:
   //! - ::clingo_error_bad_alloc
-  public bool clingo_control_backend(clingo_control_t p_control, final clingo_backend_t p_p_backend); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_backend(clingo_control_t *control, clingo_backend_t **backend);
+//  public bool clingo_control_backend(clingo_control_t p_control, final clingo_backend_t p_p_backend); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_backend(clingo_control_t *control, clingo_backend_t **backend);
   //! Get an object to add non-ground directives to the program.
   //!
   //! See the @ref ProgramBuilder module for more information.
@@ -3528,7 +3530,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] control the target
   //! @param[out] builder the program builder object
   //! @return whether the call was successful
-  public bool clingo_control_program_builder(clingo_control_t p_control, clingo_program_builder_t p_p_builder); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_program_builder(clingo_control_t *control, clingo_program_builder_t **builder);
+//  public bool clingo_control_program_builder(clingo_control_t p_control, clingo_program_builder_t p_p_builder); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_program_builder(clingo_control_t *control, clingo_program_builder_t **builder);
   //! @}
 
   //! @}
@@ -3575,7 +3577,7 @@ public interface ClingoLibrary extends Library {
   //! @{
 
   //! Object to add command-line options.
-  public static final typedef<struct> clingo_options_t = null; // typedef struct clingo_options clingo_options_t;
+//  public static final typedef<struct> clingo_options_t = null; // typedef struct clingo_options clingo_options_t;
 
   //! Callback to customize clingo main function.
   //!
@@ -3585,14 +3587,14 @@ public interface ClingoLibrary extends Library {
   //! @param[in] data user data for the callback
   //!
   //! @return whether the call was successful
-  public static final typedef<bool> clingo_main_function_t = null; // typedef bool (*clingo_main_function_t) (clingo_control_t *control, char const *const * files, size_t size, void *data);
+//  public static final typedef<bool> clingo_main_function_t = null; // typedef bool (*clingo_main_function_t) (clingo_control_t *control, char const *const * files, size_t size, void *data);
 
   //! Callback to print a model in default format.
   //!
   //! @param[in] data user data for the callback
   //!
   //! @return whether the call was successful
-  public static final typedef<bool> clingo_default_model_printer_t = null; // typedef bool (*clingo_default_model_printer_t) (void *data);
+//  public static final typedef<bool> clingo_default_model_printer_t = null; // typedef bool (*clingo_default_model_printer_t) (void *data);
 
   //! Callback to customize model printing.
   //!
@@ -3602,7 +3604,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] data user data for the callback
   //!
   //! @return whether the call was successful
-  public static final typedef<bool> clingo_model_printer_t = null; // typedef bool (*clingo_model_printer_t) (clingo_model_t const *model, clingo_default_model_printer_t printer, void *printer_data, void *data);
+//  public static final typedef<bool> clingo_model_printer_t = null; // typedef bool (*clingo_model_printer_t) (clingo_model_t const *model, clingo_default_model_printer_t printer, void *printer_data, void *data);
 
   //! This struct contains a set of functions to customize the clingo application.
   /* typedef struct clingo_application {
@@ -3635,7 +3637,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] multi whether the option can appear multiple times on the command-line
   //! @param[in] argument optional string to change the value name in the generated help output
   //! @return whether the call was successful
-  public bool clingo_options_add(clingo_options_t p_options, final c_char p_group, final c_char p_option, final c_char p_description, bool p_parse /*(char const *value, void *data)*/, c_void p_data, bool multi, final c_char p_argument); // CLINGO_VISIBILITY_DEFAULT bool clingo_options_add(clingo_options_t *options, char const *group, char const *option, char const *description, bool (*parse) (char const *value, void *data), void *data, bool multi, char const *argument);
+//  public bool clingo_options_add(clingo_options_t p_options, final c_char p_group, final c_char p_option, final c_char p_description, bool p_parse /*(char const *value, void *data)*/, c_void p_data, bool multi, final c_char p_argument); // CLINGO_VISIBILITY_DEFAULT bool clingo_options_add(clingo_options_t *options, char const *group, char const *option, char const *description, bool (*parse) (char const *value, void *data), void *data, bool multi, char const *argument);
   //! Add an option that is a simple flag.
   //!
   //! This function is similar to @ref clingo_options_add() but simpler because it only supports flags, which do not have values.
@@ -3647,7 +3649,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] description the description of the option
   //! @param[in] target boolean set to true if the flag is given on the command-line
   //! @return whether the call was successful
-  public bool clingo_options_add_flag(clingo_options_t p_options, final c_char p_group, final c_char p_option, final c_char p_description, bool p_target); // CLINGO_VISIBILITY_DEFAULT bool clingo_options_add_flag(clingo_options_t *options, char const *group, char const *option, char const *description, bool *target);
+//  public bool clingo_options_add_flag(clingo_options_t p_options, final c_char p_group, final c_char p_option, final c_char p_description, bool p_target); // CLINGO_VISIBILITY_DEFAULT bool clingo_options_add_flag(clingo_options_t *options, char const *group, char const *option, char const *description, bool *target);
 
   //! Run clingo with a customized main function (similar to python and lua embedding).
   //!
@@ -3656,7 +3658,7 @@ public interface ClingoLibrary extends Library {
   //! @param[in] size number of arguments
   //! @param[in] data user data to pass to callbacks in application
   //! @return exit code to return from main function
-  public int clingo_main(clingo_application_t p_application, final c_char p_arguments, size_t size, c_void p_data); // CLINGO_VISIBILITY_DEFAULT int clingo_main(clingo_application_t *application, char const *const * arguments, size_t size, void *data);
+//  public int clingo_main(clingo_application_t p_application, final c_char p_arguments, size_t size, c_void p_data); // CLINGO_VISIBILITY_DEFAULT int clingo_main(clingo_application_t *application, char const *const * arguments, size_t size, void *data);
 
 // ********************************************************************************************************
 
@@ -3780,36 +3782,5 @@ public interface ClingoLibrary extends Library {
     // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_close(clingo_solve_handle_t *handle);
     //bool clingo_solve_handle_close(clingo_solve_handle_t *handle);
     boolean clingo_solve_handle_close(Pointer handle);
-    
-    /**
-     * Get the number of symbols of the selected types in the model.
-     * @param model [in] model the target
-     * @param show [in] show which symbols to select
-     * @param size [out] size the number symbols
-     * @return whether the call was successful; might set one of the following error codes:
-     * - ::clingo_error_bad_alloc
-     */
-//  CLINGO_VISIBILITY_DEFAULT bool clingo_model_symbols_size(clingo_model_t const *model, clingo_show_type_bitset_t show, size_t *size);
-    //bool clingo_model_symbols_size(clingo_model_t const *model, clingo_show_type_bitset_t show, size_t *size);
-   boolean clingo_model_symbols_size(Pointer model, int show, SizeByReference size);
-   
-    /**
-     * Get the symbols of the selected types in the model.
-     * <p>
-     * @note CSP assignments are represented using functions with name "$"
-     * where the first argument is the name of the CSP variable and the second one its
-     * value.
-     * @param model [in] model the target
-     * @param show [in] show which symbols to select
-     * @param symbols [out] symbols the resulting symbols
-     * @param size [in] size the number of selected symbols
-     * @return whether the call was successful; might set one of the following error codes:
-     * - ::clingo_error_bad_alloc
-     * - ::clingo_error_runtime if the size is too small
-     * @see clingo_model_symbols_size()
-     */
-// CLINGO_VISIBILITY_DEFAULT bool clingo_model_symbols(clingo_model_t const *model, clingo_show_type_bitset_t show, clingo_symbol_t *symbols, size_t size);
-   //bool clingo_model_symbols(clingo_model_t const *model, clingo_show_type_bitset_t show, clingo_symbol_t *symbols, size_t size);
-    boolean clingo_model_symbols(Pointer model, int show, long[] symbols, Size size);
     
 }

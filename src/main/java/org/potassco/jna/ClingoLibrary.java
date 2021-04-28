@@ -421,6 +421,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] iterator iterator to the atom
     //! @param[out] external whether the atom is a external
     //! @return whether the call was successful
+    /** {@link clingo_h#clingo_symbolic_atoms_is_fact} */
     public byte clingo_symbolic_atoms_is_external(Pointer p_atoms, Pointer iterator, ByteByReference p_external);
     //! Returns the (numeric) aspif literal corresponding to the given symbolic atom.
     //!
@@ -432,13 +433,15 @@ public interface ClingoLibrary extends Library {
     //! @param[in] iterator iterator to the atom
     //! @param[out] literal the associated literal
     //! @return whether the call was successful
- public bool clingo_symbolic_atoms_literal(final clingo_symbolic_atoms_t p_atoms, clingo_symbolic_atom_iterator_t iterator, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_literal(clingo_symbolic_atoms_t const *atoms, clingo_symbolic_atom_iterator_t iterator, clingo_literal_t *literal);
+    /** {@link clingo_h#clingo_symbolic_atoms_is_fact} */
+    public byte clingo_symbolic_atoms_literal(Pointer p_atoms, Pointer iterator, PointerByReference p_literal);
     //! Get the number of different predicate signatures used in the program.
     //!
     //! @param[in] atoms the target
     //! @param[out] size the number of signatures
     //! @return whether the call was successful
- public bool clingo_symbolic_atoms_signatures_size(final clingo_symbolic_atoms_t p_atoms, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_signatures_size(clingo_symbolic_atoms_t const *atoms, size_t *size);
+    /** {@link clingo_h#clingo_symbolic_atoms_signatures_size} */
+    public byte clingo_symbolic_atoms_signatures_size(Pointer p_atoms, SizeByReference p_size);
     //! Get the predicate signatures occurring in a logic program.
     //!
     //! @param[in] atoms the target
@@ -449,14 +452,16 @@ public interface ClingoLibrary extends Library {
     //! - ::clingo_error_runtime if the size is too small
     //!
     //! @see clingo_symbolic_atoms_signatures_size()
- public bool clingo_symbolic_atoms_signatures(final clingo_symbolic_atoms_t p_atoms, clingo_signature_t p_signatures, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_signatures(clingo_symbolic_atoms_t const *atoms, clingo_signature_t *signatures, size_t size);
+    /** {@link clingo_h#clingo_symbolic_atoms_signatures} */
+    public byte clingo_symbolic_atoms_signatures(Pointer p_atoms, PointerByReference p_signatures, long size);
     //! Get an iterator to the next element in the sequence of symbolic atoms.
     //!
     //! @param[in] atoms the target
     //! @param[in] iterator the current iterator
     //! @param[out] next the succeeding iterator
     //! @return whether the call was successful
- public bool clingo_symbolic_atoms_next(final clingo_symbolic_atoms_t p_atoms, clingo_symbolic_atom_iterator_t iterator, clingo_symbolic_atom_iterator_t p_next); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_next(clingo_symbolic_atoms_t const *atoms, clingo_symbolic_atom_iterator_t iterator, clingo_symbolic_atom_iterator_t *next);
+    /** {@link clingo_h#clingo_symbolic_atoms_signatures} */
+    public byte clingo_symbolic_atoms_next(Pointer p_atoms, Pointer iterator, PointerByReference p_next);
     //! Check whether the given iterator points to some element with the sequence
     //! of symbolic atoms or to the end of the sequence.
     //!
@@ -465,9 +470,11 @@ public interface ClingoLibrary extends Library {
     //! @param[out] valid whether the iterator points to some element within the
     //! sequence
     //! @return whether the call was successful
- public bool clingo_symbolic_atoms_is_valid(final clingo_symbolic_atoms_t p_atoms, clingo_symbolic_atom_iterator_t iterator, bool p_valid); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_is_valid(clingo_symbolic_atoms_t const *atoms, clingo_symbolic_atom_iterator_t iterator, bool *valid);
-
+    /** {@link clingo_h#clingo_symbolic_atoms_is_valid} */
+    public byte clingo_symbolic_atoms_is_valid(Pointer p_atoms, Pointer iterator, ByteByReference p_valid);
+// line 630
     
+// line 3622
     //! Get an object to inspect symbolic atoms (the relevant Herbrand base) used
     //! for grounding.
     //!
@@ -476,7 +483,8 @@ public interface ClingoLibrary extends Library {
     //! @param[in] control the target
     //! @param[out] atoms the symbolic atoms object
     //! @return whether the call was successful
- 	public byte clingo_control_symbolic_atoms(Pointer p_control, PointerByReference p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_symbolic_atoms(clingo_control_t const *control, clingo_symbolic_atoms_t const **atoms);
+    /** {@link clingo_h#clingo_control_symbolic_atoms} */
+ 	public byte clingo_control_symbolic_atoms(Pointer p_control, PointerByReference p_p_atoms);
 
     
     //! @return whether the call was successful; might set one of the following error codes:

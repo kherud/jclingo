@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.Iterator;
 
 import org.junit.Test;
+import org.potassco.jna.SymbolCallbackT;
 
 import com.sun.jna.Pointer;
 
@@ -49,4 +50,17 @@ public class SymbolicAtomsTest {
 // 	public long symbolicAtomsSignaturesSize(Pointer atoms) {
 // 	public Pointer symbolicAtomsSignatures(Pointer atoms, long size) {
 // 	public boolean symbolicAtomsIsValid(Pointer atoms, Pointer iterator) {
+	
+	@Test
+	public void testCallback() {
+		SymbolCallbackT sb = new SymbolCallbackT() {
+			
+			@Override
+			public boolean call(Pointer symbols, Pointer symbolsSize, Pointer data) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+		};
+	}
+	
 }

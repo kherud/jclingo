@@ -3,13 +3,13 @@ package org.potassco;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.potassco.cpp.bool;
 import org.potassco.cpp.clingo_h;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
 import org.potassco.enums.SymbolType;
+import org.potassco.enums.TermType;
 import org.potassco.jna.ClingoLibrary;
 import org.potassco.jna.Part;
 import org.potassco.jna.Size;
@@ -324,7 +324,7 @@ public class Clingo {
     
     /**
      * Check if a symbol is less than another symbol.
-     *
+     * <p>
      * Symbols are first compared by type.  If the types are equal, the values are
      * compared (where strings are compared using strcmp).  Functions are first
      * compared by signature and then lexicographically by arguments.
@@ -349,7 +349,7 @@ public class Clingo {
 
     /**
      * Internalize a string.
-     *
+     * <p>
      * This functions takes a string as input and returns an equal unique string
      * that is (at the moment) not freed until the program is closed.
      * @param string the string to internalize
@@ -363,7 +363,7 @@ public class Clingo {
 
     /**
      * Parse a term in string form.
-     *
+     * <p>
      * The result of this function is a symbol. The input term can contain
      * unevaluated functions, which are evaluated during parsing.
      * @param string the string to parse
@@ -550,7 +550,7 @@ public class Clingo {
  	
     /**
      * Get an object to inspect symbolic atoms (the relevant Herbrand base) used for grounding.
-     * 
+     * <p>
      * See the @ref SymbolicAtoms module for more information.
      * @param control
      * @return
@@ -571,10 +571,10 @@ public class Clingo {
      * @param term id of the term
      * @return the resulting type
      */
-    public int theoryAtomsTermType(Pointer atoms, int term) {
+    public TermType theoryAtomsTermType(Pointer atoms, int term) {
     	IntByReference type = new IntByReference();
     	byte success = clingoLibrary.clingo_theory_atoms_term_type(atoms, term, type);
-		return type.getValue();
+		return TermType.fromValue(type.getValue());
     }
 
     /**
@@ -591,9 +591,9 @@ public class Clingo {
 
     /**
      * Get the name of the given constant or function theory term.
-     * 
+     * <p>
      * @note The lifetime of the string is tied to the current solve step.
-     * 
+     * <p>
      * @pre The term must be of type ::clingo_theory_term_type_function or ::clingo_theory_term_type_symbol.
      * @param atoms container where the term is stored
      * @param term id of the term
@@ -607,7 +607,7 @@ public class Clingo {
 
     /**
      * Get the arguments of the given function theory term.
-     * 
+     * <p>
      * @pre The term must be of type ::clingo_theory_term_type_function.
      * @param atoms container where the term is stored
      * @param term id of the term
@@ -699,15 +699,19 @@ public class Clingo {
 //  public bool clingo_theory_atoms_element_to_string(final clingo_theory_atoms_t p_atoms, clingo_id_t element, c_char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_to_string(clingo_theory_atoms_t const *atoms, clingo_id_t element, char *string, size_t size);
     //! @}
 
-    //! @name Theory Atom Inspection
-    //! @{
+    //! Theory Atom Inspection
 
-    //! Get the total number of theory atoms.
-    //!
-    //! @param[in] atoms the target
-    //! @param[out] size the resulting number
-    //! @return whether the call was successful
-//  public bool clingo_theory_atoms_size(final clingo_theory_atoms_t p_atoms, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_size(clingo_theory_atoms_t const *atoms, size_t *size);
+    /**
+     * Get the total number of theory atoms.
+     * @param atoms the target
+     * @return the resulting number
+     */
+    public long theoryAtomsSize(Pointer atoms) {
+		SizeByReference size = new SizeByReference();
+		byte success = clingoLibrary.clingo_theory_atoms_size(atoms, size);
+		return size.getValue();
+    }
+
     //! Get the theory term associated with the theory atom.
     //!
     //! @param[in] atoms container where the atom is stored
@@ -767,6 +771,21 @@ public class Clingo {
     //! - ::clingo_error_bad_alloc
 //  public bool clingo_theory_atoms_atom_to_string(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_to_string(clingo_theory_atoms_t const *atoms, clingo_id_t atom, char *string, size_t size);
     //! @}
+    
+    
+    /**
+     * Get an object to inspect theory atoms that occur in the grounding.
+     * <p>
+     * See the @ref TheoryAtoms module for more information.
+     * @param control the target
+     * @return the theory atoms object
+     */
+    public Pointer controlTheoryAtoms(Pointer control) {
+    	PointerByReference atoms = new PointerByReference();
+		byte success = clingoLibrary.clingo_control_theory_atoms(control, atoms);
+		return atoms.getValue();
+    }
+    
     
 	/* *******
 	 * 
@@ -836,11 +855,8 @@ public class Clingo {
 	 * @param logicProgram
 	 * {@link clingo_h#clingo_control_add}
 	 */
-	public void add(String name, String logicProgram) {
-        this.controlPointer = new PointerByReference();
-        clingoLibrary.clingo_control_new(null, new Size(0), null, null, 20, controlPointer);
-        // add the program
-		clingoLibrary.clingo_control_add(controlPointer.getValue(), name, null, new Size(0), logicProgram);
+	public void add(Pointer control, String name, String logicProgram) {
+		clingoLibrary.clingo_control_add(control, name, null, new Size(0), logicProgram);
 	}
 	
 	/**
@@ -856,7 +872,7 @@ public class Clingo {
     /**
      * @return
      * @throws ClingoException
-     * 
+     * <p>
 	 * {@link clingo_h#clingo_control_solve}
      */
     public SolveHandle solve() throws ClingoException {

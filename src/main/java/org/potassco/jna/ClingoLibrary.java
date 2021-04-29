@@ -747,9 +747,7 @@ public interface ClingoLibrary extends Library {
     /** {@link clingo_h#clingo_theory_atoms_atom_to_string} */
     public byte clingo_theory_atoms_atom_to_string(Pointer p_atoms, int atom, byte[] p_string, long size);
 
-  //! @}
-
-  // {{{1 propagator
+  // propagator
 
   //! @example propagator.c
   //! The example shows how to write a simple propagator for the pigeon hole problem. For
@@ -3473,14 +3471,15 @@ public interface ClingoLibrary extends Library {
   //! @param[out] atoms the symbolic atoms object
   //! @return whether the call was successful
 //  public bool clingo_control_symbolic_atoms(final clingo_control_t p_control, final clingo_symbolic_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_symbolic_atoms(clingo_control_t const *control, clingo_symbolic_atoms_t const **atoms);
-  //! Get an object to inspect theory atoms that occur in the grounding.
-  //!
-  //! See the @ref TheoryAtoms module for more information.
-  //!
-  //! @param[in] control the target
-  //! @param[out] atoms the theory atoms object
-  //! @return whether the call was successful
-//  public bool clingo_control_theory_atoms(final clingo_control_t p_control, final clingo_theory_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_theory_atoms(clingo_control_t const *control, clingo_theory_atoms_t const **atoms);
+  	//! Get an object to inspect theory atoms that occur in the grounding.
+  	//!
+  	//! See the @ref TheoryAtoms module for more information.
+  	//!
+  	//! @param[in] control the target
+  	//! @param[out] atoms the theory atoms object
+  	//! @return whether the call was successful
+    /** {@link clingo_h#clingo_control_theory_atoms} */
+  	public byte clingo_control_theory_atoms(Pointer p_control, PointerByReference p_p_atoms);
   //! Register a program observer with the control object.
   //!
   //! @param[in] control the target

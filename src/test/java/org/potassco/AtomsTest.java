@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.Iterator;
 
 import org.junit.Test;
+import org.potassco.enums.TermType;
 import org.potassco.jna.SizeByReference;
 import org.potassco.jna.SymbolCallbackT;
 
@@ -66,23 +67,33 @@ public class AtomsTest {
 		};
 	}
 
+	/**
+	 * {@link https://github.com/potassco/clingo/blob/master/libpyclingo/clingo/tests/test_atoms.py}
+	 */
 	@Test
 	public void testTheoryAtoms() {
 		String name = "base";
 		Clingo clingo = new Clingo(name,
-				"#theory dl { "
-				+ "    constant {- : 1, unary}; "
-				+ "    diff_term {- : 1, binary, left}; "
-				+ "    &diff/0 : diff_term, {<=}, constant, any "
+				"#theory test { "
+				+ "    t { }; "
+				+ "    &a/0 : t, head; "
+				+ "    &b/0 : t, {=}, t, head "
 				+ "}.");
 		Pointer control = clingo.getControl();
+		clingo.add(control, name, "{a; b}.");
+		clingo.add(control, name, "&a { 1; 2,3: a,b }.");
 		clingo.ground(name);
+		Pointer theoryAtoms = clingo.controlTheoryAtoms(control);
+		assertEquals(1, clingo.theoryAtomsSize(theoryAtoms));
+		assertEquals(TermType.SYMBOL, clingo.theoryAtomsTermType(theoryAtoms, 0));
+		assertEquals(0, clingo.theoryAtomsTermNumber(theoryAtoms, 0));
+		assertEquals("a", clingo.theoryAtomsTermName(theoryAtoms, 0));
+// TODO:
+//		int[] args = clingo.theoryAtomsTermArguments(theoryAtoms, 0);
+//		assertEquals("a", args);
+		long stringSize = clingo.theoryAtomsTermToStringSize(theoryAtoms, 0);
+		assertEquals(2, stringSize);
+		assertEquals("a", clingo.theoryAtomsTermToString(theoryAtoms, 0, stringSize).trim());
 	}
 
-//    public int theoryAtomsTermType(Pointer atoms, int term) {
-//    public int theoryAtomsTermNumber(Pointer atoms, int term) {
-//    public String theoryAtomsTermName(Pointer atoms, int term) {
-//    public int[] theoryAtomsTermArguments(Pointer atoms, int term) {
-//    public long theoryAtomsTermToStringSize(Pointer atoms, int term) {
-//    public String theoryAtomsTermToString(Pointer atoms, int term, long size) {
 }

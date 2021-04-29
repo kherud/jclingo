@@ -6,9 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
+import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.SymbolType;
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.IntByReference;
 
 public class InfrastructureTest {
 
@@ -122,5 +124,18 @@ public class InfrastructureTest {
 		String t = "f(a,42)";
 		long symbol = clingo.parseTerm(t);
 		assertEquals(SymbolType.FUNCTION, clingo.symbolType(symbol));
+	}
+	
+	@Test
+	public void testConfiguration() {
+		String name = "base";
+		Clingo clingo = new Clingo(name, "a. b.");
+//		clingo.ground(name);
+		Pointer control = clingo.getControl();
+		Pointer conf = clingo.controlConfiguration(control);
+		int root = clingo.configurationRoot(conf);
+		assertEquals(root, clingo.configurationRoot(conf));
+		assertEquals(ConfigurationType.MAP, clingo.configurationType(conf, root));
+		assertEquals("Options", clingo.configurationDescription(conf, root));
 	}
 }

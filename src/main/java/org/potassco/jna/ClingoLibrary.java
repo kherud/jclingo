@@ -1459,43 +1459,33 @@ public interface ClingoLibrary extends Library {
   //! For an example, see @ref configuration.c.
   //! @ingroup Control
 
-  //! @addtogroup Configuration
-  //! @{
+    //! Configuration
 
-  //! Enumeration for entries of the configuration.
-  /* enum clingo_configuration_type_e {
-      clingo_configuration_type_value = 1, //!< the entry is a (string) value
-      clingo_configuration_type_array = 2, //!< the entry is an array
-      clingo_configuration_type_map   = 4  //!< the entry is a map
-  }; */ public static final typedef<c_enum> clingo_configuration_type_e = null;
-  //! Bitset for values of type ::clingo_configuration_type.
-//  public static final typedef<unsigned> clingo_configuration_type_bitset_t = null;
-
-  //! Handle for to the solver configuration.
-//  public static final typedef<struct> clingo_configuration_t = null;
-
-  //! Get the root key of the configuration.
-  //!
-  //! @param[in] configuration the target configuration
-  //! @param[out] key the root key
-  //! @return whether the call was successful
-//  public bool clingo_configuration_root(final clingo_configuration_t p_configuration, clingo_id_t p_key); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_root(clingo_configuration_t const *configuration, clingo_id_t *key);
-  //! Get the type of a key.
-  //!
-  //! @note The type is bitset, an entry can have multiple (but at least one) type.
-  //!
-  //! @param[in] configuration the target configuration
-  //! @param[in] key the key
-  //! @param[out] type the resulting type
-  //! @return whether the call was successful
-//  public bool clingo_configuration_type(final clingo_configuration_t p_configuration, clingo_id_t key, clingo_configuration_type_bitset_t p_type); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_type(clingo_configuration_t const *configuration, clingo_id_t key, clingo_configuration_type_bitset_t *type);
-  //! Get the description of an entry.
-  //!
-  //! @param[in] configuration the target configuration
-  //! @param[in] key the key
-  //! @param[out] description the description
-  //! @return whether the call was successful
-//  public bool clingo_configuration_description(final clingo_configuration_t p_configuration, clingo_id_t key, final c_char p_p_description); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_description(clingo_configuration_t const *configuration, clingo_id_t key, char const **description);
+    //! Get the root key of the configuration.
+    //!
+    //! @param[in] configuration the target configuration
+    //! @param[out] key the root key
+    //! @return whether the call was successful
+  	/** {@link clingo_h#clingo_configuration_root} */
+  	public byte clingo_configuration_root(Pointer p_configuration, IntByReference p_key);
+    //! Get the type of a key.
+    //!
+    //! @note The type is bitset, an entry can have multiple (but at least one) type.
+    //!
+    //! @param[in] configuration the target configuration
+    //! @param[in] key the key
+    //! @param[out] type the resulting type
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_configuration_type} */
+  	public byte clingo_configuration_type(Pointer p_configuration, int key, IntByReference p_type);
+    //! Get the description of an entry.
+    //!
+    //! @param[in] configuration the target configuration
+    //! @param[in] key the key
+    //! @param[out] description the description
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_configuration_description} */
+  	public byte clingo_configuration_description(Pointer p_configuration, int key, String[] p_p_description);
 
   //! @name Functions to access arrays
   //! @{
@@ -3382,19 +3372,17 @@ public interface ClingoLibrary extends Library {
   //! @return whether the call was successful
 //  public bool clingo_control_clasp_facade(clingo_control_t p_control, c_void p_p_clasp); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_clasp_facade(clingo_control_t *control, void **clasp);
 
-  //! @}
+    //! Configuration Functions
 
-  //! @name Configuration Functions
-  //! @{
-
-  //! Get a configuration object to change the solver configuration.
-  //!
-  //! See the @ref Configuration module for more information.
-  //!
-  //! @param[in] control the target
-  //! @param[out] configuration the configuration object
-  //! @return whether the call was successful
-//  public bool clingo_control_configuration(clingo_control_t p_control, clingo_configuration_t p_p_configuration); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_configuration(clingo_control_t *control, clingo_configuration_t **configuration);
+    //! Get a configuration object to change the solver configuration.
+    //!
+    //! See the @ref Configuration module for more information.
+    //!
+    //! @param[in] control the target
+    //! @param[out] configuration the configuration object
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_control_theory_atoms} */
+  	public byte clingo_control_configuration(Pointer p_control, PointerByReference p_p_configuration);
 
   //! Configure how learnt constraints are handled during enumeration.
   //!

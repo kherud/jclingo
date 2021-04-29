@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.potassco.cpp.clingo_h;
+import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveEventType;
@@ -875,6 +876,81 @@ public class Clingo {
 		return new String(str);
     }
 
+	/* **********
+	 * propagator
+	 * ********** */
+
+	/* **********
+	 * backend
+	 * ********** */
+
+	/* *************
+	 * configuration
+	 * ************* */
+
+    /**
+     * Get the root key of the configuration.
+     * @param configuration the target configuration
+     * @return the root key
+     */
+    public int configurationRoot(Pointer configuration) {
+		IntByReference key = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_configuration_root(configuration, key);
+		return key.getValue();
+    }
+
+    /**
+     * Get the type of a key.
+     * <p>
+     * @note The type is bitset, an entry can have multiple (but at least one) type.
+     * @param configuration the target configuration
+     * @param key the key
+     * @return the resulting type
+     */
+    public ConfigurationType configurationType(Pointer configuration, int key) {
+		IntByReference type = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_configuration_type(configuration, key, type);
+		return ConfigurationType.fromValue(type.getValue());
+    }
+
+    /**
+     * Get the description of an entry.e.
+     * @param configuration the target configuration
+     * @param key the key
+     * @return 
+     * @return the resulting type
+     */
+    public String configurationDescription(Pointer configuration, int key) {
+		String[] description = new String[1];
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_configuration_description(configuration, key, description);
+		return description[0];
+    }
+
+	/* **********
+	 * Functions to access arrays
+	 * ********** */
+
+	/* **********
+	 * 
+	 * ********** */
+
+    /**
+     * Get a configuration object to change the solver configuration.
+     * <p>
+     * See the @ref Configuration module for more information.
+     * @param control the target
+     * @return the configuration object
+     */
+    public Pointer controlConfiguration(Pointer control) {
+    	PointerByReference configuration = new PointerByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_configuration(control, configuration);
+		return configuration.getValue();
+    }
+
     /**
      * Get an object to inspect theory atoms that occur in the grounding.
      * <p>
@@ -888,12 +964,10 @@ public class Clingo {
 		byte success = clingoLibrary.clingo_control_theory_atoms(control, atoms);
 		return atoms.getValue();
     }
-    
-    
-	/* *******
+
+	/* **********
 	 * 
-	 * ******* */
-    
+	 * ********** */ 
 
     /**Ground the selected @link ::clingo_part parts @endlink of the current (non-ground) logic program.
      * <p>

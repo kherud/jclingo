@@ -8,9 +8,15 @@ import java.util.List;
 import org.junit.Test;
 import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ErrorCode;
+import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;
+import org.potassco.jna.SizeByReference;
+
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.ByteByReference;
+import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
 
 public class InfrastructureTest {
 
@@ -125,7 +131,7 @@ public class InfrastructureTest {
 		long symbol = clingo.parseTerm(t);
 		assertEquals(SymbolType.FUNCTION, clingo.symbolType(symbol));
 	}
-	
+
 	@Test
 	public void testConfiguration() {
 		String name = "base";
@@ -138,4 +144,29 @@ public class InfrastructureTest {
 		assertEquals(ConfigurationType.MAP, clingo.configurationType(conf, root));
 		assertEquals("Options", clingo.configurationDescription(conf, root));
 	}
+
+	/**
+	 * {@link https://github.com/potassco/clingo/blob/master/libpyclingo/clingo/tests/test_conf.py}
+	 */
+	@Test
+	public void testStatistics() {
+		String name = "base";
+		Clingo clingo = new Clingo(name, "a. b.");
+//		clingo.ground(name);
+		Pointer control = clingo.getControl();
+		Pointer stats = clingo.controlStatistics(control);
+		long root = clingo.statisticsRoot(stats);
+		assertEquals(StatisticsType.EMPTY, clingo.statisticsType(stats, root));
+		assertEquals(0L, clingo.clingoStatisticsArraySize(stats, root));
+	}
+
+//    public int statisticsArrayAt(Pointer statistics, long key, long offset) {
+//    public int statisticsArrayPush(Pointer statistics, long key, int type) {
+//    public long statisticsMapSize(Pointer statistics, long key) {
+//    public byte statisticsMapHas_subkey(Pointer statistics, long key, String name) {
+//    public String statisticsMapSubkey_name(Pointer statistics, long key, long offset) {
+//    public int statisticsMapAt(Pointer statistics, long key, String name) {
+//    public int statisticsMapAddSubkey(Pointer statistics, long key, String name, int type) {
+//    public double statisticsValueGet(Pointer statistics, long key) {
+//    public void statisticsValueSet(Pointer statistics, long key, double value) {
 }

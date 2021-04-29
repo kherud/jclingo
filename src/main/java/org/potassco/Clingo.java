@@ -3,12 +3,19 @@ package org.potassco;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.potassco.cpp.bool;
+import org.potassco.cpp.c_char;
 import org.potassco.cpp.clingo_h;
+import org.potassco.cpp.clingo_statistics_t;
+import org.potassco.cpp.clingo_statistics_type_t;
+import org.potassco.cpp.size_t;
+import org.potassco.cpp.uint64_t;
 import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
+import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;
 import org.potassco.enums.TermType;
 import org.potassco.jna.ClingoLibrary;
@@ -20,6 +27,7 @@ import org.potassco.jna.SymbolByReference;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
+import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -1092,8 +1100,214 @@ public class Clingo {
     }
 
 	/* **********
+	 * statistics
+	 * ********** */
+    
+//    StatisticsType
+
+    /**
+     * Get the root key of the statistics.
+     *
+     * @param[in] statistics the target statistics
+     * @param[out] key the root key
+     * @return whether the call was successful
+     */
+    public long statisticsRoot(Pointer statistics) {
+    	IntByReference key = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_statistics_root(statistics, key);
+		return key.getValue();
+    }
+    /**
+     * Get the type of a key.
+     *
+     * @param[in] statistics the target statistics
+     * @param[in] key the key
+     * @param[out] type the resulting type
+     * @return whether the call was success
+     */
+    public StatisticsType statisticsType(Pointer statistics, long key) {
+    	IntByReference type = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_statistics_type(statistics, key, type);
+		return StatisticsType.fromValue(type.getValue());
+    }
+    
+    /**
+     * @name Functions to access arrays
+     * @{
+
+     * Get the size of an array entry.
+     *
+     * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_array.
+     * @param[in] statistics the target statistics
+     * @param[in] key the key
+     * @param[out] size the resulting size
+     * @return whether the call was success
+     */
+    public long clingoStatisticsArraySize(Pointer statistics, long key) {
+    	SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_statistics_array_size(statistics, key, size);
+		return size.getValue();
+    }
+    /**
+     * Get the subkey at the given offset of an array entry.
+     *
+     * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_array.
+     * @param[in] statistics the target statistics
+     * @param[in] key the key
+     * @param[in] offset the offset in the array
+     * @param[out] subkey the resulting subkey
+     * @return whether the call was success
+     */
+    public int statisticsArrayAt(Pointer statistics, long key, long offset) {
+    	IntByReference subkey = new IntByReference();
+    	@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_statistics_array_at(statistics, key, offset, subkey);
+    	return subkey.getValue();
+    }
+    /**
+     * Create the subkey at the end of an array entry.
+     *
+     * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_array.
+     * @param[in] statistics the target statistics
+     * @param[in] key the key
+     * @param[in] type the type of the new subkey
+     * @param[out] subkey the resulting subkey
+     * @return whether the call was success
+     */
+    public int statisticsArrayPush(Pointer statistics, long key, int type) {
+    	IntByReference subkey = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_statistics_array_push(statistics, key, type, subkey);
+		return subkey.getValue();
+    }
+    /**
+     * @name Functions to access maps
+
+     * Get the number of subkeys of a map entry.
+     *
+     * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
+     * @param[in] statistics the target statistics
+     * @param[in] key the key
+     * @param[out] size the resulting number
+     * @return whether the call was success
+     */
+    public long statisticsMapSize(Pointer statistics, long key) {
+    	SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_statistics_map_size(statistics, key, size);
+		return size.getValue();
+    }
+    /**
+     * Test if the given map contains a specific subkey.
+     *
+     * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
+     * @param[in] statistics the target statistics
+     * @param[in] key the key
+     * @param[in] name name of the subkey
+     * @param[out] result true if the map has a subkey with the given name
+     * @return whether the call was success
+     */
+    public byte statisticsMapHas_subkey(Pointer statistics, long key, String name) {
+        ByteByReference result = new ByteByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_statistics_map_has_subkey(statistics, key, name, result);
+		return result.getValue();
+  }
+    /**
+     * Get the name associated with the offset-th subkey.
+     *
+     * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
+     * @param[in] statistics the target statistics
+     * @param[in] key the key
+     * @param[in] offset the offset of the name
+     * @param[out] name the resulting name
+     * @return whether the call was success
+     */
+    public String statisticsMapSubkey_name(Pointer statistics, long key, long offset) {
+    	String[] name = new String[1];
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_statistics_map_subkey_name(statistics, key, offset, name);
+		return name[0];
+    }
+    
+    /**
+     * Lookup a subkey under the given name.
+     *
+     * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
+     * @note Multiple levels can be looked up by concatenating keys with a period.
+     * @param[in] statistics the target statistics
+     * @param[in] key the key
+     * @param[in] name the name to lookup the subkey
+     * @param[out] subkey the resulting subkey
+     * @return whether the call was success
+     */
+    public int statisticsMapAt(Pointer statistics, long key, String name) {
+        IntByReference subkey = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_statistics_map_at(statistics, key, name, subkey);
+		return subkey.getValue();
+    }
+    
+    /**
+     * Add a subkey with the given name.
+     *
+     * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
+     * @param[in] statistics the target statistics
+     * @param[in] key the key
+     * @param[in] name the name of the new subkey
+     * @param[in] type the type of the new subkey
+     * @param[out] subkey the index of the resulting subkey
+     * @return whether the call was success
+     */
+    public int statisticsMapAddSubkey(Pointer statistics, long key, String name, int type) {
+    	IntByReference subkey = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_statistics_map_add_subkey(statistics, key, name, type, subkey);
+		return subkey.getValue();
+    }
+    
+    /**
+     * Get the value of the given entry.
+     *
+     * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_value.
+     * @param[in] statistics the target statistics
+     * @param[in] key the key
+     * @param[out] value the resulting value
+     * @return whether the call was successful
+     */
+    public double statisticsValueGet(Pointer statistics, long key) {
+        DoubleByReference value = new DoubleByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_statistics_value_get(statistics, key, value);
+		return value.getValue();
+    }
+    
+    /**
+     * Set the value of the given entry.
+     *
+     * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_value.
+     * @param[in] statistics the target statistics
+     * @param[in] key the key
+     * @param[out] value the new value
+     * @return whether the call was success
+     */
+    public void statisticsValueSet(Pointer statistics, long key, double value) {
+        byte success = clingoLibrary.clingo_statistics_value_set(statistics, key, value);
+    }
+
+	/* **********
 	 * 
 	 * ********** */
+
+    public Pointer controlStatistics(Pointer control) {
+    	PointerByReference statistics = new PointerByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_statistics(control, statistics);
+		return statistics.getValue();
+    }
 
     /**
      * Get a configuration object to change the solver configuration.

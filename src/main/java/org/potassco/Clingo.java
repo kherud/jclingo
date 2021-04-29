@@ -3,15 +3,10 @@ package org.potassco;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.potassco.cpp.bool;
-import org.potassco.cpp.c_char;
 import org.potassco.cpp.clingo_h;
-import org.potassco.cpp.clingo_statistics_t;
-import org.potassco.cpp.clingo_statistics_type_t;
-import org.potassco.cpp.size_t;
-import org.potassco.cpp.uint64_t;
 import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ErrorCode;
+import org.potassco.enums.ModelType;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
@@ -1295,8 +1290,226 @@ public class Clingo {
      * @return whether the call was success
      */
     public void statisticsValueSet(Pointer statistics, long key, double value) {
-        byte success = clingoLibrary.clingo_statistics_value_set(statistics, key, value);
+        @SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_statistics_value_set(statistics, key, value);
     }
+
+	/* **********
+	 *  model and solve control
+	 * ********** */
+
+//    ModelType
+//    ShowType
+    /* Functions for Inspecting Models */
+
+    /**
+     * Get the type of the model.
+     * @param model the target
+     * @return the type of the model
+     */
+    public ModelType modelType(Pointer model) {
+    	IntByReference type = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_model_type(model, type);
+		return ModelType.fromValue(type.getValue());
+    }
+    
+    /**
+     * Get the running number of the model.
+     * @param model the target
+     * @return the number of the model
+     */
+    public int modelNumber(Pointer model) {
+    	IntByReference number = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_model_number(model, number);
+		return number.getValue();
+    }
+    
+    /**
+     * Get the number of symbols of the selected types in the model.
+     * @param model the target
+     * @param show which symbols to select
+     * @return the number symbols
+     */
+    public long modelSymbolsSize(Pointer model, int show) {
+    	SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_model_symbols_size(model, show, size);
+		return size.getValue();
+    }
+
+    /**
+     * Get the symbols of the selected types in the model.
+     * <p>
+     * @note CSP assignments are represented using functions with name "$"
+     * where the first argument is the name of the CSP variable and the second one its
+     * value.
+     * @param model [in] model the target
+     * @param show [in] show which symbols to select. Of {@link ShowType}
+     * @param size [in] size the number of selected symbols
+     * @return the resulting symbols as an array[size] of symbol references
+     * @see clingo_model_symbols_size()
+     */
+    public long[] modelSymbols(Pointer model, ShowType show, long size) {
+    	long[] symbols = new long[Math.toIntExact(size)];
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_model_symbols(model, show.getValue(), symbols, size);
+		return symbols;
+    }
+    /**
+     * Constant time lookup to test whether an atom is in a model.
+     *
+     * @param[in] model the target
+     * @param[in] atom the atom to lookup
+     * @param[out] contained whether the atom is contained
+     * @return whether the call was successful
+     */
+    public byte clingo_model_contains(Pointer model, long atom) {
+        ByteByReference contained = new ByteByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_model_contains(model, atom, contained);
+		return contained.getValue();
+    }
+    /**
+     * Check if a program literal is true in a model.
+     *
+     * @param[in] model the target
+     * @param[in] literal the literal to lookup
+     * @param[out] result whether the literal is true
+     * @return whether the call was successful
+     */
+    public byte clingo_model_is_true(Pointer model, long literal) {
+        ByteByReference result = new ByteByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_model_is_true(model, literal, result);
+		return result.getValue();
+    }
+    /**
+     * Get the number of cost values of a model.
+     *
+     * @param[in] model the target
+     * @param[out] size the number of costs
+     * @return whether the call was successful
+     */
+    public long clingo_model_cost_size(Pointer model, SizeByReference p_size) {
+        SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_model_cost_size(model, size);
+		return size.getValue();
+    }
+    /**
+     * Get the cost vector of a model.
+     *
+     * @param[in] model the target
+     * @param[out] costs the resulting costs
+     * @param[in] size the number of costs
+     * @return whether the call was successful; might set one of the following error codes:
+     * - ::clingo_error_bad_alloc
+     * - ::clingo_error_runtime if the size is too small
+     *
+     * @see clingo_model_cost_size()
+     * @see clingo_model_optimality_proven()
+     */
+    public int clingo_model_cost(Pointer model, IntByReference p_costs, long size) {
+        IntByReference costs = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_model_cost(model, costs, size);
+		return costs.getValue();
+    }
+    /**
+     * Whether the optimality of a model has been proven.
+     *
+     * @param[in] model the target
+     * @param[out] proven whether the optimality has been proven
+     * @return whether the call was successful
+     *
+     * @see clingo_model_cost()
+     */
+    public byte clingo_model_optimality_proven(Pointer model, ByteByReference p_proven) {
+        ByteByReference proven = new ByteByReference();
+        @SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_model_optimality_proven(model, proven);
+		return proven.getValue();
+    }
+    /**
+     * Get the id of the solver thread that found the model.
+     *
+     * @param[in] model the target
+     * @param[out] id the resulting thread id
+     * @return whether the call was successful
+     */
+    public int clingo_model_thread_id(Pointer model, IntByReference p_id) {
+        IntByReference id = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_model_thread_id(model, id);
+		return id.getValue();
+    }
+    /**
+     * Add symbols to the model.
+     *
+     * These symbols will appear in clingo's output, which means that this
+     * function is only meaningful if there is an underlying clingo application.
+     * Only models passed to the ::clingo_solve_event_callback_t are extendable.
+     *
+     * @param[in] model the target
+     * @param[in] symbols the symbols to add
+     * @param[in] size the number of symbols to add
+     * @return whether the call was successful
+     */
+    public void clingo_model_extend(Pointer model, long symbols, long size) {
+        @SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_model_extend(model, symbols, size);
+    }
+    
+    /* Functions for Adding Clauses */
+    
+    /**
+     * Get the associated solve control object of a model.
+     *
+     * This object allows for adding clauses during model enumeration.
+     * @param[in] model the target
+     * @param[out] control the resulting solve control object
+     * @return whether the call was successful
+     */
+    public Pointer clingo_model_context(Pointer model) {
+        PointerByReference control = new PointerByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_model_context(model, control);
+		return control.getValue();
+    }
+    /**
+     * Get an object to inspect the symbolic atoms.
+     *
+     * @param[in] control the target
+     * @param[out] atoms the resulting object
+     * @return whether the call was successful
+     */
+    public Pointer clingo_solve_control_symbolic_atoms(Pointer control) {
+        PointerByReference atoms = new PointerByReference();
+		@SuppressWarnings("unused")
+        byte success = clingoLibrary.clingo_solve_control_symbolic_atoms(control, atoms);
+		return atoms.getValue();
+    }
+    /**
+     * Add a clause that applies to the current solving step during model
+     * enumeration.
+     *
+     * @note The @ref Propagator module provides a more sophisticated
+     * interface to add clauses - even on partial assignments.
+     *
+     * @param[in] control the target
+     * @param[in] clause array of literals representing the clause
+     * @param[in] size the size of the literal array
+     * @return whether the call was successful; might set one of the following error codes:
+     * - ::clingo_error_bad_alloc
+     * - ::clingo_error_runtime if adding the clause fails
+     */
+    public void clingo_solve_control_add_clause(Pointer control, Pointer clause, long size) {
+        @SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_solve_control_add_clause(control, clause, size);
+    }
+
 
 	/* **********
 	 * 
@@ -1370,38 +1583,6 @@ public class Clingo {
 	 * Solving
 	 * ******* */
     
-    /**
-     * Get the number of symbols of the selected types in the model.
-     * @param model the target
-     * @param show which symbols to select
-     * @return the number symbols
-     */
-    public long modelSymbolsSize(Pointer model, int show) {
-    	SizeByReference size = new SizeByReference();
-		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_model_symbols_size(model, show, size);
-		return size.getValue();
-    }
-
-    /**
-     * Get the symbols of the selected types in the model.
-     * <p>
-     * @note CSP assignments are represented using functions with name "$"
-     * where the first argument is the name of the CSP variable and the second one its
-     * value.
-     * @param model [in] model the target
-     * @param show [in] show which symbols to select. Of {@link ShowType}
-     * @param size [in] size the number of selected symbols
-     * @return the resulting symbols as an array[size] of symbol references
-     * @see clingo_model_symbols_size()
-     */
-    public long[] modelSymbols(Pointer model, ShowType show, long size) {
-    	long[] symbols = new long[Math.toIntExact(size)];
-		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_model_symbols(model, show.getValue(), symbols, size);
-		return symbols;
-    }
-
 	/**
 	 * @param name
 	 * @param logicProgram

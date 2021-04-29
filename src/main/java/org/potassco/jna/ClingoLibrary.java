@@ -1,76 +1,12 @@
 package org.potassco.jna;
-import org.potassco.cpp.bool;
-import org.potassco.cpp.c_char;
 import org.potassco.cpp.c_enum;
-import org.potassco.cpp.c_int;
-import org.potassco.cpp.c_void;
-import org.potassco.cpp.clingo_application_t;
-import org.potassco.cpp.clingo_assignment_t;
-import org.potassco.cpp.clingo_ast_attribute_names_t;
-import org.potassco.cpp.clingo_ast_attribute_t;
-import org.potassco.cpp.clingo_ast_attribute_type_t;
-import org.potassco.cpp.clingo_ast_callback_t;
-import org.potassco.cpp.clingo_ast_constructors_t;
-import org.potassco.cpp.clingo_ast_t;
-import org.potassco.cpp.clingo_ast_type_t;
-import org.potassco.cpp.clingo_ast_unpool_type_bitset_t;
-import org.potassco.cpp.clingo_atom_t;
-import org.potassco.cpp.clingo_backend_t;
-import org.potassco.cpp.clingo_clause_type_t;
-import org.potassco.cpp.clingo_configuration_t;
-import org.potassco.cpp.clingo_configuration_type_bitset_t;
-import org.potassco.cpp.clingo_control_t;
-import org.potassco.cpp.clingo_error_t;
-import org.potassco.cpp.clingo_external_type_t;
-import org.potassco.cpp.clingo_ground_callback_t;
-import org.potassco.cpp.clingo_ground_program_observer_t;
 import org.potassco.cpp.clingo_h;
-import org.potassco.cpp.clingo_heuristic_type_t;
-import org.potassco.cpp.clingo_id_t;
-import org.potassco.cpp.clingo_literal_t;
-import org.potassco.cpp.clingo_location_t;
-import org.potassco.cpp.clingo_logger_t;
-import org.potassco.cpp.clingo_model_t;
-import org.potassco.cpp.clingo_model_type_t;
-import org.potassco.cpp.clingo_options_t;
-import org.potassco.cpp.clingo_part_t;
-import org.potassco.cpp.clingo_program_builder_t;
-import org.potassco.cpp.clingo_propagate_control_t;
-import org.potassco.cpp.clingo_propagate_init_t;
-import org.potassco.cpp.clingo_propagator_check_mode_t;
-import org.potassco.cpp.clingo_propagator_t;
-import org.potassco.cpp.clingo_show_type_bitset_t;
-import org.potassco.cpp.clingo_signature_t;
-import org.potassco.cpp.clingo_solve_control_t;
-import org.potassco.cpp.clingo_solve_event_callback_t;
-import org.potassco.cpp.clingo_solve_handle_t;
-import org.potassco.cpp.clingo_solve_mode_bitset_t;
-import org.potassco.cpp.clingo_solve_result_bitset_t;
-import org.potassco.cpp.clingo_statistics_t;
-import org.potassco.cpp.clingo_statistics_type_t;
-import org.potassco.cpp.clingo_symbol_t;
-import org.potassco.cpp.clingo_symbol_type_t;
-import org.potassco.cpp.clingo_symbolic_atom_iterator_t;
-import org.potassco.cpp.clingo_symbolic_atoms_t;
-import org.potassco.cpp.clingo_theory_atoms_t;
-import org.potassco.cpp.clingo_theory_term_type_t;
-import org.potassco.cpp.clingo_truth_value_t;
-import org.potassco.cpp.clingo_warning_t;
-import org.potassco.cpp.clingo_weight_constraint_type_t;
-import org.potassco.cpp.clingo_weight_t;
-import org.potassco.cpp.clingo_weighted_literal_t;
-import org.potassco.cpp.int64_t;
-import org.potassco.cpp.size_t;
 import org.potassco.cpp.struct;
 import org.potassco.cpp.typedef;
-import org.potassco.cpp.uint32_t;
-import org.potassco.cpp.uint64_t;
-import org.potassco.cpp.unsigned;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -335,7 +271,7 @@ public interface ClingoLibrary extends Library {
     //! Check if two symbols are equal.
     //!
     //! @param[in] a first symbol
-    //! @param[in] b second symbol
+    //! @param[in] b second symbol
     //! @return whether a == b
     /** {@link clingo_h#clingo_symbol_is_equal_to} */
     public byte clingo_symbol_is_equal_to(long a, long b);
@@ -1726,81 +1662,24 @@ public interface ClingoLibrary extends Library {
     /** {@link clingo_h#clingo_statistics_value_set} */
     public byte clingo_statistics_value_set(Pointer p_statistics, long key, double value);
 
-  // {{{1 model and solve control
+    // model and solve control
 
-  //! @example model.c
-  //! The example shows how to inspect a model.
-  //!
-  //! ## Output ##
-  //!
-  //! ~~~~~~~~~~~~
-  //! $ ./model 0
-  //! Stable model:
-  //!   shown: c
-  //!   atoms: b
-  //!   terms: c
-  //!  ~atoms: a
-  //! Stable model:
-  //!   shown: a
-  //!   atoms: a
-  //!   terms:
-  //!  ~atoms: b
-  //! ~~~~~~~~~~~~
-  //!
-  //! ## Code ##
+    //! Functions for Inspecting Models
 
-  //! @defgroup Model Model Inspection
-  //! Inspection of models and a high-level interface to add constraints during solving.
-  //!
-  //! For an example, see @ref model.c.
-  //! @ingroup Control
-
-  //! @addtogroup Model
-  //! @{
-
-  //! Object to add clauses during search.
-//  public static final typedef<struct> clingo_solve_control_t = null;
-
-  //! Object representing a model.
-//  public static final typedef<struct> clingo_model_t = null;
-
-  //! Enumeration for the different model types.
-  /* enum clingo_model_type_e {
-      clingo_model_type_stable_model          = 0, //!< The model represents a stable model.
-      clingo_model_type_brave_consequences    = 1, //!< The model represents a set of brave consequences.
-      clingo_model_type_cautious_consequences = 2  //!< The model represents a set of cautious consequences.
-  }; */ public static final typedef<c_enum> clingo_model_type_e = null;
-  //! Corresponding type to ::clingo_model_type.
-//  public static final typedef<c_int> clingo_model_type_t = null;
-
-  //! Enumeration of bit flags to select symbols in models.
-  /* enum clingo_show_type_e {
-      clingo_show_type_csp        = 1,  //!< Select CSP assignments.
-      clingo_show_type_shown      = 2,  //!< Select shown atoms and terms.
-      clingo_show_type_atoms      = 4,  //!< Select all atoms.
-      clingo_show_type_terms      = 8,  //!< Select all terms.
-      clingo_show_type_theory     = 16, //!< Select symbols added by theory.
-      clingo_show_type_all        = 31, //!< Select everything.
-      clingo_show_type_complement = 32  //!< Select false instead of true atoms (::clingo_show_type_atoms) or terms (::clingo_show_type_terms).
-  }; */ public static final typedef<c_enum> clingo_show_type_e = null;
-  //! Corresponding type to ::clingo_show_type.
-//  public static final typedef<unsigned> clingo_show_type_bitset_t = null;
-
-  //! @name Functions for Inspecting Models
-  //! @{
-
-  //! Get the type of the model.
-  //!
-  //! @param[in] model the target
-  //! @param[out] type the type of the model
-  //! @return whether the call was successful
-//  public bool clingo_model_type(final clingo_model_t p_model, clingo_model_type_t p_type); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_type(clingo_model_t const *model, clingo_model_type_t *type);
-  //! Get the running number of the model.
-  //!
-  //! @param[in] model the target
-  //! @param[out] number the number of the model
-  //! @return whether the call was successful
-//  public bool clingo_model_number(final clingo_model_t p_model, uint64_t p_number); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_number(clingo_model_t const *model, uint64_t *number);
+    //! Get the type of the model.
+    //!
+    //! @param[in] model the target
+    //! @param[out] type the type of the model
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_model_type} */
+    public byte clingo_model_type(Pointer p_model, IntByReference p_type);
+    //! Get the running number of the model.
+    //!
+    //! @param[in] model the target
+    //! @param[out] number the number of the model
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_model_number} */
+    public byte clingo_model_number(Pointer p_model, IntByReference p_number);
     //! Get the number of symbols of the selected types in the model.
     //!
     //! @param[in] model the target
@@ -1827,97 +1706,94 @@ public interface ClingoLibrary extends Library {
     //! @see clingo_model_symbols_size()
     /** {@link clingo_h#clingo_model_symbols} */
     public byte clingo_model_symbols(Pointer p_model, int show, long[] p_symbols, long size);
-  //! Constant time lookup to test whether an atom is in a model.
-  //!
-  //! @param[in] model the target
-  //! @param[in] atom the atom to lookup
-  //! @param[out] contained whether the atom is contained
-  //! @return whether the call was successful
-//  public bool clingo_model_contains(final clingo_model_t p_model, clingo_symbol_t atom, bool p_contained); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_contains(clingo_model_t const *model, clingo_symbol_t atom, bool *contained);
-  //! Check if a program literal is true in a model.
-  //!
-  //! @param[in] model the target
-  //! @param[in] literal the literal to lookup
-  //! @param[out] result whether the literal is true
-  //! @return whether the call was successful
-//  public bool clingo_model_is_true(final clingo_model_t p_model, clingo_literal_t literal, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_is_true(clingo_model_t const *model, clingo_literal_t literal, bool *result);
-  //! Get the number of cost values of a model.
-  //!
-  //! @param[in] model the target
-  //! @param[out] size the number of costs
-  //! @return whether the call was successful
-//  public bool clingo_model_cost_size(final clingo_model_t p_model, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_cost_size(clingo_model_t const *model, size_t *size);
-  //! Get the cost vector of a model.
-  //!
-  //! @param[in] model the target
-  //! @param[out] costs the resulting costs
-  //! @param[in] size the number of costs
-  //! @return whether the call was successful; might set one of the following error codes:
-  //! - ::clingo_error_bad_alloc
-  //! - ::clingo_error_runtime if the size is too small
-  //!
-  //! @see clingo_model_cost_size()
-  //! @see clingo_model_optimality_proven()
-//  public bool clingo_model_cost(final clingo_model_t p_model, int64_t p_costs, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_cost(clingo_model_t const *model, int64_t *costs, size_t size);
-  //! Whether the optimality of a model has been proven.
-  //!
-  //! @param[in] model the target
-  //! @param[out] proven whether the optimality has been proven
-  //! @return whether the call was successful
-  //!
-  //! @see clingo_model_cost()
-//  public bool clingo_model_optimality_proven(final clingo_model_t p_model, bool p_proven); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_optimality_proven(clingo_model_t const *model, bool *proven);
-  //! Get the id of the solver thread that found the model.
-  //!
-  //! @param[in] model the target
-  //! @param[out] id the resulting thread id
-  //! @return whether the call was successful
-//  public bool clingo_model_thread_id(final clingo_model_t p_model, clingo_id_t p_id); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_thread_id(clingo_model_t const *model, clingo_id_t *id);
-  //! Add symbols to the model.
-  //!
-  //! These symbols will appear in clingo's output, which means that this
-  //! function is only meaningful if there is an underlying clingo application.
-  //! Only models passed to the ::clingo_solve_event_callback_t are extendable.
-  //!
-  //! @param[in] model the target
-  //! @param[in] symbols the symbols to add
-  //! @param[in] size the number of symbols to add
-  //! @return whether the call was successful
-//  public bool clingo_model_extend(clingo_model_t p_model, final clingo_symbol_t p_symbols, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_extend(clingo_model_t *model, clingo_symbol_t const *symbols, size_t size);
-  //! @}
+    //! Constant time lookup to test whether an atom is in a model.
+    //!
+    //! @param[in] model the target
+    //! @param[in] atom the atom to lookup
+    //! @param[out] contained whether the atom is contained
+    //! @return whether the call was successful
+    public byte clingo_model_contains(Pointer model, long atom, ByteByReference p_contained);
+    //! Check if a program literal is true in a model.
+    //!
+    //! @param[in] model the target
+    //! @param[in] literal the literal to lookup
+    //! @param[out] result whether the literal is true
+    //! @return whether the call was successful
+    public byte clingo_model_is_true(Pointer model, long literal, ByteByReference p_result);
+    //! Get the number of cost values of a model.
+    //!
+    //! @param[in] model the target
+    //! @param[out] size the number of costs
+    //! @return whether the call was successful
+    public byte clingo_model_cost_size(Pointer model, SizeByReference p_size);
+    //! Get the cost vector of a model.
+    //!
+    //! @param[in] model the target
+    //! @param[out] costs the resulting costs
+    //! @param[in] size the number of costs
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    //! - ::clingo_error_runtime if the size is too small
+    //!
+    //! @see clingo_model_cost_size()
+    //! @see clingo_model_optimality_proven()
+    public byte clingo_model_cost(Pointer model, IntByReference p_costs, long size);
+    //! Whether the optimality of a model has been proven.
+    //!
+    //! @param[in] model the target
+    //! @param[out] proven whether the optimality has been proven
+    //! @return whether the call was successful
+    //!
+    //! @see clingo_model_cost()
+    public byte clingo_model_optimality_proven(Pointer model, ByteByReference p_proven);
+    //! Get the id of the solver thread that found the model.
+    //!
+    //! @param[in] model the target
+    //! @param[out] id the resulting thread id
+    //! @return whether the call was successful
+    public byte clingo_model_thread_id(Pointer model, IntByReference p_id);
+    //! Add symbols to the model.
+    //!
+    //! These symbols will appear in clingo's output, which means that this
+    //! function is only meaningful if there is an underlying clingo application.
+    //! Only models passed to the ::clingo_solve_event_callback_t are extendable.
+    //!
+    //! @param[in] model the target
+    //! @param[in] symbols the symbols to add
+    //! @param[in] size the number of symbols to add
+    //! @return whether the call was successful
+    public byte clingo_model_extend(Pointer p_model, long p_symbols, long size);
+    //! @}
 
-  //! @name Functions for Adding Clauses
-  //! @{
+    //! @name Functions for Adding Clauses
+    //! @{
 
-  //! Get the associated solve control object of a model.
-  //!
-  //! This object allows for adding clauses during model enumeration.
-  //! @param[in] model the target
-  //! @param[out] control the resulting solve control object
-  //! @return whether the call was successful
-//  public bool clingo_model_context(final clingo_model_t p_model, clingo_solve_control_t p_p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_model_context(clingo_model_t const *model, clingo_solve_control_t **control);
-  //! Get an object to inspect the symbolic atoms.
-  //!
-  //! @param[in] control the target
-  //! @param[out] atoms the resulting object
-  //! @return whether the call was successful
-//  public bool clingo_solve_control_symbolic_atoms(final clingo_solve_control_t p_control, final clingo_symbolic_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_control_symbolic_atoms(clingo_solve_control_t const *control, clingo_symbolic_atoms_t const **atoms);
-  //! Add a clause that applies to the current solving step during model
-  //! enumeration.
-  //!
-  //! @note The @ref Propagator module provides a more sophisticated
-  //! interface to add clauses - even on partial assignments.
-  //!
-  //! @param[in] control the target
-  //! @param[in] clause array of literals representing the clause
-  //! @param[in] size the size of the literal array
-  //! @return whether the call was successful; might set one of the following error codes:
-  //! - ::clingo_error_bad_alloc
-  //! - ::clingo_error_runtime if adding the clause fails
-//  public bool clingo_solve_control_add_clause(clingo_solve_control_t p_control, final clingo_literal_t p_clause, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_control_add_clause(clingo_solve_control_t *control, clingo_literal_t const *clause, size_t size);
-  //! @}
-
-  //! @}
+    //! Get the associated solve control object of a model.
+    //!
+    //! This object allows for adding clauses during model enumeration.
+    //! @param[in] model the target
+    //! @param[out] control the resulting solve control object
+    //! @return whether the call was successful
+    public byte clingo_model_context(Pointer model, PointerByReference p_p_control);
+    //! Get an object to inspect the symbolic atoms.
+    //!
+    //! @param[in] control the target
+    //! @param[out] atoms the resulting object
+    //! @return whether the call was successful
+    public byte clingo_solve_control_symbolic_atoms(Pointer p_control, PointerByReference p_p_atoms);
+    //! Add a clause that applies to the current solving step during model
+    //! enumeration.
+    //!
+    //! @note The @ref Propagator module provides a more sophisticated
+    //! interface to add clauses - even on partial assignments.
+    //!
+    //! @param[in] control the target
+    //! @param[in] clause array of literals representing the clause
+    //! @param[in] size the size of the literal array
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    //! - ::clingo_error_runtime if adding the clause fails
+    public byte clingo_solve_control_add_clause(Pointer p_control, Pointer p_clause, long size);
 
   // {{{1 solve result
 

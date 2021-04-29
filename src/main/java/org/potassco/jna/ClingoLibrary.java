@@ -704,8 +704,8 @@ public interface ClingoLibrary extends Library {
     //! @param[in] atom id of the atom
     //! @param[out] has_guard whether the theory atom has a guard
     //! @return whether the call was successful
-    /** {@link clingo_h#clingo_theory_atoms_atom_elements} */
-    public byte clingo_theory_atoms_atom_elements(Pointer p_atoms, int atom, ByteByReference p_has_guard);
+    /** {@link clingo_h#clingo_theory_atoms_atom_has_guard} */
+    public byte clingo_theory_atoms_atom_has_guard(Pointer p_atoms, int atom, ByteByReference p_has_guard);
     //! Get the guard consisting of a theory operator and a theory term of the given theory atom.
     //!
     //! @note
@@ -724,8 +724,8 @@ public interface ClingoLibrary extends Library {
     //! @param[in] atom id of the atom
     //! @param[out] literal the resulting literal
     //! @return whether the call was successful
-    /** {@link clingo_h#clingo_theory_atoms_atom_guard} */
-    public byte clingo_theory_atoms_atom_guard(Pointer p_atoms, int atom, IntByReference p_literal);
+    /** {@link clingo_h#clingo_theory_atoms_atom_literal} */
+    public byte clingo_theory_atoms_atom_literal(Pointer p_atoms, int atom, IntByReference p_literal);
     //! Get the size of the string representation of the given theory atom (including the terminating 0).
     //!
     //! @param[in] atoms container where the atom is stored

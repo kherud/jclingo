@@ -207,12 +207,14 @@ public class Clingo {
 
 	long symbolCreateString(String string) {
 		SymbolByReference symb = new SymbolByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_create_string(string, symb);
 		return symb.getValue();
 	}
 
 	long symbolCreateId(String name, boolean positive) {
 		SymbolByReference symb = new SymbolByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_create_id(name, (byte) (positive ? 1 : 0), symb);
 		return symb.getValue();
 	}
@@ -228,18 +230,21 @@ public class Clingo {
 			args[i].setValue(s);
 			i++;
 		}
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_create_function(name, args, argumentsSize, (byte) (positive ? 1 : 0), symb);
 		return symb.getValue();
 	}
 
 	public int symbolNumber(long symbol) {
 		IntByReference ibr = new IntByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_number(symbol, ibr);
 		return ibr.getValue();
 	}
 
 	public String symbolName(long symbol) {
 		String[] pointer = new String[1];
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_name(symbol, pointer);
 		String v = pointer[0];
 		return v;
@@ -248,12 +253,14 @@ public class Clingo {
 	public String symbolString(long symbol) {
 		// https://stackoverflow.com/questions/29162569/jna-passing-string-by-reference-to-dll-but-non-return
 		String[] r1 = new String[1];
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_string(symbol, r1);
 		return r1[0];
 	}
 
 	public boolean symbolIsPositive(long symbol) {
 		ByteByReference p_positive = new ByteByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_is_positive(symbol, p_positive);
 		byte v = p_positive.getValue();
 		return v == 1;
@@ -261,6 +268,7 @@ public class Clingo {
 
 	public boolean symbolIsNegative(long symbol) {
 		ByteByReference p_positive = new ByteByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_is_negative(symbol, p_positive);
 		byte v = p_positive.getValue();
 		return v == 1;
@@ -279,6 +287,7 @@ public class Clingo {
 		}
 		PointerByReference p_p_arguments = new PointerByReference();
 		SizeByReference p_arguments_size = new SizeByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_arguments(symbol, p_p_arguments, p_arguments_size);
 		size = p_arguments_size.getValue();
 		Pointer p = p_p_arguments.getPointer();
@@ -297,6 +306,7 @@ public class Clingo {
     
     public long symbolToStringSize(long symbol) {
     	SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
 		boolean success = clingoLibrary.clingo_symbol_to_string_size(symbol, size);
 		return size.getValue();
     }
@@ -308,6 +318,7 @@ public class Clingo {
      */
     public String symbolToString(long symbol, long size) {
 		byte[] str = new byte[Math.toIntExact(size)];
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_to_string(symbol, str, size);
 		return new String(str);
     }
@@ -357,6 +368,7 @@ public class Clingo {
      */
     public String addString(String string) {
 		String[] x = new String[1];
+		@SuppressWarnings("unused")
     	byte success = clingoLibrary.clingo_add_string(string, x);
 		return x[0];
     }
@@ -375,6 +387,7 @@ public class Clingo {
 		PointerByReference loggerData = null;
 		int message = 0;
     	LongByReference symbol = new LongByReference();
+	@SuppressWarnings("unused")
     	byte success = clingoLibrary.clingo_parse_term(string, logger, loggerData, message, symbol);
 		return symbol.getValue();
     }
@@ -389,6 +402,7 @@ public class Clingo {
      */
     public long symbolicAtomsSize(Pointer atoms) {
 		SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_size(atoms, size);
 		return size.getValue();
     }
@@ -402,6 +416,7 @@ public class Clingo {
      */
     public Pointer symbolicAtomsBegin(Pointer atoms, Pointer signature) {
 		PointerByReference iterator = new PointerByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_begin(atoms, signature, iterator);
 		return iterator.getValue();
     }
@@ -413,6 +428,7 @@ public class Clingo {
  	 */
  	public Pointer symbolicAtomsEnd(Pointer atoms) {
 		PointerByReference iterator = new PointerByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_end(atoms, iterator);
 		return iterator.getValue();
  	}
@@ -425,6 +441,7 @@ public class Clingo {
  	 */
  	public Pointer symbolicAtomsFind(Pointer atoms, long symbol) {
 		PointerByReference iterator = new PointerByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_find(atoms, symbol, iterator);
 		return iterator.getValue();
  	}
@@ -438,6 +455,7 @@ public class Clingo {
  	 */
  	public boolean symbolicAtomsIteratorIsEqualTo(Pointer atoms, Pointer iteratorA, Pointer iteratorB) {
  		ByteByReference equal = new ByteByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_iterator_is_equal_to(atoms, iteratorA, iteratorB, equal);
 		return equal.getValue() == 1;
  	}
@@ -450,6 +468,7 @@ public class Clingo {
  	 */
  	public long symbolicAtomsSymbol(Pointer atoms, Pointer iterator) {
 		LongByReference p_symbol = new LongByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_symbol(atoms, iterator, p_symbol);
 		return p_symbol.getValue();
  	}
@@ -466,6 +485,7 @@ public class Clingo {
  	 */
  	public boolean symbolicAtomsIsFact(Pointer atoms, Pointer iterator) {
 		ByteByReference p_fact = new ByteByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_is_fact(atoms, iterator, p_fact);
 		return p_fact.getValue() == 1;
  	}
@@ -481,6 +501,7 @@ public class Clingo {
  	 */
  	public long symbolicAtomsIsExternal(Pointer atoms, Pointer iterator) {
 		ByteByReference p_external = new ByteByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_is_external(atoms, iterator, p_external);
 		return p_external.getValue();
  	}
@@ -496,6 +517,7 @@ public class Clingo {
  	 */
  	public Pointer symbolicAtomsLiteral(Pointer atoms, Pointer iterator) {
  		PointerByReference p_literal = new PointerByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_literal(atoms, iterator, p_literal);
 		return p_literal.getValue();
  	}
@@ -507,6 +529,7 @@ public class Clingo {
  	 */
  	public long symbolicAtomsSignaturesSize(Pointer atoms) {
  		SizeByReference p_size = new SizeByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_signatures_size(atoms, p_size);
 		return p_size.getValue();
  	}
@@ -519,6 +542,7 @@ public class Clingo {
  	 */
  	public Pointer symbolicAtomsSignatures(Pointer atoms, long size) {
  		PointerByReference p_signatures = new PointerByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_signatures(atoms, p_signatures, size);
 		return p_signatures.getValue();
  	}
@@ -531,6 +555,7 @@ public class Clingo {
  	 */
  	public Pointer symbolicAtomsNext(Pointer atoms, Pointer iterator) {
  		PointerByReference p_next = new PointerByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_next(atoms, iterator, p_next);
 		return p_next.getValue();
  	}
@@ -544,6 +569,7 @@ public class Clingo {
  	 */
  	public byte symbolicAtomsIsValid(Pointer atoms, Pointer iterator) {
  		ByteByReference p_valid = new ByteByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_is_valid(atoms, iterator, p_valid);
 		return p_valid.getValue();
  	}
@@ -557,6 +583,7 @@ public class Clingo {
      */
     public Pointer controlSymbolicAtoms(Pointer control) {
 		PointerByReference atoms = new PointerByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_symbolic_atoms(control, atoms);
 		return atoms.getValue();
     }
@@ -573,6 +600,7 @@ public class Clingo {
      */
     public TermType theoryAtomsTermType(Pointer atoms, int term) {
     	IntByReference type = new IntByReference();
+	@SuppressWarnings("unused")
     	byte success = clingoLibrary.clingo_theory_atoms_term_type(atoms, term, type);
 		return TermType.fromValue(type.getValue());
     }
@@ -585,6 +613,7 @@ public class Clingo {
      */
     public int theoryAtomsTermNumber(Pointer atoms, int term) {
     	IntByReference number = new IntByReference();
+	@SuppressWarnings("unused")
     	byte success = clingoLibrary.clingo_theory_atoms_term_number(atoms, term, number);
 		return number.getValue();
     }
@@ -601,6 +630,7 @@ public class Clingo {
      */
     public String theoryAtomsTermName(Pointer atoms, int term) {
 		String[] name = new String[1];
+		@SuppressWarnings("unused")
     	byte success = clingoLibrary.clingo_theory_atoms_term_name(atoms, term, name);
 		return name[0];
     }
@@ -616,6 +646,7 @@ public class Clingo {
     public int[] theoryAtomsTermArguments(Pointer atoms, int term) {
     	PointerByReference arguments = new PointerByReference();
 		SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_term_arguments(atoms, term, arguments, size);
 		int[] result = new int[Math.toIntExact(size.getValue())];
 		for (int i = 0; i < result.length; i++) {
@@ -633,6 +664,7 @@ public class Clingo {
      */
     public long theoryAtomsTermToStringSize(Pointer atoms, int term) {
     	SizeByReference size = new SizeByReference();
+	@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_term_to_string_size(atoms, term, size );
 		return size.getValue();
     }
@@ -646,59 +678,89 @@ public class Clingo {
      */
     public String theoryAtomsTermToString(Pointer atoms, int term, long size) {
 		byte[] str = new byte[Math.toIntExact(size)];
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_term_to_string(atoms, term, str, size);
 		return new String(str);
     }
 
-
-    //! Get the tuple (array of theory terms) of the given theory element.
-    //!
-    //! @param[in] atoms container where the element is stored
-    //! @param[in] element id of the element
+    /**
+     * Get the tuple (array of theory terms) of the given theory element.
+     * @param atoms container where the element is stored
+     * @param element id of the element
+     * @return
+     */
     //! @param[out] tuple the resulting array of term ids
     //! @param[out] size the number of term ids
-    //! @return whether the call was successful
-//  public bool clingo_theory_atoms_element_tuple(final clingo_theory_atoms_t p_atoms, clingo_id_t element, final clingo_id_t p_p_tuple, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_tuple(clingo_theory_atoms_t const *atoms, clingo_id_t element, clingo_id_t const **tuple, size_t *size);
-    //! Get the condition (array of aspif literals) of the given theory element.
-    //!
-    //! @param[in] atoms container where the element is stored
-    //! @param[in] element id of the element
+    public Pointer theoryAtomsElementTuple(Pointer atoms, int element) {
+		PointerByReference tuple = new PointerByReference();
+		SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_theory_atoms_element_tuple(atoms, element, tuple, size);
+		long s = size.getValue(); // TODO return size
+		return tuple.getValue();
+    }
+
+    /**
+     * Get the condition (array of aspif literals) of the given theory element.
+     * @param atoms container where the element is stored
+     * @param element id of the element
+     * @return
+     */
     //! @param[out] condition the resulting array of aspif literals
     //! @param[out] size the number of term literals
-    //! @return whether the call was successful
-//  public bool clingo_theory_atoms_element_condition(final clingo_theory_atoms_t p_atoms, clingo_id_t element, final clingo_literal_t p_p_condition, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_condition(clingo_theory_atoms_t const *atoms, clingo_id_t element, clingo_literal_t const **condition, size_t *size);
-    //! Get the id of the condition of the given theory element.
-    //!
-    //! @note
-    //! This id can be mapped to a solver literal using clingo_propagate_init_solver_literal().
-    //! This id is not (necessarily) an aspif literal;
-    //! to get aspif literals use clingo_theory_atoms_element_condition().
-    //!
-    //! @param[in] atoms container where the element is stored
-    //! @param[in] element id of the element
-    //! @param[out] condition the resulting condition id
-    //! @return whether the call was successful
-//  public bool clingo_theory_atoms_element_condition_id(final clingo_theory_atoms_t p_atoms, clingo_id_t element, clingo_literal_t p_condition); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_condition_id(clingo_theory_atoms_t const *atoms, clingo_id_t element, clingo_literal_t *condition);
-    //! Get the size of the string representation of the given theory element (including the terminating 0).
-    //!
-    //! @param[in] atoms container where the element is stored
-    //! @param[in] element id of the element
-    //! @param[out] size the resulting size
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-//  public bool clingo_theory_atoms_element_to_string_size(final clingo_theory_atoms_t p_atoms, clingo_id_t element, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_to_string_size(clingo_theory_atoms_t const *atoms, clingo_id_t element, size_t *size);
-    //! Get the string representation of the given theory element.
-    //!
-    //! @param[in] atoms container where the element is stored
-    //! @param[in] element id of the element
-    //! @param[out] string the resulting string
-    //! @param[in] size the size of the string
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_runtime if the size is too small
-    //! - ::clingo_error_bad_alloc
-//  public bool clingo_theory_atoms_element_to_string(final clingo_theory_atoms_t p_atoms, clingo_id_t element, c_char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_to_string(clingo_theory_atoms_t const *atoms, clingo_id_t element, char *string, size_t size);
-    //! @}
+    public Pointer theoryAtomsElementCondition(Pointer atoms, int element) {
+		PointerByReference condition = new PointerByReference();
+		SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_theory_atoms_element_condition(atoms, element, condition, size);
+		long s = size.getValue(); // TODO return size
+		return condition.getValue();
+    }
 
+    /**
+     * Get the id of the condition of the given theory element.
+     * <p>
+     * @note
+     * This id can be mapped to a solver literal using clingo_propagate_init_solver_literal().
+     * This id is not (necessarily) an aspif literal; to get aspif literals use clingo_theory_atoms_element_condition().
+     * @param atoms container where the element is stored
+     * @param element id of the element
+     * @return the resulting condition id
+     */
+    public int theoryAtomsElementConditionId(Pointer atoms, int element) {
+    	IntByReference condition = new IntByReference();
+	@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_theory_atoms_element_condition_id(atoms, element, condition);
+		return condition.getValue();
+    }
+
+    /**
+     * Get the size of the string representation of the given theory element (including the terminating 0).
+     * @param atoms container where the element is stored
+     * @param element id of the element
+     * @return the resulting size
+     */
+    public long theoryAtomsElementToStringSize(Pointer atoms, int element) {
+		SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_theory_atoms_element_to_string_size(atoms, element, size);
+		return size.getValue();
+    }
+
+    /**
+     * Get the string representation of the given theory element.
+     * @param atoms container where the element is stored
+     * @param element id of the element
+     * @param size the size of the string. The caller hast to provide the length of the requested string. 
+     * @return the resulting string
+     */
+    public String theoryAtomsElementToString(Pointer atoms, int element, long size) {
+		byte[] str = new byte[Math.toIntExact(size)];
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_theory_atoms_element_to_string(atoms, element, str, size);
+		return new String(str);
+    }
+    
     //! Theory Atom Inspection
 
     /**
@@ -708,71 +770,111 @@ public class Clingo {
      */
     public long theoryAtomsSize(Pointer atoms) {
 		SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_size(atoms, size);
 		return size.getValue();
     }
 
-    //! Get the theory term associated with the theory atom.
-    //!
-    //! @param[in] atoms container where the atom is stored
-    //! @param[in] atom id of the atom
-    //! @param[out] term the resulting term id
-    //! @return whether the call was successful
-//  public bool clingo_theory_atoms_atom_term(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, clingo_id_t p_term); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_term(clingo_theory_atoms_t const *atoms, clingo_id_t atom, clingo_id_t *term);
-    //! Get the theory elements associated with the theory atom.
-    //!
-    //! @param[in] atoms container where the atom is stored
-    //! @param[in] atom id of the atom
+    /**
+     * Get the theory term associated with the theory atom.
+     * @param atoms container where the atom is stored
+     * @param atom id of the atom
+     * @return the resulting term id
+     */
+    public long theoryAtomsAtomTerm(Pointer atoms, int atom) {
+		IntByReference term = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_theory_atoms_atom_term(atoms, atom, term);
+		return term.getValue();
+    }
+
+    /**
+     * Get the theory elements associated with the theory atom.
+     * @param atoms container where the atom is stored
+     * @param atom id of the atom
+     * @return
+     */
     //! @param[out] elements the resulting array of elements
     //! @param[out] size the number of elements
-    //! @return whether the call was successful
-//  public bool clingo_theory_atoms_atom_elements(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, final clingo_id_t p_p_elements, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_elements(clingo_theory_atoms_t const *atoms, clingo_id_t atom, clingo_id_t const **elements, size_t *size);
-    //! Whether the theory atom has a guard.
-    //!
-    //! @param[in] atoms container where the atom is stored
-    //! @param[in] atom id of the atom
-    //! @param[out] has_guard whether the theory atom has a guard
-    //! @return whether the call was successful
-//  public bool clingo_theory_atoms_atom_has_guard(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, bool p_has_guard); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_has_guard(clingo_theory_atoms_t const *atoms, clingo_id_t atom, bool *has_guard);
-    //! Get the guard consisting of a theory operator and a theory term of the given theory atom.
-    //!
-    //! @note
-    //! The lifetime of the string is tied to the current solve step.
-    //!
-    //! @param[in] atoms container where the atom is stored
-    //! @param[in] atom id of the atom
+    public long theoryAtomsAtomElements(Pointer atoms, int atom) {
+		IntByReference elements = new IntByReference();
+		SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_theory_atoms_atom_elements(atoms, atom, elements, size);
+		return elements.getValue();
+    }
+
+    /**
+     * Whether the theory atom has a guard.
+     * @param atoms container where the atom is stored
+     * @param atom id of the atom
+     * @return whether the theory atom has a guard
+     */
+    public byte theoryAtomsAtomHasGuard(Pointer atoms, int atom) {
+		ByteByReference hasGuard = new ByteByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_theory_atoms_atom_has_guard(atoms, atom, hasGuard);
+		return hasGuard.getValue();
+    }
+
+    /**
+     * Get the guard consisting of a theory operator and a theory term of the given theory atom.
+     * <p>
+     * @note The lifetime of the string is tied to the current solve step.
+     * @param atoms container where the atom is stored
+     * @param atom id of the atom
+     * @return
+     */
     //! @param[out] connective the resulting theory operator
     //! @param[out] term the resulting term
-    //! @return whether the call was successful
-//  public bool clingo_theory_atoms_atom_guard(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, final c_char p_p_connective, clingo_id_t p_term); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_guard(clingo_theory_atoms_t const *atoms, clingo_id_t atom, char const **connective, clingo_id_t *term);
-    //! Get the aspif literal associated with the given theory atom.
-    //!
-    //! @param[in] atoms container where the atom is stored
-    //! @param[in] atom id of the atom
-    //! @param[out] literal the resulting literal
-    //! @return whether the call was successful
-//  public bool clingo_theory_atoms_atom_literal(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_literal(clingo_theory_atoms_t const *atoms, clingo_id_t atom, clingo_literal_t *literal);
-    //! Get the size of the string representation of the given theory atom (including the terminating 0).
-    //!
-    //! @param[in] atoms container where the atom is stored
-    //! @param[in] atom id of the element
-    //! @param[out] size the resulting size
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-//  public bool clingo_theory_atoms_atom_to_string_size(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_to_string_size(clingo_theory_atoms_t const *atoms, clingo_id_t atom, size_t *size);
-    //! Get the string representation of the given theory atom.
-    //!
-    //! @param[in] atoms container where the atom is stored
-    //! @param[in] atom id of the element
-    //! @param[out] string the resulting string
-    //! @param[in] size the size of the string
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_runtime if the size is too small
-    //! - ::clingo_error_bad_alloc
-//  public bool clingo_theory_atoms_atom_to_string(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_to_string(clingo_theory_atoms_t const *atoms, clingo_id_t atom, char *string, size_t size);
-    //! @}
-    
-    
+    public void theoryAtomsAtomGuard(Pointer atoms, int atom) {
+		byte[] connective = null;
+		int term = 0;
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_theory_atoms_atom_guard(atoms, atom, connective, term);
+//		return elements.getValue();
+    }
+
+    /**
+     * Get the aspif literal associated with the given theory atom.
+     * @param atoms container where the atom is stored
+     * @param atom id of the atom
+     * @return the resulting literal
+     */
+    public int theoryAtomsAtomLiteral(Pointer atoms, int atom) {
+		IntByReference literal = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_theory_atoms_atom_literal(atoms, atom, literal);
+		return literal.getValue();
+    }
+
+    /**
+     * Get the size of the string representation of the given theory atom (including the terminating 0).
+     * @param atoms container where the atom is stored
+     * @param atom id of the atom
+     * @return the resulting size
+     */
+    public long theoryAtomsAtomToStringSize(Pointer atoms, int atom) {
+		SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_theory_atoms_atom_to_string_size(atoms, atom, size);
+		return size.getValue();
+    }
+
+    /**
+     * Get the string representation of the given theory atom.
+     * @param atoms container where the atom is stored
+     * @param atom id of the atom
+     * @param size the size of the string. The caller hast to provide the size of the expected string.
+     * @return the resulting size
+     */
+    public String theoryAtomsAtomToString(Pointer atoms, int atom, long size) {
+		byte[] str = new byte[Math.toIntExact(size)];;
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_theory_atoms_atom_to_string(atoms, atom, str, size);
+		return new String(str);
+    }
+
     /**
      * Get an object to inspect theory atoms that occur in the grounding.
      * <p>
@@ -782,6 +884,7 @@ public class Clingo {
      */
     public Pointer controlTheoryAtoms(Pointer control) {
     	PointerByReference atoms = new PointerByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_theory_atoms(control, atoms);
 		return atoms.getValue();
     }
@@ -812,6 +915,7 @@ public class Clingo {
      *  CLINGO_VISIBILITY_DEFAULT bool clingo_control_ground(clingo_control_t *control, clingo_part_t const *parts, size_t parts_size, clingo_ground_callback_t ground_callback, void *ground_callback_data);
      */
     public void controlGround(Pointer control, Part[] parts, Size parts_size, Pointer ground_callback, Pointer ground_callback_data) {
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_ground(control, parts, parts_size, ground_callback, ground_callback_data);
     }
         
@@ -828,6 +932,7 @@ public class Clingo {
      */
     public long modelSymbolsSize(Pointer model, int show) {
     	SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_symbols_size(model, show, size);
 		return size.getValue();
     }
@@ -846,6 +951,7 @@ public class Clingo {
      */
     public long[] modelSymbols(Pointer model, ShowType show, long size) {
     	long[] symbols = new long[Math.toIntExact(size)];
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_symbols(model, show.getValue(), symbols, size);
 		return symbols;
     }

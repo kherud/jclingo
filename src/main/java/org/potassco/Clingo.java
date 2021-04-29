@@ -1298,8 +1298,6 @@ public class Clingo {
 	 *  model and solve control
 	 * ********** */
 
-//    ModelType
-//    ShowType
     /* Functions for Inspecting Models */
 
     /**
@@ -1329,13 +1327,13 @@ public class Clingo {
     /**
      * Get the number of symbols of the selected types in the model.
      * @param model the target
-     * @param show which symbols to select
+     * @param show which symbols to select - {@link ShowType}
      * @return the number symbols
      */
-    public long modelSymbolsSize(Pointer model, int show) {
+    public long modelSymbolsSize(Pointer model, ShowType show) {
     	SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_model_symbols_size(model, show, size);
+		byte success = clingoLibrary.clingo_model_symbols_size(model, show.getValue(), size);
 		return size.getValue();
     }
 
@@ -1392,7 +1390,7 @@ public class Clingo {
      * @param[out] size the number of costs
      * @return whether the call was successful
      */
-    public long clingo_model_cost_size(Pointer model, SizeByReference p_size) {
+    public long clingo_model_cost_size(Pointer model) {
         SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_cost_size(model, size);
@@ -1411,7 +1409,7 @@ public class Clingo {
      * @see clingo_model_cost_size()
      * @see clingo_model_optimality_proven()
      */
-    public int clingo_model_cost(Pointer model, IntByReference p_costs, long size) {
+    public int clingo_model_cost(Pointer model, long size) {
         IntByReference costs = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_cost(model, costs, size);
@@ -1426,7 +1424,7 @@ public class Clingo {
      *
      * @see clingo_model_cost()
      */
-    public byte clingo_model_optimality_proven(Pointer model, ByteByReference p_proven) {
+    public byte clingo_model_optimality_proven(Pointer model) {
         ByteByReference proven = new ByteByReference();
         @SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_optimality_proven(model, proven);
@@ -1439,7 +1437,7 @@ public class Clingo {
      * @param[out] id the resulting thread id
      * @return whether the call was successful
      */
-    public int clingo_model_thread_id(Pointer model, IntByReference p_id) {
+    public int clingo_model_thread_id(Pointer model) {
         IntByReference id = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_thread_id(model, id);
@@ -1505,12 +1503,23 @@ public class Clingo {
      * - ::clingo_error_bad_alloc
      * - ::clingo_error_runtime if adding the clause fails
      */
-    public void clingo_solve_control_add_clause(Pointer control, Pointer clause, long size) {
+    public void solveControlAddClause(Pointer control, Pointer clause, long size) {
         @SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_solve_control_add_clause(control, clause, size);
     }
 
-
+  	/**
+  	 * Get the next model (or zero if there are no more models).
+  	 * @param handle the target
+  	 * @return the model (it is NULL if there are no more models)
+  	 */
+  	public Pointer solveHandleModel(Pointer handle) {
+        PointerByReference model = new PointerByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_solve_handle_model(handle, model);
+		return model.getValue();
+  	}
+  	
 	/* **********
 	 * 
 	 * ********** */
@@ -1602,6 +1611,13 @@ public class Clingo {
         clingoLibrary.clingo_control_ground(controlPointer.getValue(), parts, new Size(1), null, null);
 	}
 
+	public void controlSolve(Pointer control, int mode, Pointer assumptions,
+			Size assumptionsSize, SolveEventCallbackT cb, Pointer data) {
+        PointerByReference handle = new PointerByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_solve(control, mode, assumptions, assumptionsSize, cb, data, handle);
+	}
+	
     /**
      * @return
      * @throws ClingoException
@@ -1627,7 +1643,7 @@ public class Clingo {
                 SolveEventType t = SolveEventType.fromValue(type);
                 switch (t) {
                     case MODEL:
-                    	long size = modelSymbolsSize(event, 2);
+                    	long size = modelSymbolsSize(event, ShowType.SHOWN);
                         solveHandle.setSize(size);
                         long[] symbols = modelSymbols(event, ShowType.SHOWN, size);
                         for (int i = 0; i < size; ++i) {

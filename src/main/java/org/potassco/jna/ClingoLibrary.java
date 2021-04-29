@@ -1901,14 +1901,14 @@ public interface ClingoLibrary extends Library {
   //! @param[in] timeout the maximum time to wait
   //! @param[out] result whether the search has finished
 //  public void clingo_solve_handle_wait(clingo_solve_handle_t p_handle, double timeout, bool p_result); // CLINGO_VISIBILITY_DEFAULT void clingo_solve_handle_wait(clingo_solve_handle_t *handle, double timeout, bool *result);
-  //! Get the next model (or zero if there are no more models).
-  //!
-  //! @param[in] handle the target
-  //! @param[out] model the model (it is NULL if there are no more models)
-  //! @return whether the call was successful; might set one of the following error codes:
-  //! - ::clingo_error_bad_alloc
-  //! - ::clingo_error_runtime if solving fails
-//  public bool clingo_solve_handle_model(clingo_solve_handle_t p_handle, final clingo_model_t p_p_model); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_model(clingo_solve_handle_t *handle, clingo_model_t const **model);
+    //! Get the next model (or zero if there are no more models).
+    //!
+    //! @param[in] handle the target
+    //! @param[out] model the model (it is NULL if there are no more models)
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    //! - ::clingo_error_runtime if solving fails
+  	public byte clingo_solve_handle_model(Pointer p_handle, PointerByReference p_p_model);
   //! When a problem is unsatisfiable, get a subset of the assumptions that made the problem unsatisfiable.
   //!
   //! If the program is not unsatisfiable, core is set to NULL and size to zero.
@@ -3530,10 +3530,9 @@ public interface ClingoLibrary extends Library {
      * @return whether the call was successful; might set one of the following error codes:
      * - ::clingo_error_bad_alloc
      * - ::clingo_error_runtime if solving could not be started
+     *  {@link clingo_h#clingo_control_solve}
      */
-//  CLINGO_VISIBILITY_DEFAULT bool clingo_control_solve(clingo_control_t *control, clingo_solve_mode_bitset_t mode, clingo_literal_t const *assumptions, size_t assumptions_size, clingo_solve_event_callback_t notify, void *data, clingo_solve_handle_t **handle);
-    //bool clingo_control_solve(clingo_control_t *control, clingo_solve_mode_bitset_t mode, clingo_literal_t const *assumptions, size_t assumptions_size, clingo_solve_event_callback_t notify, void *data, clingo_solve_handle_t **handle);
-    boolean clingo_control_solve(Pointer control, int mode, Pointer assumptions, Size assumptions_size, SolveEventCallbackT notify, Pointer data, PointerByReference handle);
+    public byte clingo_control_solve(Pointer control, int mode, Pointer assumptions, Size assumptions_size, SolveEventCallbackT notify, Pointer data, PointerByReference handle);
     
     /**
      * Get the next solve result.

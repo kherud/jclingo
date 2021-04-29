@@ -5,14 +5,17 @@ import static org.junit.Assert.*;
 import java.util.Iterator;
 
 import org.junit.Test;
+import org.potassco.jna.SizeByReference;
 import org.potassco.jna.SymbolCallbackT;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
 
-public class SymbolicAtomsTest {
+public class AtomsTest {
 
 	@Test
-	public void test3() {
+	public void testSymbolicAtoms() {
 		String name = "base";
 		Clingo clingo = new Clingo(name, "a. b. c. d. e.");
 		Pointer control = clingo.getControl();
@@ -62,5 +65,24 @@ public class SymbolicAtomsTest {
 			}
 		};
 	}
-	
+
+	@Test
+	public void testTheoryAtoms() {
+		String name = "base";
+		Clingo clingo = new Clingo(name,
+				"#theory dl { "
+				+ "    constant {- : 1, unary}; "
+				+ "    diff_term {- : 1, binary, left}; "
+				+ "    &diff/0 : diff_term, {<=}, constant, any "
+				+ "}.");
+		Pointer control = clingo.getControl();
+		clingo.ground(name);
+	}
+
+//    public int theoryAtomsTermType(Pointer atoms, int term) {
+//    public int theoryAtomsTermNumber(Pointer atoms, int term) {
+//    public String theoryAtomsTermName(Pointer atoms, int term) {
+//    public int[] theoryAtomsTermArguments(Pointer atoms, int term) {
+//    public long theoryAtomsTermToStringSize(Pointer atoms, int term) {
+//    public String theoryAtomsTermToString(Pointer atoms, int term, long size) {
 }

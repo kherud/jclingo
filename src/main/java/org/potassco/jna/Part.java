@@ -29,7 +29,15 @@ public class Part extends Structure {
 	public Pointer params;
 	public Size size;
 
+	public Part(String name, Pointer params, Size size) {
+		super();
+		this.name = name;
+		this.params = params;
+		this.size = size;
+	}
+
 	protected List<String> getFieldOrder() {
 		return Arrays.asList("name", "params", "size");
 	}
+
 }

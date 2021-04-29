@@ -22,7 +22,7 @@ import com.sun.jna.Pointer;
  * {@link clingo_h#clingo_solve_event_callback_t}
  */
 public abstract class SolveEventCallbackT implements Callback {
-    public abstract boolean call(int type, Pointer event, Pointer goon);
+    public abstract boolean call(int type, Pointer event, Pointer data, Pointer goon);
 
     /**
      * @param type an SolveEventType as int
@@ -32,6 +32,6 @@ public abstract class SolveEventCallbackT implements Callback {
      * @return
      */
     public boolean callback(int type, Pointer event, Pointer data, Pointer goon) {
-        return call(type, event, goon);
+        return call(type, event, data, goon);
     }
 }

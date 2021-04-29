@@ -3,6 +3,7 @@ package org.potassco;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.potassco.cpp.bool;
 import org.potassco.cpp.clingo_h;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.ShowType;
@@ -560,6 +561,242 @@ public class Clingo {
 		return atoms.getValue();
     }
 
+	/* ************
+	 * theory atoms
+	 * ************ */
+
+    /**
+     * Get the type of the given theory term.
+     * @param atoms container where the term is stored
+     * @param term id of the term
+     * @return the resulting type
+     */
+    public int theoryAtomsTermType(Pointer atoms, int term) {
+    	IntByReference type = new IntByReference();
+    	byte success = clingoLibrary.clingo_theory_atoms_term_type(atoms, term, type);
+		return type.getValue();
+    }
+
+    /**
+     * Get the number of the given numeric theory term.
+     * @param atoms container where the term is stored
+     * @param term id of the term
+     * @return the resulting number
+     */
+    public int theoryAtomsTermNumber(Pointer atoms, int term) {
+    	IntByReference number = new IntByReference();
+    	byte success = clingoLibrary.clingo_theory_atoms_term_number(atoms, term, number);
+		return number.getValue();
+    }
+
+    /**
+     * Get the name of the given constant or function theory term.
+     * 
+     * @note The lifetime of the string is tied to the current solve step.
+     * 
+     * @pre The term must be of type ::clingo_theory_term_type_function or ::clingo_theory_term_type_symbol.
+     * @param atoms container where the term is stored
+     * @param term id of the term
+     * @return the resulting name
+     */
+    public String theoryAtomsTermName(Pointer atoms, int term) {
+		String[] name = new String[1];
+    	byte success = clingoLibrary.clingo_theory_atoms_term_name(atoms, term, name);
+		return name[0];
+    }
+
+    /**
+     * Get the arguments of the given function theory term.
+     * 
+     * @pre The term must be of type ::clingo_theory_term_type_function.
+     * @param atoms container where the term is stored
+     * @param term id of the term
+     * @return the resulting arguments in form of an array of term ids
+     */
+    public int[] theoryAtomsTermArguments(Pointer atoms, int term) {
+    	PointerByReference arguments = new PointerByReference();
+		SizeByReference size = new SizeByReference();
+		byte success = clingoLibrary.clingo_theory_atoms_term_arguments(atoms, term, arguments, size);
+		int[] result = new int[Math.toIntExact(size.getValue())];
+		for (int i = 0; i < result.length; i++) {
+			Pointer p = arguments.getPointer();
+			result[i] = p.getInt(8); // TODO ???
+		}
+		return result;
+    }
+
+    /**
+     * Get the size of the string representation of the given theory term (including the terminating 0).
+     * @param atoms container where the term is stored
+     * @param term id of the term
+     * @return the resulting size
+     */
+    public long theoryAtomsTermToStringSize(Pointer atoms, int term) {
+    	SizeByReference size = new SizeByReference();
+		byte success = clingoLibrary.clingo_theory_atoms_term_to_string_size(atoms, term, size );
+		return size.getValue();
+    }
+
+    /**
+     * Get the string representation of the given theory term.
+     * @param atoms container where the term is stored
+     * @param term id of the term
+     * @param size the size of the string. The caller has to know the length of the string to return.
+     * @return the resulting string
+     */
+    public String theoryAtomsTermToString(Pointer atoms, int term, long size) {
+		byte[] str = new byte[Math.toIntExact(size)];
+		byte success = clingoLibrary.clingo_theory_atoms_term_to_string(atoms, term, str, size);
+		return new String(str);
+    }
+
+
+    //! Get the tuple (array of theory terms) of the given theory element.
+    //!
+    //! @param[in] atoms container where the element is stored
+    //! @param[in] element id of the element
+    //! @param[out] tuple the resulting array of term ids
+    //! @param[out] size the number of term ids
+    //! @return whether the call was successful
+//  public bool clingo_theory_atoms_element_tuple(final clingo_theory_atoms_t p_atoms, clingo_id_t element, final clingo_id_t p_p_tuple, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_tuple(clingo_theory_atoms_t const *atoms, clingo_id_t element, clingo_id_t const **tuple, size_t *size);
+    //! Get the condition (array of aspif literals) of the given theory element.
+    //!
+    //! @param[in] atoms container where the element is stored
+    //! @param[in] element id of the element
+    //! @param[out] condition the resulting array of aspif literals
+    //! @param[out] size the number of term literals
+    //! @return whether the call was successful
+//  public bool clingo_theory_atoms_element_condition(final clingo_theory_atoms_t p_atoms, clingo_id_t element, final clingo_literal_t p_p_condition, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_condition(clingo_theory_atoms_t const *atoms, clingo_id_t element, clingo_literal_t const **condition, size_t *size);
+    //! Get the id of the condition of the given theory element.
+    //!
+    //! @note
+    //! This id can be mapped to a solver literal using clingo_propagate_init_solver_literal().
+    //! This id is not (necessarily) an aspif literal;
+    //! to get aspif literals use clingo_theory_atoms_element_condition().
+    //!
+    //! @param[in] atoms container where the element is stored
+    //! @param[in] element id of the element
+    //! @param[out] condition the resulting condition id
+    //! @return whether the call was successful
+//  public bool clingo_theory_atoms_element_condition_id(final clingo_theory_atoms_t p_atoms, clingo_id_t element, clingo_literal_t p_condition); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_condition_id(clingo_theory_atoms_t const *atoms, clingo_id_t element, clingo_literal_t *condition);
+    //! Get the size of the string representation of the given theory element (including the terminating 0).
+    //!
+    //! @param[in] atoms container where the element is stored
+    //! @param[in] element id of the element
+    //! @param[out] size the resulting size
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+//  public bool clingo_theory_atoms_element_to_string_size(final clingo_theory_atoms_t p_atoms, clingo_id_t element, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_to_string_size(clingo_theory_atoms_t const *atoms, clingo_id_t element, size_t *size);
+    //! Get the string representation of the given theory element.
+    //!
+    //! @param[in] atoms container where the element is stored
+    //! @param[in] element id of the element
+    //! @param[out] string the resulting string
+    //! @param[in] size the size of the string
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_runtime if the size is too small
+    //! - ::clingo_error_bad_alloc
+//  public bool clingo_theory_atoms_element_to_string(final clingo_theory_atoms_t p_atoms, clingo_id_t element, c_char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_to_string(clingo_theory_atoms_t const *atoms, clingo_id_t element, char *string, size_t size);
+    //! @}
+
+    //! @name Theory Atom Inspection
+    //! @{
+
+    //! Get the total number of theory atoms.
+    //!
+    //! @param[in] atoms the target
+    //! @param[out] size the resulting number
+    //! @return whether the call was successful
+//  public bool clingo_theory_atoms_size(final clingo_theory_atoms_t p_atoms, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_size(clingo_theory_atoms_t const *atoms, size_t *size);
+    //! Get the theory term associated with the theory atom.
+    //!
+    //! @param[in] atoms container where the atom is stored
+    //! @param[in] atom id of the atom
+    //! @param[out] term the resulting term id
+    //! @return whether the call was successful
+//  public bool clingo_theory_atoms_atom_term(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, clingo_id_t p_term); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_term(clingo_theory_atoms_t const *atoms, clingo_id_t atom, clingo_id_t *term);
+    //! Get the theory elements associated with the theory atom.
+    //!
+    //! @param[in] atoms container where the atom is stored
+    //! @param[in] atom id of the atom
+    //! @param[out] elements the resulting array of elements
+    //! @param[out] size the number of elements
+    //! @return whether the call was successful
+//  public bool clingo_theory_atoms_atom_elements(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, final clingo_id_t p_p_elements, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_elements(clingo_theory_atoms_t const *atoms, clingo_id_t atom, clingo_id_t const **elements, size_t *size);
+    //! Whether the theory atom has a guard.
+    //!
+    //! @param[in] atoms container where the atom is stored
+    //! @param[in] atom id of the atom
+    //! @param[out] has_guard whether the theory atom has a guard
+    //! @return whether the call was successful
+//  public bool clingo_theory_atoms_atom_has_guard(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, bool p_has_guard); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_has_guard(clingo_theory_atoms_t const *atoms, clingo_id_t atom, bool *has_guard);
+    //! Get the guard consisting of a theory operator and a theory term of the given theory atom.
+    //!
+    //! @note
+    //! The lifetime of the string is tied to the current solve step.
+    //!
+    //! @param[in] atoms container where the atom is stored
+    //! @param[in] atom id of the atom
+    //! @param[out] connective the resulting theory operator
+    //! @param[out] term the resulting term
+    //! @return whether the call was successful
+//  public bool clingo_theory_atoms_atom_guard(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, final c_char p_p_connective, clingo_id_t p_term); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_guard(clingo_theory_atoms_t const *atoms, clingo_id_t atom, char const **connective, clingo_id_t *term);
+    //! Get the aspif literal associated with the given theory atom.
+    //!
+    //! @param[in] atoms container where the atom is stored
+    //! @param[in] atom id of the atom
+    //! @param[out] literal the resulting literal
+    //! @return whether the call was successful
+//  public bool clingo_theory_atoms_atom_literal(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_literal(clingo_theory_atoms_t const *atoms, clingo_id_t atom, clingo_literal_t *literal);
+    //! Get the size of the string representation of the given theory atom (including the terminating 0).
+    //!
+    //! @param[in] atoms container where the atom is stored
+    //! @param[in] atom id of the element
+    //! @param[out] size the resulting size
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+//  public bool clingo_theory_atoms_atom_to_string_size(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_to_string_size(clingo_theory_atoms_t const *atoms, clingo_id_t atom, size_t *size);
+    //! Get the string representation of the given theory atom.
+    //!
+    //! @param[in] atoms container where the atom is stored
+    //! @param[in] atom id of the element
+    //! @param[out] string the resulting string
+    //! @param[in] size the size of the string
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_runtime if the size is too small
+    //! - ::clingo_error_bad_alloc
+//  public bool clingo_theory_atoms_atom_to_string(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_to_string(clingo_theory_atoms_t const *atoms, clingo_id_t atom, char *string, size_t size);
+    //! @}
+    
+	/* *******
+	 * 
+	 * ******* */
+    
+
+    /**Ground the selected @link ::clingo_part parts @endlink of the current (non-ground) logic program.
+     * <p>
+     * After grounding, logic programs can be solved with ::clingo_control_solve().
+     * <p>
+     * @note Parts of a logic program without an explicit <tt>\#program</tt>
+     * specification are by default put into a program called `base` without
+     * arguments.
+     * @param control [in] control the target
+     * @param parts [in] parts array of parts to ground
+     * @param parts_size [in] parts_size size of the parts array. The caller has to know the size of parts to return.
+     * @param ground_callback [in] ground_callback callback to implement external functions
+     * @param ground_callback_data [in] ground_callback_data user data for ground_callback
+     * @return whether the call was successful; might set one of the following error codes:
+     * - ::clingo_error_bad_alloc
+     * - error code of ground callback
+     * @see clingo_part
+     * bool clingo_control_ground(clingo_control_t *control, clingo_part_t const *parts, size_t parts_size, clingo_ground_callback_t ground_callback, void *ground_callback_data);
+     *  CLINGO_VISIBILITY_DEFAULT bool clingo_control_ground(clingo_control_t *control, clingo_part_t const *parts, size_t parts_size, clingo_ground_callback_t ground_callback, void *ground_callback_data);
+     */
+    public void controlGround(Pointer control, Part[] parts, Size parts_size, Pointer ground_callback, Pointer ground_callback_data) {
+		byte success = clingoLibrary.clingo_control_ground(control, parts, parts_size, ground_callback, ground_callback_data);
+    }
+        
+    
 	/* *******
 	 * Solving
 	 * ******* */
@@ -611,11 +848,8 @@ public class Clingo {
 	 * {@link clingo_h#clingo_control_ground}
 	 */
 	public void ground(String name) {
-        Part[] parts = new Part [1];
-        parts[0] = new Part();
-		parts[0].name = name;
-        parts[0].params = null;
-        parts[0].size = new Size(0);
+        Part[] parts = new Part[1];
+        parts[0] = new Part(name, null, new Size(0));
         clingoLibrary.clingo_control_ground(controlPointer.getValue(), parts, new Size(1), null, null);
 	}
 
@@ -640,7 +874,7 @@ public class Clingo {
 
         SolveHandle solveHandle = new SolveHandle();
         SolveEventCallbackT cb = new SolveEventCallbackT() {
-            public boolean call(int type, Pointer event, Pointer goon) {
+            public boolean call(int type, Pointer event, Pointer data, Pointer goon) {
                 SolveEventType t = SolveEventType.fromValue(type);
                 switch (t) {
                     case MODEL:

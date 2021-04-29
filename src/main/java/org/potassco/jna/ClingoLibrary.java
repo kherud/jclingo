@@ -522,251 +522,230 @@ public interface ClingoLibrary extends Library {
 
     // ********************************************************************************************************
 
-    //! Callback function to inject symbols.
+    // {{{1 theory atoms
+
+    //! @example theory-atoms.c
+    //! The example shows how to inspect and use theory atoms.
     //!
-    //! @param symbols array of symbols
-    //! @param symbols_size size of the symbol array
-    //! @param data user data of the callback
+    //! This is a very simple example that uses the @link ProgramBuilder backend@endlink to let theory atoms affect answer sets.
+    //! In general, the backend can be used to implement a custom theory by translating it to a logic program.
+    //! On the other hand, a @link Propagator propagator@endlink can be used to implement a custom theory without adding any constraints in advance.
+    //! Or both approaches can be combined.
+    //!
+    //! ## Output ##
+    //!
+    //! ~~~~~~~~~~~~
+    //! ./theory-atoms 0
+    //! number of grounded theory atoms: 2
+    //! theory atom b/1 has a guard: true
+    //! Model: y
+    //! Model: x y
+    //! ~~~~~~~~~~~~
+    //!
+    //! ## Code ##
+    //!
+    //! During grounding, theory atoms get consecutive numbers starting with zero.
+    //! The total number of theory atoms can be obtained using clingo_theory_atoms_size().
+    //!
+    //! @attention
+    //! All structural information about theory atoms, elements, and terms is reset after @link clingo_control_solve() solving@endlink.
+    //! If afterward fresh theory atoms are @link clingo_control_ground() grounded@endlink, previously used ids are reused.
+    //!
+    //! For an example, see @ref theory-atoms.c.
+
+    //! @name Theory Term Inspection
+    //! @{
+
+    //! Get the type of the given theory term.
+    //!
+    //! @param[in] atoms container where the term is stored
+    //! @param[in] term id of the term
+    //! @param[out] type the resulting type
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_theory_atoms_term_type} */
+    public byte clingo_theory_atoms_term_type(Pointer p_atoms, int term, IntByReference p_type);
+    //! Get the number of the given numeric theory term.
+    //!
+    //! @pre The term must be of type ::clingo_theory_term_type_number.
+    //! @param[in] atoms container where the term is stored
+    //! @param[in] term id of the term
+    //! @param[out] number the resulting number
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_theory_atoms_term_number} */
+    public byte clingo_theory_atoms_term_number(Pointer p_atoms, int term, IntByReference p_number);
+    //! Get the name of the given constant or function theory term.
+    //!
+    //! @note
+    //! The lifetime of the string is tied to the current solve step.
+    //!
+    //! @pre The term must be of type ::clingo_theory_term_type_function or ::clingo_theory_term_type_symbol.
+    //! @param[in] atoms container where the term is stored
+    //! @param[in] term id of the term
+    //! @param[out] name the resulting name
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_theory_atoms_term_name} */
+    public byte clingo_theory_atoms_term_name(Pointer p_atoms, int term, final String[] p_p_name);
+    //! Get the arguments of the given function theory term.
+    //!
+    //! @pre The term must be of type ::clingo_theory_term_type_function.
+    //! @param[in] atoms container where the term is stored
+    //! @param[in] term id of the term
+    //! @param[out] arguments the resulting arguments in form of an array of term ids
+    //! @param[out] size the number of arguments
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_theory_atoms_term_arguments} */
+    public byte clingo_theory_atoms_term_arguments(Pointer p_atoms, int term, PointerByReference p_p_arguments, SizeByReference p_size);
+    //! Get the size of the string representation of the given theory term (including the terminating 0).
+    //!
+    //! @param[in] atoms container where the term is stored
+    //! @param[in] term id of the term
+    //! @param[out] size the resulting size
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_bad_alloc
-    //! @see ::clingo_ground_callback_t
-//  public static final typedef<bool> clingo_symbol_callback_t = null; // typedef bool (*clingo_symbol_callback_t) (clingo_symbol_t const *symbols, size_t symbols_size, void *data);
-  //! @}
+    /** {@link clingo_h#clingo_theory_atoms_term_to_string_size} */
+    public byte clingo_theory_atoms_term_to_string_size(Pointer p_atoms, int term, SizeByReference p_size);
+    //! Get the string representation of the given theory term.
+    //!
+    //! @param[in] atoms container where the term is stored
+    //! @param[in] term id of the term
+    //! @param[out] string the resulting string
+    //! @param[in] size the size of the string
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_runtime if the size is too small
+    //! - ::clingo_error_bad_alloc
+    //!
+    //! @see clingo_theory_atoms_term_to_string_size()
+    /** {@link clingo_h#clingo_theory_atoms_term_to_string} */
+    public byte clingo_theory_atoms_term_to_string(Pointer p_atoms, int term, byte[] p_string, long size);
 
-  // {{{1 theory atoms
+    //! @name Theory Element Inspection
 
-  //! @example theory-atoms.c
-  //! The example shows how to inspect and use theory atoms.
-  //!
-  //! @verbatim@endverbatim
-  //!
-  //! This is a very simple example that uses the @link ProgramBuilder backend@endlink to let theory atoms affect answer sets.
-  //! In general, the backend can be used to implement a custom theory by translating it to a logic program.
-  //! On the other hand, a @link Propagator propagator@endlink can be used to implement a custom theory without adding any constraints in advance.
-  //! Or both approaches can be combined.
-  //!
-  //! ## Output ##
-  //!
-  //! ~~~~~~~~~~~~
-  //! ./theory-atoms 0
-  //! number of grounded theory atoms: 2
-  //! theory atom b/1 has a guard: true
-  //! Model: y
-  //! Model: x y
-  //! ~~~~~~~~~~~~
-  //!
-  //! ## Code ##
+    //! Get the tuple (array of theory terms) of the given theory element.
+    //!
+    //! @param[in] atoms container where the element is stored
+    //! @param[in] element id of the element
+    //! @param[out] tuple the resulting array of term ids
+    //! @param[out] size the number of term ids
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_theory_atoms_element_tuple} */
+    public byte clingo_theory_atoms_element_tuple(Pointer p_atoms, int element, PointerByReference p_p_tuple, SizeByReference p_size);
+    //! Get the condition (array of aspif literals) of the given theory element.
+    //!
+    //! @param[in] atoms container where the element is stored
+    //! @param[in] element id of the element
+    //! @param[out] condition the resulting array of aspif literals
+    //! @param[out] size the number of term literals
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_theory_atoms_element_condition} */
+    public byte clingo_theory_atoms_element_condition(Pointer p_atoms, int element, PointerByReference p_p_condition, SizeByReference p_size);
+    //! Get the id of the condition of the given theory element.
+    //!
+    //! @note
+    //! This id can be mapped to a solver literal using clingo_propagate_init_solver_literal().
+    //! This id is not (necessarily) an aspif literal;
+    //! to get aspif literals use clingo_theory_atoms_element_condition().
+    //!
+    //! @param[in] atoms container where the element is stored
+    //! @param[in] element id of the element
+    //! @param[out] condition the resulting condition id
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_theory_atoms_element_condition_id} */
+    public byte clingo_theory_atoms_element_condition_id(Pointer p_atoms, int element, IntByReference p_condition);
+    //! Get the size of the string representation of the given theory element (including the terminating 0).
+    //!
+    //! @param[in] atoms container where the element is stored
+    //! @param[in] element id of the element
+    //! @param[out] size the resulting size
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    /** {@link clingo_h#clingo_theory_atoms_element_to_string_size} */
+    public byte clingo_theory_atoms_element_to_string_size(Pointer p_atoms, int element, SizeByReference p_size);
+    //! Get the string representation of the given theory element.
+    //!
+    //! @param[in] atoms container where the element is stored
+    //! @param[in] element id of the element
+    //! @param[out] string the resulting string
+    //! @param[in] size the size of the string
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_runtime if the size is too small
+    //! - ::clingo_error_bad_alloc
+    /** {@link clingo_h#clingo_theory_atoms_element_to_string} */
+    public byte clingo_theory_atoms_element_to_string(Pointer p_atoms, int element, byte[] p_string, long size);
 
-  //! @defgroup TheoryAtoms Theory Atom Inspection
-  //! Inspection of theory atoms occurring in ground logic programs.
-  //! @ingroup Control
-  //!
-  //! During grounding, theory atoms get consecutive numbers starting with zero.
-  //! The total number of theory atoms can be obtained using clingo_theory_atoms_size().
-  //!
-  //! @attention
-  //! All structural information about theory atoms, elements, and terms is reset after @link clingo_control_solve() solving@endlink.
-  //! If afterward fresh theory atoms are @link clingo_control_ground() grounded@endlink, previously used ids are reused.
-  //!
-  //! For an example, see @ref theory-atoms.c.
+    //! Theory Atom Inspection
 
-  //! @addtogroup TheoryAtoms
-  //! @{
-
-  //! Enumeration of theory term types.
-  /* enum clingo_theory_term_type_e {
-      clingo_theory_term_type_tuple    = 0, //!< a tuple term, e.g., `(1,2,3)`
-      clingo_theory_term_type_list     = 1, //!< a list term, e.g., `[1,2,3]`
-      clingo_theory_term_type_set      = 2, //!< a set term, e.g., `{1,2,3}`
-      clingo_theory_term_type_function = 3, //!< a function term, e.g., `f(1,2,3)`
-      clingo_theory_term_type_number   = 4, //!< a number term, e.g., `42`
-      clingo_theory_term_type_symbol   = 5  //!< a symbol term, e.g., `c`
-  }; */ public static final typedef<c_enum> clingo_theory_term_type_e = null;
-  //! Corresponding type to ::clingo_theory_term_type.
-  public static final typedef<c_int> clingo_theory_term_type_t = null;
-
-  //! Container that stores theory atoms, elements, and terms (see @ref clingo_control_theory_atoms()).
-  public static final typedef<struct> clingo_theory_atoms_t = null;
-
-  //! @name Theory Term Inspection
-  //! @{
-
-  //! Get the type of the given theory term.
-  //!
-  //! @param[in] atoms container where the term is stored
-  //! @param[in] term id of the term
-  //! @param[out] type the resulting type
-  //! @return whether the call was successful
-//  public bool clingo_theory_atoms_term_type(final clingo_theory_atoms_t p_atoms, clingo_id_t term, clingo_theory_term_type_t p_type); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_type(clingo_theory_atoms_t const *atoms, clingo_id_t term, clingo_theory_term_type_t *type);
-  //! Get the number of the given numeric theory term.
-  //!
-  //! @pre The term must be of type ::clingo_theory_term_type_number.
-  //! @param[in] atoms container where the term is stored
-  //! @param[in] term id of the term
-  //! @param[out] number the resulting number
-  //! @return whether the call was successful
-//  public bool clingo_theory_atoms_term_number(final clingo_theory_atoms_t p_atoms, clingo_id_t term, c_int p_number); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_number(clingo_theory_atoms_t const *atoms, clingo_id_t term, int *number);
-  //! Get the name of the given constant or function theory term.
-  //!
-  //! @note
-  //! The lifetime of the string is tied to the current solve step.
-  //!
-  //! @pre The term must be of type ::clingo_theory_term_type_function or ::clingo_theory_term_type_symbol.
-  //! @param[in] atoms container where the term is stored
-  //! @param[in] term id of the term
-  //! @param[out] name the resulting name
-  //! @return whether the call was successful
-//  public bool clingo_theory_atoms_term_name(final clingo_theory_atoms_t p_atoms, clingo_id_t term, final c_char p_p_name); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_name(clingo_theory_atoms_t const *atoms, clingo_id_t term, char const **name);
-  //! Get the arguments of the given function theory term.
-  //!
-  //! @pre The term must be of type ::clingo_theory_term_type_function.
-  //! @param[in] atoms container where the term is stored
-  //! @param[in] term id of the term
-  //! @param[out] arguments the resulting arguments in form of an array of term ids
-  //! @param[out] size the number of arguments
-  //! @return whether the call was successful
-//  public bool clingo_theory_atoms_term_arguments(final clingo_theory_atoms_t p_atoms, clingo_id_t term, final clingo_id_t p_p_arguments, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_arguments(clingo_theory_atoms_t const *atoms, clingo_id_t term, clingo_id_t const **arguments, size_t *size);
-  //! Get the size of the string representation of the given theory term (including the terminating 0).
-  //!
-  //! @param[in] atoms container where the term is stored
-  //! @param[in] term id of the term
-  //! @param[out] size the resulting size
-  //! @return whether the call was successful; might set one of the following error codes:
-  //! - ::clingo_error_bad_alloc
-//  public bool clingo_theory_atoms_term_to_string_size(final clingo_theory_atoms_t p_atoms, clingo_id_t term, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_to_string_size(clingo_theory_atoms_t const *atoms, clingo_id_t term, size_t *size);
-  //! Get the string representation of the given theory term.
-  //!
-  //! @param[in] atoms container where the term is stored
-  //! @param[in] term id of the term
-  //! @param[out] string the resulting string
-  //! @param[in] size the size of the string
-  //! @return whether the call was successful; might set one of the following error codes:
-  //! - ::clingo_error_runtime if the size is too small
-  //! - ::clingo_error_bad_alloc
-  //!
-  //! @see clingo_theory_atoms_term_to_string_size()
-//  public bool clingo_theory_atoms_term_to_string(final clingo_theory_atoms_t p_atoms, clingo_id_t term, c_char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_to_string(clingo_theory_atoms_t const *atoms, clingo_id_t term, char *string, size_t size);
-  //! @}
-
-  //! @name Theory Element Inspection
-  //! @{
-
-  //! Get the tuple (array of theory terms) of the given theory element.
-  //!
-  //! @param[in] atoms container where the element is stored
-  //! @param[in] element id of the element
-  //! @param[out] tuple the resulting array of term ids
-  //! @param[out] size the number of term ids
-  //! @return whether the call was successful
-//  public bool clingo_theory_atoms_element_tuple(final clingo_theory_atoms_t p_atoms, clingo_id_t element, final clingo_id_t p_p_tuple, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_tuple(clingo_theory_atoms_t const *atoms, clingo_id_t element, clingo_id_t const **tuple, size_t *size);
-  //! Get the condition (array of aspif literals) of the given theory element.
-  //!
-  //! @param[in] atoms container where the element is stored
-  //! @param[in] element id of the element
-  //! @param[out] condition the resulting array of aspif literals
-  //! @param[out] size the number of term literals
-  //! @return whether the call was successful
-//  public bool clingo_theory_atoms_element_condition(final clingo_theory_atoms_t p_atoms, clingo_id_t element, final clingo_literal_t p_p_condition, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_condition(clingo_theory_atoms_t const *atoms, clingo_id_t element, clingo_literal_t const **condition, size_t *size);
-  //! Get the id of the condition of the given theory element.
-  //!
-  //! @note
-  //! This id can be mapped to a solver literal using clingo_propagate_init_solver_literal().
-  //! This id is not (necessarily) an aspif literal;
-  //! to get aspif literals use clingo_theory_atoms_element_condition().
-  //!
-  //! @param[in] atoms container where the element is stored
-  //! @param[in] element id of the element
-  //! @param[out] condition the resulting condition id
-  //! @return whether the call was successful
-//  public bool clingo_theory_atoms_element_condition_id(final clingo_theory_atoms_t p_atoms, clingo_id_t element, clingo_literal_t p_condition); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_condition_id(clingo_theory_atoms_t const *atoms, clingo_id_t element, clingo_literal_t *condition);
-  //! Get the size of the string representation of the given theory element (including the terminating 0).
-  //!
-  //! @param[in] atoms container where the element is stored
-  //! @param[in] element id of the element
-  //! @param[out] size the resulting size
-  //! @return whether the call was successful; might set one of the following error codes:
-  //! - ::clingo_error_bad_alloc
-//  public bool clingo_theory_atoms_element_to_string_size(final clingo_theory_atoms_t p_atoms, clingo_id_t element, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_to_string_size(clingo_theory_atoms_t const *atoms, clingo_id_t element, size_t *size);
-  //! Get the string representation of the given theory element.
-  //!
-  //! @param[in] atoms container where the element is stored
-  //! @param[in] element id of the element
-  //! @param[out] string the resulting string
-  //! @param[in] size the size of the string
-  //! @return whether the call was successful; might set one of the following error codes:
-  //! - ::clingo_error_runtime if the size is too small
-  //! - ::clingo_error_bad_alloc
-//  public bool clingo_theory_atoms_element_to_string(final clingo_theory_atoms_t p_atoms, clingo_id_t element, c_char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_element_to_string(clingo_theory_atoms_t const *atoms, clingo_id_t element, char *string, size_t size);
-  //! @}
-
-  //! @name Theory Atom Inspection
-  //! @{
-
-  //! Get the total number of theory atoms.
-  //!
-  //! @param[in] atoms the target
-  //! @param[out] size the resulting number
-  //! @return whether the call was successful
-//  public bool clingo_theory_atoms_size(final clingo_theory_atoms_t p_atoms, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_size(clingo_theory_atoms_t const *atoms, size_t *size);
-  //! Get the theory term associated with the theory atom.
-  //!
-  //! @param[in] atoms container where the atom is stored
-  //! @param[in] atom id of the atom
-  //! @param[out] term the resulting term id
-  //! @return whether the call was successful
-//  public bool clingo_theory_atoms_atom_term(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, clingo_id_t p_term); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_term(clingo_theory_atoms_t const *atoms, clingo_id_t atom, clingo_id_t *term);
-  //! Get the theory elements associated with the theory atom.
-  //!
-  //! @param[in] atoms container where the atom is stored
-  //! @param[in] atom id of the atom
-  //! @param[out] elements the resulting array of elements
-  //! @param[out] size the number of elements
-  //! @return whether the call was successful
-//  public bool clingo_theory_atoms_atom_elements(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, final clingo_id_t p_p_elements, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_elements(clingo_theory_atoms_t const *atoms, clingo_id_t atom, clingo_id_t const **elements, size_t *size);
-  //! Whether the theory atom has a guard.
-  //!
-  //! @param[in] atoms container where the atom is stored
-  //! @param[in] atom id of the atom
-  //! @param[out] has_guard whether the theory atom has a guard
-  //! @return whether the call was successful
-//  public bool clingo_theory_atoms_atom_has_guard(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, bool p_has_guard); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_has_guard(clingo_theory_atoms_t const *atoms, clingo_id_t atom, bool *has_guard);
-  //! Get the guard consisting of a theory operator and a theory term of the given theory atom.
-  //!
-  //! @note
-  //! The lifetime of the string is tied to the current solve step.
-  //!
-  //! @param[in] atoms container where the atom is stored
-  //! @param[in] atom id of the atom
-  //! @param[out] connective the resulting theory operator
-  //! @param[out] term the resulting term
-  //! @return whether the call was successful
-//  public bool clingo_theory_atoms_atom_guard(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, final c_char p_p_connective, clingo_id_t p_term); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_guard(clingo_theory_atoms_t const *atoms, clingo_id_t atom, char const **connective, clingo_id_t *term);
-  //! Get the aspif literal associated with the given theory atom.
-  //!
-  //! @param[in] atoms container where the atom is stored
-  //! @param[in] atom id of the atom
-  //! @param[out] literal the resulting literal
-  //! @return whether the call was successful
-//  public bool clingo_theory_atoms_atom_literal(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_literal(clingo_theory_atoms_t const *atoms, clingo_id_t atom, clingo_literal_t *literal);
-  //! Get the size of the string representation of the given theory atom (including the terminating 0).
-  //!
-  //! @param[in] atoms container where the atom is stored
-  //! @param[in] atom id of the element
-  //! @param[out] size the resulting size
-  //! @return whether the call was successful; might set one of the following error codes:
-  //! - ::clingo_error_bad_alloc
-//  public bool clingo_theory_atoms_atom_to_string_size(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_to_string_size(clingo_theory_atoms_t const *atoms, clingo_id_t atom, size_t *size);
-  //! Get the string representation of the given theory atom.
-  //!
-  //! @param[in] atoms container where the atom is stored
-  //! @param[in] atom id of the element
-  //! @param[out] string the resulting string
-  //! @param[in] size the size of the string
-  //! @return whether the call was successful; might set one of the following error codes:
-  //! - ::clingo_error_runtime if the size is too small
-  //! - ::clingo_error_bad_alloc
-//  public bool clingo_theory_atoms_atom_to_string(final clingo_theory_atoms_t p_atoms, clingo_id_t atom, char p_string, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_atom_to_string(clingo_theory_atoms_t const *atoms, clingo_id_t atom, char *string, size_t size);
-  //! @}
+    //! Get the total number of theory atoms.
+    //!
+    //! @param[in] atoms the target
+    //! @param[out] size the resulting number
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_theory_atoms_size} */
+    public byte clingo_theory_atoms_size(Pointer p_atoms, SizeByReference p_size);
+    //! Get the theory term associated with the theory atom.
+    //!
+    //! @param[in] atoms container where the atom is stored
+    //! @param[in] atom id of the atom
+    //! @param[out] term the resulting term id
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_theory_atoms_atom_term} */
+    public byte clingo_theory_atoms_atom_term(Pointer p_atoms, int atom, IntByReference p_term);
+    //! Get the theory elements associated with the theory atom.
+    //!
+    //! @param[in] atoms container where the atom is stored
+    //! @param[in] atom id of the atom
+    //! @param[out] elements the resulting array of elements
+    //! @param[out] size the number of elements
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_theory_atoms_atom_elements} */
+    public byte clingo_theory_atoms_atom_elements(Pointer p_atoms, int atom, IntByReference p_p_elements, SizeByReference p_size);
+    //! Whether the theory atom has a guard.
+    //!
+    //! @param[in] atoms container where the atom is stored
+    //! @param[in] atom id of the atom
+    //! @param[out] has_guard whether the theory atom has a guard
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_theory_atoms_atom_elements} */
+    public byte clingo_theory_atoms_atom_elements(Pointer p_atoms, int atom, ByteByReference p_has_guard);
+    //! Get the guard consisting of a theory operator and a theory term of the given theory atom.
+    //!
+    //! @note
+    //! The lifetime of the string is tied to the current solve step.
+    //!
+    //! @param[in] atoms container where the atom is stored
+    //! @param[in] atom id of the atom
+    //! @param[out] connective the resulting theory operator
+    //! @param[out] term the resulting term
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_theory_atoms_atom_guard} */
+    public byte clingo_theory_atoms_atom_guard(Pointer p_atoms, int atom, byte[] p_p_connective, int p_term);
+    //! Get the aspif literal associated with the given theory atom.
+    //!
+    //! @param[in] atoms container where the atom is stored
+    //! @param[in] atom id of the atom
+    //! @param[out] literal the resulting literal
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_theory_atoms_atom_guard} */
+    public byte clingo_theory_atoms_atom_guard(Pointer p_atoms, int atom, IntByReference p_literal);
+    //! Get the size of the string representation of the given theory atom (including the terminating 0).
+    //!
+    //! @param[in] atoms container where the atom is stored
+    //! @param[in] atom id of the element
+    //! @param[out] size the resulting size
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    /** {@link clingo_h#clingo_theory_atoms_atom_to_string_size} */
+    public byte clingo_theory_atoms_atom_to_string_size(Pointer p_atoms, int atom, SizeByReference p_size);
+    //! Get the string representation of the given theory atom.
+    //!
+    //! @param[in] atoms container where the atom is stored
+    //! @param[in] atom id of the element
+    //! @param[out] string the resulting string
+    //! @param[in] size the size of the string
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_runtime if the size is too small
+    //! - ::clingo_error_bad_alloc
+    /** {@link clingo_h#clingo_theory_atoms_atom_to_string} */
+    public byte clingo_theory_atoms_atom_to_string(Pointer p_atoms, int atom, byte[] p_string, long size);
 
   //! @}
 
@@ -3257,25 +3236,26 @@ public interface ClingoLibrary extends Library {
   //! - ::clingo_error_runtime if parsing fails
 //  public bool clingo_control_add(clingo_control_t p_control, final c_char p_name, c_char const_p_const_p_parameters, size_t parameters_size, final c_char p_program); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_add(clingo_control_t *control, char const *name, char const * const * parameters, size_t parameters_size, char const *program);
 
-  //! Ground the selected @link ::clingo_part parts @endlink of the current (non-ground) logic program.
-  //!
-  //! After grounding, logic programs can be solved with ::clingo_control_solve().
-  //!
-  //! @note Parts of a logic program without an explicit <tt>\#program</tt>
-  //! specification are by default put into a program called `base` without
-  //! arguments.
-  //!
-  //! @param[in] control the target
-  //! @param[in] parts array of parts to ground
-  //! @param[in] parts_size size of the parts array
-  //! @param[in] ground_callback callback to implement external functions
-  //! @param[in] ground_callback_data user data for ground_callback
-  //! @return whether the call was successful; might set one of the following error codes:
-  //! - ::clingo_error_bad_alloc
-  //! - error code of ground callback
-  //!
-  //! @see clingo_part
-//  public bool clingo_control_ground(clingo_control_t p_control, final clingo_part_t p_parts, size_t parts_size, clingo_ground_callback_t ground_callback, c_void p_ground_callback_data); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_ground(clingo_control_t *control, clingo_part_t const *parts, size_t parts_size, clingo_ground_callback_t ground_callback, void *ground_callback_data);
+    //! Ground the selected @link ::clingo_part parts @endlink of the current (non-ground) logic program.
+    //!
+    //! After grounding, logic programs can be solved with ::clingo_control_solve().
+    //!
+    //! @note Parts of a logic program without an explicit <tt>\#program</tt>
+    //! specification are by default put into a program called `base` without
+    //! arguments.
+    //!
+    //! @param[in] control the target
+    //! @param[in] parts array of parts to ground
+    //! @param[in] parts_size size of the parts array
+    //! @param[in] ground_callback callback to implement external functions
+    //! @param[in] ground_callback_data user data for ground_callback
+    //! @return whether the call was successful; might set one of the following error codes:
+    //! - ::clingo_error_bad_alloc
+    //! - error code of ground callback
+    //!
+    //! @see clingo_part
+  	public byte clingo_control_ground(Pointer p_control, Part[] p_parts, Size parts_size, Pointer ground_callback, Pointer p_ground_callback_data);
+
 
   //! @}
 
@@ -3714,27 +3694,6 @@ public interface ClingoLibrary extends Library {
     //bool clingo_control_add(clingo_control_t *control, char const *name, char const * const * parameters, size_t parameters_size, char const *program);
     boolean clingo_control_add(Pointer control, String name, String[] parameters, Size parameters_size, String program);
     
-    /**Ground the selected @link ::clingo_part parts @endlink of the current (non-ground) logic program.
-     * <p>
-     * After grounding, logic programs can be solved with ::clingo_control_solve().
-     * <p>
-     * @note Parts of a logic program without an explicit <tt>\#program</tt>
-     * specification are by default put into a program called `base` without
-     * arguments.
-     * @param control [in] control the target
-     * @param parts [in] parts array of parts to ground
-     * @param parts_size [in] parts_size size of the parts array
-     * @param ground_callback [in] ground_callback callback to implement external functions
-     * @param ground_callback_data [in] ground_callback_data user data for ground_callback
-     * @return whether the call was successful; might set one of the following error codes:
-     * - ::clingo_error_bad_alloc
-     * - error code of ground callback
-     * @see clingo_part
-     * bool clingo_control_ground(clingo_control_t *control, clingo_part_t const *parts, size_t parts_size, clingo_ground_callback_t ground_callback, void *ground_callback_data);
-     *  CLINGO_VISIBILITY_DEFAULT bool clingo_control_ground(clingo_control_t *control, clingo_part_t const *parts, size_t parts_size, clingo_ground_callback_t ground_callback, void *ground_callback_data);
-     */
-    boolean clingo_control_ground(Pointer control, Part[] parts, Size parts_size, Pointer ground_callback, Pointer ground_callback_data);
-        
     /**
      * Solve the currently @link ::clingo_control_ground grounded @endlink logic program enumerating its models.
      * <p>

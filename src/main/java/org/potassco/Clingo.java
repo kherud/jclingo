@@ -929,9 +929,167 @@ public class Clingo {
 		return description[0];
     }
 
-	/* **********
-	 * Functions to access arrays
-	 * ********** */
+	/* Functions to access arrays */
+
+    /**
+     * Get the size of an array entry.
+     * <p>
+     * @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_array.
+     * @param configuration the target configuration
+     * @param key the key
+     * @return the resulting size
+     */
+    public long configurationArraySize(Pointer configuration, int key) {
+		SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_configuration_array_size(configuration, key, size );
+		return size.getValue();
+    }
+
+    /**
+     * Get the subkey at the given offset of an array entry.
+     * <p>
+     * @note Some array entries, like fore example the solver configuration, can be accessed past there actual size to add subentries.
+     * @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_array.
+     * @param configuration the target configuration
+     * @param key the key
+     * @param offset the offset in the array
+     * @return the resulting subkey
+     */
+    public long configurationArrayAt(Pointer configuration, int key, long offset) {
+		IntByReference subkey = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_configuration_array_at(configuration, key, offset, subkey);
+		return subkey.getValue();
+    }
+
+    /* Functions to access maps */
+
+    /**
+     * Get the number of subkeys of a map entry.
+     * <p>
+     * @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
+     * @param configuration the target configuration
+     * @param key the key
+     * @return the resulting size
+     */
+    public long configurationMapSize(Pointer configuration, int key) {
+		SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_configuration_map_size(configuration, key, size);
+		return size.getValue();
+    }
+
+    /**
+     * Query whether the map has a key.
+     * <p>
+     * @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
+	 * @note Multiple levels can be looked up by concatenating keys with a period.
+     * @param configuration the target configuration
+     * @param key the key
+     * @param  name the name to lookup the subkey
+     * @return the resulting subkey
+     */
+    public long configurationMapHasSubkey(Pointer configuration, int key, String name) {
+		ByteByReference result = new ByteByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_configuration_map_has_subkey(configuration, key, name, result);
+		return result.getValue();
+    }
+
+    /**
+     * Get the name associated with the offset-th subkey.
+     * <p>
+     * @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
+     * @param[in] configuration the target configuration
+     * @param configuration the target configuration
+     * @param key the key
+     * @param offset the offset of the name
+     * @return the resulting name
+     */
+    public String configurationMapSubkeyName(Pointer configuration, int key, long offset) {
+		String[] name = new String[1];
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_configuration_map_subkey_name(configuration, key, offset, name);
+		return name[0];
+    }
+
+    /**
+     * Lookup a subkey under the given name.
+     * <p>
+     * @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
+     * @note Multiple levels can be looked up by concatenating keys with a period.
+     * @param configuration the target configuration
+     * @param key the key
+     * @param name the name to lookup the subkey
+     * @return the resulting subkey
+     */
+    public int configurationMapAt(Pointer configuration, int key, String name) {
+		IntByReference subkey = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_configuration_map_at(configuration, key, name, subkey );
+		return subkey.getValue();
+    }
+
+	/* Functions to access values */
+
+    /**
+     * Check whether a entry has a value.
+     * <p>
+     * @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
+     * @param configuration the target configuration
+     * @param key the key
+     * @return whether the entry has a value
+     */
+    public byte configurationValueIsAssigned(Pointer configuration, int key) {
+		ByteByReference assigned = new ByteByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_configuration_value_is_assigned(configuration, key, assigned);
+		return assigned.getValue();
+    }
+
+    /**
+     * Get the size of the string value of the given entry.
+     * <p>
+     * @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
+     * @param configuration the target configuration
+     * @param key the key
+     * @return the resulting size
+     */
+    public long configurationValueGetSize(Pointer configuration, int key) {
+		SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_configuration_value_get_size(configuration, key, size);
+		return size.getValue();
+    }
+
+    /**
+     * Get the string value of the given entry.
+     * <p>
+     * @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
+     * @pre The given size must be larger or equal to size of the value.
+     * @param configuration the target configuration
+     * @param key the key
+     * @param size the size of the given char array
+     * @return the resulting string value
+     */
+    public String configurationValueGet(Pointer configuration, int key, long size) {
+		byte[] value = new byte[Math.toIntExact(size)];
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_configuration_value_get(configuration, key, value , size);
+		return new String(value);
+    }
+
+    /**
+     * Set the value of an entry.
+     * @param configuration the target configuration
+     * @param key the key
+     * @param value the value to set
+     */
+    public void configurationValueSet(Pointer configuration, int key, String value) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_configuration_value_set(configuration, key, value);
+    }
 
 	/* **********
 	 * 

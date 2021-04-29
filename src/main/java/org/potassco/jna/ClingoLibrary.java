@@ -1487,109 +1487,104 @@ public interface ClingoLibrary extends Library {
     /** {@link clingo_h#clingo_configuration_description} */
   	public byte clingo_configuration_description(Pointer p_configuration, int key, String[] p_p_description);
 
-  //! @name Functions to access arrays
-  //! @{
+    //! Functions to access arrays
 
-  //! Get the size of an array entry.
-  //!
-  //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_array.
-  //! @param[in] configuration the target configuration
-  //! @param[in] key the key
-  //! @param[out] size the resulting size
-  //! @return whether the call was successful
-//  public bool clingo_configuration_array_size(final clingo_configuration_t p_configuration, clingo_id_t key, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_array_size(clingo_configuration_t const *configuration, clingo_id_t key, size_t *size);
-  //! Get the subkey at the given offset of an array entry.
-  //!
-  //! @note Some array entries, like fore example the solver configuration, can be accessed past there actual size to add subentries.
-  //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_array.
-  //! @param[in] configuration the target configuration
-  //! @param[in] key the key
-  //! @param[in] offset the offset in the array
-  //! @param[out] subkey the resulting subkey
-  //! @return whether the call was successful
-//  public bool clingo_configuration_array_at(final clingo_configuration_t p_configuration, clingo_id_t key, size_t offset, clingo_id_t p_subkey); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_array_at(clingo_configuration_t const *configuration, clingo_id_t key, size_t offset, clingo_id_t *subkey);
-  //! @}
+    //! Get the size of an array entry.
+    //!
+    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_array.
+    //! @param[in] configuration the target configuration
+    //! @param[in] key the key
+    //! @param[out] size the resulting size
+    //! @return whether the call was successful
+    /** {@link clingo_h#clingo_configuration_description} */
+  	public byte clingo_configuration_array_size(Pointer p_configuration, int key, SizeByReference p_size);
+    //! Get the subkey at the given offset of an array entry.
+    //!
+    //! @note Some array entries, like fore example the solver configuration, can be accessed past there actual size to add subentries.
+    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_array.
+    //! @param[in] configuration the target configuration
+    //! @param[in] key the key
+    //! @param[in] offset the offset in the array
+    //! @param[out] subkey the resulting subkey
+    //! @return whether the call was successful
+  	public byte clingo_configuration_array_at(Pointer p_configuration, int key, long offset, IntByReference p_subkey);
 
-  //! @name Functions to access maps
-  //! @{
+    //! Functions to access maps
 
-  //! Get the number of subkeys of a map entry.
-  //!
-  //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
-  //! @param[in] configuration the target configuration
-  //! @param[in] key the key
-  //! @param[out] size the resulting number
-  //! @return whether the call was successful
-//  public bool clingo_configuration_map_size(final clingo_configuration_t p_configuration, clingo_id_t key, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_map_size(clingo_configuration_t const *configuration, clingo_id_t key, size_t* size);
-  //! Query whether the map has a key.
-  //!
-  //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
-  //! @note Multiple levels can be looked up by concatenating keys with a period.
-  //! @param[in] configuration the target configuration
-  //! @param[in] key the key
-  //! @param[in] name the name to lookup the subkey
-  //! @param[out] result whether the key is in the map
-  //! @return whether the call was successful
-//  public bool clingo_configuration_map_has_subkey(final clingo_configuration_t p_configuration, clingo_id_t key, final c_char p_name, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_map_has_subkey(clingo_configuration_t const *configuration, clingo_id_t key, char const *name, bool *result);
-  //! Get the name associated with the offset-th subkey.
-  //!
-  //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
-  //! @param[in] configuration the target configuration
-  //! @param[in] key the key
-  //! @param[in] offset the offset of the name
-  //! @param[out] name the resulting name
-  //! @return whether the call was successful
-//  public bool clingo_configuration_map_subkey_name(final clingo_configuration_t p_configuration, clingo_id_t key, size_t offset, final c_char p_p_name); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_map_subkey_name(clingo_configuration_t const *configuration, clingo_id_t key, size_t offset, char const **name);
-  //! Lookup a subkey under the given name.
-  //!
-  //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
-  //! @note Multiple levels can be looked up by concatenating keys with a period.
-  //! @param[in] configuration the target configuration
-  //! @param[in] key the key
-  //! @param[in] name the name to lookup the subkey
-  //! @param[out] subkey the resulting subkey
-  //! @return whether the call was successful
-//  public bool clingo_configuration_map_at(final clingo_configuration_t p_configuration, clingo_id_t key, final c_char p_name, clingo_id_t p_subkey); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_map_at(clingo_configuration_t const *configuration, clingo_id_t key, char const *name, clingo_id_t* subkey);
-  //! @}
+    //! Get the number of subkeys of a map entry.
+    //!
+    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
+    //! @param[in] configuration the target configuration
+    //! @param[in] key the key
+    //! @param[out] size the resulting number
+    //! @return whether the call was successful
+  	public byte clingo_configuration_map_size(Pointer p_configuration, int key, SizeByReference p_size);
+    //! Query whether the map has a key.
+    //!
+    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
+    //! @note Multiple levels can be looked up by concatenating keys with a period.
+    //! @param[in] configuration the target configuration
+    //! @param[in] key the key
+    //! @param[in] name the name to lookup the subkey
+    //! @param[out] result whether the key is in the map
+    //! @return whether the call was successful
+  	public byte clingo_configuration_map_has_subkey(Pointer p_configuration, int key, String p_name, ByteByReference p_result);
+    //! Get the name associated with the offset-th subkey.
+    //!
+    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
+    //! @param[in] configuration the target configuration
+    //! @param[in] key the key
+    //! @param[in] offset the offset of the name
+    //! @param[out] name the resulting name
+    //! @return whether the call was successful
+	public byte clingo_configuration_map_subkey_name(Pointer p_configuration, int key, long offset, String[] p_p_name);
+    //! Lookup a subkey under the given name.
+    //!
+    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
+    //! @note Multiple levels can be looked up by concatenating keys with a period.
+    //! @param[in] configuration the target configuration
+    //! @param[in] key the key
+    //! @param[in] name the name to lookup the subkey
+    //! @param[out] subkey the resulting subkey
+    //! @return whether the call was successful
+	public byte clingo_configuration_map_at(Pointer p_configuration, int key, final String p_name, IntByReference p_subkey);
 
-  //! @name Functions to access values
-  //! @{
+    //! Functions to access values
 
-  //! Check whether a entry has a value.
-  //!
-  //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
-  //! @param[in] configuration the target configuration
-  //! @param[in] key the key
-  //! @param[out] assigned whether the entry has a value
-  //! @return whether the call was successful
-//  public bool clingo_configuration_value_is_assigned(final clingo_configuration_t p_configuration, clingo_id_t key, bool p_assigned); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_value_is_assigned(clingo_configuration_t const *configuration, clingo_id_t key, bool *assigned);
-  //! Get the size of the string value of the given entry.
-  //!
-  //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
-  //! @param[in] configuration the target configuration
-  //! @param[in] key the key
-  //! @param[out] size the resulting size
-  //! @return whether the call was successful
-//  public bool clingo_configuration_value_get_size(final clingo_configuration_t p_configuration, clingo_id_t key, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_value_get_size(clingo_configuration_t const *configuration, clingo_id_t key, size_t *size);
-  //! Get the string value of the given entry.
-  //!
-  //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
-  //! @pre The given size must be larger or equal to size of the value.
-  //! @param[in] configuration the target configuration
-  //! @param[in] key the key
-  //! @param[out] value the resulting string value
-  //! @param[in] size the size of the given char array
-  //! @return whether the call was successful
-//  public bool clingo_configuration_value_get(final clingo_configuration_t p_configuration, clingo_id_t key, c_char p_value, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_value_get(clingo_configuration_t const *configuration, clingo_id_t key, char *value, size_t size);
-  //! Set the value of an entry.
-  //!
-  //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
-  //! @param[in] configuration the target configuration
-  //! @param[in] key the key
-  //! @param[in] value the value to set
-  //! @return whether the call was successful
-//  public bool clingo_configuration_value_set(clingo_configuration_t p_configuration, clingo_id_t key, final c_char p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_configuration_value_set(clingo_configuration_t *configuration, clingo_id_t key, char const *value);
-  //! @}
+    //! Check whether a entry has a value.
+    //!
+    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
+    //! @param[in] configuration the target configuration
+    //! @param[in] key the key
+    //! @param[out] assigned whether the entry has a value
+    //! @return whether the call was successful
+	public byte clingo_configuration_value_is_assigned(Pointer p_configuration, int key, ByteByReference p_assigned);
+    //! Get the size of the string value of the given entry.
+    //!
+    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
+    //! @param[in] configuration the target configuration
+    //! @param[in] key the key
+    //! @param[out] size the resulting size
+    //! @return whether the call was successful
+	public byte clingo_configuration_value_get_size(Pointer p_configuration, int key, SizeByReference p_size);
+    //! Get the string value of the given entry.
+    //!
+    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
+    //! @pre The given size must be larger or equal to size of the value.
+    //! @param[in] configuration the target configuration
+    //! @param[in] key the key
+    //! @param[out] value the resulting string value
+    //! @param[in] size the size of the given char array
+    //! @return whether the call was successful
+	public byte clingo_configuration_value_get(Pointer p_configuration, int key, byte[] p_value, long size);
+    //! Set the value of an entry.
+    //!
+    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
+    //! @param[in] configuration the target configuration
+    //! @param[in] key the key
+    //! @param[in] value the value to set
+    //! @return whether the call was successful
+	public byte clingo_configuration_value_set(Pointer p_configuration, int key, String p_value);
 
   //! @}
 

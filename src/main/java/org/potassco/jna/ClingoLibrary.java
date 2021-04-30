@@ -3127,7 +3127,7 @@ public interface ClingoLibrary extends Library {
     //! - ::clingo_error_bad_alloc
     //! - ::clingo_error_runtime if solving could not be started
     /** {@link clingo_h#clingo_control_solve} */
-    public byte clingo_control_solve(Pointer control, int mode, Pointer assumptions, Size assumptions_size, SolveEventCallbackT notify, Pointer data, PointerByReference handle);
+    public byte clingo_control_solve(Pointer control, int mode, Pointer assumptions, int assumptions_size, SolveEventCallbackT notify, Pointer data, PointerByReference handle);
 
     //! Clean up the domains of the grounding component using the solving
     //! component's top level assignment.

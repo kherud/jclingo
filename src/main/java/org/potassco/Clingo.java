@@ -44,7 +44,7 @@ public class Clingo {
 		this();
         this.control = controlNew(null);
         // add the program
-		clingoLibrary.clingo_control_add(control, name, null, new Size(0), logicProgram);
+        controlAdd(control, name, logicProgram);
 	}
 
 	public Pointer getControl() {
@@ -1621,14 +1621,22 @@ public class Clingo {
 	}
 	
 	/**
+	 * @param control the target
 	 * @param name
 	 * @param logicProgram
-	 * {@link clingo_h#clingo_control_add}
 	 */
 	public void controlAdd(Pointer control, String name, String logicProgram) {
 		clingoLibrary.clingo_control_add(control, name, null, new Size(0), logicProgram);
 	}
-	
+
+	/**
+	 * Free a control object created with {@link Clingo#controlNew(String[])}.
+	 * @param control the target
+	 */
+	private void controlFree(Pointer control) {
+        clingoLibrary.clingo_control_free(control);
+	}
+
 	/**
 	 * @param name
 	 * {@link clingo_h#clingo_control_ground}
@@ -1638,12 +1646,48 @@ public class Clingo {
         parts[0] = new Part(name, null, new Size(0));
         clingoLibrary.clingo_control_ground(control, parts, new Size(1), null, null);
 	}
+	
+	/**
+	 * Get the next solve result.
+	 * <p>
+	 * Blocks until the result is ready.
+	 * When yielding partial solve results can be obtained, i.e.,
+	 * when a model is ready, the result will be satisfiable but
+	 * neither the search exhausted nor the optimality proven.
+	 * @param handle the target
+	 * @return the solve result
+	 */
+	public int solveHandleGet(Pointer handle) {
+		IntByReference res = new IntByReference();
+		@SuppressWarnings("unused")
+		boolean success = clingoLibrary.clingo_solve_handle_get(handle, res);
+		return res.getValue();
+	}
 
-	public void controlSolve(Pointer control, int mode, Pointer assumptions,
-			Size assumptionsSize, SolveEventCallbackT cb, Pointer data) {
+	private void solveHandleClose(Pointer hnd) {
+        clingoLibrary.clingo_solve_handle_close(hnd);
+	}
+
+	/**
+	 * Solve the currently @link ::clingo_control_ground grounded @endlink logic program enumerating its models.
+	 * <p>
+	 * See the @ref SolveHandle module for more information.
+
+	 * @param control the target
+	 * @param mode configures the search mode
+	 * @param assumptions array of assumptions to solve under
+	 * @param assumptionsSize number of assumptions
+	 * @param notify the event handler to register
+	 * @param data the user data for the event handler
+	 * @return 
+	 * @return  handle to the current search to enumerate models
+	 */
+	public Pointer controlSolve(Pointer control, int mode, Pointer assumptions,
+			int assumptionsSize, SolveEventCallbackT notify, Pointer data) {
         PointerByReference handle = new PointerByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_control_solve(control, mode, assumptions, assumptionsSize, cb, data, handle);
+		byte success = clingoLibrary.clingo_control_solve(control, mode, assumptions, assumptionsSize, notify, data, handle);
+		return handle.getValue();
 	}
 	
     public SolveHandle solve() throws ClingoException {
@@ -1675,13 +1719,10 @@ public class Clingo {
                 return true;
             }
         };
-        PointerByReference hnd = new PointerByReference();
-        clingoLibrary.clingo_control_solve(control, 0, null, new Size(0), cb, null, hnd);
-//        IntByReference res = new IntByReference();
-//        clingoLibrary.clingo_solve_handle_get(hnd.getValue(), res);
-        clingoLibrary.clingo_solve_handle_close(hnd.getValue());
+        Pointer hnd = controlSolve(control, 0, null, 0, cb, null);
+        solveHandleClose(hnd);
         // clean up
-        clingoLibrary.clingo_control_free(control);
+        controlFree(control);
 		return solveHandle;
     }
 

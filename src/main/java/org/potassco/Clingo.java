@@ -33,7 +33,7 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class Clingo {
 	private ClingoLibrary clingoLibrary;
-	private PointerByReference controlPointer;
+	private Pointer control;
 
 	public Clingo() {
 		super();
@@ -42,14 +42,13 @@ public class Clingo {
 
 	public Clingo(String name, String logicProgram) {
 		this();
-        this.controlPointer = new PointerByReference();
-        clingoLibrary.clingo_control_new(null, 0, null, null, 20, controlPointer);
+        this.control = controlNew(null);
         // add the program
-		clingoLibrary.clingo_control_add(controlPointer.getValue(), name, null, new Size(0), logicProgram);
+		clingoLibrary.clingo_control_add(control, name, null, new Size(0), logicProgram);
 	}
 
 	public Pointer getControl() {
-		return this.controlPointer.getValue();
+		return this.control;
 	}
 
 	/* *******
@@ -1601,17 +1600,23 @@ public class Clingo {
 	 * @return resulting control object
 	 */
 	public Pointer controlNew(String[] arguments) {
-		// https://github.com/nativelibs4java/nativelibs4java/issues/476
-		StringArray sarray = new StringArray(arguments);
-		PointerByReference parray = new PointerByReference();
-		parray.setPointer(sarray);
+		PointerByReference parray = null;
+		int argumentsLength = 0;
+		if (arguments != null) {
+			// https://github.com/nativelibs4java/nativelibs4java/issues/476
+			StringArray sarray = new StringArray(arguments);
+			parray = new PointerByReference();
+			parray.setPointer(sarray);
+			argumentsLength = arguments.length;
+		}
 		// TODO
 		Pointer logger = null;
 		Pointer loggerData = null;
 		int messageLimit = 0;
 		PointerByReference control = new PointerByReference();
 		@SuppressWarnings("unused")
-		boolean success = clingoLibrary.clingo_control_new(parray, arguments.length, logger, loggerData, messageLimit, control);
+//        clingoLibrary.clingo_control_new(null, 0, null, null, 20, controlPointer);
+		boolean success = clingoLibrary.clingo_control_new(parray, argumentsLength, logger, loggerData, messageLimit, control);
 		return control.getValue();
 	}
 	
@@ -1631,7 +1636,7 @@ public class Clingo {
 	public void ground(String name) {
         Part[] parts = new Part[1];
         parts[0] = new Part(name, null, new Size(0));
-        clingoLibrary.clingo_control_ground(controlPointer.getValue(), parts, new Size(1), null, null);
+        clingoLibrary.clingo_control_ground(control, parts, new Size(1), null, null);
 	}
 
 	public void controlSolve(Pointer control, int mode, Pointer assumptions,
@@ -1671,12 +1676,12 @@ public class Clingo {
             }
         };
         PointerByReference hnd = new PointerByReference();
-        clingoLibrary.clingo_control_solve(controlPointer.getValue(), 0, null, new Size(0), cb, null, hnd);
+        clingoLibrary.clingo_control_solve(control, 0, null, new Size(0), cb, null, hnd);
 //        IntByReference res = new IntByReference();
 //        clingoLibrary.clingo_solve_handle_get(hnd.getValue(), res);
         clingoLibrary.clingo_solve_handle_close(hnd.getValue());
         // clean up
-        clingoLibrary.clingo_control_free(controlPointer.getValue());
+        clingoLibrary.clingo_control_free(control);
 		return solveHandle;
     }
 

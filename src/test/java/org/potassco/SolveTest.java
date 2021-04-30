@@ -19,7 +19,7 @@ import com.sun.jna.ptr.PointerByReference;
 public class SolveTest {
 
 	@org.junit.Test
-	public void test3() {
+	public void testAb() {
 		String name = "base";
 		Clingo clingo = new Clingo(name, "a. b.");
 		clingo.ground(name);
@@ -89,7 +89,7 @@ public class SolveTest {
 		try {
 			SolveHandle solution = clingo.solve();
 			assertEquals(3, solution.getSize());
-			clingo.solveHandleModel(null)
+//			clingo.solveHandleModel(null)
 		} catch (ClingoException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

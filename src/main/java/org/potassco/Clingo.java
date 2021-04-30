@@ -9,7 +9,6 @@ import org.potassco.enums.ErrorCode;
 import org.potassco.enums.ModelType;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveEventType;
-import org.potassco.enums.SolveMode;
 import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;
 import org.potassco.enums.TermType;
@@ -21,6 +20,7 @@ import org.potassco.jna.SolveEventCallbackT;
 import org.potassco.jna.SymbolByReference;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.StringArray;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -43,7 +43,7 @@ public class Clingo {
 	public Clingo(String name, String logicProgram) {
 		this();
         this.controlPointer = new PointerByReference();
-        clingoLibrary.clingo_control_new(null, new Size(0), null, null, 20, controlPointer);
+        clingoLibrary.clingo_control_new(null, 0, null, null, 20, controlPointer);
         // add the program
 		clingoLibrary.clingo_control_add(controlPointer.getValue(), name, null, new Size(0), logicProgram);
 	}
@@ -1593,11 +1593,34 @@ public class Clingo {
 	 * ******* */
     
 	/**
+	 * Create a new control object.
+	 * <p>
+	 * A control object has to be freed using clingo_control_free().
+	 * TODO: This will be done in the Control class.
+	 * @param arguments array of command line arguments
+	 * @return resulting control object
+	 */
+	public Pointer controlNew(String[] arguments) {
+		// https://github.com/nativelibs4java/nativelibs4java/issues/476
+		StringArray sarray = new StringArray(arguments);
+		PointerByReference parray = new PointerByReference();
+		parray.setPointer(sarray);
+		// TODO
+		Pointer logger = null;
+		Pointer loggerData = null;
+		int messageLimit = 0;
+		PointerByReference control = new PointerByReference();
+		@SuppressWarnings("unused")
+		boolean success = clingoLibrary.clingo_control_new(parray, arguments.length, logger, loggerData, messageLimit, control);
+		return control.getValue();
+	}
+	
+	/**
 	 * @param name
 	 * @param logicProgram
 	 * {@link clingo_h#clingo_control_add}
 	 */
-	public void add(Pointer control, String name, String logicProgram) {
+	public void controlAdd(Pointer control, String name, String logicProgram) {
 		clingoLibrary.clingo_control_add(control, name, null, new Size(0), logicProgram);
 	}
 	
@@ -1618,25 +1641,7 @@ public class Clingo {
 		byte success = clingoLibrary.clingo_control_solve(control, mode, assumptions, assumptionsSize, cb, data, handle);
 	}
 	
-    /**
-     * @return
-     * @throws ClingoException
-     * <p>
-	 * {@link clingo_h#clingo_control_solve}
-     */
     public SolveHandle solve() throws ClingoException {
-        return solve(new SolveEventHandler(), SolveMode.YIELD);
-    }
-
-    public SolveHandle solve(SolveEventHandler handler, SolveMode... modes) throws ClingoException {
-
-//        int mode = 0;
-//        if (modes != null && modes.length > 0) {
-//            for (int i=0; i<modes.length; i++) {
-//                mode |= modes[i].getValue();
-//            }
-//        }
-
         SolveHandle solveHandle = new SolveHandle();
         SolveEventCallbackT cb = new SolveEventCallbackT() {
             public boolean call(int type, Pointer event, Pointer data, Pointer goon) {
@@ -1667,8 +1672,8 @@ public class Clingo {
         };
         PointerByReference hnd = new PointerByReference();
         clingoLibrary.clingo_control_solve(controlPointer.getValue(), 0, null, new Size(0), cb, null, hnd);
-        IntByReference res = new IntByReference();
-        clingoLibrary.clingo_solve_handle_get(hnd.getValue(), res);
+//        IntByReference res = new IntByReference();
+//        clingoLibrary.clingo_solve_handle_get(hnd.getValue(), res);
         clingoLibrary.clingo_solve_handle_close(hnd.getValue());
         // clean up
         clingoLibrary.clingo_control_free(controlPointer.getValue());

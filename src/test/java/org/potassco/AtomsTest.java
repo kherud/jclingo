@@ -2,16 +2,11 @@ package org.potassco;
 
 import static org.junit.Assert.*;
 
-import java.util.Iterator;
-
 import org.junit.Test;
 import org.potassco.enums.TermType;
-import org.potassco.jna.SizeByReference;
 import org.potassco.jna.SymbolCallbackT;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 
 public class AtomsTest {
 
@@ -80,8 +75,8 @@ public class AtomsTest {
 				+ "    &b/0 : t, {=}, t, head "
 				+ "}.");
 		Pointer control = clingo.getControl();
-		clingo.add(control, name, "{a; b}.");
-		clingo.add(control, name, "&a { 1; 2,3: a,b }.");
+		clingo.controlAdd(control, name, "{a; b}.");
+		clingo.controlAdd(control, name, "&a { 1; 2,3: a,b }.");
 		clingo.ground(name);
 		Pointer theoryAtoms = clingo.controlTheoryAtoms(control);
 		assertEquals(1, clingo.theoryAtomsSize(theoryAtoms));

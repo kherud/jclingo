@@ -190,7 +190,7 @@ public class Clingo {
 	 * Symbol Construction Functions
 	 * ***************************** */
 
-	long symbolCreateNumber(int number) {
+	public long symbolCreateNumber(int number) {
 		SymbolByReference sbr = new SymbolByReference();
 		clingoLibrary.clingo_symbol_create_number(number, sbr);
 		return sbr.getValue();
@@ -208,21 +208,21 @@ public class Clingo {
 		return pointer.getValue();
 	}
 
-	long symbolCreateString(String string) {
+	public long symbolCreateString(String string) {
 		SymbolByReference symb = new SymbolByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_create_string(string, symb);
 		return symb.getValue();
 	}
 
-	long symbolCreateId(String name, boolean positive) {
+	public long symbolCreateId(String name, boolean positive) {
 		SymbolByReference symb = new SymbolByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_create_id(name, (byte) (positive ? 1 : 0), symb);
 		return symb.getValue();
 	}
 
-	long symbolCreateFunction(String name, List<Long> arguments, boolean positive) {
+	public long symbolCreateFunction(String name, List<Long> arguments, boolean positive) {
 		SymbolByReference symb = new SymbolByReference();
 		int argSize = arguments.size();
 		Size argumentsSize = new Size(argSize);

@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.potassco.base.Clingo;
 import org.potassco.base.ClingoException;
 import org.potassco.base.ClingoHelper;
-import org.potassco.base.SolveHandle;
+import org.potassco.dto.Solution;
 import org.potassco.jna.ClingoLibrary;
 
 import com.sun.jna.Pointer;
@@ -42,7 +42,7 @@ public class BasicTest {
 		clingo.ground(name);
 		try {
 			ClingoHelper clingoHelper = new ClingoHelper(clingo);
-			SolveHandle solution = clingoHelper.solve();
+			Solution solution = clingoHelper.solve();
 			assertEquals(2, solution.getSize());
 			String[] strArray = { "a", "b" };
 			Set<String> expected = new HashSet<String>(Arrays.asList(strArray));
@@ -133,7 +133,7 @@ public class BasicTest {
 		clingo.ground(name);
 		try {
 			ClingoHelper clingoHelper = new ClingoHelper(clingo);
-			SolveHandle solution = clingoHelper.solve();
+			Solution solution = clingoHelper.solve();
 			assertEquals(52, solution.getSize());
 //			String[] strArray = { "a", "b" };
 //			Set<String> expected = new HashSet<String>(Arrays.asList(strArray));

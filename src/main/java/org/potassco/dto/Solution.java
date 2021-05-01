@@ -1,9 +1,9 @@
-package org.potassco.base;
+package org.potassco.dto;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class SolveHandle {
+public class Solution {
 
 	private long size;
 	private Set<String> symbols = new HashSet<>();

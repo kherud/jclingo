@@ -3,6 +3,7 @@ package org.potassco.base;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.potassco.callback.SolveEventCallback;
 import org.potassco.cpp.clingo_h;
 import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ErrorCode;
@@ -1523,6 +1524,21 @@ public class Clingo {
 		return res.getValue();
 	}
 
+	/**
+	 * Wait for the specified amount of time to check if the next result is ready.
+     * <p>
+     * If the time is set to zero, this function can be used to poll if the search is still active.
+     * If the time is negative, the function blocks until the search is finished.
+	 * @param handle the target
+	 * @param timeout the maximum time to wait
+	 * @return whether the search has finished
+	 */
+	public boolean solveHandleWait(Pointer handle, double timeout) {
+		ByteByReference result = new ByteByReference();
+		clingoLibrary.clingo_solve_handle_wait(handle, timeout, result);
+		return result.getValue() == 1;
+	}
+
   	/**
   	 * Get the next model (or zero if there are no more models).
   	 * @param handle the target
@@ -1535,16 +1551,53 @@ public class Clingo {
 		return model.getValue();
   	}
 
+  	/**
+  	 * When a problem is unsatisfiable, get a subset of the assumptions that made the problem unsatisfiable.
+  	 * <p>
+  	 * If the program is not unsatisfiable, core is set to NULL and size to zero.
+    //! @param[out] core pointer where to store the core
+    //! @param[out] size size of the given array
+  	 * @param handle the target
+  	 * @return
+  	 */
+  	public Pointer solveHandleCore(Pointer handle) {
+		PointerByReference core = new PointerByReference();
+		SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_solve_handle_core(handle, core, size);
+		// TODO size
+		return core.getValue();
+  	}
+
+  	/**
+  	 * Discards the last model and starts the search for the next one.
+  	 * <p>
+  	 * If the search has been started asynchronously, this function continues the search in the background.
+  	 * <p>
+  	 * @note This function does not block.
+  	 * @param handle the target
+  	 */
+  	public void solveHandleResume(Pointer handle) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_solve_handle_resume(handle);
+  	}
+
+  	/** 
+  	 * Stop the running search and block until done.
+  	 * @param handle the target
+  	 */
+  	public void solveHandleCancel(Pointer handle) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_solve_handle_cancel(handle);
+  	}
+
 	/**
 	 * Stops the running search and releases the handle.
-    //!
-    //! Blocks until the search is stopped (as if an implicit cancel was called before the handle is released).
-    //!
-    //! @param[in] handle
-    //! @return whether the call was successful; might set one of the following error codes:
+     *
+     * Blocks until the search is stopped (as if an implicit cancel was called before the handle is released).
 	 * @param handle the target
 	 */
-	void solveHandleClose(Pointer handle) {
+	public void solveHandleClose(Pointer handle) {
         @SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_solve_handle_close(handle);
 	}
@@ -1604,8 +1657,18 @@ public class Clingo {
 	 * Free a control object created with {@link Clingo#controlNew(String[])}.
 	 * @param control the target
 	 */
-	void controlFree(Pointer control) {
+	public void controlFree(Pointer control) {
         clingoLibrary.clingo_control_free(control);
+	}
+
+	/**
+	 * Extend the logic program with a program in a file.
+	 * @param control the target
+	 * @param file path to the file
+	 */
+	public void controlLoad(Pointer control, String file) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_load(control, file);
 	}
 
 	/**
@@ -1646,7 +1709,7 @@ public class Clingo {
 	/**
 	 * Solve the currently @link ::clingo_control_ground grounded @endlink logic program enumerating its models.
 	 * <p>
-	 * See the @ref SolveHandle module for more information.
+	 * See the @ref Solution module for more information.
 
 	 * @param control the target
 	 * @param mode configures the search mode
@@ -1657,8 +1720,10 @@ public class Clingo {
 	 * @return 
 	 * @return handle to the current search to enumerate models
 	 */
-	public Pointer controlSolve(Pointer control, SolveMode mode, Pointer assumptions,
-			int assumptionsSize, SolveEventCallbackT notify, Pointer data) {
+	public Pointer controlSolve(Pointer control, SolveMode mode, Pointer assumptions, int assumptionsSize,
+//			SolveEventCallback notify,
+			SolveEventCallbackT notify,
+			Pointer data) {
         PointerByReference handle = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_solve(control, mode.getValue(),

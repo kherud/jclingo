@@ -2162,7 +2162,7 @@ public static final typedef<unsigned> clingo_solve_result_bitset_t = null;
 //!
 //! ## Code ##
 
-//! @defgroup SolveHandle Solving
+//! @defgroup Solution Solving
 //! Interact with a running search.
 //!
 //! A ::clingo_solve_handle_t objects can be used for both synchronous and asynchronous search,
@@ -2171,7 +2171,7 @@ public static final typedef<unsigned> clingo_solve_result_bitset_t = null;
 //! For an example showing how to solve asynchronously, see @ref solve-async.c.
 //! @ingroup Control
 
-//! @addtogroup SolveHandle
+//! @addtogroup Solution
 //! @{
 
 //! Enumeration of solve modes.
@@ -3419,7 +3419,7 @@ public bool clingo_control_ground(clingo_control_t p_control, final clingo_part_
 
 //! Solve the currently @link ::clingo_control_ground grounded @endlink logic program enumerating its models.
 //!
-//! See the @ref SolveHandle module for more information.
+//! See the @ref Solution module for more information.
 //!
 //! @param[in] control the target
 //! @param[in] mode configures the search mode

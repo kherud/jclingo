@@ -1,11 +1,8 @@
 package org.potassco.jna;
 import org.potassco.cpp.c_enum;
-import org.potassco.cpp.c_int;
 import org.potassco.cpp.clingo_h;
-import org.potassco.cpp.int32_t;
 import org.potassco.cpp.struct;
 import org.potassco.cpp.typedef;
-import org.potassco.cpp.uint32_t;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -1870,7 +1867,7 @@ public interface ClingoLibrary extends Library {
     //!
     //! ## Code ##
     
-    //! @defgroup SolveHandle Solving
+    //! @defgroup Solution Solving
     //! Interact with a running search.
     //!
     //! A ::clingo_solve_handle_t objects can be used for both synchronous and asynchronous search,
@@ -1879,7 +1876,7 @@ public interface ClingoLibrary extends Library {
     //! For an example showing how to solve asynchronously, see @ref solve-async.c.
     //! @ingroup Control
     
-    //! @addtogroup SolveHandle
+    //! @addtogroup Solution
     //! @{
     
     //! Enumeration of solve modes.
@@ -1942,7 +1939,8 @@ public interface ClingoLibrary extends Library {
     //! @param[in] handle the target
     //! @param[in] timeout the maximum time to wait
     //! @param[out] result whether the search has finished
-// public void clingo_solve_handle_wait(clingo_solve_handle_t p_handle, double timeout, bool p_result); // CLINGO_VISIBILITY_DEFAULT void clingo_solve_handle_wait(clingo_solve_handle_t *handle, double timeout, bool *result);
+    /** {@link clingo_h#clingo_solve_handle_wait} */
+    public void clingo_solve_handle_wait(Pointer p_handle, double timeout, ByteByReference p_result);
     //! Get the next model (or zero if there are no more models).
     //!
     //! @param[in] handle the target
@@ -1961,7 +1959,8 @@ public interface ClingoLibrary extends Library {
     //! @param[out] size size of the given array
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_bad_alloc
-// public bool clingo_solve_handle_core(clingo_solve_handle_t p_handle, final clingo_literal_t p_p_core, size_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_core(clingo_solve_handle_t *handle, clingo_literal_t const **core, size_t *size);
+    /** {@link clingo_h#clingo_solve_handle_core} */
+	public byte clingo_solve_handle_core(Pointer p_handle, PointerByReference p_p_core, SizeByReference p_size);
     //! Discards the last model and starts the search for the next one.
     //!
     //! If the search has been started asynchronously, this function continues the search in the background.
@@ -1972,14 +1971,16 @@ public interface ClingoLibrary extends Library {
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_bad_alloc
     //! - ::clingo_error_runtime if solving fails
-// public bool clingo_solve_handle_resume(clingo_solve_handle_t p_handle); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_resume(clingo_solve_handle_t *handle);
+    /** {@link clingo_h#clingo_solve_handle_resume} */
+	public byte clingo_solve_handle_resume(Pointer p_handle);
     //! Stop the running search and block until done.
     //!
     //! @param[in] handle the target
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_bad_alloc
     //! - ::clingo_error_runtime if solving fails
-// public bool clingo_solve_handle_cancel(clingo_solve_handle_t p_handle); // CLINGO_VISIBILITY_DEFAULT bool clingo_solve_handle_cancel(clingo_solve_handle_t *handle);
+    /** {@link clingo_h#clingo_solve_handle_cancel} */
+	public byte clingo_solve_handle_cancel(Pointer p_handle);
     //! Stops the running search and releases the handle.
     //!
     //! Blocks until the search is stopped (as if an implicit cancel was called before the handle is released).
@@ -3048,489 +3049,110 @@ public interface ClingoLibrary extends Library {
     
     //! Control object holding grounding and solving state.
 // public static final typedef<struct> clingo_control_t = null; // typedef struct clingo_control clingo_control_t;
-    
-    //! Create a new control object.
-    //!
-    //! A control object has to be freed using clingo_control_free().
-    //!
-    //! @note Only gringo options (without <code>\-\-output</code>) and clasp's options are supported as arguments,
-    //! except basic options such as <code>\-\-help</code>.
-    //! Furthermore, a control object is blocked while a search call is active;
-    //! you must not call any member function during search.
-    //!
-    //! If the logger is NULL, messages are printed to stderr.
-    //!
-    //! @param[in] arguments C string array of command line arguments
-    //! @param[in] arguments_size size of the arguments array
-    //! @param[in] logger callback functions for warnings and info messages
-    //! @param[in] logger_data user data for the logger callback
-    //! @param[in] message_limit maximum number of times the logger callback is called
-    //! @param[out] control resulting control object
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime if argument parsing fails
+
+    // clingo_ground_callback_t
+    // clingo_control_t
+  
     /** {@link clingo_h#clingo_control_new} */
     boolean clingo_control_new(PointerByReference arguments, int arguments_size, Pointer logger, Pointer logger_data, int message_limit, PointerByReference control);
   
-    //! Free a control object created with clingo_control_new().
-    //! @param[in] control the target
     /** {@link clingo_h#clingo_control_free} */
     void clingo_control_free(Pointer control);
   
-    //! @name Grounding Functions
-    //! @{
-    
-    //! Extend the logic program with a program in a file.
-    //!
-    //! @param[in] control the target
-    //! @param[in] file path to the file
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime if parsing or checking fails
-// public bool clingo_control_load(clingo_control_t p_control, final c_char p_file); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_load(clingo_control_t *control, char const *file);
-    
-    //! Extend the logic program with the given non-ground logic program in string form.
-    //!
-    //! This function puts the given program into a block of form: <tt>\#program name(parameters).</tt>
-    //!
-    //! After extending the logic program, the corresponding program parts are typically grounded with ::clingo_control_ground.
-    //!
-    //! @param[in] control the target
-    //! @param[in] name name of the program block
-    //! @param[in] parameters string array of parameters of the program block
-    //! @param[in] parameters_size number of parameters
-    //! @param[in] program string representation of the program
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime if parsing fails
-    /** {@link clingo_h#clingo_control_add} */
-    boolean clingo_control_add(Pointer control, String name, String[] parameters, Size parameters_size, String program);
+    // Grounding Functions
 
-    //! Ground the selected @link ::clingo_part parts @endlink of the current (non-ground) logic program.
-    //!
-    //! After grounding, logic programs can be solved with ::clingo_control_solve().
-    //!
-    //! @note Parts of a logic program without an explicit <tt>\#program</tt>
-    //! specification are by default put into a program called `base` without
-    //! arguments.
-    //!
-    //! @param[in] control the target
-    //! @param[in] parts array of parts to ground
-    //! @param[in] parts_size size of the parts array
-    //! @param[in] ground_callback callback to implement external functions
-    //! @param[in] ground_callback_data user data for ground_callback
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - error code of ground callback
-    //!
-    //! @see clingo_part
+    /** {@link clingo_h#clingo_control_load} */
+    public byte clingo_control_load(Pointer p_control, String p_file);
+
+    /** {@link clingo_h#clingo_control_add} */
+    public byte  clingo_control_add(Pointer p_control, String name, String[] parameters, Size parameters_size, String program);
+
     /** {@link clingo_h#clingo_control_ground} */
     public byte clingo_control_ground(Pointer p_control, Part[] p_parts, Size parts_size, Pointer ground_callback, Pointer p_ground_callback_data);
     
-    
-    //! @}
-    
-    //! @name Solving Functions
-    //! @{
-    
-    //! Solve the currently @link ::clingo_control_ground grounded @endlink logic program enumerating its models.
-    //!
-    //! See the @ref SolveHandle module for more information.
-    //!
-    //! @param[in] control the target
-    //! @param[in] mode configures the search mode
-    //! @param[in] assumptions array of assumptions to solve under
-    //! @param[in] assumptions_size number of assumptions
-    //! @param[in] notify the event handler to register
-    //! @param[in] data the user data for the event handler
-    //! @param[out] handle handle to the current search to enumerate models
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime if solving could not be started
+    // Solving Functions
+
     /** {@link clingo_h#clingo_control_solve} */
     public byte clingo_control_solve(Pointer control, int mode, Pointer assumptions, int assumptions_size, SolveEventCallbackT notify, Pointer data, PointerByReference handle);
 
-    //! Clean up the domains of the grounding component using the solving
-    //! component's top level assignment.
-    //!
-    //! This function removes atoms from domains that are false and marks atoms as
-    //! facts that are true.  With multi-shot solving, this can result in smaller
-    //! groundings because less rules have to be instantiated and more
-    //! simplifications can be applied.
-    //!
-    //! @note It is typically not necessary to call this function manually because
-    //! automatic cleanups at the right time are enabled by default.
-    //
-    //! @param[in] control the target
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //!
-    //! @see clingo_control_get_enable_cleanup()
-    //! @see clingo_control_set_enable_cleanup()
     /** {@link clingo_h#clingo_control_cleanup} */
 	public byte clingo_control_cleanup(Pointer p_control);
-    //! Assign a truth value to an external atom.
-    //!
-    //! If a negative literal is passed, the corresponding atom is assigned the
-    //! inverted truth value.
-    //!
-    //! If the atom does not exist or is not external, this is a noop.
-    //!
-    //! @param[in] control the target
-    //! @param[in] literal literal to assign
-    //! @param[in] value the truth value
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
+
     /** {@link clingo_h#clingo_control_assign_external} */
 	public byte clingo_control_assign_external(Pointer p_control, int literal, int value);
-    //! Release an external atom.
-    //!
-    //! If a negative literal is passed, the corresponding atom is released.
-    //!
-    //! After this call, an external atom is no longer external and subject to
-    //! program simplifications.  If the atom does not exist or is not external,
-    //! this is a noop.
-    //!
-    //! @param[in] control the target
-    //! @param[in] literal literal to release
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
+
     /** {@link clingo_h#clingo_control_release_external} */
 	public byte clingo_control_release_external(Pointer p_control, int literal);
-    //! Register a custom propagator with the control object.
-    //!
-    //! If the sequential flag is set to true, the propagator is called
-    //! sequentially when solving with multiple threads.
-    //!
-    //! See the @ref Propagator module for more information.
-    //!
-    //! @param[in] control the target
-    //! @param[in] propagator the propagator
-    //! @param[in] data user data passed to the propagator functions
-    //! @param[in] sequential whether the propagator should be called sequentially
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
+
     /** {@link clingo_h#clingo_control_release_external} */
 	public byte clingo_control_register_propagator(Pointer p_control, Pointer p_propagator, Pointer p_data, byte sequential);
-    //! Check if the solver has determined that the internal program representation is conflicting.
-    //!
-    //! If this function returns true, solve calls will return immediately with an unsatisfiable solve result.
-    //! Note that conflicts first have to be detected, e.g. -
-    //! initial unit propagation results in an empty clause,
-    //! or later if an empty clause is resolved during solving.
-    //! Hence, the function might return false even if the problem is unsatisfiable.
-    //!
-    //! @param[in] control the target
-    //! @return whether the program representation is conflicting
+
     /** {@link clingo_h#clingo_control_release_external} */
 	public byte clingo_control_is_conflicting(Pointer p_control);
-    
-    //! Get a statistics object to inspect solver statistics.
-    //!
-    //! Statistics are updated after a solve call.
-    //!
-    //! See the @ref Statistics module for more information.
-    //!
-    //! @attention
-    //! The level of detail of the statistics depends on the stats option
-    //! (which can be set using @ref Configuration module or passed as an option when @link clingo_control_new creating the control object@endlink).
-    //! The default level zero only provides basic statistics,
-    //! level one provides extended and accumulated statistics,
-    //! and level two provides per-thread statistics.
-    //! Furthermore, the statistics object is best accessed right after solving.
-    //! Otherwise, not all of its entries have valid values.
-    //!
-    //! @param[in] control the target
-    //! @param[out] statistics the statistics object
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
+
     /** {@link clingo_h#clingo_control_statistics} */
     public byte clingo_control_statistics(Pointer control, PointerByReference p_p_statistics);
-    //! Interrupt the active solve call (or the following solve call right at the beginning).
-    //!
-    //! @param[in] control the target
+
     /** {@link clingo_h#clingo_control_interrupt} */
     public void clingo_control_interrupt(Pointer p_control);
-    //! Get low-level access to clasp.
-    //!
-    //! @attention
-    //! This function is intended for experimental use only and not part of the stable API.
-    //!
-    //! This function may return a <code>nullptr</code>.
-    //! Otherwise, the returned pointer can be casted to a ClaspFacade pointer.
-    //!
-    //! @param[in] control the target
-    //! @param[out] clasp pointer to the ClaspFacade object (may be <code>nullptr</code>)
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_control_clasp_facade} */
     public byte clingo_control_clasp_facade(Pointer p_control, PointerByReference p_p_clasp);
     
-    //! Configuration Functions
-    
-    //! Get a configuration object to change the solver configuration.
-    //!
-    //! See the @ref Configuration module for more information.
-    //!
-    //! @param[in] control the target
-    //! @param[out] configuration the configuration object
-    //! @return whether the call was successful
+    // Configuration Functions
+
     /** {@link clingo_h#clingo_control_configuration} */
     public byte clingo_control_configuration(Pointer p_control, PointerByReference p_p_configuration);
-    
-    //! Configure how learnt constraints are handled during enumeration.
-    //!
-    //! If the enumeration assumption is enabled, then all information learnt from
-    //! the solver's various enumeration modes is removed after a solve call. This
-    //! includes enumeration of cautious or brave consequences, enumeration of
-    //! answer sets with or without projection, or finding optimal models, as well
-    //! as clauses added with clingo_solve_control_add_clause().
-    //!
-    //! @attention For practical purposes, this option is only interesting for single-shot solving
-    //! or before the last solve call to squeeze out a tiny bit of performance.
-    //! Initially, the enumeration assumption is enabled.
-    //!
-    //! @param[in] control the target
-    //! @param[in] enable whether to enable the assumption
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_control_set_enable_enumeration_assumption} */
 	public byte clingo_control_set_enable_enumeration_assumption(Pointer p_control, byte enable);
-    //! Check whether the enumeration assumption is enabled.
-    //!
-    //! See ::clingo_control_set_enable_enumeration_assumption().
-    //! @param[in] control the target
-    //! @return whether using the enumeration assumption is enabled
+
     /** {@link clingo_h#clingo_control_get_enable_enumeration_assumption} */
 	public byte clingo_control_get_enable_enumeration_assumption(Pointer p_control);
-    
-    //! Enable automatic cleanup after solving.
-    //!
-    //! @note Cleanup is enabled by default.
-    //!
-    //! @param[in] control the target
-    //! @param[in] enable whether to enable cleanups
-    //! @return whether the call was successful
-    //!
-    //! @see clingo_control_cleanup()
-    //! @see clingo_control_get_enable_cleanup()
+
     /** {@link clingo_h#clingo_control_set_enable_cleanup} */
 	public byte clingo_control_set_enable_cleanup(Pointer p_control, byte enable);
-    //! Check whether automatic cleanup is enabled.
-    //!
-    //! See ::clingo_control_set_enable_cleanup().
-    //!
-    //! @param[in] control the target
-    //!
-    //! @see clingo_control_cleanup()
-    //! @see clingo_control_set_enable_cleanup()
+
     /** {@link clingo_h#clingo_control_get_enable_cleanup} */
 	public byte clingo_control_get_enable_cleanup(Pointer p_control);
     
-    //! @}
+    // Program Inspection Functions
     
-    //! @name Program Inspection Functions
-    //! @{
-    
-    //! Return the symbol for a constant definition of form: <tt>\#const name = symbol</tt>.
-    //!
-    //! @param[in] control the target
-    //! @param[in] name the name of the constant
-    //! @param[out] symbol the resulting symbol
-    //! @return whether the call was successful
     /** {@link clingo_h#clingo_control_get_const} */
 	public byte clingo_control_get_const(Pointer p_control, String p_name, IntByReference p_symbol);
-    //! Check if there is a constant definition for the given constant.
-    //!
-    //! @param[in] control the target
-    //! @param[in] name the name of the constant
-    //! @param[out] exists whether a matching constant definition exists
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_runtime if constant definition does not exist
-    //!
-    //! @see clingo_control_get_const()
+
     /** {@link clingo_h#clingo_control_has_const} */
 	public byte clingo_control_has_const(Pointer p_control, String p_name, ByteByReference p_exists);
-    //! Get an object to inspect symbolic atoms (the relevant Herbrand base) used
-    //! for grounding.
-    //!
-    //! See the @ref SymbolicAtoms module for more information.
-    //!
-    //! @param[in] control the target
-    //! @param[out] atoms the symbolic atoms object
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_control_symbolic_atoms} */
     public byte clingo_control_symbolic_atoms(Pointer p_control, PointerByReference p_p_atoms);
 
-    //! Get an object to inspect theory atoms that occur in the grounding.
-    //!
-    //! See the @ref TheoryAtoms module for more information.
-    //!
-    //! @param[in] control the target
-    //! @param[out] atoms the theory atoms object
-    //! @return whether the call was successful
     /** {@link clingo_h#clingo_control_theory_atoms} */
     public byte clingo_control_theory_atoms(Pointer p_control, PointerByReference p_p_atoms);
-    //! Register a program observer with the control object.
-    //!
-    //! @param[in] control the target
-    //! @param[in] observer the observer to register
-    //! @param[in] replace just pass the grounding to the observer but not the solver
-    //! @param[in] data user data passed to the observer functions
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_control_theory_atoms} */
     public byte clingo_control_register_observer(Pointer p_control, Pointer p_observer, byte replace, Pointer p_data);
-    //! @}
-    
-    //! @name Program Modification Functions
-    //! @{
-    
-    //! Get an object to add ground directives to the program.
-    //!
-    //! See the @ref ProgramBuilder module for more information.
-    //!
-    //! @param[in] control the target
-    //! @param[out] backend the backend object
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
+
     /** {@link clingo_h#clingo_control_backend} */
     public byte clingo_control_backend(Pointer p_control, PointerByReference p_p_backend);
-    //! Get an object to add non-ground directives to the program.
-    //!
-    //! See the @ref ProgramBuilder module for more information.
-    //!
-    //! @param[in] control the target
-    //! @param[out] builder the program builder object
-    //! @return whether the call was successful
+    
     /** {@link clingo_h#clingo_control_program_builder} */
 	public byte clingo_control_program_builder(Pointer p_control, PointerByReference p_p_builder);
-    //! @}
-    
-    //! @}
-    
-    // {{{1 extending clingo
-    
-    //! @example application.c
-    //! The example shows how to extend the clingo application.
-    //!
-    //! It behaves like a normal normal clingo but adds one option to override the default program part to ground.
-    //! ## Example calls ##
-    //!
-    //! ~~~~~~~~~~~~
-    //! $ cat example.lp
-    //! b.
-    //! #program test.
-    //! t.
-    //!
-    //! $ ./application --program test example.lp
-    //! example version 1.0.0
-    //! Reading from example.lp
-    //! Solving...
-    //! Answer: 1
-    //! t
-    //! SATISFIABLE
-    //!
-    //! Models       : 1+
-    //! Calls        : 1
-    //! Time         : 0.004s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
-    //! CPU Time     : 0.004s
-    //! ~~~~~~~~~~~~
-    //!
-    //! ## Code ##
-    
-    //! @defgroup ExtendingClingo Extending Clingo
-    //! Functions to customize clingo's main function.
-    //!
-    //! This module allows for customizing the clingo application.
-    //! For example, this can be used to register custom propagators and command line options with clingo.
-    //!
-    //! Warning: This part of the API is not yet finalized and might change in the future.
-    
-    //! @addtogroup ExtendingClingo
-    //! @{
-    
-    //! Object to add command-line options.
-// public static final typedef<struct> clingo_options_t = null; // typedef struct clingo_options clingo_options_t;
-    
-    //! Callback to customize clingo main function.
-    //!
-    //! @param[in] control corresponding control object
-    //! @param[in] files files passed via command line arguments
-    //! @param[in] size number of files
-    //! @param[in] data user data for the callback
-    //!
-    //! @return whether the call was successful
-// public static final typedef<bool> clingo_main_function_t = null; // typedef bool (*clingo_main_function_t) (clingo_control_t *control, char const *const * files, size_t size, void *data);
-    
-    //! Callback to print a model in default format.
-    //!
-    //! @param[in] data user data for the callback
-    //!
-    //! @return whether the call was successful
-// public static final typedef<bool> clingo_default_model_printer_t = null; // typedef bool (*clingo_default_model_printer_t) (void *data);
-    
-    //! Callback to customize model printing.
-    //!
-    //! @param[in] model the model
-    //! @param[in] printer the default model printer
-    //! @param[in] printer_data user data for the printer
-    //! @param[in] data user data for the callback
-    //!
-    //! @return whether the call was successful
-// public static final typedef<bool> clingo_model_printer_t = null; // typedef bool (*clingo_model_printer_t) (clingo_model_t const *model, clingo_default_model_printer_t printer, void *printer_data, void *data);
-    
-    //! This struct contains a set of functions to customize the clingo application.
-  /* typedef struct clingo_application {
-      char const *(*program_name) (void *data);                        //!< callback to obtain program name
-      char const *(*version) (void *data);                             //!< callback to obtain version information
-      unsigned (*message_limit) (void *data);                          //!< callback to obtain message limit
-      clingo_main_function_t main;                                     //!< callback to override clingo's main function
-      clingo_logger_t logger;                                          //!< callback to override default logger
-      clingo_model_printer_t printer;                                  //!< callback to override default model printing
-      bool (*register_options)(clingo_options_t *options, void *data); //!< callback to register options
-      bool (*validate_options)(void *data);                            //!< callback validate options
-  } clingo_application_t; */ public static final typedef<struct> clingo_application_t = null;
+	
+    // Extending Clingo
+	
+	// clingo_main_function_t
+	// clingo_default_model_printer_t
+    // clingo_model_printer_t
+    // clingo_application
+  	// clingo_application_t
 
-    //! Add an option that is processed with a custom parser.
-    //!
-    //! Note that the parser also has to take care of storing the semantic value of
-    //! the option somewhere.
-    //!
-    //! Parameter option specifies the name(s) of the option.
-    //! For example, "ping,p" adds the short option "-p" and its long form "--ping".
-    //! It is also possible to associate an option with a help level by adding ",@l" to the option specification.
-    //! Options with a level greater than zero are only shown if the argument to help is greater or equal to l.
-    //!
-    //! @param[in] options object to register the option with
-    //! @param[in] group options are grouped into sections as given by this string
-    //! @param[in] option specifies the command line option
-    //! @param[in] description the description of the option
-    //! @param[in] parse callback to parse the value of the option
-    //! @param[in] data user data for the callback
-    //! @param[in] multi whether the option can appear multiple times on the command-line
-    //! @param[in] argument optional string to change the value name in the generated help output
-    //! @return whether the call was successful
     /** {@link clingo_h#clingo_options_add} */
     public byte clingo_options_add(Pointer p_options, String p_group, String p_option, String p_description, OptionParseCallbackT p_parse /*(char const *value, void *data)*/, Pointer p_data, byte multi, String p_argument);
-    //! Add an option that is a simple flag.
-    //!
-    //! This function is similar to @ref clingo_options_add() but simpler because it only supports flags, which do not have values.
-    //! If a flag is passed via the command-line the parameter target is set to true.
-    //!
-    //! @param[in] options object to register the option with
-    //! @param[in] group options are grouped into sections as given by this string
-    //! @param[in] option specifies the command line option
-    //! @param[in] description the description of the option
-    //! @param[in] target boolean set to true if the flag is given on the command-line
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_options_add_flag} */
     public byte clingo_options_add_flag(Pointer p_options, String p_group, String p_option, String p_description, byte p_target);
     
-    //! Run clingo with a customized main function (similar to python and lua embedding).
-    //!
-    //! @param[in] application struct with callbacks to override default clingo functionality
-    //! @param[in] arguments command line arguments
-    //! @param[in] size number of arguments
-    //! @param[in] data user data to pass to callbacks in application
-    //! @return exit code to return from main function
     /** {@link clingo_h#clingo_main} */
 	public int clingo_main(Pointer p_application, String p_arguments, int size, Pointer p_data);
     

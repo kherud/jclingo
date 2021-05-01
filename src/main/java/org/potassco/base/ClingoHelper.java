@@ -1,5 +1,6 @@
 package org.potassco.base;
 
+import org.potassco.dto.Solution;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
@@ -15,8 +16,8 @@ public class ClingoHelper {
 		this.clingo = clingo;
 	}
 
-	public SolveHandle solve() throws ClingoException {
-        SolveHandle solveHandle = new SolveHandle();
+	public Solution solve() throws ClingoException {
+        Solution solveHandle = new Solution();
         SolveEventCallbackT cb = new SolveEventCallbackT() {
             public boolean call(int type, Pointer event, Pointer data, Pointer goon) {
                 SolveEventType t = SolveEventType.fromValue(type);
@@ -45,8 +46,8 @@ public class ClingoHelper {
             }
         };
 		Pointer control = clingo.getControl();
-        Pointer hnd = clingo.controlSolve(control, SolveMode.ASYNC, null, 0, cb, null);
-        clingo.solveHandleClose(hnd);
+        Pointer handle = clingo.controlSolve(control, SolveMode.ASYNC, null, 0, cb, null);
+        clingo.solveHandleClose(handle);
         // clean up
         clingo.controlFree(control);
 		return solveHandle;

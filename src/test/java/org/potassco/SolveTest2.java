@@ -2,37 +2,15 @@ package org.potassco;
 
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
+import org.junit.Test;
 import org.potassco.base.Clingo;
 import org.potassco.base.ClingoException;
 import org.potassco.base.ClingoHelper;
-import org.potassco.base.SolveHandle;
+import org.potassco.dto.Solution;
 
-public class SolveTest {
+public class SolveTest2 {
 
-	@org.junit.Test
-	public void testAb() {
-		String name = "base";
-		Clingo clingo = new Clingo(name, "a. b.");
-		clingo.ground(name);
-		try {
-			ClingoHelper clingoHelper = new ClingoHelper(clingo);
-			SolveHandle solution = clingoHelper.solve();
-			assertEquals(2, solution.getSize());
-			String[] strArray = { "a", "b" };
-			Set<String> expected = new HashSet<String>(Arrays.asList(strArray));
-			Set<String> actual = solution.getSymbols();
-			assertTrue(expected.equals(actual));
-		} catch (ClingoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	@org.junit.Test
+	@Test
 	public void testTravellingSalesperson() {
 		String name = "base";
 		Clingo clingo = new Clingo(name,
@@ -65,7 +43,7 @@ public class SolveTest {
 		clingo.ground(name);
 		try {
 			ClingoHelper clingoHelper = new ClingoHelper(clingo);
-			SolveHandle solution = clingoHelper.solve();
+			Solution solution = clingoHelper.solve();
 			assertEquals(52, solution.getSize());
 //			String[] strArray = { "a", "b" };
 //			Set<String> expected = new HashSet<String>(Arrays.asList(strArray));
@@ -77,7 +55,7 @@ public class SolveTest {
 		}
 	}
 
-	@org.junit.Test
+	@Test
 	public void testMultiModels() {
 		String name = "base";
 		Clingo clingo = new Clingo(name,
@@ -85,7 +63,7 @@ public class SolveTest {
 		clingo.ground(name);
 		try {
 			ClingoHelper clingoHelper = new ClingoHelper(clingo);
-			SolveHandle solution = clingoHelper.solve();
+			Solution solution = clingoHelper.solve();
 			assertEquals(3, solution.getSize());
 //			clingo.solveHandleModel(null)
 		} catch (ClingoException e) {

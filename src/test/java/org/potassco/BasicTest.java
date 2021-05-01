@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.Test;
 import org.potassco.base.Clingo;
 import org.potassco.base.ClingoException;
 import org.potassco.base.SolveHandle;
@@ -14,9 +15,9 @@ import org.potassco.jna.ClingoLibrary;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 
-public class Test {
+public class BasicTest {
 
-	@org.junit.Test
+	@Test
 	public void test1() {
 		IntByReference major = new IntByReference();
 		IntByReference minor = new IntByReference();
@@ -27,13 +28,13 @@ public class Test {
 		assertEquals(0, patch.getValue());
 	}
 
-	@org.junit.Test
+	@Test
 	public void test2() {
 		Clingo clingo = new Clingo();
 		assertEquals("5.5.0", clingo.version());
 	}
 
-	@org.junit.Test
+	@Test
 	public void test3() {
 		String name = "base";
 		Clingo clingo = new Clingo(name, "a. b.");
@@ -51,7 +52,7 @@ public class Test {
 		}
 	}
 
-	@org.junit.Test
+	@Test
 	public void testCleanupSetting() {
 		String name = "base";
 		Clingo clingo = new Clingo(name, "a. b.");
@@ -62,7 +63,7 @@ public class Test {
 		assertFalse(clingo.controlGetEnableCleanup(control));
 	}
 
-	@org.junit.Test
+	@Test
 	public void testEnumerationAssumptionSetting() {
 		String name = "base";
 		Clingo clingo = new Clingo(name, "a. b.");
@@ -73,7 +74,16 @@ public class Test {
 		assertFalse(clingo.controlGetEnableEnumerationAssumption(control));
 	}
 
-	@org.junit.Test
+	@Test
+	public void testIsConflicting() {
+		String name = "base";
+		Clingo clingo = new Clingo(name, "a. not a.");
+		clingo.ground(name);
+		Pointer control = clingo.getControl();
+		assertTrue(clingo.controlIsConflicting(control));
+	}
+
+	@Test
 	public void testTravellingSalesperson() {
 		String name = "base";
 		Clingo clingo = new Clingo(name,

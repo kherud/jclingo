@@ -1743,10 +1743,11 @@ public class Clingo {
      * or later if an empty clause is resolved during solving.
      * Hence, the function might return false even if the problem is unsatisfiable.
 	 * @param control the target
+	 * @return 
 	 */
-	public void controlIsConflicting(Pointer control) {
-		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_control_is_conflicting(control);
+	public boolean controlIsConflicting(Pointer control) {
+		byte isConflicting = clingoLibrary.clingo_control_is_conflicting(control);
+		return isConflicting == 1;
 	}
 
     /**

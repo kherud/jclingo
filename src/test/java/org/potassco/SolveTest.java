@@ -8,16 +8,8 @@ import java.util.Set;
 
 import org.potassco.base.Clingo;
 import org.potassco.base.ClingoException;
+import org.potassco.base.ClingoHelper;
 import org.potassco.base.SolveHandle;
-import org.potassco.enums.ModelType;
-import org.potassco.enums.ShowType;
-import org.potassco.jna.ClingoLibrary;
-import org.potassco.jna.SizeByReference;
-
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 
 public class SolveTest {
 
@@ -27,7 +19,8 @@ public class SolveTest {
 		Clingo clingo = new Clingo(name, "a. b.");
 		clingo.ground(name);
 		try {
-			SolveHandle solution = clingo.solve();
+			ClingoHelper clingoHelper = new ClingoHelper(clingo);
+			SolveHandle solution = clingoHelper.solve();
 			assertEquals(2, solution.getSize());
 			String[] strArray = { "a", "b" };
 			Set<String> expected = new HashSet<String>(Arrays.asList(strArray));
@@ -71,7 +64,8 @@ public class SolveTest {
 				+ "");
 		clingo.ground(name);
 		try {
-			SolveHandle solution = clingo.solve();
+			ClingoHelper clingoHelper = new ClingoHelper(clingo);
+			SolveHandle solution = clingoHelper.solve();
 			assertEquals(52, solution.getSize());
 //			String[] strArray = { "a", "b" };
 //			Set<String> expected = new HashSet<String>(Arrays.asList(strArray));
@@ -90,7 +84,8 @@ public class SolveTest {
 				"{elected(ann; bob; carol; dan; elaine; fred)} = 3.");
 		clingo.ground(name);
 		try {
-			SolveHandle solution = clingo.solve();
+			ClingoHelper clingoHelper = new ClingoHelper(clingo);
+			SolveHandle solution = clingoHelper.solve();
 			assertEquals(3, solution.getSize());
 //			clingo.solveHandleModel(null)
 		} catch (ClingoException e) {

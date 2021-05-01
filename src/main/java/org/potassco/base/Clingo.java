@@ -8,7 +8,6 @@ import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.ModelType;
 import org.potassco.enums.ShowType;
-import org.potassco.enums.SolveEventType;
 import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;
 import org.potassco.enums.TermType;
@@ -1544,8 +1543,9 @@ public class Clingo {
     //! @return whether the call was successful; might set one of the following error codes:
 	 * @param handle the target
 	 */
-	private void solveHandleClose(Pointer handle) {
-        byte success = clingoLibrary.clingo_solve_handle_close(handle);
+	void solveHandleClose(Pointer handle) {
+        @SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_solve_handle_close(handle);
 	}
 
 	/* **********
@@ -1603,7 +1603,7 @@ public class Clingo {
 	 * Free a control object created with {@link Clingo#controlNew(String[])}.
 	 * @param control the target
 	 */
-	private void controlFree(Pointer control) {
+	void controlFree(Pointer control) {
         clingoLibrary.clingo_control_free(control);
 	}
 
@@ -1873,7 +1873,6 @@ public class Clingo {
      * @return whether automatic cleanup is enabled.
      */
     public boolean controlGetEnableCleanup(Pointer control) {
- 		@SuppressWarnings("unused")
  		byte enabled = clingoLibrary.clingo_control_get_enable_cleanup(control);
  		return enabled == 1;
     }
@@ -2042,42 +2041,6 @@ public class Clingo {
      */
     public int main(Pointer application, String arguments, int size, Pointer data) {
 		return clingoLibrary.clingo_main(application, arguments, size, data);
-    }
-
-    public SolveHandle solve() throws ClingoException {
-        SolveHandle solveHandle = new SolveHandle();
-        SolveEventCallbackT cb = new SolveEventCallbackT() {
-            public boolean call(int type, Pointer event, Pointer data, Pointer goon) {
-                SolveEventType t = SolveEventType.fromValue(type);
-                switch (t) {
-                    case MODEL:
-                    	long size = modelSymbolsSize(event, ShowType.SHOWN);
-                        solveHandle.setSize(size);
-                        long[] symbols = modelSymbols(event, ShowType.SHOWN, size);
-                        for (int i = 0; i < size; ++i) {
-                            long len = symbolToStringSize(symbols[i]);
-                            String symbol = symbolToString(symbols[i], len);
-                            solveHandle.addSymbol(symbol.trim());
-                        }
-                        break;
-                    case STATISTICS:
-                        break;
-                    case UNSAT:
-                        break;
-                    case FINISH:
-//                        Pointer<Integer> p_event = (Pointer<Integer>) event;
-//                        handler.onFinish(new SolveResult(p_event.get()));
-//                        goon.set(true);
-                        return true;
-                }
-                return true;
-            }
-        };
-        Pointer hnd = controlSolve(control, 0, null, 0, cb, null);
-        solveHandleClose(hnd);
-        // clean up
-        controlFree(control);
-		return solveHandle;
     }
 
 }

@@ -21,6 +21,7 @@ import org.potassco.jna.Size;
 import org.potassco.jna.SizeByReference;
 import org.potassco.jna.SolveEventCallbackT;
 import org.potassco.jna.SymbolByReference;
+import org.potassco.jna.clingo_weighted_literal_t;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.StringArray;
@@ -241,6 +242,8 @@ public class Clingo {
 		return symb.getValue();
 	}
 
+	// Symbol Inspection Functions
+	
 	public int symbolNumber(long symbol) {
 		IntByReference ibr = new IntByReference();
 		@SuppressWarnings("unused")
@@ -328,6 +331,8 @@ public class Clingo {
 		byte success = clingoLibrary.clingo_symbol_to_string(symbol, str, size);
 		return new String(str);
     }
+    
+    // Symbol Comparison Functions
     
    /**
      * @param a first symbol
@@ -583,6 +588,8 @@ public class Clingo {
 	/* ************
 	 * theory atoms
 	 * ************ */
+ 	
+ 	// Theory Term Inspection
 
     /**
      * Get the type of the given theory term.
@@ -674,6 +681,8 @@ public class Clingo {
 		byte success = clingoLibrary.clingo_theory_atoms_term_to_string(atoms, term, str, size);
 		return new String(str);
     }
+    
+    // Theory Element Inspection
 
     /**
      * Get the tuple (array of theory terms) of the given theory element.
@@ -753,7 +762,7 @@ public class Clingo {
 		return new String(str);
     }
     
-    //! Theory Atom Inspection
+    // Theory Atom Inspection
 
     /**
      * Get the total number of theory atoms.
@@ -875,6 +884,40 @@ public class Clingo {
 	 * backend
 	 * ********** */
 
+	/** {@link clingo_h#clingo_backend_begin} */
+  	public byte clingo_backend_begin(Pointer p_backend);
+
+	/** {@link clingo_h#clingo_backend_end} */
+  	public byte clingo_backend_end(Pointer p_backend);
+
+	/** {@link clingo_h#clingo_backend_rule} */
+  	public byte clingo_backend_rule(Pointer p_backend, byte choice, int p_head, long head_size, int p_body, long body_size);
+
+	/** {@link clingo_h#clingo_backend_weight_rule} */
+  	public byte clingo_backend_weight_rule(Pointer p_backend, byte choice, int p_head, long head_size, int lower_bound, final clingo_weighted_literal_t p_body, long body_size);
+
+	/** {@link clingo_h#clingo_backend_minimize} */
+  	public byte clingo_backend_minimize(Pointer p_backend, int priority, final clingo_weighted_literal_t p_literals, long size);
+
+	/** {@link clingo_h#clingo_backend_project} */
+  	public byte clingo_backend_project(Pointer p_backend, int p_atoms, long size);
+
+	/** {@link clingo_h#clingo_backend_external} */
+  	public byte clingo_backend_external(Pointer p_backend, int atom, int type);
+
+	/** {@link clingo_h#clingo_backend_assume} */
+  	public byte clingo_backend_assume(Pointer p_backend, int p_literals, long size);
+
+	/** {@link clingo_h#clingo_backend_heuristic} */
+  	public byte clingo_backend_heuristic(Pointer p_backend, int atom, int type, int bias, int priority, int p_condition, long size);
+
+	/** {@link clingo_h#clingo_backend_acyc_edge} */
+  	public byte clingo_backend_acyc_edge(Pointer p_backend, int node_u, int node_v, int p_condition, long size);
+
+  	/** {@link clingo_h#clingo_backend_add_atom} */
+	public byte clingo_backend_add_atom(Pointer p_backend, int p_symbol, IntByReference p_atom);
+
+    
 	/* *************
 	 * configuration
 	 * ************* */

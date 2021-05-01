@@ -47,667 +47,223 @@ public interface ClingoLibrary extends Library {
     //! Enumeration of error codes.
     // typedef<c_enum> clingo_error_e = null;
     // typedef<c_int> clingo_error_t = null;
-    //! Convert error code into string.
+
     /** {@link clingo_h#clingo_error_string} */
     public String clingo_error_string(int code);
-    //! Get the last error code set by a clingo API call.
-    //! @note Each thread has its own local error code.
-    //! @return error code
+
     /** {@link clingo_h#clingo_error_code} */
     public int clingo_error_code();
-    //! Get the last error message set if an API call fails.
-    //! @note Each thread has its own local error message.
-    //! @return error message or NULL
+
     /** {@link clingo_h#clingo_error_message} */
     public String clingo_error_message();
-    //! Set a custom error code and message in the active thread.
-    //! @param[in] code the error code
-    //! @param[in] message the error message
+
     /** {@link clingo_h#clingo_set_error} */
     public void clingo_set_error(int code, String message);
-    //! Convert warning code into string.
+
     /** {@link clingo_h#clingo_warning_string} */
     public String clingo_warning_string(int code);
 
-    //! Obtain the clingo version.
-    //!
-    //! @param[out] major major version number
-    //! @param[out] minor minor version number
-    //! @param[out] revision revision number
     /** {@link clingo_h#clingo_version} */
     void clingo_version(IntByReference major, IntByReference minor, IntByReference patch);
     
-    //! Represents three-valued truth values.
-    // typedef<c_enum> clingo_truth_value_e = null;
-    // typedef<c_int> clingo_truth_value_t = null;
+    // clingo_truth_value_e
+    // clingo_truth_value_t
     
-    //! @name Signature Functions
-    //! @{
+    // Signature Functions
 
-    //! Create a new signature.
-    //!
-    //! @param[in] name name of the signature
-    //! @param[in] arity arity of the signature
-    //! @param[in] positive false if the signature has a classical negation sign
-    //! @param[out] signature the resulting signature
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_create(char const *name, uint32_t arity, bool positive, clingo_signature_t *signature);
     /** {@link clingo_h#clingo_signature_create} */
     int clingo_signature_create(String p_name, int arity, int positive, PointerByReference p_signature);
 
-    //! Get the name of a signature.
-    //!
-    //! @note
-    //! The string is internalized and valid for the duration of the process.
-    //!
-    //! @param[in] signature the target signature
-    //! @return the name of the signature
     /** {@link clingo_h#clingo_signature_name} */
     public String clingo_signature_name(Pointer signature); // CLINGO_VISIBILITY_DEFAULT char const *clingo_signature_name(clingo_signature_t signature);
 
-    //! Get the arity of a signature.
-    //!
-    //! @param[in] signature the target signature
-    //! @return the arity of the signature
     /** {@link clingo_h#clingo_signature_arity} */
     public int clingo_signature_arity(Pointer signature); // CLINGO_VISIBILITY_DEFAULT uint32_t clingo_signature_arity(clingo_signature_t signature);
-  
-    //! Whether the signature is positive (is not classically negated).
-    //!
-    //! @param[in] signature the target signature
-    //! @return whether the signature has no sign
+
     /** {@link clingo_h#clingo_signature_is_positive} */
     public byte clingo_signature_is_positive(Pointer signature); // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_is_positive(clingo_signature_t signature);
 
-    //! Whether the signature is negative (is classically negated).
-    //!
-    //! @param[in] signature the target signature
-    //! @return whether the signature has a sign
     /** {@link clingo_h#clingo_signature_is_negative} */
     public byte clingo_signature_is_negative(Pointer signature); // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_is_negative(clingo_signature_t signature);
 
-    //! Check if two signatures are equal.
-    //!
-    //! @param[in] a first signature
-    //! @param[in] b second signature
-    //! @return whether a == b
     /** {@link clingo_h#clingo_signature_is_equal_to} */
     public byte clingo_signature_is_equal_to(Pointer a, Pointer b); // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_is_equal_to(clingo_signature_t a, clingo_signature_t b);
-  
-    //! Check if a signature is less than another signature.
-    //!
-    //! Signatures are compared first by sign (unsigned < signed), then by arity,
-    //! then by name.
-    //!
-    //! @param[in] a first signature
-    //! @param[in] b second signature
-    //! @return whether a < b
+
     /** {@link clingo_h#clingo_signature_is_less_than} */
     public byte clingo_signature_is_less_than(Pointer a, Pointer b); // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_is_less_than(clingo_signature_t a, clingo_signature_t b);
 
-    //! Calculate a hash code of a signature.
-    //!
-    //! @param[in] signature the target signature
-    //! @return the hash code of the signature
     /** {@link clingo_h#clingo_signature_hash} */
     public Size clingo_signature_hash(Pointer signature); // CLINGO_VISIBILITY_DEFAULT size_t clingo_signature_hash(clingo_signature_t signature);
 
-    //! Construct a symbol representing a number.
-    //!
-    //! @param[in] number the number
-    //! @param[out] symbol the resulting symbol
     /** {@link clingo_h#clingo_symbol_create_number} */
     public void clingo_symbol_create_number(int number, SymbolByReference p_symbol);
-    //! Construct a symbol representing \#sup.
-    //!
-    //! @param[out] symbol the resulting symbol
+
     /** {@link clingo_h#clingo_symbol_create_supremum} */
     public void clingo_symbol_create_supremum(SymbolByReference p_symbol);
-    //! Construct a symbol representing <tt>\#inf</tt>.
-    //!
-    //! @param[out] symbol the resulting symbol
+
     /** {@link clingo_h#clingo_symbol_create_infimum} */
     public void clingo_symbol_create_infimum(SymbolByReference p_symbol);
-    //! Construct a symbol representing a string.
-    //!
-    //! @param[in] string the string
-    //! @param[out] symbol the resulting symbol
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
+
     /** {@link clingo_h#clingo_symbol_create_string} */
     public byte clingo_symbol_create_string(String p_string, SymbolByReference p_symbol);
-    //! Construct a symbol representing an id.
-    //!
-    //! @note This is just a shortcut for clingo_symbol_create_function() with
-    //! empty arguments.
-    //!
-    //! @param[in] name the name
-    //! @param[in] positive whether the symbol has a classical negation sign
-    //! @param[out] symbol the resulting symbol
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
+
     /** {@link clingo_h#clingo_symbol_create_id} */
     public byte clingo_symbol_create_id(String p_name, byte positive, SymbolByReference p_symbol);
-    //! Construct a symbol representing a function or tuple.
-    //!
-    //! @note To create tuples, the empty string has to be used as name.
-    //!
-    //! @param[in] name the name of the function
-    //! @param[in] arguments the arguments of the function
-    //! @param[in] arguments_size the number of arguments
-    //! @param[in] positive whether the symbol has a classical negation sign
-    //! @param[out] symbol the resulting symbol
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
+
     /** {@link clingo_h#clingo_symbol_create_function} */
     public byte clingo_symbol_create_function(String p_name, SymbolByReference[] p_arguments, Size arguments_size, byte positive, SymbolByReference p_symbol);
 
-    //! @name Symbol Inspection Functions
-    
-    //! Get the number of a symbol.
-    //!
-    //! @param[in] symbol the target symbol
-    //! @param[out] number the resulting number
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_number
+    // Symbol Inspection Functions
+
     /** {@link clingo_h#clingo_symbol_number} */
     public byte clingo_symbol_number(long symbol, IntByReference p_number);
-    //! Get the name of a symbol.
-    //!
-    //! @note
-    //! The string is internalized and valid for the duration of the process.
-    //!
-    //! @param[in] symbol the target symbol
-    //! @param[out] name the resulting name
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_function
+
     /** {@link clingo_h#clingo_symbol_name} */
     public byte clingo_symbol_name(long symbol, String[] p_p_name);
-    //! Get the string of a symbol.
-    //!
-    //! @note
-    //! The string is internalized and valid for the duration of the process.
-    //!
-    //! @param[in] symbol the target symbol
-    //! @param[out] string the resulting string
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_string
+
     /** {@link clingo_h#clingo_symbol_string} */
     public byte clingo_symbol_string(long symbol, String[] p_p_string);
-    //! Check if a function is positive (does not have a sign).
-    //!
-    //! @param[in] symbol the target symbol
-    //! @param[out] positive the result
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_function
+    
     /** {@link clingo_h#clingo_symbol_is_positive} */
     public byte clingo_symbol_is_positive(long symbol, ByteByReference p_positive);
-    //! Check if a function is negative (has a sign).
-    //!
-    //! @param[in] symbol the target symbol
-    //! @param[out] negative the result
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_function
+
     /** {@link clingo_h#clingo_symbol_is_negative} */
     public byte clingo_symbol_is_negative(long symbol, ByteByReference p_negative);
-    //! Get the arguments of a symbol.
-    //!
-    //! @param[in] symbol the target symbol
-    //! @param[out] arguments the resulting arguments
-    //! @param[out] arguments_size the number of arguments
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_runtime if symbol is not of type ::clingo_symbol_type_function
+
     /** {@link clingo_h#clingo_symbol_arguments} */
     public byte clingo_symbol_arguments(long symbol, PointerByReference p_p_arguments, SizeByReference p_arguments_size);
-    //! Get the type of a symbol.
-    //!
-    //! @param[in] symbol the target symbol
-    //! @return the type of the symbol
+
     /** {@link clingo_h#clingo_symbol_type} */
     public int clingo_symbol_type(long symbol);
-    /**
-     * Get the size of the string representation of a symbol (including the terminating 0).
-     * @param symbol [in] symbol the target symbol
-     * @param size [out] size the resulting size
-     * @return whether the call was successful; might set one of the following error codes:
-     * - ::clingo_error_bad_alloc
-     * {@link clingo_h#clingo_symbol_to_string_size}
-     */
+
+    /** {@link clingo_h#clingo_symbol_to_string_size} */
     public boolean clingo_symbol_to_string_size(long symbol, SizeByReference p_size);
 //    public byte clingo_symbol_to_string_size(Symbol symbol, SizeByReference p_size);
 
-    /**
-     * Get the string representation of a symbol.
-     * @param symbol [in] symbol the target symbol
-     * @param string [out] string the resulting string
-     * @param size [in] size the size of the string
-     * @return whether the call was successful; might set one of the following error codes:
-     * - ::clingo_error_bad_alloc
-     * @see clingo_symbol_to_string_size()
-     */
     /** {@link clingo_h#clingo_symbol_to_string} */
     public byte clingo_symbol_to_string(long symbol, byte[] p_string, long size);
 //    boolean clingo_symbol_to_string(long symbol, byte[] string, Size size);
     
-    //! @}
-    
-    //! @name Symbol Comparison Functions
-    //! @{
-    
-    //! Check if two symbols are equal.
-    //!
-    //! @param[in] a first symbol
-    //! @param[in] b second symbol
-    //! @return whether a == b
+    // Symbol Comparison Functions
+
     /** {@link clingo_h#clingo_symbol_is_equal_to} */
     public byte clingo_symbol_is_equal_to(long a, long b);
-    //! Check if a symbol is less than another symbol.
-    //!
-    //! Symbols are first compared by type.  If the types are equal, the values are
-    //! compared (where strings are compared using strcmp).  Functions are first
-    //! compared by signature and then lexicographically by arguments.
-    //!
-    //! @param[in] a first symbol
-    //! @param[in] b second symbol
-    //! @return whether a < b
+
     /** {@link clingo_h#clingo_symbol_is_less_than} */
     public byte clingo_symbol_is_less_than(long a, long b); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_is_less_than(clingo_symbol_t a, clingo_symbol_t b);
-    //! Calculate a hash code of a symbol.
-    //!
-    //! @param[in] symbol the target symbol
-    //! @return the hash code of the symbol
+
     /** {@link clingo_h#clingo_symbol_hash} */
     public Size clingo_symbol_hash(long symbol); // CLINGO_VISIBILITY_DEFAULT size_t clingo_symbol_hash(clingo_symbol_t symbol);
 
-    //! Internalize a string.
-    //!
-    //! This functions takes a string as input and returns an equal unique string
-    //! that is (at the moment) not freed until the program is closed.
-    //!
-    //! @param[in] string the string to internalize
-    //! @param[out] result the internalized string
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
     /** {@link clingo_h#clingo_add_string} */
     public byte clingo_add_string(String p_string, String[] p_p_result);
-    //! Parse a term in string form.
-    //!
-    //! The result of this function is a symbol. The input term can contain
-    //! unevaluated functions, which are evaluated during parsing.
-    //!
-    //! @param[in] string the string to parse
-    //! @param[in] logger optional logger to report warnings during parsing
-    //! @param[in] logger_data user data for the logger
-    //! @param[in] message_limit maximum number of times to call the logger
-    //! @param[out] symbol the resulting symbol
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime if parsing fails
+
     /** {@link clingo_h#clingo_parse_term} */
     public byte clingo_parse_term(String p_string, Pointer logger, PointerByReference p_logger_data, int message_limit, LongByReference p_symbol);
 
     // symbolic atoms
 
-    //! @example symbolic-atoms.c
-    //! The example shows how to iterate over symbolic atoms.
-    //!
-    //! ## Output ##
-    //!
-    //! ~~~~~~~~~~~~
-    //! ./symbolic-atoms 0
-    //! Symbolic atoms:
-    //!   b
-    //!   c, external
-    //!   a, fact
-    //! ~~~~~~~~~~~~
-
-    //! Get the number of different atoms occurring in a logic program.
-    //!
-    //! @param[in] atoms the target
-    //! @param[out] size the number of atoms
-    //! @return whether the call was successful
     /** {@link clingo_h#clingo_symbolic_atoms_size} */
     public byte clingo_symbolic_atoms_size(Pointer p_atoms, SizeByReference p_size);
-    //! Get a forward iterator to the beginning of the sequence of all symbolic
-    //! atoms optionally restricted to a given signature.
-    //!
-    //! @param[in] atoms the target
-    //! @param[in] signature optional signature
-    //! @param[out] iterator the resulting iterator
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_symbolic_atoms_begin} */
     public byte clingo_symbolic_atoms_begin(Pointer p_atoms, Pointer p_signature, PointerByReference p_iterator);
-    //! Iterator pointing to the end of the sequence of symbolic atoms.
-    //!
-    //! @param[in] atoms the target
-    //! @param[out] iterator the resulting iterator
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_symbolic_atoms_end} */
     public byte clingo_symbolic_atoms_end(Pointer p_atoms, PointerByReference p_iterator);
-    //! Find a symbolic atom given its symbolic representation.
-    //!
-    //! @param[in] atoms the target
-    //! @param[in] symbol the symbol to lookup
-    //! @param[out] iterator iterator pointing to the symbolic atom or to the end
-    //! of the sequence if no corresponding atom is found
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_symbolic_atoms_find} */
     public byte clingo_symbolic_atoms_find(Pointer p_atoms, long symbol, PointerByReference p_iterator);
-    //! Check if two iterators point to the same element (or end of the sequence).
-    //!
-    //! @param[in] atoms the target
-    //! @param[in] a the first iterator
-    //! @param[in] b the second iterator
-    //! @param[out] equal whether the two iterators are equal
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_symbolic_atoms_iterator_is_equal_to} */
     public byte clingo_symbolic_atoms_iterator_is_equal_to(Pointer p_atoms, Pointer a, Pointer b, ByteByReference p_equal);
-    //! Get the symbolic representation of an atom.
-    //!
-    //! @param[in] atoms the target
-    //! @param[in] iterator iterator to the atom
-    //! @param[out] symbol the resulting symbol
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_symbolic_atoms_symbol} */
     public byte clingo_symbolic_atoms_symbol(Pointer p_atoms, Pointer iterator, LongByReference p_symbol);
-    //! Check whether an atom is a fact.
-    //!
-    //! @note This does not determine if an atom is a cautious consequence. The
-    //! grounding or solving component's simplifications can only detect this in
-    //! some cases.
-    //!
-    //! @param[in] atoms the target
-    //! @param[in] iterator iterator to the atom
-    //! @param[out] fact whether the atom is a fact
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_symbolic_atoms_is_fact} */
     public byte clingo_symbolic_atoms_is_fact(Pointer p_atoms, Pointer iterator, ByteByReference p_fact);
-    //! Check whether an atom is external.
-    //!
-    //! An atom is external if it has been defined using an external directive and
-    //! has not been released or defined by a rule.
-    //!
-    //! @param[in] atoms the target
-    //! @param[in] iterator iterator to the atom
-    //! @param[out] external whether the atom is a external
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_symbolic_atoms_is_fact} */
     public byte clingo_symbolic_atoms_is_external(Pointer p_atoms, Pointer iterator, ByteByReference p_external);
-    //! Returns the (numeric) aspif literal corresponding to the given symbolic atom.
-    //!
-    //! Such a literal can be mapped to a solver literal (see the \ref Propagator
-    //! module) or be used in rules in aspif format (see the \ref ProgramBuilder
-    //! module).
-    //!
-    //! @param[in] atoms the target
-    //! @param[in] iterator iterator to the atom
-    //! @param[out] literal the associated literal
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_symbolic_atoms_is_fact} */
     public byte clingo_symbolic_atoms_literal(Pointer p_atoms, Pointer iterator, PointerByReference p_literal);
-    //! Get the number of different predicate signatures used in the program.
-    //!
-    //! @param[in] atoms the target
-    //! @param[out] size the number of signatures
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_symbolic_atoms_signatures_size} */
     public byte clingo_symbolic_atoms_signatures_size(Pointer p_atoms, SizeByReference p_size);
-    //! Get the predicate signatures occurring in a logic program.
-    //!
-    //! @param[in] atoms the target
-    //! @param[out] signatures the resulting signatures
-    //! @param[in] size the number of signatures
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime if the size is too small
-    //!
-    //! @see clingo_symbolic_atoms_signatures_size()
+
     /** {@link clingo_h#clingo_symbolic_atoms_signatures} */
     public byte clingo_symbolic_atoms_signatures(Pointer p_atoms, PointerByReference p_signatures, long size);
-    //! Get an iterator to the next element in the sequence of symbolic atoms.
-    //!
-    //! @param[in] atoms the target
-    //! @param[in] iterator the current iterator
-    //! @param[out] next the succeeding iterator
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_symbolic_atoms_signatures} */
     public byte clingo_symbolic_atoms_next(Pointer p_atoms, Pointer iterator, PointerByReference p_next);
-    //! Check whether the given iterator points to some element with the sequence
-    //! of symbolic atoms or to the end of the sequence.
-    //!
-    //! @param[in] atoms the target
-    //! @param[in] iterator the iterator
-    //! @param[out] valid whether the iterator points to some element within the
-    //! sequence
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_symbolic_atoms_is_valid} */
     public byte clingo_symbolic_atoms_is_valid(Pointer p_atoms, Pointer iterator, ByteByReference p_valid);
 
-    // ********************************************************************************************************
+    // theory atoms
 
-    // {{{1 theory atoms
+    // Theory Term Inspection
 
-    //! @example theory-atoms.c
-    //! The example shows how to inspect and use theory atoms.
-    //!
-    //! This is a very simple example that uses the @link ProgramBuilder backend@endlink to let theory atoms affect answer sets.
-    //! In general, the backend can be used to implement a custom theory by translating it to a logic program.
-    //! On the other hand, a @link Propagator propagator@endlink can be used to implement a custom theory without adding any constraints in advance.
-    //! Or both approaches can be combined.
-    //!
-    //! ## Output ##
-    //!
-    //! ~~~~~~~~~~~~
-    //! ./theory-atoms 0
-    //! number of grounded theory atoms: 2
-    //! theory atom b/1 has a guard: true
-    //! Model: y
-    //! Model: x y
-    //! ~~~~~~~~~~~~
-    //!
-    //! ## Code ##
-    //!
-    //! During grounding, theory atoms get consecutive numbers starting with zero.
-    //! The total number of theory atoms can be obtained using clingo_theory_atoms_size().
-    //!
-    //! @attention
-    //! All structural information about theory atoms, elements, and terms is reset after @link clingo_control_solve() solving@endlink.
-    //! If afterward fresh theory atoms are @link clingo_control_ground() grounded@endlink, previously used ids are reused.
-    //!
-    //! For an example, see @ref theory-atoms.c.
-
-    //! @name Theory Term Inspection
-    //! @{
-
-    //! Get the type of the given theory term.
-    //!
-    //! @param[in] atoms container where the term is stored
-    //! @param[in] term id of the term
-    //! @param[out] type the resulting type
-    //! @return whether the call was successful
     /** {@link clingo_h#clingo_theory_atoms_term_type} */
     public byte clingo_theory_atoms_term_type(Pointer p_atoms, int term, IntByReference p_type);
-    //! Get the number of the given numeric theory term.
-    //!
-    //! @pre The term must be of type ::clingo_theory_term_type_number.
-    //! @param[in] atoms container where the term is stored
-    //! @param[in] term id of the term
-    //! @param[out] number the resulting number
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_theory_atoms_term_number} */
     public byte clingo_theory_atoms_term_number(Pointer p_atoms, int term, IntByReference p_number);
-    //! Get the name of the given constant or function theory term.
-    //!
-    //! @note
-    //! The lifetime of the string is tied to the current solve step.
-    //!
-    //! @pre The term must be of type ::clingo_theory_term_type_function or ::clingo_theory_term_type_symbol.
-    //! @param[in] atoms container where the term is stored
-    //! @param[in] term id of the term
-    //! @param[out] name the resulting name
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_theory_atoms_term_name} */
     public byte clingo_theory_atoms_term_name(Pointer p_atoms, int term, final String[] p_p_name);
-    //! Get the arguments of the given function theory term.
-    //!
-    //! @pre The term must be of type ::clingo_theory_term_type_function.
-    //! @param[in] atoms container where the term is stored
-    //! @param[in] term id of the term
-    //! @param[out] arguments the resulting arguments in form of an array of term ids
-    //! @param[out] size the number of arguments
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_theory_atoms_term_arguments} */
     public byte clingo_theory_atoms_term_arguments(Pointer p_atoms, int term, PointerByReference p_p_arguments, SizeByReference p_size);
-    //! Get the size of the string representation of the given theory term (including the terminating 0).
-    //!
-    //! @param[in] atoms container where the term is stored
-    //! @param[in] term id of the term
-    //! @param[out] size the resulting size
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
+
     /** {@link clingo_h#clingo_theory_atoms_term_to_string_size} */
     public byte clingo_theory_atoms_term_to_string_size(Pointer p_atoms, int term, SizeByReference p_size);
-    //! Get the string representation of the given theory term.
-    //!
-    //! @param[in] atoms container where the term is stored
-    //! @param[in] term id of the term
-    //! @param[out] string the resulting string
-    //! @param[in] size the size of the string
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_runtime if the size is too small
-    //! - ::clingo_error_bad_alloc
-    //!
-    //! @see clingo_theory_atoms_term_to_string_size()
+
     /** {@link clingo_h#clingo_theory_atoms_term_to_string} */
     public byte clingo_theory_atoms_term_to_string(Pointer p_atoms, int term, byte[] p_string, long size);
 
-    //! @name Theory Element Inspection
+    // Theory Element Inspection
 
-    //! Get the tuple (array of theory terms) of the given theory element.
-    //!
-    //! @param[in] atoms container where the element is stored
-    //! @param[in] element id of the element
-    //! @param[out] tuple the resulting array of term ids
-    //! @param[out] size the number of term ids
-    //! @return whether the call was successful
     /** {@link clingo_h#clingo_theory_atoms_element_tuple} */
     public byte clingo_theory_atoms_element_tuple(Pointer p_atoms, int element, PointerByReference p_p_tuple, SizeByReference p_size);
-    //! Get the condition (array of aspif literals) of the given theory element.
-    //!
-    //! @param[in] atoms container where the element is stored
-    //! @param[in] element id of the element
-    //! @param[out] condition the resulting array of aspif literals
-    //! @param[out] size the number of term literals
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_theory_atoms_element_condition} */
     public byte clingo_theory_atoms_element_condition(Pointer p_atoms, int element, PointerByReference p_p_condition, SizeByReference p_size);
-    //! Get the id of the condition of the given theory element.
-    //!
-    //! @note
-    //! This id can be mapped to a solver literal using clingo_propagate_init_solver_literal().
-    //! This id is not (necessarily) an aspif literal;
-    //! to get aspif literals use clingo_theory_atoms_element_condition().
-    //!
-    //! @param[in] atoms container where the element is stored
-    //! @param[in] element id of the element
-    //! @param[out] condition the resulting condition id
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_theory_atoms_element_condition_id} */
     public byte clingo_theory_atoms_element_condition_id(Pointer p_atoms, int element, IntByReference p_condition);
-    //! Get the size of the string representation of the given theory element (including the terminating 0).
-    //!
-    //! @param[in] atoms container where the element is stored
-    //! @param[in] element id of the element
-    //! @param[out] size the resulting size
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
+
     /** {@link clingo_h#clingo_theory_atoms_element_to_string_size} */
     public byte clingo_theory_atoms_element_to_string_size(Pointer p_atoms, int element, SizeByReference p_size);
-    //! Get the string representation of the given theory element.
-    //!
-    //! @param[in] atoms container where the element is stored
-    //! @param[in] element id of the element
-    //! @param[out] string the resulting string
-    //! @param[in] size the size of the string
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_runtime if the size is too small
-    //! - ::clingo_error_bad_alloc
+
     /** {@link clingo_h#clingo_theory_atoms_element_to_string} */
     public byte clingo_theory_atoms_element_to_string(Pointer p_atoms, int element, byte[] p_string, long size);
 
-    //! Theory Atom Inspection
+    // Theory Atom Inspection
 
-    //! Get the total number of theory atoms.
-    //!
-    //! @param[in] atoms the target
-    //! @param[out] size the resulting number
-    //! @return whether the call was successful
     /** {@link clingo_h#clingo_theory_atoms_size} */
     public byte clingo_theory_atoms_size(Pointer p_atoms, SizeByReference p_size);
-    //! Get the theory term associated with the theory atom.
-    //!
-    //! @param[in] atoms container where the atom is stored
-    //! @param[in] atom id of the atom
-    //! @param[out] term the resulting term id
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_theory_atoms_atom_term} */
     public byte clingo_theory_atoms_atom_term(Pointer p_atoms, int atom, IntByReference p_term);
-    //! Get the theory elements associated with the theory atom.
-    //!
-    //! @param[in] atoms container where the atom is stored
-    //! @param[in] atom id of the atom
-    //! @param[out] elements the resulting array of elements
-    //! @param[out] size the number of elements
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_theory_atoms_atom_elements} */
     public byte clingo_theory_atoms_atom_elements(Pointer p_atoms, int atom, IntByReference p_p_elements, SizeByReference p_size);
-    //! Whether the theory atom has a guard.
-    //!
-    //! @param[in] atoms container where the atom is stored
-    //! @param[in] atom id of the atom
-    //! @param[out] has_guard whether the theory atom has a guard
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_theory_atoms_atom_has_guard} */
     public byte clingo_theory_atoms_atom_has_guard(Pointer p_atoms, int atom, ByteByReference p_has_guard);
-    //! Get the guard consisting of a theory operator and a theory term of the given theory atom.
-    //!
-    //! @note
-    //! The lifetime of the string is tied to the current solve step.
-    //!
-    //! @param[in] atoms container where the atom is stored
-    //! @param[in] atom id of the atom
-    //! @param[out] connective the resulting theory operator
-    //! @param[out] term the resulting term
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_theory_atoms_atom_guard} */
     public byte clingo_theory_atoms_atom_guard(Pointer p_atoms, int atom, byte[] p_p_connective, int p_term);
-    //! Get the aspif literal associated with the given theory atom.
-    //!
-    //! @param[in] atoms container where the atom is stored
-    //! @param[in] atom id of the atom
-    //! @param[out] literal the resulting literal
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_theory_atoms_atom_literal} */
     public byte clingo_theory_atoms_atom_literal(Pointer p_atoms, int atom, IntByReference p_literal);
-    //! Get the size of the string representation of the given theory atom (including the terminating 0).
-    //!
-    //! @param[in] atoms container where the atom is stored
-    //! @param[in] atom id of the element
-    //! @param[out] size the resulting size
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
+
     /** {@link clingo_h#clingo_theory_atoms_atom_to_string_size} */
     public byte clingo_theory_atoms_atom_to_string_size(Pointer p_atoms, int atom, SizeByReference p_size);
-    //! Get the string representation of the given theory atom.
-    //!
-    //! @param[in] atoms container where the atom is stored
-    //! @param[in] atom id of the element
-    //! @param[out] string the resulting string
-    //! @param[in] size the size of the string
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_runtime if the size is too small
-    //! - ::clingo_error_bad_alloc
+
     /** {@link clingo_h#clingo_theory_atoms_atom_to_string} */
     public byte clingo_theory_atoms_atom_to_string(Pointer p_atoms, int atom, byte[] p_string, long size);
 
@@ -1233,762 +789,219 @@ public interface ClingoLibrary extends Library {
 // bool (*decide) (clingo_id_t thread_id, clingo_assignment_t const *assignment, clingo_literal_t fallback, void *data, clingo_literal_t *decision);
     // typedef<struct> clingo_propagator = null;
     
-    //! @}
+    // backend
     
-    // {{{1 backend
+    // clingo_heuristic_type_e
+  	// clingo_heuristic_type_t
+  	// clingo_external_type_e
+    // clingo_external_type_t
+  	// clingo_backend_t
     
-    //! @example backend.c
-    //! The example shows how to used the backend to extend a grounded program.
-    //!
-    //! ## Output ##
-    //!
-    //! ~~~~~~~~~~~~
-    //! ./backend 0
-    //! Model: a b
-    //! Model: a b c
-    //! Model:
-    //! Model: a
-    //! Model: b
-    //! ~~~~~~~~~~~~
-    //!
-    //! ## Code ##
-    
-    //! @defgroup ProgramBuilder Program Building
-    //! Add non-ground program representations (ASTs) to logic programs or extend the ground (aspif) program.
-    //! @ingroup Control
-    //!
-    //! For an example about ground logic programs, see @ref backend.c.
-    //! For an example about non-ground logic programs, see @ref ast.c and the @ref AST module.
-    
-    //! @addtogroup ProgramBuilder
-    //! @{
-    
-    //! Enumeration of different heuristic modifiers.
-    //! @ingroup ProgramInspection
-/* enum clingo_heuristic_type_e {
-      clingo_heuristic_type_level  = 0, //!< set the level of an atom
-      clingo_heuristic_type_sign   = 1, //!< configure which sign to chose for an atom
-      clingo_heuristic_type_factor = 2, //!< modify VSIDS factor of an atom
-      clingo_heuristic_type_init   = 3, //!< modify the initial VSIDS score of an atom
-      clingo_heuristic_type_true   = 4, //!< set the level of an atom and choose a positive sign
-      clingo_heuristic_type_false  = 5  //!< set the level of an atom and choose a negative sign
-  }; */ public static final typedef<c_enum> clingo_heuristic_type_e = null;
-    //! Corresponding type to ::clingo_heuristic_type.
-    //! @ingroup ProgramInspection
-// public static final typedef<c_int> clingo_heuristic_type_t = null;
-    
-    //! Enumeration of different external statements.
-    //! @ingroup ProgramInspection
-  /* enum clingo_external_type_e {
-      clingo_external_type_free    = 0, //!< allow an external to be assigned freely
-      clingo_external_type_true    = 1, //!< assign an external to true
-      clingo_external_type_false   = 2, //!< assign an external to false
-      clingo_external_type_release = 3, //!< no longer treat an atom as external
-  }; */ public static final typedef<c_enum> clingo_external_type_e = null;
-    //! Corresponding type to ::clingo_external_type.
-    //! @ingroup ProgramInspection
-// public static final typedef<c_int> clingo_external_type_t = null;
-    
-    //! Handle to the backend to add directives in aspif format.
-// public static final typedef<struct> clingo_backend_t = null;
-    
-    //! Prepare the backend for usage.
-    //!
-    //! @param[in] backend the target backend
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime
-// public bool clingo_backend_begin(clingo_backend_t p_backend); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_begin(clingo_backend_t *backend);
-    //! Finalize the backend after using it.
-    //!
-    //! @param[in] backend the target backend
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime
-// public bool clingo_backend_end(clingo_backend_t p_backend); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_end(clingo_backend_t *backend);
-    //! Add a rule to the program.
-    //!
-    //! @param[in] backend the target backend
-    //! @param[in] choice determines if the head is a choice or a disjunction
-    //! @param[in] head the head atoms
-    //! @param[in] head_size the number of atoms in the head
-    //! @param[in] body the body literals
-    //! @param[in] body_size the number of literals in the body
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-// public bool clingo_backend_rule(clingo_backend_t p_backend, bool choice, final clingo_atom_t p_head, size_t head_size, final clingo_literal_t p_body, size_t body_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_rule(clingo_backend_t *backend, bool choice, clingo_atom_t const *head, size_t head_size, clingo_literal_t const *body, size_t body_size);
-    //! Add a weight rule to the program.
-    //!
-    //! @attention All weights and the lower bound must be positive.
-    //! @param[in] backend the target backend
-    //! @param[in] choice determines if the head is a choice or a disjunction
-    //! @param[in] head the head atoms
-    //! @param[in] head_size the number of atoms in the head
-    //! @param[in] lower_bound the lower bound of the weight rule
-    //! @param[in] body the weighted body literals
-    //! @param[in] body_size the number of weighted literals in the body
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-// public bool clingo_backend_weight_rule(clingo_backend_t p_backend, bool choice, final clingo_atom_t p_head, size_t head_size, clingo_weight_t lower_bound, final clingo_weighted_literal_t p_body, size_t body_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_weight_rule(clingo_backend_t *backend, bool choice, clingo_atom_t const *head, size_t head_size, clingo_weight_t lower_bound, clingo_weighted_literal_t const *body, size_t body_size);
-    //! Add a minimize constraint (or weak constraint) to the program.
-    //!
-    //! @param[in] backend the target backend
-    //! @param[in] priority the priority of the constraint
-    //! @param[in] literals the weighted literals whose sum to minimize
-    //! @param[in] size the number of weighted literals
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-// public bool clingo_backend_minimize(clingo_backend_t p_backend, clingo_weight_t priority, final clingo_weighted_literal_t p_literals, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_minimize(clingo_backend_t *backend, clingo_weight_t priority, clingo_weighted_literal_t const* literals, size_t size);
-    //! Add a projection directive.
-    //!
-    //! @param[in] backend the target backend
-    //! @param[in] atoms the atoms to project on
-    //! @param[in] size the number of atoms
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-// public bool clingo_backend_project(clingo_backend_t p_backend, final clingo_atom_t p_atoms, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_project(clingo_backend_t *backend, clingo_atom_t const *atoms, size_t size);
-    //! Add an external statement.
-    //!
-    //! @param[in] backend the target backend
-    //! @param[in] atom the external atom
-    //! @param[in] type the type of the external statement
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-// public bool clingo_backend_external(clingo_backend_t p_backend, clingo_atom_t atom, clingo_external_type_t type); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_external(clingo_backend_t *backend, clingo_atom_t atom, clingo_external_type_t type);
-    //! Add an assumption directive.
-    //!
-    //! @param[in] backend the target backend
-    //! @param[in] literals the literals to assume (positive literals are true and negative literals false for the next solve call)
-    //! @param[in] size the number of atoms
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-// public bool clingo_backend_assume(clingo_backend_t p_backend, final clingo_literal_t p_literals, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_assume(clingo_backend_t *backend, clingo_literal_t const *literals, size_t size);
-    //! Add an heuristic directive.
-    //!
-    //! @param[in] backend the target backend
-    //! @param[in] atom the target atom
-    //! @param[in] type the type of the heuristic modification
-    //! @param[in] bias the heuristic bias
-    //! @param[in] priority the heuristic priority
-    //! @param[in] condition the condition under which to apply the heuristic modification
-    //! @param[in] size the number of atoms in the condition
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-// public bool clingo_backend_heuristic(clingo_backend_t p_backend, clingo_atom_t atom, clingo_heuristic_type_t type, int bias, unsigned priority, final clingo_literal_t p_condition, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_heuristic(clingo_backend_t *backend, clingo_atom_t atom, clingo_heuristic_type_t type, int bias, unsigned priority, clingo_literal_t const *condition, size_t size);
-    //! Add an edge directive.
-    //!
-    //! @param[in] backend the target backend
-    //! @param[in] node_u the start vertex of the edge
-    //! @param[in] node_v the end vertex of the edge
-    //! @param[in] condition the condition under which the edge is part of the graph
-    //! @param[in] size the number of atoms in the condition
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-// public bool clingo_backend_acyc_edge(clingo_backend_t p_backend, int node_u, int node_v, final clingo_literal_t p_condition, size_t size); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_acyc_edge(clingo_backend_t *backend, int node_u, int node_v, clingo_literal_t const *condition, size_t size);
-    //! Get a fresh atom to be used in aspif directives.
-    //!
-    //! @param[in] backend the target backend
-    //! @param[in] symbol optional symbol to associate the atom with
-    //! @param[out] atom the resulting atom
-    //! @return whether the call was successful
-// public bool clingo_backend_add_atom(clingo_backend_t p_backend, clingo_symbol_t p_symbol, clingo_atom_t p_atom); // CLINGO_VISIBILITY_DEFAULT bool clingo_backend_add_atom(clingo_backend_t *backend, clingo_symbol_t *symbol, clingo_atom_t *atom);
-    
-    //! @}
-    
-    // {{{1 configuration
-    
-    //! @example configuration.c
-    //! The example shows how to configure the solver.
-    //!
-    //! @note It is also possible to loop over all configuration entries.
-    //! This can be done in a similar fashion as in the @ref statistics.c example.
-    //! But note that, unlike with statistics entries, a configuration entry can have more than one type.
-    //!
-    //! ## Output ##
-    //!
-    //! ~~~~~~~~
-    //! ./configuration
-    //! Model: a
-    //! Model: b
-    //! ~~~~~~~~
-    //!
-    //! ## Code ##
-    
-    //! @defgroup Configuration Solver Configuration
-    //! Configuration of search and enumeration algorithms.
-    //!
-    //! Entries in a configuration are organized hierarchically.
-    //! Subentries are either accessed by name for map entries or by offset for array entries.
-    //! Value entries have a string value that can be inspected or modified.
-    //!
-    //! For an example, see @ref configuration.c.
-    //! @ingroup Control
-    
-    //! Configuration
-    
-    //! Get the root key of the configuration.
-    //!
-    //! @param[in] configuration the target configuration
-    //! @param[out] key the root key
-    //! @return whether the call was successful
+	/** {@link clingo_h#clingo_backend_begin} */
+  	public byte clingo_backend_begin(Pointer p_backend);
+
+	/** {@link clingo_h#clingo_backend_end} */
+  	public byte clingo_backend_end(Pointer p_backend);
+
+	/** {@link clingo_h#clingo_backend_rule} */
+  	public byte clingo_backend_rule(Pointer p_backend, byte choice, int p_head, long head_size, int p_body, long body_size);
+
+	/** {@link clingo_h#clingo_backend_weight_rule} */
+  	public byte clingo_backend_weight_rule(Pointer p_backend, byte choice, int p_head, long head_size, int lower_bound, final clingo_weighted_literal_t p_body, long body_size);
+
+	/** {@link clingo_h#clingo_backend_minimize} */
+  	public byte clingo_backend_minimize(Pointer p_backend, int priority, final clingo_weighted_literal_t p_literals, long size);
+
+	/** {@link clingo_h#clingo_backend_project} */
+  	public byte clingo_backend_project(Pointer p_backend, int p_atoms, long size);
+
+	/** {@link clingo_h#clingo_backend_external} */
+  	public byte clingo_backend_external(Pointer p_backend, int atom, int type);
+
+	/** {@link clingo_h#clingo_backend_assume} */
+  	public byte clingo_backend_assume(Pointer p_backend, int p_literals, long size);
+
+	/** {@link clingo_h#clingo_backend_heuristic} */
+  	public byte clingo_backend_heuristic(Pointer p_backend, int atom, int type, int bias, int priority, int p_condition, long size);
+
+	/** {@link clingo_h#clingo_backend_acyc_edge} */
+  	public byte clingo_backend_acyc_edge(Pointer p_backend, int node_u, int node_v, int p_condition, long size);
+
+  	/** {@link clingo_h#clingo_backend_add_atom} */
+	public byte clingo_backend_add_atom(Pointer p_backend, int p_symbol, IntByReference p_atom);
+
+    // Configuration
+
     /** {@link clingo_h#clingo_configuration_root} */
     public byte clingo_configuration_root(Pointer p_configuration, IntByReference p_key);
-    //! Get the type of a key.
-    //!
-    //! @note The type is bitset, an entry can have multiple (but at least one) type.
-    //!
-    //! @param[in] configuration the target configuration
-    //! @param[in] key the key
-    //! @param[out] type the resulting type
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_configuration_type} */
     public byte clingo_configuration_type(Pointer p_configuration, int key, IntByReference p_type);
-    //! Get the description of an entry.
-    //!
-    //! @param[in] configuration the target configuration
-    //! @param[in] key the key
-    //! @param[out] description the description
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_configuration_description} */
     public byte clingo_configuration_description(Pointer p_configuration, int key, String[] p_p_description);
     
-    //! Functions to access arrays
+    // Functions to access arrays
     
-    //! Get the size of an array entry.
-    //!
-    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_array.
-    //! @param[in] configuration the target configuration
-    //! @param[in] key the key
-    //! @param[out] size the resulting size
-    //! @return whether the call was successful
     /** {@link clingo_h#clingo_configuration_description} */
     public byte clingo_configuration_array_size(Pointer p_configuration, int key, SizeByReference p_size);
-    //! Get the subkey at the given offset of an array entry.
-    //!
-    //! @note Some array entries, like fore example the solver configuration, can be accessed past there actual size to add subentries.
-    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_array.
-    //! @param[in] configuration the target configuration
-    //! @param[in] key the key
-    //! @param[in] offset the offset in the array
-    //! @param[out] subkey the resulting subkey
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_configuration_array_at} */
     public byte clingo_configuration_array_at(Pointer p_configuration, int key, long offset, IntByReference p_subkey);
     
-    //! Functions to access maps
+    // Functions to access maps
     
-    //! Get the number of subkeys of a map entry.
-    //!
-    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
-    //! @param[in] configuration the target configuration
-    //! @param[in] key the key
-    //! @param[out] size the resulting number
-    //! @return whether the call was successful
     /** {@link clingo_h#clingo_configuration_map_size} */
     public byte clingo_configuration_map_size(Pointer p_configuration, int key, SizeByReference p_size);
-    //! Query whether the map has a key.
-    //!
-    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
-    //! @note Multiple levels can be looked up by concatenating keys with a period.
-    //! @param[in] configuration the target configuration
-    //! @param[in] key the key
-    //! @param[in] name the name to lookup the subkey
-    //! @param[out] result whether the key is in the map
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_configuration_map_has_subkey} */
     public byte clingo_configuration_map_has_subkey(Pointer p_configuration, int key, String p_name, ByteByReference p_result);
-    //! Get the name associated with the offset-th subkey.
-    //!
-    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
-    //! @param[in] configuration the target configuration
-    //! @param[in] key the key
-    //! @param[in] offset the offset of the name
-    //! @param[out] name the resulting name
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_configuration_map_subkey_name} */
     public byte clingo_configuration_map_subkey_name(Pointer p_configuration, int key, long offset, String[] p_p_name);
-    //! Lookup a subkey under the given name.
-    //!
-    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_map.
-    //! @note Multiple levels can be looked up by concatenating keys with a period.
-    //! @param[in] configuration the target configuration
-    //! @param[in] key the key
-    //! @param[in] name the name to lookup the subkey
-    //! @param[out] subkey the resulting subkey
-    //! @return whether the call was successful
+    
     /** {@link clingo_h#clingo_configuration_map_at} */
     public byte clingo_configuration_map_at(Pointer p_configuration, int key, final String p_name, IntByReference p_subkey);
     
-    //! Functions to access values
-    
-    //! Check whether a entry has a value.
-    //!
-    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
-    //! @param[in] configuration the target configuration
-    //! @param[in] key the key
-    //! @param[out] assigned whether the entry has a value
-    //! @return whether the call was successful
+    // Functions to access values
+
     /** {@link clingo_h#clingo_configuration_value_is_assigned} */
     public byte clingo_configuration_value_is_assigned(Pointer p_configuration, int key, ByteByReference p_assigned);
-    //! Get the size of the string value of the given entry.
-    //!
-    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
-    //! @param[in] configuration the target configuration
-    //! @param[in] key the key
-    //! @param[out] size the resulting size
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_configuration_value_get_size} */
     public byte clingo_configuration_value_get_size(Pointer p_configuration, int key, SizeByReference p_size);
-    //! Get the string value of the given entry.
-    //!
-    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
-    //! @pre The given size must be larger or equal to size of the value.
-    //! @param[in] configuration the target configuration
-    //! @param[in] key the key
-    //! @param[out] value the resulting string value
-    //! @param[in] size the size of the given char array
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_configuration_value_get} */
     public byte clingo_configuration_value_get(Pointer p_configuration, int key, byte[] p_value, long size);
-    //! Set the value of an entry.
-    //!
-    //! @pre The @link clingo_configuration_type() type@endlink of the entry must be @ref ::clingo_configuration_type_value.
-    //! @param[in] configuration the target configuration
-    //! @param[in] key the key
-    //! @param[in] value the value to set
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_configuration_value_set} */
     public byte clingo_configuration_value_set(Pointer p_configuration, int key, String p_value);
     
     // statistics
-    
-    //! Get the root key of the statistics.
-    //!
-    //! @param[in] statistics the target statistics
-    //! @param[out] key the root key
-    //! @return whether the call was successful
+
+
     /** {@link clingo_h#clingo_statistics_root} */
     public byte clingo_statistics_root(Pointer statistics, IntByReference p_key);
-    //! Get the type of a key.
-    //!
-    //! @param[in] statistics the target statistics
-    //! @param[in] key the key
-    //! @param[out] type the resulting type
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_statistics_type} */
     public byte clingo_statistics_type(Pointer statistics, long key, IntByReference type);
     
-    //! @name Functions to access arrays
-    //! @{
-    
-    //! Get the size of an array entry.
-    //!
-    //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_array.
-    //! @param[in] statistics the target statistics
-    //! @param[in] key the key
-    //! @param[out] size the resulting size
-    //! @return whether the call was successful
+    // Functions to access arrays
+
     /** {@link clingo_h#clingo_statistics_array_size} */
     public byte clingo_statistics_array_size(Pointer statistics, long key, SizeByReference p_size);
-    //! Get the subkey at the given offset of an array entry.
-    //!
-    //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_array.
-    //! @param[in] statistics the target statistics
-    //! @param[in] key the key
-    //! @param[in] offset the offset in the array
-    //! @param[out] subkey the resulting subkey
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_statistics_array_at} */
     public byte clingo_statistics_array_at(Pointer statistics, long key, long offset, IntByReference p_subkey);
-    //! Create the subkey at the end of an array entry.
-    //!
-    //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_array.
-    //! @param[in] statistics the target statistics
-    //! @param[in] key the key
-    //! @param[in] type the type of the new subkey
-    //! @param[out] subkey the resulting subkey
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_statistics_array_push} */
     public byte clingo_statistics_array_push(Pointer p_statistics, long key, int type, IntByReference p_subkey);
-    //! @}
     
-    //! @name Functions to access maps
-    //! @{
-    
-    //! Get the number of subkeys of a map entry.
-    //!
-    //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
-    //! @param[in] statistics the target statistics
-    //! @param[in] key the key
-    //! @param[out] size the resulting number
-    //! @return whether the call was successful
+    // Functions to access maps
+
     /** {@link clingo_h#clingo_statistics_map_size} */
     public byte clingo_statistics_map_size(Pointer statistics, long key, SizeByReference p_size);
-    //! Test if the given map contains a specific subkey.
-    //!
-    //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
-    //! @param[in] statistics the target statistics
-    //! @param[in] key the key
-    //! @param[in] name name of the subkey
-    //! @param[out] result true if the map has a subkey with the given name
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_statistics_map_has_subkey} */
     public byte clingo_statistics_map_has_subkey(Pointer statistics, long key, String p_name, ByteByReference p_result);
-    //! Get the name associated with the offset-th subkey.
-    //!
-    //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
-    //! @param[in] statistics the target statistics
-    //! @param[in] key the key
-    //! @param[in] offset the offset of the name
-    //! @param[out] name the resulting name
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_statistics_map_subkey_name} */
     public byte clingo_statistics_map_subkey_name(Pointer statistics, long key, long offset, String[] p_p_name);
-    //! Lookup a subkey under the given name.
-    //!
-    //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
-    //! @note Multiple levels can be looked up by concatenating keys with a period.
-    //! @param[in] statistics the target statistics
-    //! @param[in] key the key
-    //! @param[in] name the name to lookup the subkey
-    //! @param[out] subkey the resulting subkey
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_statistics_map_at} */
     public byte clingo_statistics_map_at(Pointer statistics, long key, String p_name, IntByReference p_subkey);
-    //! Add a subkey with the given name.
-    //!
-    //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
-    //! @param[in] statistics the target statistics
-    //! @param[in] key the key
-    //! @param[in] name the name of the new subkey
-    //! @param[in] type the type of the new subkey
-    //! @param[out] subkey the index of the resulting subkey
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_statistics_map_add_subkey} */
     public byte clingo_statistics_map_add_subkey(Pointer p_statistics, long key, String p_name, int type, IntByReference p_subkey);
-    //! @}
-    
-    //! @name Functions to inspect and change values
-    //! @{
-    
-    //! Get the value of the given entry.
-    //!
-    //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_value.
-    //! @param[in] statistics the target statistics
-    //! @param[in] key the key
-    //! @param[out] value the resulting value
-    //! @return whether the call was successful
+
+    // Functions to inspect and change values
+
     /** {@link clingo_h#clingo_statistics_value_get} */
     public byte clingo_statistics_value_get(Pointer statistics, long key, DoubleByReference p_value);
-    //! Set the value of the given entry.
-    //!
-    //! @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_value.
-    //! @param[in] statistics the target statistics
-    //! @param[in] key the key
-    //! @param[in] value the new value
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_statistics_value_set} */
     public byte clingo_statistics_value_set(Pointer p_statistics, long key, double value);
     
     // model and solve control
-    
-    //! Functions for Inspecting Models
-    
-    //! Get the type of the model.
-    //!
-    //! @param[in] model the target
-    //! @param[out] type the type of the model
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_model_type} */
     public byte clingo_model_type(Pointer p_model, IntByReference p_type);
-    //! Get the running number of the model.
-    //!
-    //! @param[in] model the target
-    //! @param[out] number the number of the model
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_model_number} */
     public byte clingo_model_number(Pointer p_model, IntByReference p_number);
-    //! Get the number of symbols of the selected types in the model.
-    //!
-    //! @param[in] model the target
-    //! @param[in] show which symbols to select
-    //! @param[out] size the number symbols
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
+
     /** {@link clingo_h#clingo_model_symbols_size} */
     public byte clingo_model_symbols_size(Pointer model, int show, SizeByReference size);
-    //! Get the symbols of the selected types in the model.
-    //!
-    //! @note CSP assignments are represented using functions with name "$"
-    //! where the first argument is the name of the CSP variable and the second one its
-    //! value.
-    //!
-    //! @param[in] model the target
-    //! @param[in] show which symbols to select
-    //! @param[out] symbols the resulting symbols. Requires an empty array of the right size as input.
-    //! @param[in] size the number of selected symbols
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime if the size is too small
-    //!
-    //! @see clingo_model_symbols_size()
+
     /** {@link clingo_h#clingo_model_symbols} */
     public byte clingo_model_symbols(Pointer p_model, int show, long[] p_symbols, long size);
-    //! Constant time lookup to test whether an atom is in a model.
-    //!
-    //! @param[in] model the target
-    //! @param[in] atom the atom to lookup
-    //! @param[out] contained whether the atom is contained
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_model_contains} */
     public byte clingo_model_contains(Pointer model, long atom, ByteByReference p_contained);
-    //! Check if a program literal is true in a model.
-    //!
-    //! @param[in] model the target
-    //! @param[in] literal the literal to lookup
-    //! @param[out] result whether the literal is true
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_model_is_true} */
     public byte clingo_model_is_true(Pointer model, long literal, ByteByReference p_result);
-    //! Get the number of cost values of a model.
-    //!
-    //! @param[in] model the target
-    //! @param[out] size the number of costs
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_model_cost_size} */
     public byte clingo_model_cost_size(Pointer model, SizeByReference p_size);
-    //! Get the cost vector of a model.
-    //!
-    //! @param[in] model the target
-    //! @param[out] costs the resulting costs
-    //! @param[in] size the number of costs
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime if the size is too small
-    //!
-    //! @see clingo_model_cost_size()
-    //! @see clingo_model_optimality_proven()
+
     /** {@link clingo_h#clingo_model_cost} */
     public byte clingo_model_cost(Pointer model, IntByReference p_costs, long size);
-    //! Whether the optimality of a model has been proven.
-    //!
-    //! @param[in] model the target
-    //! @param[out] proven whether the optimality has been proven
-    //! @return whether the call was successful
-    //!
-    //! @see clingo_model_cost()
+
     /** {@link clingo_h#clingo_model_optimality_proven} */
     public byte clingo_model_optimality_proven(Pointer model, ByteByReference p_proven);
-    //! Get the id of the solver thread that found the model.
-    //!
-    //! @param[in] model the target
-    //! @param[out] id the resulting thread id
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_model_thread_id} */
     public byte clingo_model_thread_id(Pointer model, IntByReference p_id);
-    //! Add symbols to the model.
-    //!
-    //! These symbols will appear in clingo's output, which means that this
-    //! function is only meaningful if there is an underlying clingo application.
-    //! Only models passed to the ::clingo_solve_event_callback_t are extendable.
-    //!
-    //! @param[in] model the target
-    //! @param[in] symbols the symbols to add
-    //! @param[in] size the number of symbols to add
-    //! @return whether the call was successful
+
     /** {@link clingo_h#clingo_model_extend} */
     public byte clingo_model_extend(Pointer p_model, long p_symbols, long size);
-    //! @}
     
-    //! @name Functions for Adding Clauses
-    //! @{
+    // Functions for Adding Clauses
     
-    //! Get the associated solve control object of a model.
-    //!
-    //! This object allows for adding clauses during model enumeration.
-    //! @param[in] model the target
-    //! @param[out] control the resulting solve control object
-    //! @return whether the call was successful
     /** {@link clingo_h#clingo_model_context} */
     public byte clingo_model_context(Pointer model, PointerByReference p_p_control);
-    //! Get an object to inspect the symbolic atoms.
-    //!
-    //! @param[in] control the target
-    //! @param[out] atoms the resulting object
-    //! @return whether the call was successful
+    
     /** {@link clingo_h#clingo_solve_control_symbolic_atoms} */
     public byte clingo_solve_control_symbolic_atoms(Pointer p_control, PointerByReference p_p_atoms);
-    //! Add a clause that applies to the current solving step during model
-    //! enumeration.
-    //!
-    //! @note The @ref Propagator module provides a more sophisticated
-    //! interface to add clauses - even on partial assignments.
-    //!
-    //! @param[in] control the target
-    //! @param[in] clause array of literals representing the clause
-    //! @param[in] size the size of the literal array
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime if adding the clause fails
+    
     /** {@link clingo_h#clingo_solve_control_add_clause} */
     public byte clingo_solve_control_add_clause(Pointer p_control, Pointer p_clause, long size);
     
-    // {{{1 solve result
+    // solve result
     
-    // NOTE: documented in Control Module
-/* enum clingo_solve_result_e {
-      clingo_solve_result_satisfiable   = 1,
-      clingo_solve_result_unsatisfiable = 2,
-      clingo_solve_result_exhausted     = 4,
-      clingo_solve_result_interrupted   = 8
-  }; */ public static final typedef<c_enum> clingo_solve_result_e = null;
-// public static final typedef<unsigned> clingo_solve_result_bitset_t = null;
+  	// clingo_solve_result_e
+  	// clingo_solve_result_bitset_t
+  
+    // solve handle
     
-    // {{{1 solve handle
+    // Solving
     
-    //! @example solve-async.c
-    //! The example shows how to solve in the background.
-    //!
-    //! ## Output (approximately) ##
-    //!
-    //! ~~~~~~~~~~~~
-    //! ./solve-async 0
-    //! pi = 3.
-    //! 1415926535 8979323846 2643383279 5028841971 6939937510 5820974944
-    //! 5923078164 0628620899 8628034825 3421170679 8214808651 3282306647
-    //! 0938446095 5058223172 5359408128 4811174502 8410270193 8521105559
-    //! 6446229489 5493038196 4428810975 6659334461 2847564823 3786783165
-    //! 2712019091 4564856692 3460348610 4543266482 1339360726 0249141273
-    //! 7245870066 0631558817 4881520920 9628292540 9171536436 7892590360
-    //! 0113305305 4882046652 1384146951 9415116094 3305727036 5759591953
-    //! 0921861173 8193261179 3105118548 0744623799 6274956735 1885752724
-    //! 8912279381 8301194912 ...
-    //! ~~~~~~~~~~~~
-    //!
-    //! ## Code ##
-    
-    //! @defgroup Solution Solving
-    //! Interact with a running search.
-    //!
-    //! A ::clingo_solve_handle_t objects can be used for both synchronous and asynchronous search,
-    //! as well as iteratively receiving models and solve results.
-    //!
-    //! For an example showing how to solve asynchronously, see @ref solve-async.c.
-    //! @ingroup Control
-    
-    //! @addtogroup Solution
-    //! @{
-    
-    //! Enumeration of solve modes.
-  /* enum clingo_solve_mode_e {
-      clingo_solve_mode_async = 1, //!< Enable non-blocking search.
-      clingo_solve_mode_yield = 2, //!< Yield models in calls to clingo_solve_handle_model.
-  }; */ public static final typedef<c_enum> clingo_solve_mode_e = null;
-    //! Corresponding type to ::clingo_solve_mode.
-// public static final typedef<unsigned> clingo_solve_mode_bitset_t = null;
-    
-    //! Enumeration of solve events.
-  /* enum clingo_solve_event_type_e {
-      clingo_solve_event_type_model      = 0, //!< Issued if a model is found.
-      clingo_solve_event_type_unsat      = 1, //!< Issued if an optimization problem is found unsatisfiable.
-      clingo_solve_event_type_statistics = 2, //!< Issued when the statistics can be updated.
-      clingo_solve_event_type_finish     = 3, //!< Issued if the search has completed.
-  }; */ public static final typedef<c_enum> clingo_solve_event_type_e = null;
-    //! Corresponding type to ::clingo_solve_event_type.
-// public static final typedef<unsigned> clingo_solve_event_type_t = null;
-    
-    //! Callback function called during search to notify when the search is finished or a model is ready.
-    //!
-    //! If a (non-recoverable) clingo API function fails in this callback, it must return false.
-    //! In case of errors not related to clingo, set error code ::clingo_error_unknown and return false to stop solving with an error.
-    //!
-    //! The event is either a pointer to a model, a pointer to an int64_t* and a size_t, a pointer to two statistics objects (per step and accumulated statistics), or a solve result.
-    //! @attention If the search is finished, the model is NULL.
-    //!
-    //! @param[in] event the current event.
-    //! @param[in] data user data of the callback
-    //! @param[out] goon can be set to false to stop solving
-    //! @return whether the call was successful
-    //!
-    //! @see clingo_control_solve()
-// public static final typedef<bool> clingo_solve_event_callback_t = null; // typedef bool (*clingo_solve_event_callback_t) (clingo_solve_event_type_t type, void *event, void *data, bool *goon);
-    
-    //! Search handle to a solve call.
-    //!
-    //! @see clingo_control_solve()
-// public static final typedef<struct> clingo_solve_handle_t = null; // typedef struct clingo_solve_handle clingo_solve_handle_t;
-    
-    //! Get the next solve result.
-    //!
-    //! Blocks until the result is ready.
-    //! When yielding partial solve results can be obtained, i.e.,
-    //! when a model is ready, the result will be satisfiable but neither the search exhausted nor the optimality proven.
-    //!
-    //! @param[in] handle the target
-    //! @param[out] result the solve result
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime if solving fails
+  	// clingo_solve_mode_e
+  	// clingo_solve_mode_bitset_t
+  	// clingo_solve_event_type_e
+  	// clingo_solve_event_type_t
+  	// clingo_solve_event_callback_t
+  	// clingo_solve_handle_t
+
     /** {@link clingo_h#clingo_solve_handle_get} */
     boolean clingo_solve_handle_get(Pointer handle, IntByReference result);
-    //! Wait for the specified amount of time to check if the next result is ready.
-    //!
-    //! If the time is set to zero, this function can be used to poll if the search is still active.
-    //! If the time is negative, the function blocks until the search is finished.
-    //!
-    //! @param[in] handle the target
-    //! @param[in] timeout the maximum time to wait
-    //! @param[out] result whether the search has finished
+
     /** {@link clingo_h#clingo_solve_handle_wait} */
     public void clingo_solve_handle_wait(Pointer p_handle, double timeout, ByteByReference p_result);
-    //! Get the next model (or zero if there are no more models).
-    //!
-    //! @param[in] handle the target
-    //! @param[out] model the model (it is NULL if there are no more models)
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime if solving fails
+
     /** {@link clingo_h#clingo_solve_handle_model} */
     public byte clingo_solve_handle_model(Pointer p_handle, PointerByReference p_p_model);
-    //! When a problem is unsatisfiable, get a subset of the assumptions that made the problem unsatisfiable.
-    //!
-    //! If the program is not unsatisfiable, core is set to NULL and size to zero.
-    //!
-    //! @param[in] handle the target
-    //! @param[out] core pointer where to store the core
-    //! @param[out] size size of the given array
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
+
     /** {@link clingo_h#clingo_solve_handle_core} */
 	public byte clingo_solve_handle_core(Pointer p_handle, PointerByReference p_p_core, SizeByReference p_size);
-    //! Discards the last model and starts the search for the next one.
-    //!
-    //! If the search has been started asynchronously, this function continues the search in the background.
-    //!
-    //! @note This function does not block.
-    //!
-    //! @param[in] handle the target
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime if solving fails
+
     /** {@link clingo_h#clingo_solve_handle_resume} */
 	public byte clingo_solve_handle_resume(Pointer p_handle);
-    //! Stop the running search and block until done.
-    //!
-    //! @param[in] handle the target
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime if solving fails
+	
     /** {@link clingo_h#clingo_solve_handle_cancel} */
 	public byte clingo_solve_handle_cancel(Pointer p_handle);
-    //! Stops the running search and releases the handle.
-    //!
-    //! Blocks until the search is stopped (as if an implicit cancel was called before the handle is released).
-    //!
-    //! @param[in] handle the target
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_runtime if solving fails
+
     /** {@link clingo_h#clingo_solve_handle_close} */
     byte clingo_solve_handle_close(Pointer handle);
     
@@ -2942,114 +1955,14 @@ public interface ClingoLibrary extends Library {
     /*    bool (*theory_atom_with_guard)(clingo_id_t atom_id_or_zero, clingo_id_t term_id, clingo_id_t const *elements, size_t size, clingo_id_t operator_id, clingo_id_t right_hand_side_id, void *data);
     } clingo_ground_program_observer_t; */ public static final typedef<struct> clingo_ground_program_observer_t = null;
     
-    //! @}
+    // clingo_ground_program_observer_t
     
-    // {{{1 control
+    // Control
     
-    //! @example control.c
-    //! The example shows how to ground and solve a simple logic program, and print
-    //! its answer sets.
-    //!
-    //! ## Output ##
-    //!
-    //! ~~~~~~~~~~~~
-    //! ./control 0
-    //! Model: a
-    //! Model: b
-    //! ~~~~~~~~~~~~
-    //!
-    //! ## Code ##
-    
-    //! @defgroup Control Grounding and Solving
-    //! Functions to control the grounding and solving process.
-    //!
-    //! For an example, see @ref control.c.
-    
-    //! @addtogroup Control
-    //! @{
-    
-    //! @enum clingo_solve_result_e
-    //! Enumeration of bit masks for solve call results.
-    //!
-    //! @note Neither ::clingo_solve_result_satisfiable nor
-    //! ::clingo_solve_result_exhausted is set if the search is interrupted and no
-    //! model was found.
-    //!
-    //! @var clingo_solve_result::clingo_solve_result_satisfiable
-    //! The last solve call found a solution.
-    //! @var clingo_solve_result::clingo_solve_result_unsatisfiable
-    //! The last solve call did not find a solution.
-    //! @var clingo_solve_result::clingo_solve_result_exhausted
-    //! The last solve call completely exhausted the search space.
-    //! @var clingo_solve_result::clingo_solve_result_interrupted
-    //! The last solve call was interrupted.
-    //!
-    //! @see clingo_control_interrupt()
-    
-    //! @typedef clingo_solve_result_bitset_t
-    //! Corresponding type to ::clingo_solve_result.
-    
-    //! Struct used to specify the program parts that have to be grounded.
-    //!
-    //! Programs may be structured into parts, which can be grounded independently with ::clingo_control_ground.
-    //! Program parts are mainly interesting for incremental grounding and multi-shot solving.
-    //! For single-shot solving, program parts are not needed.
-    //!
-    //! @note Parts of a logic program without an explicit <tt>\#program</tt>
-    //! specification are by default put into a program called `base` without
-    //! arguments.
-    //!
-    //! @see clingo_control_ground()
-  /* typedef struct clingo_part {
-      char const *name;              //!< name of the program part
-      clingo_symbol_t const *params; //!< array of parameters
-      size_t size;                   //!< number of parameters
-  } clingo_part_t; */ public static final typedef<struct> clingo_part_t = null;
-
-    //! Callback function to implement external functions.
-    //!
-    //! If an external function of form <tt>\@name(parameters)</tt> occurs in a logic program,
-    //! then this function is called with its location, name, parameters, and a callback to inject symbols as arguments.
-    //! The callback can be called multiple times; all symbols passed are injected.
-    //!
-    //! If a (non-recoverable) clingo API function fails in this callback, for example, the symbol callback, the callback must return false.
-    //! In case of errors not related to clingo, this function can set error ::clingo_error_unknown and return false to stop grounding with an error.
-    //!
-    //! @param[in] location location from which the external function was called
-    //! @param[in] name name of the called external function
-    //! @param[in] arguments arguments of the called external function
-    //! @param[in] arguments_size number of arguments
-    //! @param[in] data user data of the callback
-    //! @param[in] symbol_callback function to inject symbols
-    //! @param[in] symbol_callback_data user data for the symbol callback
-    //!            (must be passed untouched)
-    //! @return whether the call was successful
-    //! @see clingo_control_ground()
-    //!
-    //! The following example implements the external function <tt>\@f()</tt> returning 42.
-    //! ~~~~~~~~~~~~~~~{.c}
-    //! bool
-    //! ground_callback(clingo_location_t const *location,
-    //!                 char const *name,
-    //!                 clingo_symbol_t const *arguments,
-    //!                 size_t arguments_size,
-    //!                 void *data,
-    //!                 clingo_symbol_callback_t symbol_callback,
-    //!                 void *symbol_callback_data) {
-    //!   if (strcmp(name, "f") == 0 && arguments_size == 0) {
-    //!     clingo_symbol_t sym;
-    //!     clingo_symbol_create_number(42, &sym);
-    //!     return symbol_callback(&sym, 1, symbol_callback_data);
-    //!   }
-    //!   clingo_set_error(clingo_error_runtime, "function not found");
-    //!   return false;
-    //! }
-    //! ~~~~~~~~~~~~~~~
-// public static final typedef<bool> clingo_ground_callback_t = null; // typedef bool (*clingo_ground_callback_t) (clingo_location_t const *location, char const *name, clingo_symbol_t const *arguments, size_t arguments_size, void *data, clingo_symbol_callback_t symbol_callback, void *symbol_callback_data);
-    
-    //! Control object holding grounding and solving state.
-// public static final typedef<struct> clingo_control_t = null; // typedef struct clingo_control clingo_control_t;
-
+    // clingo_solve_result_e
+    // clingo_solve_result_bitset_t
+  	// clingo_part
+  	// clingo_part_t
     // clingo_ground_callback_t
     // clingo_control_t
   

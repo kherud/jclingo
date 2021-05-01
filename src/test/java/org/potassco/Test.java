@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.potassco.base.Clingo;
+import org.potassco.base.ClingoException;
+import org.potassco.base.SolveHandle;
 import org.potassco.jna.ClingoLibrary;
 
 import com.sun.jna.ptr.IntByReference;

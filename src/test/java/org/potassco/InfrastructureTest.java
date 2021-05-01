@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
+import org.potassco.base.Clingo;
+import org.potassco.base.ClingoException;
 import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.StatisticsType;

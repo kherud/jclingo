@@ -1,4 +1,4 @@
-package org.potassco;
+package org.potassco.base;
 
 import com.sun.jna.Pointer;
 

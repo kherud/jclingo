@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.potassco.base.Clingo;
+import org.potassco.base.ClingoException;
+import org.potassco.base.SolveHandle;
 import org.potassco.enums.ModelType;
 import org.potassco.enums.ShowType;
 import org.potassco.jna.ClingoLibrary;

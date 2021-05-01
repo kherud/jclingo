@@ -3,6 +3,7 @@ package org.potassco;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.potassco.base.Clingo;
 import org.potassco.enums.TermType;
 import org.potassco.jna.SymbolCallbackT;
 

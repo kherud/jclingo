@@ -1,4 +1,4 @@
-package org.potassco;
+package org.potassco.base;
 
 import java.util.LinkedList;
 import java.util.List;

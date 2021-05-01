@@ -1,4 +1,4 @@
-package org.potassco;
+package org.potassco.base;
 
 import org.potassco.enums.ModelType;
 import org.potassco.jna.ClingoLibrary;

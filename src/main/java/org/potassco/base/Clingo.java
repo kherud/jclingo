@@ -1534,9 +1534,22 @@ public class Clingo {
 		byte success = clingoLibrary.clingo_solve_handle_model(handle, model);
 		return model.getValue();
   	}
-  	
+
+	/**
+	 * Stops the running search and releases the handle.
+    //!
+    //! Blocks until the search is stopped (as if an implicit cancel was called before the handle is released).
+    //!
+    //! @param[in] handle
+    //! @return whether the call was successful; might set one of the following error codes:
+	 * @param handle the target
+	 */
+	private void solveHandleClose(Pointer handle) {
+        byte success = clingoLibrary.clingo_solve_handle_close(handle);
+	}
+
 	/* **********
-	 * 
+	 * ast v2
 	 * ********** */
 
 	/* **********
@@ -1826,10 +1839,11 @@ public class Clingo {
      * <p>
      * See ::clingo_control_set_enable_enumeration_assumption().
      * @param control the target
+     * @return 
      */
-    public void controlGetEnableEnumerationAssumption(Pointer control) {
-		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_control_get_enable_enumeration_assumption(control);
+    public boolean controlGetEnableEnumerationAssumption(Pointer control) {
+		byte enabled = clingoLibrary.clingo_control_get_enable_enumeration_assumption(control);
+		return enabled == 1;
     }
 
     /**
@@ -1855,10 +1869,12 @@ public class Clingo {
      * @see clingo_control_cleanup()
      * @see clingo_control_set_enable_cleanup()
      * @param control the target
+     * @return whether automatic cleanup is enabled.
      */
-    public void controlGetEnableCleanup(Pointer control) {
+    public boolean controlGetEnableCleanup(Pointer control) {
  		@SuppressWarnings("unused")
- 		byte success = clingoLibrary.clingo_control_get_enable_cleanup(control);
+ 		byte enabled = clingoLibrary.clingo_control_get_enable_cleanup(control);
+ 		return enabled == 1;
     }
     
     // Program Inspection Functions
@@ -2026,10 +2042,6 @@ public class Clingo {
     public int main(Pointer application, String arguments, int size, Pointer data) {
 		return clingoLibrary.clingo_main(application, arguments, size, data);
     }
-
-	private void solveHandleClose(Pointer hnd) {
-        clingoLibrary.clingo_solve_handle_close(hnd);
-	}
 
     public SolveHandle solve() throws ClingoException {
         SolveHandle solveHandle = new SolveHandle();

@@ -1989,7 +1989,7 @@ public interface ClingoLibrary extends Library {
     //! - ::clingo_error_bad_alloc
     //! - ::clingo_error_runtime if solving fails
     /** {@link clingo_h#clingo_solve_handle_close} */
-    boolean clingo_solve_handle_close(Pointer handle);
+    byte clingo_solve_handle_close(Pointer handle);
     
     //! @}
     // {{{1 ast v2

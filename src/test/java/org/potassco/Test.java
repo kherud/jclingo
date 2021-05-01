@@ -11,6 +11,7 @@ import org.potassco.base.ClingoException;
 import org.potassco.base.SolveHandle;
 import org.potassco.jna.ClingoLibrary;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 
 public class Test {
@@ -48,6 +49,28 @@ public class Test {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@org.junit.Test
+	public void testCleanupSetting() {
+		String name = "base";
+		Clingo clingo = new Clingo(name, "a. b.");
+		clingo.ground(name);
+		Pointer control = clingo.getControl();
+		assertTrue(clingo.controlGetEnableCleanup(control));
+		clingo.controlSetEnableCleanup(control, false);
+		assertFalse(clingo.controlGetEnableCleanup(control));
+	}
+
+	@org.junit.Test
+	public void testEnumerationAssumptionSetting() {
+		String name = "base";
+		Clingo clingo = new Clingo(name, "a. b.");
+		clingo.ground(name);
+		Pointer control = clingo.getControl();
+		assertTrue(clingo.controlGetEnableEnumerationAssumption(control));
+		clingo.controlSetEnableEnumerationAssumption(control, false);
+		assertFalse(clingo.controlGetEnableEnumerationAssumption(control));
 	}
 
 	@org.junit.Test

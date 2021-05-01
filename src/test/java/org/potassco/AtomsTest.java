@@ -92,4 +92,18 @@ public class AtomsTest {
 		assertEquals("a", clingo.theoryAtomsTermToString(theoryAtoms, 0, stringSize).trim());
 	}
 
+	@Test
+	public void testConstants() {
+		String name = "base";
+		Clingo clingo = new Clingo(name,
+				"#const n=6. "
+				+ "like(1,2; 3,4). "
+				+ "dislike(2,3; 1,3).");
+		clingo.ground(name);
+		Pointer control = clingo.getControl();
+		String constName = "n";
+		assertTrue(clingo.controlHasConst(control, constName));
+		int symbol = clingo.controlGetConst(control, constName);
+		assertEquals(symbol, clingo.controlGetConst(control, constName));
+	}
 }

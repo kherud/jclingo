@@ -8,6 +8,7 @@ import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.ModelType;
 import org.potassco.enums.ShowType;
+import org.potassco.enums.SolveMode;
 import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;
 import org.potassco.enums.TermType;
@@ -1654,13 +1655,14 @@ public class Clingo {
 	 * @param notify the event handler to register
 	 * @param data the user data for the event handler
 	 * @return 
-	 * @return  handle to the current search to enumerate models
+	 * @return handle to the current search to enumerate models
 	 */
-	public Pointer controlSolve(Pointer control, int mode, Pointer assumptions,
+	public Pointer controlSolve(Pointer control, SolveMode mode, Pointer assumptions,
 			int assumptionsSize, SolveEventCallbackT notify, Pointer data) {
         PointerByReference handle = new PointerByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_control_solve(control, mode, assumptions, assumptionsSize, notify, data, handle);
+		byte success = clingoLibrary.clingo_control_solve(control, mode.getValue(),
+				assumptions, assumptionsSize, notify, data, handle);
 		return handle.getValue();
 	}
 	

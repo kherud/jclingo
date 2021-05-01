@@ -2,6 +2,7 @@ package org.potassco.base;
 
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveEventType;
+import org.potassco.enums.SolveMode;
 import org.potassco.jna.SolveEventCallbackT;
 
 import com.sun.jna.Pointer;
@@ -44,7 +45,7 @@ public class ClingoHelper {
             }
         };
 		Pointer control = clingo.getControl();
-        Pointer hnd = clingo.controlSolve(control, 0, null, 0, cb, null);
+        Pointer hnd = clingo.controlSolve(control, SolveMode.ASYNC, null, 0, cb, null);
         clingo.solveHandleClose(hnd);
         // clean up
         clingo.controlFree(control);

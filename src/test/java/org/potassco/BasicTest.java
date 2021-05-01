@@ -83,6 +83,21 @@ public class BasicTest {
 		assertTrue(clingo.controlIsConflicting(control));
 	}
 
+	/**
+	 * TODO {@link Clingo#controlAssignExternal(Pointer, int, org.potassco.enums.TruthValue)} 
+	 * TODO {@link Clingo#controlReleaseExternal(Pointer, int)} 
+	 */
+	@Test
+	public void testExternalAtoms() {
+		String name = "base";
+		Clingo clingo = new Clingo(name,
+				"p(1). p(2). p(3). "
+				+ "#external q(X) : p(X). "
+				+ "q(1). "
+				+ "r(X) :- q(X).");
+//		clingo.ground(name);
+	}
+
 	@Test
 	public void testTravellingSalesperson() {
 		String name = "base";

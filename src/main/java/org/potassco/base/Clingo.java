@@ -12,7 +12,9 @@ import org.potassco.enums.SolveEventType;
 import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;
 import org.potassco.enums.TermType;
+import org.potassco.enums.TruthValue;
 import org.potassco.jna.ClingoLibrary;
+import org.potassco.jna.OptionParseCallbackT;
 import org.potassco.jna.Part;
 import org.potassco.jna.Size;
 import org.potassco.jna.SizeByReference;
@@ -92,8 +94,8 @@ public class Clingo {
 
     /**
      * Set a custom error code and message in the active thread.
-     * @param code [in] code the error code
-     * @param message [in] message the error message
+     * @param code  code the error code
+     * @param message  message the error message
      */
     public void setError(int code, String message) {
         clingoLibrary.clingo_set_error(code, message);
@@ -577,20 +579,6 @@ public class Clingo {
 		return p_valid.getValue();
  	}
  	
-    /**
-     * Get an object to inspect symbolic atoms (the relevant Herbrand base) used for grounding.
-     * <p>
-     * See the @ref SymbolicAtoms module for more information.
-     * @param control
-     * @return
-     */
-    public Pointer controlSymbolicAtoms(Pointer control) {
-		PointerByReference atoms = new PointerByReference();
-		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_control_symbolic_atoms(control, atoms);
-		return atoms.getValue();
-    }
-
 	/* ************
 	 * theory atoms
 	 * ************ */
@@ -1507,6 +1495,34 @@ public class Clingo {
 		byte success = clingoLibrary.clingo_solve_control_add_clause(control, clause, size);
     }
 
+    // solve result
+    
+    // clingo_solve_result_bitset_t
+    
+    // solve handle
+    
+    // clingo_solve_mode_bitset_t
+    // clingo_solve_event_type_t
+    // clingo_solve_event_callback_t
+    // clingo_solve_handle_t
+    
+	/**
+	 * Get the next solve result.
+	 * <p>
+	 * Blocks until the result is ready.
+	 * When yielding partial solve results can be obtained, i.e.,
+	 * when a model is ready, the result will be satisfiable but
+	 * neither the search exhausted nor the optimality proven.
+	 * @param handle the target
+	 * @return the solve result
+	 */
+	public int solveHandleGet(Pointer handle) {
+		IntByReference res = new IntByReference();
+		@SuppressWarnings("unused")
+		boolean success = clingoLibrary.clingo_solve_handle_get(handle, res);
+		return res.getValue();
+	}
+
   	/**
   	 * Get the next model (or zero if there are no more models).
   	 * @param handle the target
@@ -1523,73 +1539,23 @@ public class Clingo {
 	 * 
 	 * ********** */
 
-    public Pointer controlStatistics(Pointer control) {
-    	PointerByReference statistics = new PointerByReference();
-		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_control_statistics(control, statistics);
-		return statistics.getValue();
-    }
-
-    /**
-     * Get a configuration object to change the solver configuration.
-     * <p>
-     * See the @ref Configuration module for more information.
-     * @param control the target
-     * @return the configuration object
-     */
-    public Pointer controlConfiguration(Pointer control) {
-    	PointerByReference configuration = new PointerByReference();
-		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_control_configuration(control, configuration);
-		return configuration.getValue();
-    }
-
-    /**
-     * Get an object to inspect theory atoms that occur in the grounding.
-     * <p>
-     * See the @ref TheoryAtoms module for more information.
-     * @param control the target
-     * @return the theory atoms object
-     */
-    public Pointer controlTheoryAtoms(Pointer control) {
-    	PointerByReference atoms = new PointerByReference();
-		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_control_theory_atoms(control, atoms);
-		return atoms.getValue();
-    }
-
 	/* **********
 	 * 
 	 * ********** */ 
 
-    /**Ground the selected @link ::clingo_part parts @endlink of the current (non-ground) logic program.
-     * <p>
-     * After grounding, logic programs can be solved with ::clingo_control_solve().
-     * <p>
-     * @note Parts of a logic program without an explicit <tt>\#program</tt>
-     * specification are by default put into a program called `base` without
-     * arguments.
-     * @param control [in] control the target
-     * @param parts [in] parts array of parts to ground
-     * @param parts_size [in] parts_size size of the parts array. The caller has to know the size of parts to return.
-     * @param ground_callback [in] ground_callback callback to implement external functions
-     * @param ground_callback_data [in] ground_callback_data user data for ground_callback
-     * @return whether the call was successful; might set one of the following error codes:
-     * - ::clingo_error_bad_alloc
-     * - error code of ground callback
-     * @see clingo_part
-     * bool clingo_control_ground(clingo_control_t *control, clingo_part_t const *parts, size_t parts_size, clingo_ground_callback_t ground_callback, void *ground_callback_data);
-     *  CLINGO_VISIBILITY_DEFAULT bool clingo_control_ground(clingo_control_t *control, clingo_part_t const *parts, size_t parts_size, clingo_ground_callback_t ground_callback, void *ground_callback_data);
-     */
-    public void controlGround(Pointer control, Part[] parts, Size parts_size, Pointer ground_callback, Pointer ground_callback_data) {
-		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_control_ground(control, parts, parts_size, ground_callback, ground_callback_data);
-    }
-        
+	/* *******
+	 * ground program observer
+	 * ******* */
+    
+    // clingo_ground_program_observer_t
     
 	/* *******
-	 * Solving
+	 * control
 	 * ******* */
+    
+    // clingo_part_t
+    // clingo_ground_callback_t
+    // clingo_control_t
     
 	/**
 	 * Create a new control object.
@@ -1619,15 +1585,6 @@ public class Clingo {
 		boolean success = clingoLibrary.clingo_control_new(parray, argumentsLength, logger, loggerData, messageLimit, control);
 		return control.getValue();
 	}
-	
-	/**
-	 * @param control the target
-	 * @param name
-	 * @param logicProgram
-	 */
-	public void controlAdd(Pointer control, String name, String logicProgram) {
-		clingoLibrary.clingo_control_add(control, name, null, new Size(0), logicProgram);
-	}
 
 	/**
 	 * Free a control object created with {@link Clingo#controlNew(String[])}.
@@ -1638,6 +1595,15 @@ public class Clingo {
 	}
 
 	/**
+	 * @param control the target
+	 * @param name
+	 * @param logicProgram
+	 */
+	public void controlAdd(Pointer control, String name, String logicProgram) {
+		clingoLibrary.clingo_control_add(control, name, null, new Size(0), logicProgram);
+	}
+
+    /**
 	 * @param name
 	 * {@link clingo_h#clingo_control_ground}
 	 */
@@ -1647,26 +1613,21 @@ public class Clingo {
         clingoLibrary.clingo_control_ground(control, parts, new Size(1), null, null);
 	}
 	
-	/**
-	 * Get the next solve result.
-	 * <p>
-	 * Blocks until the result is ready.
-	 * When yielding partial solve results can be obtained, i.e.,
-	 * when a model is ready, the result will be satisfiable but
-	 * neither the search exhausted nor the optimality proven.
-	 * @param handle the target
-	 * @return the solve result
-	 */
-	public int solveHandleGet(Pointer handle) {
-		IntByReference res = new IntByReference();
+    /**
+     * @param control the target
+     * @param parts array of parts to ground
+     * @param parts_size size of the parts array
+     * @param ground_callback callback to implement external functions
+     * @param ground_callback_data user data for ground_callback
+     */
+    public void controlGround(Pointer control, Part[] parts, Size parts_size, Pointer ground_callback, Pointer ground_callback_data) {
 		@SuppressWarnings("unused")
-		boolean success = clingoLibrary.clingo_solve_handle_get(handle, res);
-		return res.getValue();
-	}
+		byte success = clingoLibrary.clingo_control_ground(control, parts, parts_size, ground_callback, ground_callback_data);
+    }
 
-	private void solveHandleClose(Pointer hnd) {
-        clingoLibrary.clingo_solve_handle_close(hnd);
-	}
+	/* *****************
+	 * Solving Functions
+	 * ***************** */
 
 	/**
 	 * Solve the currently @link ::clingo_control_ground grounded @endlink logic program enumerating its models.
@@ -1690,6 +1651,386 @@ public class Clingo {
 		return handle.getValue();
 	}
 	
+	/**
+	 * Clean up the domains of the grounding component using the solving
+     * component's top level assignment.
+     * <p>
+     * This function removes atoms from domains that are false and marks atoms as
+     * facts that are true.  With multi-shot solving, this can result in smaller
+     * groundings because less rules have to be instantiated and more
+     * simplifications can be applied.
+     * <p>
+     * @note It is typically not necessary to call this function manually because
+     * automatic cleanups at the right time are enabled by default.
+     *
+     * @see clingo_control_get_enable_cleanup()
+     * @see clingo_control_set_enable_cleanup()
+	 * @param control the target
+	 */
+	public void controlCleanup(Pointer control) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_cleanup(control);
+	}
+
+	/**
+	 * Assign a truth value to an external atom.
+     * <p>
+     * If a negative literal is passed, the corresponding atom is assigned the
+     * inverted truth value.
+     * <p>
+     * If the atom does not exist or is not external, this is a noop.
+	 * @param control the target
+	 * @param literal literal to assign
+	 * @param value the truth value
+	 */
+	public void controlAssignExternal(Pointer control, int literal, TruthValue value) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_assign_external(control, literal, value.getValue());
+	}
+
+	/**
+	 * Release an external atom.
+     * <p>
+     * If a negative literal is passed, the corresponding atom is released.
+     * <P>
+     * After this call, an external atom is no longer external and subject to
+     * program simplifications.  If the atom does not exist or is not external,
+     * this is a noop.
+	 * @param control the target
+	 * @param literal literal to release
+	 */
+	public void controlReleaseExternal(Pointer control, int literal) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_release_external(control, literal);
+	}
+
+	/**
+	 * Register a custom propagator with the control object.
+     * <p>
+     * If the sequential flag is set to true, the propagator is called
+     * sequentially when solving with multiple threads.
+     * <p>
+     * See the @ref Propagator module for more information.
+	 * @param control the target
+	 * @param propagator the propagator
+	 * @param data user data passed to the propagator functions
+	 * @param sequential whether the propagator should be called sequentially
+	 */
+	public void controlRegisterPropagator(Pointer control, Pointer propagator, Pointer data, boolean sequential) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_register_propagator(control, propagator, data, (byte) (sequential ? 1 : 0));
+	}
+
+	/**
+	 * Check if the solver has determined that the internal program representation is conflicting.
+	 * <p>
+	 * If this function returns true, solve calls will return immediately with an unsatisfiable solve result.
+     * Note that conflicts first have to be detected, e.g. -
+     * initial unit propagation results in an empty clause,
+     * or later if an empty clause is resolved during solving.
+     * Hence, the function might return false even if the problem is unsatisfiable.
+	 * @param control the target
+	 */
+	public void controlIsConflicting(Pointer control) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_is_conflicting(control);
+	}
+
+    /**
+     * Get a statistics object to inspect solver statistics.
+     * <p>
+     * Statistics are updated after a solve call.
+     * <p>
+     * See the @ref Statistics module for more information.
+     * <p>
+     * @attention
+     * The level of detail of the statistics depends on the stats option
+     * (which can be set using @ref Configuration module or passed as an option when @link clingo_control_new creating the control object@endlink).
+     * The default level zero only provides basic statistics,
+     * level one provides extended and accumulated statistics,
+     * and level two provides per-thread statistics.
+     * Furthermore, the statistics object is best accessed right after solving.
+     * Otherwise, not all of its entries have valid values.
+     * @param control the target
+     * @return the statistics object
+     */
+    public Pointer controlStatistics(Pointer control) {
+    	PointerByReference statistics = new PointerByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_statistics(control, statistics);
+		return statistics.getValue();
+    }
+
+    /**
+     * Interrupt the active solve call (or the following solve call right at the beginning).
+     * @param control the target
+     */
+    public void controlInterrupt(Pointer control) {
+		clingoLibrary.clingo_control_interrupt(control);
+    }
+
+    /**
+     * Get low-level access to clasp.
+     * <p>
+     * @attention
+     * This function is intended for experimental use only and not part of the stable API.
+     * <p>
+     * This function may return a <code>nullptr</code>.
+     * Otherwise, the returned pointer can be casted to a ClaspFacade pointer.
+     * @param control the target
+     * @return clasp pointer to the ClaspFacade object (may be <code>nullptr</code>)
+     */
+    public Pointer controlClaspFacade(Pointer control) {
+    	PointerByReference claspFacade = new PointerByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_clasp_facade(control, claspFacade);
+		return claspFacade.getValue();
+    }
+
+    /**
+     * Get a configuration object to change the solver configuration.
+     * <p>
+     * See the @ref Configuration module for more information.
+     * @param control the target
+     * @return the configuration object
+     */
+    public Pointer controlConfiguration(Pointer control) {
+    	PointerByReference configuration = new PointerByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_configuration(control, configuration);
+		return configuration.getValue();
+    }
+
+    /**
+     * Configure how learnt constraints are handled during enumeration.
+     * <p>
+     * If the enumeration assumption is enabled, then all information learnt from
+     * the solver's various enumeration modes is removed after a solve call. This
+     * includes enumeration of cautious or brave consequences, enumeration of
+     * answer sets with or without projection, or finding optimal models, as well
+     * as clauses added with clingo_solve_control_add_clause().
+     * <p>
+     * @attention For practical purposes, this option is only interesting for single-shot solving
+     * or before the last solve call to squeeze out a tiny bit of performance.
+     * Initially, the enumeration assumption is enabled.
+     * @param control the target
+     * @param enable whether to enable the assumption
+     */
+    public void controlSetEnableEnumerationAssumption(Pointer control, boolean enable) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_set_enable_enumeration_assumption(control, (byte) (enable ? 1 : 0));
+    }
+
+    /**
+     * Check whether the enumeration assumption is enabled.
+     * <p>
+     * See ::clingo_control_set_enable_enumeration_assumption().
+     * @param control the target
+     */
+    public void controlGetEnableEnumerationAssumption(Pointer control) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_get_enable_enumeration_assumption(control);
+    }
+
+    /**
+     * Enable automatic cleanup after solving.
+     * <p>
+     * @note Cleanup is enabled by default.
+     * <p>
+     * @see clingo_control_cleanup()
+     * @see clingo_control_get_enable_cleanup()
+     * @param control the target
+     * @param enable whether to enable cleanups
+    */
+    public void controlSetEnableCleanup(Pointer control, boolean enable) {
+ 		@SuppressWarnings("unused")
+ 		byte success = clingoLibrary.clingo_control_set_enable_cleanup(control, (byte) (enable ? 1 : 0));
+    }
+
+    /**
+     * Check whether automatic cleanup is enabled.
+     * <p>
+     * See ::clingo_control_set_enable_cleanup().
+     * <p>
+     * @see clingo_control_cleanup()
+     * @see clingo_control_set_enable_cleanup()
+     * @param control the target
+     */
+    public void controlGetEnableCleanup(Pointer control) {
+ 		@SuppressWarnings("unused")
+ 		byte success = clingoLibrary.clingo_control_get_enable_cleanup(control);
+    }
+    
+    // Program Inspection Functions
+
+    /**
+     * Return the symbol for a constant definition of form: <tt>\#const name = symbol</tt>.
+     * @param control the target
+     * @param name of the constant
+     * @return the resulting symbol
+     */
+    public int controlGetConst(Pointer control, String name) {
+ 		IntByReference symbol = new IntByReference();
+		@SuppressWarnings("unused")
+ 		byte success = clingoLibrary.clingo_control_get_const(control, name, symbol);
+		return symbol.getValue();
+    }
+
+    /**
+     * Check if there is a constant definition for the given constant.
+     * <p>
+     * @see clingo_control_get_const()
+     * @param control the target
+     * @param name the name of the constant
+     * @return whether a matching constant definition exists
+     */
+    public boolean controlHasConst(Pointer control, String name) {
+		ByteByReference exists = new ByteByReference();
+		@SuppressWarnings("unused")
+ 		byte success = clingoLibrary.clingo_control_has_const(control, name, exists );
+		return exists.getValue() == 1;
+    }
+
+    /**
+     * Get an object to inspect symbolic atoms (the relevant Herbrand base) used for grounding.
+     * <p>
+     * See the @ref SymbolicAtoms module for more information.
+     * @param control
+     * @return
+     */
+    public Pointer controlSymbolicAtoms(Pointer control) {
+		PointerByReference atoms = new PointerByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_symbolic_atoms(control, atoms);
+		return atoms.getValue();
+    }
+
+    /**
+     * Get an object to inspect theory atoms that occur in the grounding.
+     * <p>
+     * See the @ref TheoryAtoms module for more information.
+     * @param control the target
+     * @return the theory atoms object
+     */
+    public Pointer controlTheoryAtoms(Pointer control) {
+    	PointerByReference atoms = new PointerByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_theory_atoms(control, atoms);
+		return atoms.getValue();
+    }
+
+    /**
+     * Register a program observer with the control object.
+     * @param control the target
+     * @param observer the observer to register
+     * @param replace just pass the grounding to the observer but not the solver
+     * @param data user data passed to the observer functions
+     * @return
+     */
+    public void controlRegisterObserver(Pointer control, Pointer observer, boolean replace, Pointer data) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_register_observer(control, observer, (byte) (replace ? 1 : 0), data);
+    }
+    
+    // Program Modification Functions
+    
+    /**
+     * Get an object to add ground directives to the program.
+     * <p>
+     * See the @ref ProgramBuilder module for more information.
+     * @param control the target
+     * @return the backend object
+     */
+    public Pointer controlBackend(Pointer control) {
+    	PointerByReference backend = new PointerByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_backend(control, backend);
+		return backend.getValue();
+    }
+
+    /**
+     * Get an object to add non-ground directives to the program.
+     * <p>
+     * See the @ref ProgramBuilder module for more information.
+     * @param control the target
+     * @return the program builder object
+     */
+    public Pointer controlProgramBuilder(Pointer control) {
+    	PointerByReference builder = new PointerByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_control_program_builder(control, builder);
+		return builder.getValue();
+    }
+
+    // extending clingo
+    
+    // clingo_options_t
+    // clingo_main_function_t
+    // clingo_default_model_printer_t
+    // clingo_model_printer_t
+    // clingo_application_t
+
+    /**
+     * Add an option that is processed with a custom parser.
+     * <p>
+     * Note that the parser also has to take care of storing the semantic value of
+     * the option somewhere.
+     * <p>
+     * Parameter option specifies the name(s) of the option.
+     * For example, "ping,p" adds the short option "-p" and its long form "--ping".
+     * It is also possible to associate an option with a help level by adding ",@l" to the option specification.
+     * Options with a level greater than zero are only shown if the argument to help is greater or equal to l.
+     *
+     * @param options object to register the option with
+     * @param group options are grouped into sections as given by this string
+     * @param option specifies the command line option
+     * @param description the description of the option
+     * @param parse callback to parse the value of the option
+     * @param data user data for the callback
+     * @param multi whether the option can appear multiple times on the command-line
+     * @param argument optional string to change the value name in the generated help output
+     * @return
+     */
+    public void optionsAdd(Pointer options, String group, String option, String description,
+    		OptionParseCallbackT parse, Pointer data, byte multi, String argument) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_options_add(options, group, option, description, parse, data, multi, argument);
+    }
+
+    /**
+     * Add an option that is a simple flag.
+     * <p>
+     * This function is similar to @ref clingo_options_add() but simpler because it only supports flags, which do not have values.
+     * If a flag is passed via the command-line the parameter target is set to true.
+     *
+     * @param options object to register the option with
+     * @param group options are grouped into sections as given by this string
+     * @param option specifies the command line option
+     * @param description the description of the option
+     * @param target target boolean set to true if the flag is given on the command-line
+     */
+    public void optionsAddFlag(Pointer options, String group, String option, String description, boolean target) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_options_add_flag(options, group, option, description, (byte) (target ? 1 : 0));
+    }
+
+    /**
+     * Run clingo with a customized main function (similar to python and lua embedding).
+     *
+     * @param[in] application struct with callbacks to override default clingo functionality
+     * @param[in] arguments command line arguments
+     * @param[in] size number of arguments
+     * @param[in] data user data to pass to callbacks in application
+     * @return exit code to return from main function
+     */
+    public int main(Pointer application, String arguments, int size, Pointer data) {
+		return clingoLibrary.clingo_main(application, arguments, size, data);
+    }
+
+	private void solveHandleClose(Pointer hnd) {
+        clingoLibrary.clingo_solve_handle_close(hnd);
+	}
+
     public SolveHandle solve() throws ClingoException {
         SolveHandle solveHandle = new SolveHandle();
         SolveEventCallbackT cb = new SolveEventCallbackT() {

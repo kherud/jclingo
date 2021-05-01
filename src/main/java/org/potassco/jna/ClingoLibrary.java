@@ -1,8 +1,11 @@
 package org.potassco.jna;
 import org.potassco.cpp.c_enum;
+import org.potassco.cpp.c_int;
 import org.potassco.cpp.clingo_h;
+import org.potassco.cpp.int32_t;
 import org.potassco.cpp.struct;
 import org.potassco.cpp.typedef;
+import org.potassco.cpp.uint32_t;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -33,6 +36,20 @@ import com.sun.jna.ptr.PointerByReference;
 public interface ClingoLibrary extends Library {
     ClingoLibrary INSTANCE = Native.load("d:\\js\\projects\\clingo4j\\windows\\x64\\clingo.dll", ClingoLibrary.class);
 
+    //! Signed integer type used for aspif and solver literals.
+  	// typedef<int32_t> clingo_literal_t = null;
+    //! Unsigned integer type used for aspif atoms.
+    // typedef<uint32_t> clingo_atom_t = null;
+    //! Unsigned integer type used in various places.
+    // typedef<uint32_t> clingo_id_t = null;
+    //! Signed integer type for weights in sum aggregates and minimize constraints.
+    // typedef<int32_t> clingo_weight_t = null;
+    //! A Literal with an associated weight.
+    // typedef<struct> clingo_weighted_literal_t
+    
+    //! Enumeration of error codes.
+    // typedef<c_enum> clingo_error_e = null;
+    // typedef<c_int> clingo_error_t = null;
     //! Convert error code into string.
     /** {@link clingo_h#clingo_error_string} */
     public String clingo_error_string(int code);
@@ -62,7 +79,11 @@ public interface ClingoLibrary extends Library {
     //! @param[out] revision revision number
     /** {@link clingo_h#clingo_version} */
     void clingo_version(IntByReference major, IntByReference minor, IntByReference patch);
-
+    
+    //! Represents three-valued truth values.
+    // typedef<c_enum> clingo_truth_value_e = null;
+    // typedef<c_int> clingo_truth_value_t = null;
+    
     //! @name Signature Functions
     //! @{
 
@@ -1133,7 +1154,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
     //! @see ::clingo_propagator_init_callback_t
-    //      bool (*init) (clingo_propagate_init_t *init, void *data);
+// bool (*init) (clingo_propagate_init_t *init, void *data);
     //! Can be used to propagate solver literals given a @link clingo_assignment_t partial assignment@endlink.
     //!
     //! Called during propagation with a non-empty array of @link clingo_propagate_init_add_watch() watched solver literals@endlink
@@ -1173,7 +1194,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
     //! @see ::clingo_propagator_propagate_callback_t
-    //      bool (*propagate) (clingo_propagate_control_t *control, clingo_literal_t const *changes, size_t size, void *data);
+// bool (*propagate) (clingo_propagate_control_t *control, clingo_literal_t const *changes, size_t size, void *data);
     //! Called whenever a solver undoes assignments to watched solver literals.
     //!
     //! This callback is meant to update assignment dependent state in the propagator.
@@ -1186,7 +1207,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
     //! @see ::clingo_propagator_undo_callback_t
-    //      void (*undo) (clingo_propagate_control_t const *control, clingo_literal_t const *changes, size_t size, void *data);
+// void (*undo) (clingo_propagate_control_t const *control, clingo_literal_t const *changes, size_t size, void *data);
     //! This function is similar to @ref clingo_propagate_control_propagate() but is called without a change set on propagation fixpoints.
     //!
     //! When exactly this function is called, can be configured using the @ref clingo_propagate_init_set_check_mode() function.
@@ -1197,7 +1218,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
     //! @see ::clingo_propagator_check_callback_t
-    //      bool (*check) (clingo_propagate_control_t *control, void *data);
+// bool (*check) (clingo_propagate_control_t *control, void *data);
     //! This function allows a propagator to implement domain-specific heuristics.
     //!
     //! It is called whenever propagation reaches a fixed point and
@@ -1212,8 +1233,8 @@ public interface ClingoLibrary extends Library {
     //! @param[out] decision the literal to make true
     //! @return whether the call was successful
     /** {@link clingo_h#clingo_propagator} */
-    /*    bool (*decide) (clingo_id_t thread_id, clingo_assignment_t const *assignment, clingo_literal_t fallback, void *data, clingo_literal_t *decision);
-    } clingo_propagator_t; */ public static typedef<struct> clingo_propagator = null;
+// bool (*decide) (clingo_id_t thread_id, clingo_assignment_t const *assignment, clingo_literal_t fallback, void *data, clingo_literal_t *decision);
+    // typedef<struct> clingo_propagator = null;
     
     //! @}
     
@@ -2744,14 +2765,14 @@ public interface ClingoLibrary extends Library {
     //! @param[in] incremental whether the program is incremental
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*init_program)(bool incremental, void *data);
+// bool (*init_program)(bool incremental, void *data);
     //! Marks the beginning of a block of directives passed to the solver.
     //!
     //! @see @ref end_step
     //!
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*begin_step)(void *data);
+// bool (*begin_step)(void *data);
     //! Marks the end of a block of directives passed to the solver.
     //!
     //! This function is called before solving starts.
@@ -2760,7 +2781,7 @@ public interface ClingoLibrary extends Library {
     //!
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*end_step)(void *data);
+// bool (*end_step)(void *data);
     
     //! Observe rules passed to the solver.
     //!
@@ -2771,7 +2792,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] body_size the number of literals in the body
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*rule)(bool choice, clingo_atom_t const *head, size_t head_size, clingo_literal_t const *body, size_t body_size, void *data);
+// bool (*rule)(bool choice, clingo_atom_t const *head, size_t head_size, clingo_literal_t const *body, size_t body_size, void *data);
     //! Observe weight rules passed to the solver.
     //!
     //! @param[in] choice determines if the head is a choice or a disjunction
@@ -2782,7 +2803,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] body_size the number of weighted literals in the body
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*weight_rule)(bool choice, clingo_atom_t const *head, size_t head_size, clingo_weight_t lower_bound, clingo_weighted_literal_t const *body, size_t body_size, void *data);
+// bool (*weight_rule)(bool choice, clingo_atom_t const *head, size_t head_size, clingo_weight_t lower_bound, clingo_weighted_literal_t const *body, size_t body_size, void *data);
     //! Observe minimize constraints (or weak constraints) passed to the solver.
     //!
     //! @param[in] priority the priority of the constraint
@@ -2790,14 +2811,14 @@ public interface ClingoLibrary extends Library {
     //! @param[in] size the number of weighted literals
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*minimize)(clingo_weight_t priority, clingo_weighted_literal_t const* literals, size_t size, void *data);
+// bool (*minimize)(clingo_weight_t priority, clingo_weighted_literal_t const* literals, size_t size, void *data);
     //! Observe projection directives passed to the solver.
     //!
     //! @param[in] atoms the atoms to project on
     //! @param[in] size the number of atoms
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*project)(clingo_atom_t const *atoms, size_t size, void *data);
+// bool (*project)(clingo_atom_t const *atoms, size_t size, void *data);
     //! Observe shown atoms passed to the solver.
     //! \note Facts do not have an associated aspif atom.
     //! The value of the atom is set to zero.
@@ -2806,7 +2827,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] atom the aspif atom (0 for facts)
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*output_atom)(clingo_symbol_t symbol, clingo_atom_t atom, void *data);
+// bool (*output_atom)(clingo_symbol_t symbol, clingo_atom_t atom, void *data);
     //! Observe shown terms passed to the solver.
     //!
     //! @param[in] symbol the symbolic representation of the term
@@ -2814,7 +2835,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] size the size of the condition
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*output_term)(clingo_symbol_t symbol, clingo_literal_t const *condition, size_t size, void *data);
+// bool (*output_term)(clingo_symbol_t symbol, clingo_literal_t const *condition, size_t size, void *data);
     //! Observe shown csp variables passed to the solver.
     //!
     //! @param[in] symbol the symbolic representation of the variable
@@ -2823,21 +2844,21 @@ public interface ClingoLibrary extends Library {
     //! @param[in] size the size of the condition
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*output_csp)(clingo_symbol_t symbol, int value, clingo_literal_t const *condition, size_t size, void *data);
+// bool (*output_csp)(clingo_symbol_t symbol, int value, clingo_literal_t const *condition, size_t size, void *data);
     //! Observe external statements passed to the solver.
     //!
     //! @param[in] atom the external atom
     //! @param[in] type the type of the external statement
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*external)(clingo_atom_t atom, clingo_external_type_t type, void *data);
+// bool (*external)(clingo_atom_t atom, clingo_external_type_t type, void *data);
     //! Observe assumption directives passed to the solver.
     //!
     //! @param[in] literals the literals to assume (positive literals are true and negative literals false for the next solve call)
     //! @param[in] size the number of atoms
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*assume)(clingo_literal_t const *literals, size_t size, void *data);
+// bool (*assume)(clingo_literal_t const *literals, size_t size, void *data);
     //! Observe heuristic directives passed to the solver.
     //!
     //! @param[in] atom the target atom
@@ -2848,7 +2869,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] size the number of atoms in the condition
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*heuristic)(clingo_atom_t atom, clingo_heuristic_type_t type, int bias, unsigned priority, clingo_literal_t const *condition, size_t size, void *data);
+// bool (*heuristic)(clingo_atom_t atom, clingo_heuristic_type_t type, int bias, unsigned priority, clingo_literal_t const *condition, size_t size, void *data);
     //! Observe edge directives passed to the solver.
     //!
     //! @param[in] node_u the start vertex of the edge
@@ -2857,7 +2878,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] size the number of atoms in the condition
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*acyc_edge)(int node_u, int node_v, clingo_literal_t const *condition, size_t size, void *data);
+// bool (*acyc_edge)(int node_u, int node_v, clingo_literal_t const *condition, size_t size, void *data);
     
     //! Observe numeric theory terms.
     //!
@@ -2865,14 +2886,14 @@ public interface ClingoLibrary extends Library {
     //! @param[in] number the value of the term
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*theory_term_number)(clingo_id_t term_id, int number, void *data);
+// bool (*theory_term_number)(clingo_id_t term_id, int number, void *data);
     //! Observe string theory terms.
     //!
     //! @param[in] term_id the id of the term
     //! @param[in] name the value of the term
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*theory_term_string)(clingo_id_t term_id, char const *name, void *data);
+// bool (*theory_term_string)(clingo_id_t term_id, char const *name, void *data);
     //! Observe compound theory terms.
     //!
     //! The name_id_or_type gives the type of the compound term:
@@ -2887,7 +2908,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] size the number of arguments
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*theory_term_compound)(clingo_id_t term_id, int name_id_or_type, clingo_id_t const *arguments, size_t size, void *data);
+// bool (*theory_term_compound)(clingo_id_t term_id, int name_id_or_type, clingo_id_t const *arguments, size_t size, void *data);
     //! Observe theory elements.
     //!
     //! @param element_id the id of the element
@@ -2897,7 +2918,7 @@ public interface ClingoLibrary extends Library {
     //! @param condition_size the number of literals in the condition
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*theory_element)(clingo_id_t element_id, clingo_id_t const *terms, size_t terms_size, clingo_literal_t const *condition, size_t condition_size, void *data);
+// bool (*theory_element)(clingo_id_t element_id, clingo_id_t const *terms, size_t terms_size, clingo_literal_t const *condition, size_t condition_size, void *data);
     //! Observe theory atoms without guard.
     //!
     //! @param[in] atom_id_or_zero the id of the atom or zero for directives
@@ -2906,7 +2927,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] size the number of elements
     //! @param[in] data user data for the callback
     //! @return whether the call was successful
-    //      bool (*theory_atom)(clingo_id_t atom_id_or_zero, clingo_id_t term_id, clingo_id_t const *elements, size_t size, void *data);
+// bool (*theory_atom)(clingo_id_t atom_id_or_zero, clingo_id_t term_id, clingo_id_t const *elements, size_t size, void *data);
     //! Observe theory atoms with guard.
     //!
     //! @param[in] atom_id_or_zero the id of the atom or zero for directives
@@ -3146,7 +3167,8 @@ public interface ClingoLibrary extends Library {
     //!
     //! @see clingo_control_get_enable_cleanup()
     //! @see clingo_control_set_enable_cleanup()
-// public bool clingo_control_cleanup(clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_cleanup(clingo_control_t *control);
+    /** {@link clingo_h#clingo_control_cleanup} */
+	public byte clingo_control_cleanup(Pointer p_control);
     //! Assign a truth value to an external atom.
     //!
     //! If a negative literal is passed, the corresponding atom is assigned the
@@ -3159,7 +3181,8 @@ public interface ClingoLibrary extends Library {
     //! @param[in] value the truth value
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_bad_alloc
-// public bool clingo_control_assign_external(clingo_control_t p_control, clingo_literal_t literal, clingo_truth_value_t value); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_assign_external(clingo_control_t *control, clingo_literal_t literal, clingo_truth_value_t value);
+    /** {@link clingo_h#clingo_control_assign_external} */
+	public byte clingo_control_assign_external(Pointer p_control, int literal, int value);
     //! Release an external atom.
     //!
     //! If a negative literal is passed, the corresponding atom is released.
@@ -3172,7 +3195,8 @@ public interface ClingoLibrary extends Library {
     //! @param[in] literal literal to release
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_bad_alloc
-// public bool clingo_control_release_external(clingo_control_t p_control, clingo_literal_t literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_release_external(clingo_control_t *control, clingo_literal_t literal);
+    /** {@link clingo_h#clingo_control_release_external} */
+	public byte clingo_control_release_external(Pointer p_control, int literal);
     //! Register a custom propagator with the control object.
     //!
     //! If the sequential flag is set to true, the propagator is called
@@ -3186,7 +3210,8 @@ public interface ClingoLibrary extends Library {
     //! @param[in] sequential whether the propagator should be called sequentially
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_bad_alloc
-// public bool clingo_control_register_propagator(clingo_control_t p_control, final clingo_propagator_t p_propagator, c_void p_data, bool sequential); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_register_propagator(clingo_control_t *control, clingo_propagator_t const *propagator, void *data, bool sequential);
+    /** {@link clingo_h#clingo_control_release_external} */
+	public byte clingo_control_register_propagator(Pointer p_control, Pointer p_propagator, Pointer p_data, byte sequential);
     //! Check if the solver has determined that the internal program representation is conflicting.
     //!
     //! If this function returns true, solve calls will return immediately with an unsatisfiable solve result.
@@ -3197,7 +3222,8 @@ public interface ClingoLibrary extends Library {
     //!
     //! @param[in] control the target
     //! @return whether the program representation is conflicting
-// public bool clingo_control_is_conflicting(final clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_is_conflicting(clingo_control_t const *control);
+    /** {@link clingo_h#clingo_control_release_external} */
+	public byte clingo_control_is_conflicting(Pointer p_control);
     
     //! Get a statistics object to inspect solver statistics.
     //!
@@ -3223,7 +3249,8 @@ public interface ClingoLibrary extends Library {
     //! Interrupt the active solve call (or the following solve call right at the beginning).
     //!
     //! @param[in] control the target
-// public void clingo_control_interrupt(clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT void clingo_control_interrupt(clingo_control_t *control);
+    /** {@link clingo_h#clingo_control_interrupt} */
+    public void clingo_control_interrupt(Pointer p_control);
     //! Get low-level access to clasp.
     //!
     //! @attention
@@ -3235,7 +3262,8 @@ public interface ClingoLibrary extends Library {
     //! @param[in] control the target
     //! @param[out] clasp pointer to the ClaspFacade object (may be <code>nullptr</code>)
     //! @return whether the call was successful
-// public bool clingo_control_clasp_facade(clingo_control_t p_control, c_void p_p_clasp); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_clasp_facade(clingo_control_t *control, void **clasp);
+    /** {@link clingo_h#clingo_control_clasp_facade} */
+    public byte clingo_control_clasp_facade(Pointer p_control, PointerByReference p_p_clasp);
     
     //! Configuration Functions
     
@@ -3264,13 +3292,15 @@ public interface ClingoLibrary extends Library {
     //! @param[in] control the target
     //! @param[in] enable whether to enable the assumption
     //! @return whether the call was successful
-// public bool clingo_control_set_enable_enumeration_assumption(clingo_control_t p_control, bool enable); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_set_enable_enumeration_assumption(clingo_control_t *control, bool enable);
+    /** {@link clingo_h#clingo_control_set_enable_enumeration_assumption} */
+	public byte clingo_control_set_enable_enumeration_assumption(Pointer p_control, byte enable);
     //! Check whether the enumeration assumption is enabled.
     //!
     //! See ::clingo_control_set_enable_enumeration_assumption().
     //! @param[in] control the target
     //! @return whether using the enumeration assumption is enabled
-// public bool clingo_control_get_enable_enumeration_assumption(clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_get_enable_enumeration_assumption(clingo_control_t *control);
+    /** {@link clingo_h#clingo_control_get_enable_enumeration_assumption} */
+	public byte clingo_control_get_enable_enumeration_assumption(Pointer p_control);
     
     //! Enable automatic cleanup after solving.
     //!
@@ -3282,7 +3312,8 @@ public interface ClingoLibrary extends Library {
     //!
     //! @see clingo_control_cleanup()
     //! @see clingo_control_get_enable_cleanup()
-// public bool clingo_control_set_enable_cleanup(clingo_control_t p_control, bool enable); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_set_enable_cleanup(clingo_control_t *control, bool enable);
+    /** {@link clingo_h#clingo_control_set_enable_cleanup} */
+	public byte clingo_control_set_enable_cleanup(Pointer p_control, byte enable);
     //! Check whether automatic cleanup is enabled.
     //!
     //! See ::clingo_control_set_enable_cleanup().
@@ -3291,7 +3322,8 @@ public interface ClingoLibrary extends Library {
     //!
     //! @see clingo_control_cleanup()
     //! @see clingo_control_set_enable_cleanup()
-// public bool clingo_control_get_enable_cleanup(clingo_control_t p_control); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_get_enable_cleanup(clingo_control_t *control);
+    /** {@link clingo_h#clingo_control_get_enable_cleanup} */
+	public byte clingo_control_get_enable_cleanup(Pointer p_control);
     
     //! @}
     
@@ -3304,7 +3336,8 @@ public interface ClingoLibrary extends Library {
     //! @param[in] name the name of the constant
     //! @param[out] symbol the resulting symbol
     //! @return whether the call was successful
-// public bool clingo_control_get_const(final clingo_control_t p_control, final c_char p_name, clingo_symbol_t p_symbol); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_get_const(clingo_control_t const *control, char const *name, clingo_symbol_t *symbol);
+    /** {@link clingo_h#clingo_control_get_const} */
+	public byte clingo_control_get_const(Pointer p_control, String p_name, IntByReference p_symbol);
     //! Check if there is a constant definition for the given constant.
     //!
     //! @param[in] control the target
@@ -3314,7 +3347,8 @@ public interface ClingoLibrary extends Library {
     //! - ::clingo_error_runtime if constant definition does not exist
     //!
     //! @see clingo_control_get_const()
-// public bool clingo_control_has_const(final clingo_control_t p_control, final c_char p_name, bool p_exists); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_has_const(clingo_control_t const *control, char const *name, bool *exists);
+    /** {@link clingo_h#clingo_control_has_const} */
+	public byte clingo_control_has_const(Pointer p_control, String p_name, ByteByReference p_exists);
     //! Get an object to inspect symbolic atoms (the relevant Herbrand base) used
     //! for grounding.
     //!
@@ -3342,7 +3376,8 @@ public interface ClingoLibrary extends Library {
     //! @param[in] replace just pass the grounding to the observer but not the solver
     //! @param[in] data user data passed to the observer functions
     //! @return whether the call was successful
-// public bool clingo_control_register_observer(clingo_control_t p_control, final clingo_ground_program_observer_t p_observer, bool replace, c_void p_data); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_register_observer(clingo_control_t *control, clingo_ground_program_observer_t const *observer, bool replace, void *data);
+    /** {@link clingo_h#clingo_control_theory_atoms} */
+    public byte clingo_control_register_observer(Pointer p_control, Pointer p_observer, byte replace, Pointer p_data);
     //! @}
     
     //! @name Program Modification Functions
@@ -3356,7 +3391,8 @@ public interface ClingoLibrary extends Library {
     //! @param[out] backend the backend object
     //! @return whether the call was successful; might set one of the following error codes:
     //! - ::clingo_error_bad_alloc
-// public bool clingo_control_backend(clingo_control_t p_control, final clingo_backend_t p_p_backend); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_backend(clingo_control_t *control, clingo_backend_t **backend);
+    /** {@link clingo_h#clingo_control_backend} */
+    public byte clingo_control_backend(Pointer p_control, PointerByReference p_p_backend);
     //! Get an object to add non-ground directives to the program.
     //!
     //! See the @ref ProgramBuilder module for more information.
@@ -3364,7 +3400,8 @@ public interface ClingoLibrary extends Library {
     //! @param[in] control the target
     //! @param[out] builder the program builder object
     //! @return whether the call was successful
-// public bool clingo_control_program_builder(clingo_control_t p_control, clingo_program_builder_t p_p_builder); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_program_builder(clingo_control_t *control, clingo_program_builder_t **builder);
+    /** {@link clingo_h#clingo_control_program_builder} */
+	public byte clingo_control_program_builder(Pointer p_control, PointerByReference p_p_builder);
     //! @}
     
     //! @}
@@ -3471,7 +3508,8 @@ public interface ClingoLibrary extends Library {
     //! @param[in] multi whether the option can appear multiple times on the command-line
     //! @param[in] argument optional string to change the value name in the generated help output
     //! @return whether the call was successful
-// public bool clingo_options_add(clingo_options_t p_options, final c_char p_group, final c_char p_option, final c_char p_description, bool p_parse /*(char const *value, void *data)*/, c_void p_data, bool multi, final c_char p_argument); // CLINGO_VISIBILITY_DEFAULT bool clingo_options_add(clingo_options_t *options, char const *group, char const *option, char const *description, bool (*parse) (char const *value, void *data), void *data, bool multi, char const *argument);
+    /** {@link clingo_h#clingo_options_add} */
+    public byte clingo_options_add(Pointer p_options, String p_group, String p_option, String p_description, OptionParseCallbackT p_parse /*(char const *value, void *data)*/, Pointer p_data, byte multi, String p_argument);
     //! Add an option that is a simple flag.
     //!
     //! This function is similar to @ref clingo_options_add() but simpler because it only supports flags, which do not have values.
@@ -3483,7 +3521,8 @@ public interface ClingoLibrary extends Library {
     //! @param[in] description the description of the option
     //! @param[in] target boolean set to true if the flag is given on the command-line
     //! @return whether the call was successful
-// public bool clingo_options_add_flag(clingo_options_t p_options, final c_char p_group, final c_char p_option, final c_char p_description, bool p_target); // CLINGO_VISIBILITY_DEFAULT bool clingo_options_add_flag(clingo_options_t *options, char const *group, char const *option, char const *description, bool *target);
+    /** {@link clingo_h#clingo_options_add_flag} */
+    public byte clingo_options_add_flag(Pointer p_options, String p_group, String p_option, String p_description, byte p_target);
     
     //! Run clingo with a customized main function (similar to python and lua embedding).
     //!
@@ -3492,6 +3531,7 @@ public interface ClingoLibrary extends Library {
     //! @param[in] size number of arguments
     //! @param[in] data user data to pass to callbacks in application
     //! @return exit code to return from main function
-// public int clingo_main(clingo_application_t p_application, final c_char p_arguments, size_t size, c_void p_data); // CLINGO_VISIBILITY_DEFAULT int clingo_main(clingo_application_t *application, char const *const * arguments, size_t size, void *data);
+    /** {@link clingo_h#clingo_main} */
+	public int clingo_main(Pointer p_application, String p_arguments, int size, Pointer p_data);
     
 }

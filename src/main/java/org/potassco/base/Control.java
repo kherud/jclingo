@@ -54,8 +54,8 @@ public class Control implements AutoCloseable {
 
 	@Override
 	public void close() throws Exception {
-		// TODO Auto-generated method stub
-		
+        clingoLibrary.clingo_control_free(this.control);
+        System.out.println("Freed clingo control");
 	}
 
 	/* *******
@@ -100,6 +100,7 @@ public class Control implements AutoCloseable {
 	 * Free a control object created with {@link Clingo#controlNew(String[])}.
 	 * @param control the target
 	 */
+	// TODO: make invisible / remove if close is working properly 
 	public void free() {
         clingoLibrary.clingo_control_free(this.control);
 	}

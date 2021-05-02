@@ -8,8 +8,7 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.potassco.base.Clingo;
-import org.potassco.callback.SolveEventCallback;
-import org.potassco.dto.Solution;
+import org.potassco.base.Control;
 import org.potassco.enums.ModelType;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveMode;
@@ -24,10 +23,10 @@ public class SolveTest1 {
 	@Test
 	public void testAb() {
 		String name = "base";
-		Clingo clingo = new Clingo(name, "1 {a; b} 1. #show c : b. #show a/0.");
-		clingo.ground(name);
-		Pointer control = clingo.getControl();
-		Pointer handle = clingo.controlSolve(control, SolveMode.YIELD, null, 0, null, null);
+		Clingo clingo = Clingo.getInstance();
+		Control control = clingo.control(name, "1 {a; b} 1. #show c : b. #show a/0.");
+		control.ground(name);
+		Pointer handle = control.solve(SolveMode.YIELD, null, 0, null, null);
 		boolean modelExits = true;
 		while (modelExits) {
 			clingo.solveHandleResume(handle);
@@ -54,7 +53,7 @@ public class SolveTest1 {
 		}
         clingo.solveHandleClose(handle);
         // clean up
-        clingo.controlFree(control);
+        control.free();
         fail("Result differs from origin.");
 	}
 

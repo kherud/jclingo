@@ -1978,7 +1978,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_control_load(Pointer p_control, String p_file);
 
     /** {@link clingo_h#clingo_control_add} */
-    public byte  clingo_control_add(Pointer p_control, String name, String[] parameters, long parameters_size, String program);
+    public byte  clingo_control_add(Pointer p_control, String name, String[] parameters, Size parameters_size, String program);
 
     /** {@link clingo_h#clingo_control_ground} */
     public byte clingo_control_ground(Pointer p_control, Part[] p_parts, Size parts_size, Pointer ground_callback, Pointer p_ground_callback_data);

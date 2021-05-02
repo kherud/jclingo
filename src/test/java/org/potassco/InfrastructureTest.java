@@ -8,17 +8,13 @@ import java.util.List;
 import org.junit.Test;
 import org.potassco.base.Clingo;
 import org.potassco.base.ClingoException;
+import org.potassco.base.Control;
 import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;
-import org.potassco.jna.SizeByReference;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.DoubleByReference;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 
 public class InfrastructureTest {
 
@@ -137,10 +133,10 @@ public class InfrastructureTest {
 	@Test
 	public void testConfiguration() {
 		String name = "base";
-		Clingo clingo = new Clingo(name, "a. b.");
-//		clingo.ground(name);
-		Pointer control = clingo.getControl();
-		Pointer conf = clingo.controlConfiguration(control);
+		Clingo clingo = Clingo.getInstance();
+		Control control = clingo.control(name, "a. b.");
+//		control.ground(name); - not used here!
+		Pointer conf = control.configuration();
 		int root = clingo.configurationRoot(conf);
 		assertEquals(root, clingo.configurationRoot(conf));
 		assertEquals(ConfigurationType.MAP, clingo.configurationType(conf, root));
@@ -153,10 +149,10 @@ public class InfrastructureTest {
 	@Test
 	public void testStatistics() {
 		String name = "base";
-		Clingo clingo = new Clingo(name, "a. b.");
-//		clingo.ground(name);
-		Pointer control = clingo.getControl();
-		Pointer stats = clingo.controlStatistics(control);
+		Clingo clingo = Clingo.getInstance();
+		Control control = clingo.control(name, "a. b.");
+//		clingo.ground(name); - not used here!
+		Pointer stats = control.statistics();
 		long root = clingo.statisticsRoot(stats);
 		assertEquals(StatisticsType.EMPTY, clingo.statisticsType(stats, root));
 		assertEquals(0L, clingo.clingoStatisticsArraySize(stats, root));

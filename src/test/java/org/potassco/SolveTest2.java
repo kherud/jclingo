@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.potassco.base.Clingo;
 import org.potassco.base.ClingoException;
-import org.potassco.base.ClingoHelper;
+import org.potassco.base.Control;
 import org.potassco.dto.Solution;
 
 public class SolveTest2 {
@@ -13,7 +13,8 @@ public class SolveTest2 {
 	@Test
 	public void testTravellingSalesperson() {
 		String name = "base";
-		Clingo clingo = new Clingo(name,
+		Clingo clingo = Clingo.getInstance();
+		Control control = clingo.control(name,
 				"node(1..6). "
 				+ ""
 				+ "edge(1,(2;3;4)). edge(2,(4;5;6)). edge(3,(1;4;5)). "
@@ -40,10 +41,9 @@ public class SolveTest2 {
 				+ " "
 				+ "#minimize { C,X,Y : cycle(X,Y), cost(X,Y,C) }. "
 				+ "");
-		clingo.ground(name);
+		control.ground(name);
 		try {
-			ClingoHelper clingoHelper = new ClingoHelper(clingo);
-			Solution solution = clingoHelper.solve();
+			Solution solution = control.solve();
 			assertEquals(52, solution.getSize());
 //			String[] strArray = { "a", "b" };
 //			Set<String> expected = new HashSet<String>(Arrays.asList(strArray));
@@ -58,12 +58,12 @@ public class SolveTest2 {
 	@Test
 	public void testMultiModels() {
 		String name = "base";
-		Clingo clingo = new Clingo(name,
+		Clingo clingo = Clingo.getInstance();
+		Control control = clingo.control(name,
 				"{elected(ann; bob; carol; dan; elaine; fred)} = 3.");
-		clingo.ground(name);
+		control.ground(name);
 		try {
-			ClingoHelper clingoHelper = new ClingoHelper(clingo);
-			Solution solution = clingoHelper.solve();
+			Solution solution = control.solve();
 			assertEquals(3, solution.getSize());
 //			clingo.solveHandleModel(null)
 		} catch (ClingoException e) {

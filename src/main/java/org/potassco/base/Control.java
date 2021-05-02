@@ -37,10 +37,19 @@ public class Control implements AutoCloseable {
 		this.name = "base";
 	}
 
+//	public Clingo(String name, String logicProgram) {
+//		this();
+//        this.control = controlNew(null);
+//        // add the program
+//        controlAdd(control, name, null, 0L, logicProgram);
+//	}
+//
 	public Control(String name, String logicProgram, Clingo clingo) {
 		this.name = name;
 		this.logicProgram = logicProgram;
 		this.clingoLibrary = clingo.getLibrary();
+		this.control = controlNew(null);
+		add(name, null, 0L, logicProgram);
 	}
 
 	@Override
@@ -63,9 +72,10 @@ public class Control implements AutoCloseable {
 	 * A control object has to be freed using clingo_control_free().
 	 * TODO: This will be done in the Control class.
 	 * @param arguments array of command line arguments
+	 * @return 
 	 * @return resulting control object
 	 */
-	public void controlNew(String[] arguments) {
+	public Pointer controlNew(String[] arguments) {
 		PointerByReference parray = null;
 		int argumentsLength = 0;
 		if (arguments != null) {
@@ -83,7 +93,7 @@ public class Control implements AutoCloseable {
 		@SuppressWarnings("unused")
 //        clingoLibrary.clingo_control_new(null, 0, null, null, 20, controlPointer);
 		boolean success = clingoLibrary.clingo_control_new(parray, argumentsLength, logger, loggerData, messageLimit, ctrl);
-		this.control = ctrl.getValue();
+		return ctrl.getValue();
 	}
 
 	/**

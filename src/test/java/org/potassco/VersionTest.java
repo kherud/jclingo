@@ -15,7 +15,7 @@ import org.potassco.jna.ClingoLibrary;
 
 import com.sun.jna.ptr.IntByReference;
 
-public class Test1 {
+public class VersionTest {
 
 	@Test
 	public void test1() {

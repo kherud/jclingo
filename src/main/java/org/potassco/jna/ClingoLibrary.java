@@ -928,7 +928,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_model_type(Pointer p_model, IntByReference p_type);
 
     /** {@link clingo_h#clingo_model_number} */
-    public byte clingo_model_number(Pointer p_model, IntByReference p_number);
+    public byte clingo_model_number(Pointer p_model, LongByReference p_number);
 
     /** {@link clingo_h#clingo_model_symbols_size} */
     public byte clingo_model_symbols_size(Pointer model, int show, SizeByReference size);

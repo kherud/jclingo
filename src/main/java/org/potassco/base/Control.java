@@ -89,7 +89,7 @@ public class Control implements AutoCloseable {
 		// TODO
 		Pointer logger = null;
 		Pointer loggerData = null;
-		int messageLimit = 0;
+		int messageLimit = 20;
 		PointerByReference ctrl = new PointerByReference();
 		@SuppressWarnings("unused")
 //        clingoLibrary.clingo_control_new(null, 0, null, null, 20, controlPointer);
@@ -165,7 +165,6 @@ public class Control implements AutoCloseable {
 	 * @param assumptionsSize number of assumptions
 	 * @param notify the event handler to register
 	 * @param data the user data for the event handler
-	 * @return 
 	 * @return handle to the current search to enumerate models
 	 */
 	public Pointer solve(SolveMode mode, Pointer assumptions, int assumptionsSize,
@@ -487,19 +486,19 @@ public class Control implements AutoCloseable {
 
 	public Solution solve() throws ClingoException {
 		Clingo clingo = Clingo.getInstance();
-        Solution solveHandle = new Solution();
+        Solution solution = new Solution();
         SolveEventCallbackT cb = new SolveEventCallbackT() {
             public boolean call(int type, Pointer event, Pointer data, Pointer goon) {
                 SolveEventType t = SolveEventType.fromValue(type);
                 switch (t) {
                     case MODEL:
                     	long size = clingo.modelSymbolsSize(event, ShowType.SHOWN);
-                        solveHandle.setSize(size);
+                        solution.setSize(size);
                         long[] symbols = clingo.modelSymbols(event, ShowType.SHOWN, size);
                         for (int i = 0; i < size; ++i) {
                             long len = clingo.symbolToStringSize(symbols[i]);
                             String symbol = clingo.symbolToString(symbols[i], len);
-                            solveHandle.addSymbol(symbol.trim());
+                            solution.addSymbol(symbol.trim());
                         }
                         break;
                     case STATISTICS:
@@ -519,7 +518,7 @@ public class Control implements AutoCloseable {
         clingo.solveHandleClose(handle);
         // clean up
         free();
-		return solveHandle;
+		return solution;
     }
 
 }

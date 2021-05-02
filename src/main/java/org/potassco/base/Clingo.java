@@ -1467,8 +1467,8 @@ public class Clingo {
      * @param model the target
      * @return the number of the model
      */
-    public int modelNumber(Pointer model) {
-    	IntByReference number = new IntByReference();
+    public long modelNumber(Pointer model) {
+    	LongByReference number = new LongByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_number(model, number);
 		return number.getValue();

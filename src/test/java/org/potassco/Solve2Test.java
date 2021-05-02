@@ -8,7 +8,7 @@ import org.potassco.base.ClingoException;
 import org.potassco.base.Control;
 import org.potassco.dto.Solution;
 
-public class SolveTest2 {
+public class Solve2Test {
 
 	@Test
 	public void testTravellingSalesperson() {

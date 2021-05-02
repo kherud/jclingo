@@ -15,10 +15,13 @@ import org.potassco.enums.SolveMode;
 
 import com.sun.jna.Pointer;
 
-public class SolveTest1 {
+public class Solve1Test {
 
 	/**
 	 * https://potassco.org/clingo/c-api/5.5/model_8c-example.html
+	 */
+	/**
+	 * 
 	 */
 	@Test
 	public void testAb() {
@@ -35,20 +38,20 @@ public class SolveTest1 {
 				modelExits = false;
 			} else {
 				assertEquals(ModelType.STABLE_MODEL, clingo.modelType(model));
-				int modelNumber = clingo.modelNumber(model);
+				long modelNumber = clingo.modelNumber(model);
 				System.out.println("Stable model: " + modelNumber);
 				assertEquals(1, modelNumber);
 				Set<String> s1 = new HashSet<String>();
 				s1.add("c");
-				assertEquals(s1, testSolution(clingo, model, ShowType.SHOWN));
+				assertEquals(s1, checkModel(clingo, model, ShowType.SHOWN));
 				Set<String> s2 = new HashSet<String>();
 				s2.add("b");
-				assertEquals(s2, testSolution(clingo, model, ShowType.ATOMS));
+				assertEquals(s2, checkModel(clingo, model, ShowType.ATOMS));
 				Set<String> s3 = new HashSet<String>();
 				s3.add("c");
-				assertEquals(s3, testSolution(clingo, model, ShowType.TERMS));
+				assertEquals(s3, checkModel(clingo, model, ShowType.TERMS));
 				Set<String> s4 = new HashSet<String>();
-				assertEquals(s4, testSolution(clingo, model, ShowType.COMPLEMENT));
+				assertEquals(s4, checkModel(clingo, model, ShowType.COMPLEMENT));
 			}
 		}
         clingo.solveHandleClose(handle);
@@ -57,7 +60,7 @@ public class SolveTest1 {
         fail("Result differs from origin.");
 	}
 
-	private Set<String> testSolution(Clingo clingo, Pointer model, ShowType shownType) {
+	private Set<String> checkModel(Clingo clingo, Pointer model, ShowType shownType) {
 		Set<String> result = new HashSet<String>();
 		long size = clingo.modelSymbolsSize(model, shownType);
 		long[] symbols = clingo.modelSymbols(model, shownType, size);
@@ -85,8 +88,8 @@ public class SolveTest1 {
 	/**
 	 * https://github.com/potassco/clingo/blob/master/libpyclingo/clingo/tests/test_solving.py
 	 */
-	@Test
-	public void testSolveAsync() {
-		fail("Not yet implemented.");
-	}
+//	@Test
+//	public void testSolveAsync() {
+//		fail("Not yet implemented.");
+//	}
 }

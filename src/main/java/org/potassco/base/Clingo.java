@@ -32,14 +32,28 @@ import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
+ * Clingo is a singleton and holds the reference to the clingoLibrary.
  * @author Josef Schneeberger
  *
  */
 public class Clingo {
+
+    /**
+     * SingletonHolder is loaded on the first execution of Singleton.getInstance() 
+     * or the first access to SingletonHolder.INSTANCE, not before.
+     */
+    private static class ClingoHolder { 
+        private static final Clingo INSTANCE = new Clingo();
+    }
+
+    public static Clingo getInstance() {
+        return ClingoHolder.INSTANCE;
+    }
+    
 	private ClingoLibrary clingoLibrary;
 	private Pointer control;
 
-	public Clingo() {
+	private Clingo() {
 		super();
 		this.clingoLibrary = ClingoLibrary.INSTANCE;
 	}
@@ -1830,7 +1844,6 @@ public class Clingo {
 	 */
 	public void controlAdd(Pointer control, String name, String[] parameters, long parametersSize, String program) {
 		clingoLibrary.clingo_control_add(control, name, parameters, parametersSize, program);
-//		clingoLibrary.clingo_control_add(control, name, null, new Size(0), logicProgram);
 	}
 
     /**

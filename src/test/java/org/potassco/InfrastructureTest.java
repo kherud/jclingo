@@ -24,7 +24,7 @@ public class InfrastructureTest {
 
 	@Test
 	public void testSignature() {
-		Clingo clingo = new Clingo();
+		Clingo clingo = Clingo.getInstance();
 		try {
 			String name = "test";
 			int arity = 2;
@@ -46,7 +46,7 @@ public class InfrastructureTest {
 
 	@Test
 	public void testErrorMessage() {
-		Clingo clingo = new Clingo();
+		Clingo clingo = Clingo.getInstance();
 		assertEquals("success", clingo.errorString(0));
 		assertEquals("runtime error", clingo.errorString(1));
 		assertEquals("logic error", clingo.errorString(2));
@@ -76,7 +76,7 @@ public class InfrastructureTest {
 
 	@Test
 	public void testSymbolHandling() {
-		Clingo clingo = new Clingo();
+		Clingo clingo = Clingo.getInstance();
 		int number = 42;
 		long num = clingo.symbolCreateNumber(number);
 		assertEquals(number, clingo.symbolNumber(num));
@@ -101,7 +101,7 @@ public class InfrastructureTest {
 
 	@Test
 	public void testSymbolCreateFunction() {
-		Clingo clingo = new Clingo();
+		Clingo clingo = Clingo.getInstance();
 		int number = 42;
 		long num = clingo.symbolCreateNumber(number);
 		String c = "clingo";
@@ -126,7 +126,7 @@ public class InfrastructureTest {
 	
 	@Test
 	public void test() {
-		Clingo clingo = new Clingo();
+		Clingo clingo = Clingo.getInstance();
 		String c = "clingo";
 		assertEquals(c, clingo.addString(c));
 		String t = "f(a,42)";

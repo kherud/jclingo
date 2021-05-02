@@ -31,7 +31,7 @@ public class BasicTest {
 
 	@Test
 	public void test2() {
-		Clingo clingo = new Clingo();
+		Clingo clingo = Clingo.getInstance();
 		assertEquals("5.5.0", clingo.version());
 	}
 

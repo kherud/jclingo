@@ -3,10 +3,11 @@ package org.potassco.base;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.potassco.callback.SolveEventCallback;
 import org.potassco.cpp.clingo_h;
 import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ErrorCode;
+import org.potassco.enums.ExternalType;
+import org.potassco.enums.HeuristicType;
 import org.potassco.enums.ModelType;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveMode;
@@ -21,7 +22,6 @@ import org.potassco.jna.Size;
 import org.potassco.jna.SizeByReference;
 import org.potassco.jna.SolveEventCallbackT;
 import org.potassco.jna.SymbolByReference;
-import org.potassco.jna.clingo_weighted_literal_t;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.StringArray;
@@ -299,7 +299,7 @@ public class Clingo {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_arguments(symbol, p_p_arguments, p_arguments_size);
 		size = p_arguments_size.getValue();
-		Pointer p = p_p_arguments.getPointer();
+//		Pointer p = p_p_arguments.getPointer();
 //		long[] adrs = p.getLongArray(8, 2);
 	}
 	
@@ -697,7 +697,7 @@ public class Clingo {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_element_tuple(atoms, element, tuple, size);
-		long s = size.getValue(); // TODO return size
+//		long s = size.getValue(); // TODO return size
 		return tuple.getValue();
     }
 
@@ -714,7 +714,7 @@ public class Clingo {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_element_condition(atoms, element, condition, size);
-		long s = size.getValue(); // TODO return size
+//		long s = size.getValue(); // TODO return size
 		return condition.getValue();
     }
 
@@ -870,7 +870,7 @@ public class Clingo {
      * @return the resulting size
      */
     public String theoryAtomsAtomToString(Pointer atoms, int atom, long size) {
-		byte[] str = new byte[Math.toIntExact(size)];;
+		byte[] str = new byte[Math.toIntExact(size)];
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_atom_to_string(atoms, atom, str, size);
 		return new String(str);
@@ -884,40 +884,141 @@ public class Clingo {
 	 * backend
 	 * ********** */
 
-	/** {@link clingo_h#clingo_backend_begin} */
-  	public byte clingo_backend_begin(Pointer p_backend);
+    /**
+     * Prepare the backend for usage.
+     * @param p_backend the target
+     */
+    public void backendBegin(Pointer p_backend) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_backend_begin(p_backend);
+    }
 
-	/** {@link clingo_h#clingo_backend_end} */
-  	public byte clingo_backend_end(Pointer p_backend);
+    /**
+     * Finalize the backend after using it.
+     * @param p_backend the target
+     */
+    public void backendEnd(Pointer p_backend) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_backend_end(p_backend);
+    }
 
-	/** {@link clingo_h#clingo_backend_rule} */
-  	public byte clingo_backend_rule(Pointer p_backend, byte choice, int p_head, long head_size, int p_body, long body_size);
+    /**
+     * Add a rule to the program.
+     * @param backend the target backend
+     * @param choice determines if the head is a choice or a disjunction
+     * @param head the head atoms
+     * @param headSize the number of atoms in the head
+     * @param body body literals
+     * @param bodySize the number of literals in the body
+     */
+    public void backendRule(Pointer backend, byte choice, int head, long headSize, int body, long bodySize) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_backend_rule(backend, choice, head, headSize, body, bodySize);
+    }
 
-	/** {@link clingo_h#clingo_backend_weight_rule} */
-  	public byte clingo_backend_weight_rule(Pointer p_backend, byte choice, int p_head, long head_size, int lower_bound, final clingo_weighted_literal_t p_body, long body_size);
+    /**
+     * Add a weight rule to the program.
+     * <p>
+     * @attention All weights and the lower bound must be positive.
+     * @param backend the target backend
+     * @param choice determines if the head is a choice or a disjunction
+     * @param head the head atoms
+     * @param headSize the number of atoms in the head
+     * @param lowerBound the lower bound of the weight rule
+     * @param body the weighted body literals
+     * @param bodySize the number of weighted literals in the body
+     */
+    public void backendWeightRule(Pointer backend, byte choice, int head, long headSize, int lowerBound, int body, long bodySize) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_backend_weight_rule(backend, choice, head, headSize, lowerBound, body, bodySize);
+    }
 
-	/** {@link clingo_h#clingo_backend_minimize} */
-  	public byte clingo_backend_minimize(Pointer p_backend, int priority, final clingo_weighted_literal_t p_literals, long size);
+    /**
+     * Add a minimize constraint (or weak constraint) to the program.
+     * @param backend the target backend
+     * @param priority the priority of the constraint
+     * @param literals the weighted literals whose sum to minimize
+     * @param size the number of weighted literals
+     */
+    public void backendWeightMinimize(Pointer backend, int priority, int literals, long size) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_backend_minimize(backend, priority, literals, size);
+    }
 
-	/** {@link clingo_h#clingo_backend_project} */
-  	public byte clingo_backend_project(Pointer p_backend, int p_atoms, long size);
+    /**
+     * Add a projection directive.
+     * @param backend the target backend
+     * @param atoms the atoms to project on
+     * @param size the number of atoms
+     */
+    public void backendWeightProject(Pointer backend, int atoms, long size) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_backend_project(backend, atoms, size);
+    }
 
-	/** {@link clingo_h#clingo_backend_external} */
-  	public byte clingo_backend_external(Pointer p_backend, int atom, int type);
+    /**
+     * Add an external statement.
+     * @param backend the target backend
+     * @param atom the external atom
+     * @param type the type of the external statement
+     */
+    public void backendWeightExternal(Pointer backend, int atom, ExternalType type) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_backend_external(backend, atom, type.getValue());
+    }
 
-	/** {@link clingo_h#clingo_backend_assume} */
-  	public byte clingo_backend_assume(Pointer p_backend, int p_literals, long size);
+    /**
+     * Add an assumption directive.
+     * @param backend the target backend
+     * @param literals the literals to assume (positive literals are true and negative literals false for the next solve call)
+     * @param size the number of atoms
+     */
+    public void backendWeightAssume(Pointer backend, int literals, long size) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_backend_assume(backend, literals, size);
+    }
 
-	/** {@link clingo_h#clingo_backend_heuristic} */
-  	public byte clingo_backend_heuristic(Pointer p_backend, int atom, int type, int bias, int priority, int p_condition, long size);
+    /**
+     * Add an heuristic directive.
+     * @param backend the target backend
+     * @param atom the target atom
+     * @param type the type of the heuristic modification
+     * @param bias the heuristic bias
+     * @param priority the heuristic priority
+     * @param condition the condition under which to apply the heuristic modification
+     * @param size the number of atoms in the condition
+     */
+    public void backendWeightHeuristic(Pointer backend, int atom, HeuristicType type, int bias, int priority, int condition, long size) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_backend_heuristic(backend, atom, type.getValue(), bias, priority, condition, size);
+    }
 
-	/** {@link clingo_h#clingo_backend_acyc_edge} */
-  	public byte clingo_backend_acyc_edge(Pointer p_backend, int node_u, int node_v, int p_condition, long size);
+    /**
+     * Add an edge directive.
+     * @param backend the target backend
+     * @param nodeU the start vertex of the edge
+     * @param nodeV the end vertex of the edge
+     * @param condition the condition under which the edge is part of the graph
+     * @param size the number of atoms in the condition
+     */
+    public void backendWeightAcycEdge(Pointer backend, int nodeU, int nodeV, int condition, long size) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_backend_acyc_edge(backend, nodeU, nodeV, condition, size);
+    }
 
-  	/** {@link clingo_h#clingo_backend_add_atom} */
-	public byte clingo_backend_add_atom(Pointer p_backend, int p_symbol, IntByReference p_atom);
+    /**
+     * Get a fresh atom to be used in aspif directives.
+     * @param backend the target backend
+     * @param symbol optional symbol to associate the atom with
+     * @return the resulting atom
+     */
+    public int backendWeightAddAtom(Pointer backend, int symbol) {
+		IntByReference atom = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_backend_add_atom(backend, symbol, atom);
+		return atom.getValue();
+    }
 
-    
 	/* *************
 	 * configuration
 	 * ************* */

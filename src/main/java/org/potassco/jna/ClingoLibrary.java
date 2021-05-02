@@ -807,10 +807,10 @@ public interface ClingoLibrary extends Library {
   	public byte clingo_backend_rule(Pointer p_backend, byte choice, int p_head, long head_size, int p_body, long body_size);
 
 	/** {@link clingo_h#clingo_backend_weight_rule} */
-  	public byte clingo_backend_weight_rule(Pointer p_backend, byte choice, int p_head, long head_size, int lower_bound, final clingo_weighted_literal_t p_body, long body_size);
+  	public byte clingo_backend_weight_rule(Pointer p_backend, byte choice, int p_head, long head_size, int lower_bound, int p_body, long body_size);
 
 	/** {@link clingo_h#clingo_backend_minimize} */
-  	public byte clingo_backend_minimize(Pointer p_backend, int priority, final clingo_weighted_literal_t p_literals, long size);
+  	public byte clingo_backend_minimize(Pointer p_backend, int priority, int p_literals, long size);
 
 	/** {@link clingo_h#clingo_backend_project} */
   	public byte clingo_backend_project(Pointer p_backend, int p_atoms, long size);

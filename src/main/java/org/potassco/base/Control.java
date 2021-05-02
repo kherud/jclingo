@@ -44,10 +44,11 @@ public class Control implements AutoCloseable {
 //        controlAdd(control, name, null, 0L, logicProgram);
 //	}
 //
-	public Control(String name, String logicProgram, Clingo clingo) {
+	public Control(String name, String logicProgram, ClingoLibrary clingoLibrary) {
+		this();
+		this.clingoLibrary = clingoLibrary;
 		this.name = name;
 		this.logicProgram = logicProgram;
-		this.clingoLibrary = clingo.getLibrary();
 		this.control = controlNew(null);
 		add(name, null, 0L, logicProgram);
 	}

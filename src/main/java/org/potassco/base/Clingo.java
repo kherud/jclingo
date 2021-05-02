@@ -1856,7 +1856,7 @@ public class Clingo {
 	}
 
 	public Control control(String name, String logicProgram) {
-		return new Control(name, logicProgram, this);
+		return new Control(name, logicProgram, this.clingoLibrary);
 	}
 
 }

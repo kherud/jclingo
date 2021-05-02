@@ -1444,9 +1444,9 @@ public class Clingo {
 		byte success = clingoLibrary.clingo_statistics_value_set(statistics, key, value);
     }
 
-	/* **********
+	/* ************************
 	 *  model and solve control
-	 * ********** */
+	 * ************************ */
 
     /* Functions for Inspecting Models */
 
@@ -1513,7 +1513,7 @@ public class Clingo {
      * @param[out] contained whether the atom is contained
      * @return whether the call was successful
      */
-    public byte clingo_model_contains(Pointer model, long atom) {
+    public byte modelContains(Pointer model, long atom) {
         ByteByReference contained = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_contains(model, atom, contained);
@@ -1527,7 +1527,7 @@ public class Clingo {
      * @param[out] result whether the literal is true
      * @return whether the call was successful
      */
-    public byte clingo_model_is_true(Pointer model, long literal) {
+    public byte modelIsTrue(Pointer model, long literal) {
         ByteByReference result = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_is_true(model, literal, result);
@@ -1540,7 +1540,7 @@ public class Clingo {
      * @param[out] size the number of costs
      * @return whether the call was successful
      */
-    public long clingo_model_cost_size(Pointer model) {
+    public long modelCostSize(Pointer model) {
         SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_cost_size(model, size);
@@ -1559,7 +1559,7 @@ public class Clingo {
      * @see clingo_model_cost_size()
      * @see clingo_model_optimality_proven()
      */
-    public int clingo_model_cost(Pointer model, long size) {
+    public int modelCost(Pointer model, long size) {
         IntByReference costs = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_cost(model, costs, size);
@@ -1574,7 +1574,7 @@ public class Clingo {
      *
      * @see clingo_model_cost()
      */
-    public byte clingo_model_optimality_proven(Pointer model) {
+    public byte modelOptimalityProven(Pointer model) {
         ByteByReference proven = new ByteByReference();
         @SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_optimality_proven(model, proven);
@@ -1587,7 +1587,7 @@ public class Clingo {
      * @param[out] id the resulting thread id
      * @return whether the call was successful
      */
-    public int clingo_model_thread_id(Pointer model) {
+    public int modelThreadId(Pointer model) {
         IntByReference id = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_thread_id(model, id);
@@ -1605,7 +1605,7 @@ public class Clingo {
      * @param[in] size the number of symbols to add
      * @return whether the call was successful
      */
-    public void clingo_model_extend(Pointer model, long symbols, long size) {
+    public void modelExtend(Pointer model, long symbols, long size) {
         @SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_extend(model, symbols, size);
     }
@@ -1620,7 +1620,7 @@ public class Clingo {
      * @param[out] control the resulting solve control object
      * @return whether the call was successful
      */
-    public Pointer clingo_model_context(Pointer model) {
+    public Pointer modelContext(Pointer model) {
         PointerByReference control = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_context(model, control);
@@ -1633,7 +1633,7 @@ public class Clingo {
      * @param[out] atoms the resulting object
      * @return whether the call was successful
      */
-    public Pointer clingo_solve_control_symbolic_atoms(Pointer control) {
+    public Pointer solveControlSymbolicAtoms(Pointer control) {
         PointerByReference atoms = new PointerByReference();
 		@SuppressWarnings("unused")
         byte success = clingoLibrary.clingo_solve_control_symbolic_atoms(control, atoms);

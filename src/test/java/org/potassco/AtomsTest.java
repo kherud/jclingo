@@ -76,8 +76,8 @@ public class AtomsTest {
 				+ "    &b/0 : t, {=}, t, head "
 				+ "}.");
 		Pointer control = clingo.getControl();
-		clingo.controlAdd(control, name, "{a; b}.");
-		clingo.controlAdd(control, name, "&a { 1; 2,3: a,b }.");
+		clingo.controlAdd(control, name, null, 0L, "{a; b}.");
+		clingo.controlAdd(control, name, null, 0L, "&a { 1; 2,3: a,b }.");
 		clingo.ground(name);
 		Pointer theoryAtoms = clingo.controlTheoryAtoms(control);
 		assertEquals(1, clingo.theoryAtomsSize(theoryAtoms));

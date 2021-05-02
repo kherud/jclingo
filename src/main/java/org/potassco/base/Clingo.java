@@ -48,7 +48,7 @@ public class Clingo {
 		this();
         this.control = controlNew(null);
         // add the program
-        controlAdd(control, name, logicProgram);
+        controlAdd(control, name, null, 0L, logicProgram);
 	}
 
 	public Pointer getControl() {
@@ -1816,12 +1816,21 @@ public class Clingo {
 	}
 
 	/**
+	 * Extend the logic program with the given non-ground logic program in string form.
+	 * <p>
+	 * This function puts the given program into a block of form: <tt>\#program name(parameters).</tt>
+	 * <p>
+	 * After extending the logic program, the corresponding program parts are typically grounded with ::clingo_control_ground.
+	 * 
 	 * @param control the target
-	 * @param name
-	 * @param logicProgram
+	 * @param name name of the program block
+	 * @param parameters string array of parameters of the program block
+	 * @param parametersSize number of parameters
+	 * @param program string representation of the program
 	 */
-	public void controlAdd(Pointer control, String name, String logicProgram) {
-		clingoLibrary.clingo_control_add(control, name, null, new Size(0), logicProgram);
+	public void controlAdd(Pointer control, String name, String[] parameters, long parametersSize, String program) {
+		clingoLibrary.clingo_control_add(control, name, parameters, parametersSize, program);
+//		clingoLibrary.clingo_control_add(control, name, null, new Size(0), logicProgram);
 	}
 
     /**

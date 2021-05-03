@@ -1855,6 +1855,10 @@ public class Clingo {
 		return this.clingoLibrary;
 	}
 
+	public Control control() {
+		return new Control(this.clingoLibrary);
+	}
+
 	public Control control(String name, String logicProgram) {
 		return new Control(name, logicProgram, this.clingoLibrary);
 	}

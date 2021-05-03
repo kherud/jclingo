@@ -7,11 +7,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
-import org.potassco.base.Clingo;
-import org.potassco.base.Control;
 import org.potassco.enums.ModelType;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveMode;
+import org.potassco.jna.Part;
+import org.potassco.jna.Size;
 
 import com.sun.jna.Pointer;
 
@@ -20,15 +20,57 @@ public class Solve1Test {
 	/**
 	 * https://potassco.org/clingo/c-api/5.5/model_8c-example.html
 	 */
-	/**
-	 * 
-	 */
 	@Test
-	public void testAb() {
+	public void testAb1() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
 		Control control = clingo.control(name, "1 {a; b} 1. #show c : b. #show a/0.");
 		control.ground(name);
+		Pointer handle = control.solve(SolveMode.YIELD, null, 0, null, null);
+		boolean modelExits = true;
+		while (modelExits) {
+			clingo.solveHandleResume(handle);
+			Pointer model = clingo.solveHandleModel(handle);
+			if (model == null) {
+				modelExits = false;
+			} else {
+				assertEquals(ModelType.STABLE_MODEL, clingo.modelType(model));
+				long modelNumber = clingo.modelNumber(model);
+				System.out.println("Stable model: " + modelNumber);
+				assertEquals(1, modelNumber);
+				Set<String> s1 = new HashSet<String>();
+				s1.add("c");
+				assertEquals(s1, checkModel(clingo, model, ShowType.SHOWN));
+				Set<String> s2 = new HashSet<String>();
+				s2.add("b");
+				assertEquals(s2, checkModel(clingo, model, ShowType.ATOMS));
+				Set<String> s3 = new HashSet<String>();
+				s3.add("c");
+				assertEquals(s3, checkModel(clingo, model, ShowType.TERMS));
+				Set<String> s4 = new HashSet<String>();
+				assertEquals(s4, checkModel(clingo, model, ShowType.COMPLEMENT));
+			}
+		}
+        clingo.solveHandleClose(handle);
+        // clean up
+        control.free();
+        fail("Result differs from origin.");
+	}
+
+	/**
+	 * https://potassco.org/clingo/c-api/5.5/model_8c-example.html
+	 */
+	@Test
+	public void testAb2() {
+		String name = "base";
+		String program = "1 {a; b} 1. #show c : b. #show a/0.";
+		Clingo clingo = Clingo.getInstance();
+		Control control = clingo.control();
+		control.controlNew(null);
+		control.add(name, null, 0L, program);
+        Part[] parts = new Part[1];
+        parts[0] = new Part(name, null, new Size(0));
+        control.ground(parts, new Size(1), null, null);
 		Pointer handle = control.solve(SolveMode.YIELD, null, 0, null, null);
 		boolean modelExits = true;
 		while (modelExits) {

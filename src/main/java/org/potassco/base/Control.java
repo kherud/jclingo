@@ -37,19 +37,16 @@ public class Control implements AutoCloseable {
 		this.name = "base";
 	}
 
-//	public Clingo(String name, String logicProgram) {
-//		this();
-//        this.control = controlNew(null);
-//        // add the program
-//        controlAdd(control, name, null, 0L, logicProgram);
-//	}
-//
-	public Control(String name, String logicProgram, ClingoLibrary clingoLibrary) {
+	public Control(ClingoLibrary clingoLibrary) {
 		this();
 		this.clingoLibrary = clingoLibrary;
+	}
+
+	public Control(String name, String logicProgram, ClingoLibrary clingoLibrary) {
+		this(clingoLibrary);
 		this.name = name;
 		this.logicProgram = logicProgram;
-		this.control = controlNew(null);
+		controlNew(null);
 		add(name, null, 0L, logicProgram);
 	}
 
@@ -76,7 +73,7 @@ public class Control implements AutoCloseable {
 	 * @return 
 	 * @return resulting control object
 	 */
-	public Pointer controlNew(String[] arguments) {
+	public void controlNew(String[] arguments) {
 		PointerByReference parray = null;
 		int argumentsLength = 0;
 		if (arguments != null) {
@@ -94,7 +91,7 @@ public class Control implements AutoCloseable {
 		@SuppressWarnings("unused")
 //        clingoLibrary.clingo_control_new(null, 0, null, null, 20, controlPointer);
 		boolean success = clingoLibrary.clingo_control_new(parray, argumentsLength, logger, loggerData, messageLimit, ctrl);
-		return ctrl.getValue();
+		this.control = ctrl.getValue();
 	}
 
 	/**

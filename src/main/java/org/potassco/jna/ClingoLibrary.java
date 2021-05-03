@@ -1981,7 +1981,7 @@ public interface ClingoLibrary extends Library {
     public byte  clingo_control_add(Pointer p_control, String name, String[] parameters, Size parameters_size, String program);
 
     /** {@link clingo_h#clingo_control_ground} */
-    public byte clingo_control_ground(Pointer p_control, Part[] p_parts, Size parts_size, Pointer ground_callback, Pointer p_ground_callback_data);
+    public byte clingo_control_ground(Pointer p_control, Part[] p_parts, Size parts_size, GroundCallbackT ground_callback, Pointer p_ground_callback_data);
     
     // Solving Functions
 

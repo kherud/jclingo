@@ -7,6 +7,7 @@ import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
 import org.potassco.enums.TruthValue;
 import org.potassco.jna.ClingoLibrary;
+import org.potassco.jna.GroundCallbackT;
 import org.potassco.jna.Part;
 import org.potassco.jna.Size;
 import org.potassco.jna.SolveEventCallback;
@@ -144,7 +145,7 @@ public class Control implements AutoCloseable {
      * @param ground_callback callback to implement external functions
      * @param ground_callback_data user data for ground_callback
      */
-    public void ground(Part[] parts, Size parts_size, Pointer ground_callback, Pointer ground_callback_data) {
+    public void ground(Part[] parts, Size parts_size, GroundCallbackT ground_callback, Pointer ground_callback_data) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_ground(this.control, parts, parts_size, ground_callback, ground_callback_data);
     }
@@ -165,7 +166,6 @@ public class Control implements AutoCloseable {
 	 * @return handle to the current search to enumerate models
 	 */
 	public Pointer solve(SolveMode mode, Pointer assumptions, int assumptionsSize,
-//			SolveEventCallback notify,
 			SolveEventCallback notify,
 			Pointer data) {
         PointerByReference handle = new PointerByReference();

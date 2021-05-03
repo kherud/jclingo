@@ -1331,14 +1331,12 @@ public class Clingo {
 	 * statistics
 	 * ********** */
     
-//    StatisticsType
+    //    StatisticsType
 
     /**
      * Get the root key of the statistics.
-     *
-     * @param[in] statistics the target statistics
-     * @param[out] key the root key
-     * @return whether the call was successful
+     * @param statistics the target statistics
+     * @return the root key
      */
     public long statisticsRoot(Pointer statistics) {
     	IntByReference key = new IntByReference();
@@ -1346,13 +1344,12 @@ public class Clingo {
 		byte success = clingoLibrary.clingo_statistics_root(statistics, key);
 		return key.getValue();
     }
+    
     /**
      * Get the type of a key.
-     *
      * @param[in] statistics the target statistics
      * @param[in] key the key
-     * @param[out] type the resulting type
-     * @return whether the call was success
+     * @return the resulting type
      */
     public StatisticsType statisticsType(Pointer statistics, long key) {
     	IntByReference type = new IntByReference();
@@ -1361,17 +1358,14 @@ public class Clingo {
 		return StatisticsType.fromValue(type.getValue());
     }
     
+    // Functions to access arrays
+    
     /**
-     * @name Functions to access arrays
-     * @{
-
      * Get the size of an array entry.
-     *
      * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_array.
-     * @param[in] statistics the target statistics
-     * @param[in] key the key
-     * @param[out] size the resulting size
-     * @return whether the call was success
+     * @param statistics the target statistics
+     * @param key the key
+     * @return the resulting size
      */
     public long clingoStatisticsArraySize(Pointer statistics, long key) {
     	SizeByReference size = new SizeByReference();
@@ -1379,9 +1373,10 @@ public class Clingo {
 		byte success = clingoLibrary.clingo_statistics_array_size(statistics, key, size);
 		return size.getValue();
     }
+    
     /**
      * Get the subkey at the given offset of an array entry.
-     *
+     * <p>
      * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_array.
      * @param[in] statistics the target statistics
      * @param[in] key the key
@@ -1389,6 +1384,7 @@ public class Clingo {
      * @param[out] subkey the resulting subkey
      * @return whether the call was success
      */
+    
     public int statisticsArrayAt(Pointer statistics, long key, long offset) {
     	IntByReference subkey = new IntByReference();
     	@SuppressWarnings("unused")
@@ -1397,7 +1393,7 @@ public class Clingo {
     }
     /**
      * Create the subkey at the end of an array entry.
-     *
+     * <p>
      * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_array.
      * @param[in] statistics the target statistics
      * @param[in] key the key
@@ -1405,17 +1401,19 @@ public class Clingo {
      * @param[out] subkey the resulting subkey
      * @return whether the call was success
      */
+    
     public int statisticsArrayPush(Pointer statistics, long key, int type) {
     	IntByReference subkey = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_array_push(statistics, key, type, subkey);
 		return subkey.getValue();
     }
+    
+    // Functions to access maps
+    
     /**
-     * @name Functions to access maps
-
      * Get the number of subkeys of a map entry.
-     *
+     * <p>
      * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
      * @param[in] statistics the target statistics
      * @param[in] key the key
@@ -1428,9 +1426,10 @@ public class Clingo {
 		byte success = clingoLibrary.clingo_statistics_map_size(statistics, key, size);
 		return size.getValue();
     }
+    
     /**
      * Test if the given map contains a specific subkey.
-     *
+     * <p>
      * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
      * @param[in] statistics the target statistics
      * @param[in] key the key
@@ -1443,10 +1442,11 @@ public class Clingo {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_map_has_subkey(statistics, key, name, result);
 		return result.getValue();
-  }
+    }
+    
     /**
      * Get the name associated with the offset-th subkey.
-     *
+     * <p>
      * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
      * @param[in] statistics the target statistics
      * @param[in] key the key
@@ -1463,7 +1463,7 @@ public class Clingo {
     
     /**
      * Lookup a subkey under the given name.
-     *
+     * <p>
      * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
      * @note Multiple levels can be looked up by concatenating keys with a period.
      * @param[in] statistics the target statistics
@@ -1481,7 +1481,7 @@ public class Clingo {
     
     /**
      * Add a subkey with the given name.
-     *
+     * <p>
      * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_map.
      * @param[in] statistics the target statistics
      * @param[in] key the key
@@ -1499,7 +1499,7 @@ public class Clingo {
     
     /**
      * Get the value of the given entry.
-     *
+     * <p>
      * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_value.
      * @param[in] statistics the target statistics
      * @param[in] key the key
@@ -1515,7 +1515,7 @@ public class Clingo {
     
     /**
      * Set the value of the given entry.
-     *
+     * <p>
      * @pre The @link clingo_statistics_type() type@endlink of the entry must be @ref ::clingo_statistics_type_value.
      * @param[in] statistics the target statistics
      * @param[in] key the key

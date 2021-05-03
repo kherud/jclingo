@@ -7,6 +7,13 @@ import org.potassco.base.Clingo;
 import org.potassco.base.ClingoException;
 import org.potassco.base.Control;
 import org.potassco.dto.Solution;
+import org.potassco.jna.GroundCallbackT;
+import org.potassco.jna.Location;
+import org.potassco.jna.Part;
+import org.potassco.jna.Size;
+import org.potassco.jna.SymbolCallbackT;
+
+import com.sun.jna.Pointer;
 
 public class Solve2Test {
 
@@ -61,7 +68,16 @@ public class Solve2Test {
 		Clingo clingo = Clingo.getInstance();
 		Control control = clingo.control(name,
 				"{elected(ann; bob; carol; dan; elaine; fred)} = 3.");
-		control.ground(name);
+        Part[] parts = new Part[1];
+        parts[0] = new Part(name, null, new Size(0));
+		control.ground(parts, new Size(1), new GroundCallbackT() {
+			@Override
+			public boolean call(Pointer location, String name, Pointer arguments, long argumentsSize, Pointer data,
+					SymbolCallbackT symbolCallback, Pointer symbolCallbackData) {
+				System.out.println("GroundCallbackT");
+				return true;
+			}
+		}, null);
 		try {
 			Solution solution = control.solve();
 			assertEquals(3, solution.getSize());

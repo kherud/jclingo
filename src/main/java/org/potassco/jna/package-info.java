@@ -12,7 +12,7 @@
  * <li>clingo_truth_value_t (c_int): int
  * <li>
  * <li>
- * <li>
+ * <li>clingo_location_t - struct: Location
  * <li>clingo_weighted_literal_t - struct
  * <li>
  * <li>

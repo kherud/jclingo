@@ -129,6 +129,7 @@ public class InfrastructureTest {
 		assertEquals(0L, clingo.clingoStatisticsArraySize(stats, root));
 	}
 
+
 //    public int statisticsArrayAt(Pointer statistics, long key, long offset) {
 //    public int statisticsArrayPush(Pointer statistics, long key, int type) {
 //    public long statisticsMapSize(Pointer statistics, long key) {

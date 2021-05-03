@@ -44,6 +44,7 @@ public abstract class SolveEventCallback implements Callback {
      * @param goon can be set to false to stop solving
      * @return
      */
+    // typedef bool (*clingo_solve_event_callback_t) (clingo_solve_event_type_t type, void *event, void *data, bool *goon);
     public boolean callback(int type, Pointer event, Pointer data, Pointer goon) {
         return call(type, event, data, goon);
     }

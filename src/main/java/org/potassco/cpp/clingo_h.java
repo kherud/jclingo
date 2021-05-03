@@ -3809,7 +3809,7 @@ public int clingo_main(clingo_application_t p_application, final c_char p_argume
 /*
 Convert cling.h to clingo_h.java
 
- - introduce package org.potassco.jna; and remove on empty line (keeps lin numbers)
+ - introduce package org.potassco.base.jna; and remove on empty line (keeps lin numbers)
  - introduce "public class clingo_h { " in an empty line and "}" at the end
  - replace "#define" by "public static final" for constant definitions (and add type plus =)
  - For all one line typedef replace "typedef int" by "public static final ttypedef int clingo_error_t;

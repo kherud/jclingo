@@ -1,69 +1,14 @@
-package org.potassco;
+package org.potassco.base;
 
 import static org.junit.Assert.*;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.Test;
 import org.potassco.base.Clingo;
 import org.potassco.base.ClingoException;
 import org.potassco.base.Control;
 import org.potassco.dto.Solution;
-import org.potassco.jna.ClingoLibrary;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-
-public class BasicTest {
-
-	@Test
-	public void testCleanupSetting() {
-		String name = "base";
-		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, "a. b.");
-		control.ground(name);
-		assertTrue(control.getEnableCleanup());
-		control.setEnableCleanup(false);
-		assertFalse(control.getEnableCleanup());
-	}
-
-	@Test
-	public void testEnumerationAssumptionSetting() {
-		String name = "base";
-		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, "a. b.");
-		control.ground(name);
-		assertTrue(control.getEnableEnumerationAssumption());
-		control.setEnableEnumerationAssumption(false);
-		assertFalse(control.getEnableEnumerationAssumption());
-	}
-
-	@Test
-	public void testIsConflicting() {
-		String name = "base";
-		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, "a. not a.");
-		control.ground(name);
-		assertTrue(control.isConflicting());
-	}
-
-	/**
-	 * TODO {@link Clingo#controlAssignExternal(Pointer, int, org.potassco.enums.TruthValue)} 
-	 * TODO {@link Clingo#controlReleaseExternal(Pointer, int)} 
-	 */
-	@Test
-	public void testExternalAtoms() {
-		String name = "base";
-		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name,
-				"p(1). p(2). p(3). "
-				+ "#external q(X) : p(X). "
-				+ "q(1). "
-				+ "r(X) :- q(X).");
-//		clingo.ground(name);
-	}
+public class Solve2Test {
 
 	@Test
 	public void testTravellingSalesperson() {
@@ -109,5 +54,37 @@ public class BasicTest {
 			e.printStackTrace();
 		}
 	}
+
+	@Test
+	public void testMultiModels() {
+		String name = "base";
+		Clingo clingo = Clingo.getInstance();
+		Control control = clingo.control(name,
+				"{elected(ann; bob; carol; dan; elaine; fred)} = 3.");
+		control.ground(name);
+		try {
+			Solution solution = control.solve();
+			assertEquals(3, solution.getSize());
+//			clingo.solveHandleModel(null)
+		} catch (ClingoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+//	solveHandleModel
+//    public ModelType modelType(Pointer model) {
+//    public int modelNumber(Pointer model) {
+//    public long modelSymbolsSize(Pointer model, ShowType show) {
+//    public long[] modelSymbols(Pointer model, ShowType show, long size) {
+//    public byte clingo_model_contains(Pointer model, long atom) {
+//    public byte clingo_model_is_true(Pointer model, long literal) {
+//    public long clingo_model_cost_size(Pointer model) {
+//    public int clingo_model_cost(Pointer model, long size) {
+//    public byte clingo_model_optimality_proven(Pointer model) {
+//    public int clingo_model_thread_id(Pointer model) {
+//    public void clingo_model_extend(Pointer model, long symbols, long size) {
+//    public Pointer clingo_solve_control_symbolic_atoms(Pointer control) {
+//    public void clingo_solve_control_add_clause(Pointer control, Pointer clause, long size) {
 
 }

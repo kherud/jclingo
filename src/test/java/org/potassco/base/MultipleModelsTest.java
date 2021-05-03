@@ -1,4 +1,4 @@
-package org.potassco;
+package org.potassco.base;
 
 import static org.junit.Assert.*;
 
@@ -28,6 +28,8 @@ public class MultipleModelsTest {
 				long mn = clingo.modelNumber(model);
 				System.out.println(mn);
 				clingo.solveHandleResume(handle);
+			} else {
+				condition = false;
 			}
 		}
 	}

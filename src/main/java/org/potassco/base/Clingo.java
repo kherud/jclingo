@@ -124,8 +124,10 @@ public class Clingo {
     /**
      * @return the last error code set if an API call fails.
      */
-    public ErrorCode getError() {
-    	return ErrorCode.fromValue(clingoLibrary.clingo_error_code());
+    public int getError() {
+//    	return ErrorCode.fromValue(clingoLibrary.clingo_error_code());
+    	// Since errors may be user defined, we just return an int and not an ErrorCode
+    	return clingoLibrary.clingo_error_code();
     }
 
     /**
@@ -1768,15 +1770,15 @@ public class Clingo {
 	 * ast v2
 	 * ********** */
 
-	/* **********
-	 * 
-	 * ********** */ 
-
+	// TODO: add AST
+	
 	/* ***********************
 	 * ground program observer
 	 * *********************** */
     
     // clingo_ground_program_observer_t
+	
+	// TODO: add observer
     
 	// Control now in Control
 	

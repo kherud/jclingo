@@ -38,7 +38,7 @@ public class VersionTest {
 	public void test3() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, "a. b.");
+		Control control = clingo.control(name, null, "a. b.");
 		control.ground(name);
 		try {
 			Solution solution = control.solve();

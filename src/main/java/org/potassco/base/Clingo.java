@@ -1942,8 +1942,8 @@ public class Clingo {
 		return new Control(this.clingoLibrary);
 	}
 
-	public Control control(String name, String logicProgram) {
-		return new Control(name, logicProgram, this.clingoLibrary);
+	public Control control(String name, String[] arguments, String logicProgram) {
+		return new Control(name, arguments, logicProgram, this.clingoLibrary);
 	}
 
 }

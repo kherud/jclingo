@@ -102,10 +102,11 @@ public class InfrastructureTest {
 	}
 
 	@Test
-	public void testConfiguration() {
+	public void testConfiguration1() {
 		String name = "base";
+		String program = "a. b.";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, "a. b.");
+		Control control = clingo.control(name, null, program);
 //		control.ground(name); - not used here!
 		Pointer conf = control.configuration();
 		int root = clingo.configurationRoot(conf);
@@ -120,8 +121,10 @@ public class InfrastructureTest {
 	@Test
 	public void testStatistics() {
 		String name = "base";
+		String program = "a. b.";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, "a. b.");
+		Control control = clingo.control();
+		control.add(name, null, name);
 //		clingo.ground(name); - not used here!
 		Pointer stats = control.statistics();
 		long root = clingo.statisticsRoot(stats);

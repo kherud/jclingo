@@ -43,12 +43,12 @@ public class Control implements AutoCloseable {
 		this.clingoLibrary = clingoLibrary;
 	}
 
-	public Control(String name, String logicProgram, ClingoLibrary clingoLibrary) {
+	public Control(String name, String[] arguments, String logicProgram, ClingoLibrary clingoLibrary) {
 		this(clingoLibrary);
 		this.name = name;
 		this.logicProgram = logicProgram;
 		controlNew(null);
-		add(name, null, 0L, logicProgram);
+		add(name, arguments, logicProgram);
 	}
 
 	@Override
@@ -126,11 +126,11 @@ public class Control implements AutoCloseable {
 	 * @param parametersSize number of parameters
 	 * @param program string representation of the program
 	 */
-	public void add(String name, String[] parameters, long parametersSize, String program) {
+	public void add(String name, String[] parameters, String program) {
 		if (parameters == null) {
 			parameters = new String[0];
 		}
-		clingoLibrary.clingo_control_add(this.control, name, parameters, new Size(parametersSize), program);
+		clingoLibrary.clingo_control_add(this.control, name, parameters, new Size(parameters.length), program);
 	}
 
     /**

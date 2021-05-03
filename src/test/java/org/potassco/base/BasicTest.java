@@ -22,7 +22,7 @@ public class BasicTest {
 	public void testCleanupSetting() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, "a. b.");
+		Control control = clingo.control(name, null, "a. b.");
 		control.ground(name);
 		assertTrue(control.getEnableCleanup());
 		control.setEnableCleanup(false);
@@ -33,7 +33,7 @@ public class BasicTest {
 	public void testEnumerationAssumptionSetting() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, "a. b.");
+		Control control = clingo.control(name, null, "a. b.");
 		control.ground(name);
 		assertTrue(control.getEnableEnumerationAssumption());
 		control.setEnableEnumerationAssumption(false);
@@ -44,7 +44,7 @@ public class BasicTest {
 	public void testIsConflicting() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, "a. not a.");
+		Control control = clingo.control(name, null, "a. not a.");
 		control.ground(name);
 		assertTrue(control.isConflicting());
 	}
@@ -58,6 +58,7 @@ public class BasicTest {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
 		Control control = clingo.control(name,
+				null,
 				"p(1). p(2). p(3). "
 				+ "#external q(X) : p(X). "
 				+ "q(1). "
@@ -70,6 +71,7 @@ public class BasicTest {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
 		Control control = clingo.control(name,
+				null,
 				"node(1..6). "
 				+ ""
 				+ "edge(1,(2;3;4)). edge(2,(4;5;6)). edge(3,(1;4;5)). "

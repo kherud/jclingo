@@ -24,7 +24,7 @@ public class Solve1Test {
 	public void testAb1() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, "1 {a; b} 1. #show c : b. #show a/0.");
+		Control control = clingo.control(name, null, "1 {a; b} 1. #show c : b. #show a/0.");
 		control.ground(name);
 		Pointer handle = control.solve(SolveMode.YIELD, null, 0, null, null);
 		boolean modelExits = true;
@@ -67,7 +67,7 @@ public class Solve1Test {
 		Clingo clingo = Clingo.getInstance();
 		Control control = clingo.control();
 		control.controlNew(null);
-		control.add(name, null, 0L, program);
+		control.add(name, null, program);
         Part[] parts = new Part[1];
         parts[0] = new Part(name, null, new Size(0));
         control.ground(parts, new Size(1), null, null);

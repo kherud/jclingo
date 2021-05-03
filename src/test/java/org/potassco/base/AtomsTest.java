@@ -16,7 +16,7 @@ public class AtomsTest {
 	public void testSymbolicAtoms() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance(); 
-		Control control = clingo.control(name, "a. b. c. d. e.");
+		Control control = clingo.control(name, null, "a. b. c. d. e.");
 		control.ground(name);
 		Pointer atoms = control.symbolicAtoms();
 		assertEquals(5, clingo.symbolicAtomsSize(atoms));
@@ -72,13 +72,14 @@ public class AtomsTest {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
 		Control control = clingo.control(name,
+				null,
 				"#theory test { "
 				+ "    t { }; "
 				+ "    &a/0 : t, head; "
 				+ "    &b/0 : t, {=}, t, head "
 				+ "}.");
-		control.add(name, null, 0L, "{a; b}.");
-		control.add(name, null, 0L, "&a { 1; 2,3: a,b }.");
+		control.add(name, null, "{a; b}.");
+		control.add(name, null, "&a { 1; 2,3: a,b }.");
 		control.ground(name);
 		Pointer theoryAtoms = control.theoryAtoms();
 		assertEquals(1, clingo.theoryAtomsSize(theoryAtoms));
@@ -97,6 +98,7 @@ public class AtomsTest {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
 		Control control = clingo.control(name,
+				null,
 				"#const n=6. "
 				+ "like(1,2; 3,4). "
 				+ "dislike(2,3; 1,3).");

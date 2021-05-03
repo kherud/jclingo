@@ -22,6 +22,7 @@ public class Solve2Test {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
 		Control control = clingo.control(name,
+				null,
 				"node(1..6). "
 				+ ""
 				+ "edge(1,(2;3;4)). edge(2,(4;5;6)). edge(3,(1;4;5)). "
@@ -67,6 +68,7 @@ public class Solve2Test {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
 		Control control = clingo.control(name,
+				null,
 				"{elected(ann; bob; carol; dan; elaine; fred)} = 3.");
         Part[] parts = new Part[1];
         parts[0] = new Part(name, null, new Size(0));

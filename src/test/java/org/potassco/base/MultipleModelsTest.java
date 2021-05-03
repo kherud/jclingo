@@ -16,7 +16,7 @@ public class MultipleModelsTest {
 		Clingo clingo = Clingo.getInstance();
 		Control control = clingo.control();
 		control.controlNew(null);
-		control.add(name, null, 0L, program);
+		control.add(name, null, program);
 		control.ground(name);
 		Pointer handle = control.solve(SolveMode.YIELD, null, 0, null, null);
 		boolean modelExits = true;

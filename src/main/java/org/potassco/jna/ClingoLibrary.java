@@ -1986,7 +1986,7 @@ public interface ClingoLibrary extends Library {
     // Solving Functions
 
     /** {@link clingo_h#clingo_control_solve} */
-    public byte clingo_control_solve(Pointer control, int mode, Pointer assumptions, int assumptions_size, SolveEventCallbackT notify, Pointer data, PointerByReference handle);
+    public byte clingo_control_solve(Pointer control, int mode, Pointer assumptions, int assumptions_size, SolveEventCallback notify, Pointer data, PointerByReference handle);
 
     /** {@link clingo_h#clingo_control_cleanup} */
 	public byte clingo_control_cleanup(Pointer p_control);

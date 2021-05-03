@@ -9,7 +9,7 @@ import org.potassco.enums.TruthValue;
 import org.potassco.jna.ClingoLibrary;
 import org.potassco.jna.Part;
 import org.potassco.jna.Size;
-import org.potassco.jna.SolveEventCallbackT;
+import org.potassco.jna.SolveEventCallback;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.StringArray;
@@ -166,7 +166,7 @@ public class Control implements AutoCloseable {
 	 */
 	public Pointer solve(SolveMode mode, Pointer assumptions, int assumptionsSize,
 //			SolveEventCallback notify,
-			SolveEventCallbackT notify,
+			SolveEventCallback notify,
 			Pointer data) {
         PointerByReference handle = new PointerByReference();
 		@SuppressWarnings("unused")
@@ -484,7 +484,7 @@ public class Control implements AutoCloseable {
 	public Solution solve() throws ClingoException {
 		Clingo clingo = Clingo.getInstance();
         Solution solution = new Solution();
-        SolveEventCallbackT cb = new SolveEventCallbackT() {
+        SolveEventCallback cb = new SolveEventCallback() {
             public boolean call(int type, Pointer event, Pointer data, Pointer goon) {
                 SolveEventType t = SolveEventType.fromValue(type);
                 switch (t) {

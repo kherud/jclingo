@@ -34,7 +34,7 @@ import com.sun.jna.Pointer;
  * @author Josef Schneeberger
  * {@link clingo_h#clingo_solve_event_callback_t}
  */
-public abstract class SolveEventCallbackT implements Callback {
+public abstract class SolveEventCallback implements Callback {
     public abstract boolean call(int type, Pointer event, Pointer data, Pointer goon);
 
     /**

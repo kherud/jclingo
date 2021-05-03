@@ -85,9 +85,8 @@ public class AtomsTest {
 		assertEquals(TermType.SYMBOL, clingo.theoryAtomsTermType(theoryAtoms, 0));
 		assertEquals(0, clingo.theoryAtomsTermNumber(theoryAtoms, 0));
 		assertEquals("a", clingo.theoryAtomsTermName(theoryAtoms, 0));
-// TODO:
-//		int[] args = clingo.theoryAtomsTermArguments(theoryAtoms, 0);
-//		assertEquals("a", args);
+		long[] args = clingo.theoryAtomsTermArguments(theoryAtoms, 0);
+		assertEquals(null, args);
 		long stringSize = clingo.theoryAtomsTermToStringSize(theoryAtoms, 0);
 		assertEquals(2, stringSize);
 		assertEquals("a", clingo.theoryAtomsTermToString(theoryAtoms, 0, stringSize).trim());

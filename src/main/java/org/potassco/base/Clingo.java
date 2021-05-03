@@ -747,17 +747,18 @@ public class Clingo {
      * @param term id of the term
      * @return the resulting arguments in form of an array of term ids
      */
-    public int[] theoryAtomsTermArguments(Pointer atoms, int term) {
+    public long[] theoryAtomsTermArguments(Pointer atoms, int term) {
     	PointerByReference arguments = new PointerByReference();
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_term_arguments(atoms, term, arguments, size);
-		int[] result = new int[Math.toIntExact(size.getValue())];
-		for (int i = 0; i < result.length; i++) {
-			Pointer p = arguments.getPointer();
-			result[i] = p.getInt(8); // TODO ???
+		Pointer v = arguments.getValue();
+		int s = Math.toIntExact(size.getValue());
+		if (v != null && s > 0) {
+			return v.getLongArray(0, s);
+		} else {
+			return null;
 		}
-		return result;
     }
 
     /**
@@ -793,34 +794,30 @@ public class Clingo {
      * Get the tuple (array of theory terms) of the given theory element.
      * @param atoms container where the element is stored
      * @param element id of the element
-     * @return
+     * @return the resulting array of term ids
      */
-    //! @param[out] tuple the resulting array of term ids
-    //! @param[out] size the number of term ids
-    public Pointer theoryAtomsElementTuple(Pointer atoms, int element) {
+    public long[] theoryAtomsElementTuple(Pointer atoms, int element) {
 		PointerByReference tuple = new PointerByReference();
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_element_tuple(atoms, element, tuple, size);
-//		long s = size.getValue(); // TODO return size
-		return tuple.getValue();
+		int s = Math.toIntExact(size.getValue());
+		return tuple.getValue().getLongArray(0, s);
     }
 
     /**
      * Get the condition (array of aspif literals) of the given theory element.
      * @param atoms container where the element is stored
      * @param element id of the element
-     * @return
+     * @return the resulting array of aspif literals
      */
-    //! @param[out] condition the resulting array of aspif literals
-    //! @param[out] size the number of term literals
-    public Pointer theoryAtomsElementCondition(Pointer atoms, int element) {
+    public long[] theoryAtomsElementCondition(Pointer atoms, int element) {
 		PointerByReference condition = new PointerByReference();
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_element_condition(atoms, element, condition, size);
-//		long s = size.getValue(); // TODO return size
-		return condition.getValue();
+		int s = Math.toIntExact(size.getValue());
+		return condition.getValue().getLongArray(0, s);
     }
 
     /**
@@ -898,16 +895,15 @@ public class Clingo {
      * Get the theory elements associated with the theory atom.
      * @param atoms container where the atom is stored
      * @param atom id of the atom
-     * @return
+     * @return the resulting array of elements
      */
-    //! @param[out] elements the resulting array of elements
-    //! @param[out] size the number of elements
-    public long theoryAtomsAtomElements(Pointer atoms, int atom) {
-		IntByReference elements = new IntByReference();
+    public long[] theoryAtomsAtomElements(Pointer atoms, int atom) {
+		PointerByReference elements = new PointerByReference();
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_atom_elements(atoms, atom, elements, size);
-		return elements.getValue();
+		int s = Math.toIntExact(size.getValue());
+		return elements.getValue().getLongArray(0, s);
     }
 
     /**
@@ -929,16 +925,16 @@ public class Clingo {
      * @note The lifetime of the string is tied to the current solve step.
      * @param atoms container where the atom is stored
      * @param atom id of the atom
+     * @return 
      * @return
      */
-    //! @param[out] connective the resulting theory operator
-    //! @param[out] term the resulting term
-    public void theoryAtomsAtomGuard(Pointer atoms, int atom) {
-		byte[] connective = null;
-		int term = 0;
+    public long[] theoryAtomsAtomGuard(Pointer atoms, int atom) {
+		PointerByReference connective = new PointerByReference();
+		IntByReference term = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_atom_guard(atoms, atom, connective, term);
-//		return elements.getValue();
+		int s = term.getValue();
+		return connective.getValue().getLongArray(0, s);
     }
 
     /**
@@ -1809,13 +1805,13 @@ public class Clingo {
   	 * @param handle the target
   	 * @return
   	 */
-  	public Pointer solveHandleCore(Pointer handle) {
+  	public long[] solveHandleCore(Pointer handle) {
 		PointerByReference core = new PointerByReference();
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_solve_handle_core(handle, core, size);
-		// TODO size
-		return core.getValue();
+		int s = Math.toIntExact(size.getValue());
+		return core.getValue().getLongArray(0, s);
   	}
 
   	/**

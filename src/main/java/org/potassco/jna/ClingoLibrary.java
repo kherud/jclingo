@@ -250,13 +250,13 @@ public interface ClingoLibrary extends Library {
     public byte clingo_theory_atoms_atom_term(Pointer p_atoms, int atom, IntByReference p_term);
 
     /** {@link clingo_h#clingo_theory_atoms_atom_elements} */
-    public byte clingo_theory_atoms_atom_elements(Pointer p_atoms, int atom, IntByReference p_p_elements, SizeByReference p_size);
+    public byte clingo_theory_atoms_atom_elements(Pointer p_atoms, int atom, PointerByReference p_p_elements, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_theory_atoms_atom_has_guard} */
     public byte clingo_theory_atoms_atom_has_guard(Pointer p_atoms, int atom, ByteByReference p_has_guard);
 
     /** {@link clingo_h#clingo_theory_atoms_atom_guard} */
-    public byte clingo_theory_atoms_atom_guard(Pointer p_atoms, int atom, byte[] p_p_connective, int p_term);
+    public byte clingo_theory_atoms_atom_guard(Pointer p_atoms, int atom, PointerByReference p_p_connective, IntByReference p_term);
 
     /** {@link clingo_h#clingo_theory_atoms_atom_literal} */
     public byte clingo_theory_atoms_atom_literal(Pointer p_atoms, int atom, IntByReference p_literal);

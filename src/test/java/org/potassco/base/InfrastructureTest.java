@@ -2,15 +2,11 @@ package org.potassco.base;
 
 import static org.junit.Assert.*;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.potassco.base.Clingo;
-import org.potassco.base.ClingoException;
-import org.potassco.base.Control;
 import org.potassco.enums.ConfigurationType;
-import org.potassco.enums.ErrorCode;
 import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;
 
@@ -53,16 +49,17 @@ public class InfrastructureTest {
 		
 		String c = "clingo";
 		assertEquals(c, clingo.symbolString(clingo.symbolCreateString(c)));
-//		assertEquals("", clingo.symbolString(clingo.symbolCreateSupremum()));
-//		assertEquals("", clingo.symbolString(clingo.symbolCreateInfimum()));
+		long sup = clingo.symbolCreateSupremum();
+		assertEquals(sup, clingo.symbolCreateSupremum());
+		long inf = clingo.symbolCreateInfimum();
+		assertEquals(inf, clingo.symbolCreateInfimum());
 		
 		String p = "potassco";
 		long ps = clingo.symbolCreateId(p, true);
-//		assertEquals(p, clingo.symbolString(ps));
+		assertEquals(null, clingo.symbolString(ps));
 		assertEquals(p, clingo.symbolName(ps));
 		assertEquals(true, clingo.symbolIsPositive(ps));
 		assertEquals(false, clingo.symbolIsNegative(ps));
-		clingo.symbolArguments(ps, null, null);
 	}
 
 	@Test
@@ -73,7 +70,7 @@ public class InfrastructureTest {
 		String c = "clingo";
 		long s = clingo.symbolCreateString(c);
 		String p = "potassco";
-		List<Long> args = new LinkedList<Long>();
+		List<Long> args = new ArrayList<Long>();
 		args.add(num);
 		args.add(s);
 		long f = clingo.symbolCreateFunction(p, args, true);
@@ -88,10 +85,14 @@ public class InfrastructureTest {
 		assertTrue(clingo.symbolIsLessThan(s, f));
 		int hash = clingo.symbolHash(f);
 		assertEquals(hash, clingo.symbolHash(f));
+		long[] res = clingo.symbolArguments(f);
+		for (int i = 0; i < res.length; i++) {
+			assertFalse(clingo.symbolIsEqualTo(args.get(i), res[i]));
+		}
 	}
-	
+
 	@Test
-	public void test() {
+	public void testSymbolType() {
 		Clingo clingo = Clingo.getInstance();
 		String c = "clingo";
 		assertEquals(c, clingo.addString(c));

@@ -189,22 +189,51 @@ public class Clingo {
 		return clingoLibrary.clingo_signature_arity(signature);
 	}
 
+	/**
+	 * Whether the signature is positive (is not classically negated).
+	 * @param signature the target signature
+	 * @return
+	 */
 	public boolean signatureIsPositive(Pointer signature) {
 		return clingoLibrary.clingo_signature_is_positive(signature) == 1;
 	}
 
+	/**
+	 * Whether the signature is negative (is classically negated).
+	 * @param signature the target signature
+	 * @return
+	 */
 	public boolean signatureIsNegative(Pointer signature) {
 		return clingoLibrary.clingo_signature_is_negative(signature) == 1;
 	}
 
+	/**
+	 * Check if two signatures are equal.
+	 * @param a first signature
+	 * @param b second signature
+	 * @return
+	 */
 	public boolean signatureIsEqualTo(Pointer a, Pointer b) {
 		return clingoLibrary.clingo_signature_is_equal_to(a, b) == 1;
 	}
-	
+
+	/**
+	 * Check if a signature is less than another signature.
+	 * <p>
+	 * Signatures are compared first by sign (unsigned < signed), then by aritthen by name.
+	 * @param a first signature
+	 * @param b second signature
+	 * @return
+	 */
 	public boolean signatureIsLessThan(Pointer a, Pointer b) {
 		return clingoLibrary.clingo_signature_is_less_than(a, b) == 1;
 	}
 	
+	/**
+	 * Calculate a hash code of a signature.
+	 * @param signature the target signature
+	 * @return
+	 */
 	public int signatureHash(Pointer signature) {
 		Size hash = clingoLibrary.clingo_signature_hash(signature);
 		return hash.intValue();
@@ -214,24 +243,41 @@ public class Clingo {
 	 * Symbol Construction Functions
 	 * ***************************** */
 
+	/**
+	 * Construct a symbol representing a number.
+	 * @param number
+	 * @return a reference to the symbol
+	 */
 	public long symbolCreateNumber(int number) {
 		SymbolByReference sbr = new SymbolByReference();
 		clingoLibrary.clingo_symbol_create_number(number, sbr);
 		return sbr.getValue();
 	}
 
-	long symbolCreateSupremum() {
+	/**
+	 * Construct a symbol representing \#sup.
+	 * @return a reference to the symbol
+	 */
+	public long symbolCreateSupremum() {
 		SymbolByReference pointer = new SymbolByReference();
 		clingoLibrary.clingo_symbol_create_supremum(pointer);
 		return pointer.getValue();
 	}
 
-	long symbolCreateInfimum() {
+	/**
+	 * Construct a symbol representing \#inf.
+	 * @return a reference to the symbol
+	 */
+	public long symbolCreateInfimum() {
 		SymbolByReference pointer = new SymbolByReference();
 		clingoLibrary.clingo_symbol_create_supremum(pointer);
 		return pointer.getValue();
 	}
 
+	/**
+	 * Construct a symbol representing a string.
+	 * @return a reference to the symbol
+	 */
 	public long symbolCreateString(String string) {
 		SymbolByReference symb = new SymbolByReference();
 		@SuppressWarnings("unused")
@@ -239,6 +285,14 @@ public class Clingo {
 		return symb.getValue();
 	}
 
+	/**
+	 * Construct a symbol representing an id.
+	 * <p>
+	 * @note This is just a shortcut for clingo_symbol_create_function() with empty arguments.
+	 * @param name the name
+	 * @param positive whether the symbol has a classical negation sign
+	 * @return a reference to the symbol
+	 */
 	public long symbolCreateId(String name, boolean positive) {
 		SymbolByReference symb = new SymbolByReference();
 		@SuppressWarnings("unused")
@@ -246,6 +300,15 @@ public class Clingo {
 		return symb.getValue();
 	}
 
+	/**
+	 * Construct a symbol representing a function or tuple.
+	 * <p>
+	 * @note To create tuples, the empty string has to be used as name.
+	 * @param name the name of the function
+	 * @param arguments the arguments of the function
+	 * @param positive whether the symbol has a classical negation sign
+	 * @return a reference to the symbol
+	 */
 	public long symbolCreateFunction(String name, List<Long> arguments, boolean positive) {
 		SymbolByReference symb = new SymbolByReference();
 		int argSize = arguments.size();
@@ -264,6 +327,11 @@ public class Clingo {
 
 	// Symbol Inspection Functions
 	
+	/**
+	 * Get the number of a symbol.
+	 * @param symbol reference to a symbol
+	 * @return the resulting number
+	 */
 	public int symbolNumber(long symbol) {
 		IntByReference ibr = new IntByReference();
 		@SuppressWarnings("unused")
@@ -271,6 +339,11 @@ public class Clingo {
 		return ibr.getValue();
 	}
 
+	/**
+	 * Get the name of a symbol.
+	 * @param symbol reference to a symbol
+	 * @return the resulting name
+	 */
 	public String symbolName(long symbol) {
 		String[] pointer = new String[1];
 		@SuppressWarnings("unused")
@@ -279,6 +352,13 @@ public class Clingo {
 		return v;
 	}
 	
+	/**
+	 * Get the string of a symbol.
+	 * <p>
+	 * @note The string is internalized and valid for the duration of the process.
+	 * @param symbol reference to a symbol
+	 * @return the resulting string
+	 */
 	public String symbolString(long symbol) {
 		// https://stackoverflow.com/questions/29162569/jna-passing-string-by-reference-to-dll-but-non-return
 		String[] r1 = new String[1];
@@ -287,6 +367,11 @@ public class Clingo {
 		return r1[0];
 	}
 
+	/**
+	 * Check if a function is positive (does not have a sign).
+	 * @param symbol reference to a symbol
+	 * @return true if positive
+	 */
 	public boolean symbolIsPositive(long symbol) {
 		ByteByReference p_positive = new ByteByReference();
 		@SuppressWarnings("unused")
@@ -295,6 +380,11 @@ public class Clingo {
 		return v == 1;
 	}
 
+	/**
+	 * Check if a function is negative (has a sign).
+	 * @param symbol reference to a symbol
+	 * @return true if negative
+	 */
 	public boolean symbolIsNegative(long symbol) {
 		ByteByReference p_positive = new ByteByReference();
 		@SuppressWarnings("unused")
@@ -304,23 +394,18 @@ public class Clingo {
 	}
 	
 	/**
-	 * Infunctional
-	 * TODO: Output parameter p_p_arguments not yet accessed.
-	 * @param symbol [in]
-	 * @param arguments [out]
-	 * @param size [out]
+	 * Get the arguments of a symbol.
+	 * @param symbol the target symbol
+	 * @return the resulting arguments as an array of symbol references
 	 */
-	public void symbolArguments(long symbol, List<Long> arguments, Long size) {
-		if (arguments == null) {
-			arguments = new LinkedList<Long>();
-		}
+	public long[] symbolArguments(long symbol) {
 		PointerByReference p_p_arguments = new PointerByReference();
 		SizeByReference p_arguments_size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_arguments(symbol, p_p_arguments, p_arguments_size);
-		size = p_arguments_size.getValue();
-//		Pointer p = p_p_arguments.getPointer();
-//		long[] adrs = p.getLongArray(8, 2);
+		long size = p_arguments_size.getValue();
+		Pointer p = p_p_arguments.getValue();
+		return p.getLongArray(0, Math.toIntExact(size));
 	}
 	
     /**

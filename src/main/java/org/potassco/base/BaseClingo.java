@@ -1394,7 +1394,6 @@ public class BaseClingo {
      * @param[out] subkey the resulting subkey
      * @return whether the call was success
      */
-    
     public int statisticsArrayPush(Pointer statistics, long key, int type) {
     	IntByReference subkey = new IntByReference();
 		@SuppressWarnings("unused")
@@ -1430,7 +1429,7 @@ public class BaseClingo {
      * @param[out] result true if the map has a subkey with the given name
      * @return whether the call was success
      */
-    public byte statisticsMapHas_subkey(Pointer statistics, long key, String name) {
+    public byte statisticsMapHasSubkey(Pointer statistics, long key, String name) {
         ByteByReference result = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_map_has_subkey(statistics, key, name, result);
@@ -1447,7 +1446,7 @@ public class BaseClingo {
      * @param[out] name the resulting name
      * @return whether the call was success
      */
-    public String statisticsMapSubkey_name(Pointer statistics, long key, long offset) {
+    public String statisticsMapSubkeyName(Pointer statistics, long key, long offset) {
     	String[] name = new String[1];
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_map_subkey_name(statistics, key, offset, name);

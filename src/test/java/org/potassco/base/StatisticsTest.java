@@ -3,6 +3,7 @@ package org.potassco.base;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.potassco.enums.SolveMode;
 
 import com.sun.jna.Pointer;
 
@@ -14,13 +15,21 @@ public class StatisticsTest {
 	@Test
 	public void test() {
 		String name = "base";
-		String[] arguments = {"-t", "2", "--stats=2"};
-		String program = "1 { a; b }.";
+		String[] arguments = null;
+		String program = "a :- not b. b :- not a.";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, arguments, program);
+		Control control = clingo.control();
 		Pointer conf = control.configuration();
-		long root = clingo.configurationRoot(conf);
+		int root = clingo.configurationRoot(conf);
 		int confSub = clingo.configurationMapAt(conf, root, "stats");
+		clingo.configurationValueSet(conf, confSub, "1");
+		control.add(name, arguments, program);
+		control.ground(name);
+//		Pointer handle = control.solve(SolveMode.YIELD, null, 0, eventHandler, null);
+//		boolean modelExists = true;
+//		while (modelExists) {
+//			control.so
+//		}
 	}
 
 }

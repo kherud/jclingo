@@ -28,8 +28,8 @@ public class StatisticsTest {
 		
 		String name = "base";
 //		String[] arguments = {"0"};
-//		String[] arguments = {"-n", "0"};
-		String[] arguments = null;
+		String[] arguments = {"-n", "0"};
+//		String[] arguments = null;
 		String program = "a :- not b. b :- not a.";
 		Clingo clingo = new Clingo();
 		Pointer control = clingo.control(arguments);

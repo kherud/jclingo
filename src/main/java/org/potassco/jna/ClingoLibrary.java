@@ -2052,7 +2052,7 @@ public interface ClingoLibrary extends Library {
     /** {@link clingo_h#clingo_control_program_builder} */
 	public byte clingo_control_program_builder(Pointer p_control, PointerByReference p_p_builder);
 	
-    // Extending Clingo
+    // Extending BaseClingo
 	
 	// clingo_main_function_t
 	// clingo_default_model_printer_t

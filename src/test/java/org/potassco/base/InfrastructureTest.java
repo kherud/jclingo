@@ -16,7 +16,7 @@ public class InfrastructureTest {
 
 	@Test
 	public void testSignature() {
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
 		try {
 			String name = "test";
 			int arity = 2;
@@ -38,7 +38,7 @@ public class InfrastructureTest {
 
 	@Test
 	public void testSymbolHandling() {
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
 		int number = 42;
 		long num = clingo.symbolCreateNumber(number);
 		assertEquals(number, clingo.symbolNumber(num));
@@ -64,7 +64,7 @@ public class InfrastructureTest {
 
 	@Test
 	public void testSymbolCreateFunction() {
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
 		int number = 42;
 		long num = clingo.symbolCreateNumber(number);
 		String c = "clingo";
@@ -93,7 +93,7 @@ public class InfrastructureTest {
 
 	@Test
 	public void testSymbolType() {
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
 		String c = "clingo";
 		assertEquals(c, clingo.addString(c));
 		String t = "f(a,42)";
@@ -105,7 +105,7 @@ public class InfrastructureTest {
 	public void testConfiguration1() {
 		String name = "base";
 		String program = "a. b.";
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, program);
 //		clingo.controlGround(control, name); - not used here!
@@ -123,7 +123,7 @@ public class InfrastructureTest {
 	public void testStatistics() {
 		String name = "base";
 //		String program = "a. b.";
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, name);
 //		clingo.ground(name); - not used here!

@@ -55,27 +55,27 @@ import com.sun.jna.ptr.PointerByReference;
  * IN THE SOFTWARE.
  *
  * <p>
- * Clingo is a singleton and holds the reference to the clingoLibrary.
+ * BaseClingo is a singleton and holds the reference to the clingoLibrary.
  * @author Josef Schneeberger
  *
  */
-public class Clingo {
+public class BaseClingo {
 
     /**
      * SingletonHolder is loaded on the first execution of Singleton.getInstance() 
      * or the first access to SingletonHolder.INSTANCE, not before.
      */
     private static class ClingoHolder { 
-        private static final Clingo INSTANCE = new Clingo();
+        private static final BaseClingo INSTANCE = new BaseClingo();
     }
 
-    public static Clingo getInstance() {
+    public static BaseClingo getInstance() {
         return ClingoHolder.INSTANCE;
     }
     
 	private ClingoLibrary clingoLibrary;
 
-	private Clingo() {
+	private BaseClingo() {
 		super();
 		this.clingoLibrary = ClingoLibrary.INSTANCE;
 	}
@@ -1906,7 +1906,7 @@ public class Clingo {
 	}
 
 	/**
-	 * Free a control object created with {@link Clingo#controlNew(String[])}.
+	 * Free a control object created with {@link BaseClingo#controlNew(String[])}.
 	 * @param control the target
 	 */
 	// TODO: make invisible / remove if close is working properly 
@@ -2360,7 +2360,7 @@ public class Clingo {
 	}
 
 	public Solution solve(Pointer control) throws ClingoException {
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
         Solution solution = new Solution();
         SolveEventCallback cb = new SolveEventCallback() {
             public boolean call(int type, Pointer event, Pointer data, Pointer goon) {

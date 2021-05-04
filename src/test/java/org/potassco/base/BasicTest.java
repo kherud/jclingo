@@ -14,7 +14,7 @@ public class BasicTest {
 	@Test
 	public void testCleanupSetting() {
 		String name = "base";
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, "a. b.");
         Part[] parts = new Part[1];
@@ -28,7 +28,7 @@ public class BasicTest {
 	@Test
 	public void testEnumerationAssumptionSetting() {
 		String name = "base";
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, "a. b.");
         Part[] parts = new Part[1];
@@ -42,7 +42,7 @@ public class BasicTest {
 	@Test
 	public void testIsConflicting() {
 		String name = "base";
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, "a. not a.");
         Part[] parts = new Part[1];
@@ -52,13 +52,13 @@ public class BasicTest {
 	}
 
 	/**
-	 * TODO {@link Clingo#controlAssignExternal(Pointer, int, org.potassco.base.enums.TruthValue)} 
-	 * TODO {@link Clingo#controlReleaseExternal(Pointer, int)} 
+	 * TODO {@link BaseClingo#controlAssignExternal(Pointer, int, org.potassco.base.enums.TruthValue)} 
+	 * TODO {@link BaseClingo#controlReleaseExternal(Pointer, int)} 
 	 */
 	@Test
 	public void testExternalAtoms() {
 		String name = "base";
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name,
 				null,
@@ -72,7 +72,7 @@ public class BasicTest {
 	@Test
 	public void testTravellingSalesperson() {
 		String name = "base";
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name,
 				null,

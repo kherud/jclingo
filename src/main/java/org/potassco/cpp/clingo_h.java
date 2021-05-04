@@ -27,7 +27,7 @@ package org.potassco.cpp;
 //!
 //! @author Roland Kaminski
 
-//! @mainpage Clingo C API
+//! @mainpage BaseClingo C API
 //! This API provides functions to ground and solve logic programs.
 //!
 //! The documentation is structured into different modules.
@@ -3700,7 +3700,7 @@ public bool clingo_control_program_builder(clingo_control_t p_control, clingo_pr
 //!
 //! ## Code ##
 
-//! @defgroup ExtendingClingo Extending Clingo
+//! @defgroup ExtendingClingo Extending BaseClingo
 //! Functions to customize clingo's main function.
 //!
 //! This module allows for customizing the clingo application.

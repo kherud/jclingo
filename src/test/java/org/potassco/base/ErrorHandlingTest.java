@@ -9,7 +9,7 @@ public class ErrorHandlingTest {
 
 	@Test
 	public void testErrorMessage() {
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
 		assertEquals("success", clingo.errorString(0));
 		assertEquals("runtime error", clingo.errorString(1));
 		assertEquals("logic error", clingo.errorString(2));

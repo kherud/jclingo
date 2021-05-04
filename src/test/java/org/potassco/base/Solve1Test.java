@@ -23,7 +23,7 @@ public class Solve1Test {
 	@Test
 	public void testAb1() {
 		String name = "base";
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, "1 {a; b} 1. #show c : b. #show a/0.");
         Part[] parts = new Part[1];
@@ -67,7 +67,7 @@ public class Solve1Test {
 	public void testAb2() {
 		String name = "base";
 		String program = "1 {a; b} 1. #show c : b. #show a/0.";
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, program);
         Part[] parts = new Part[1];
@@ -104,7 +104,7 @@ public class Solve1Test {
         fail("Result differs from origin.");
 	}
 
-	private Set<String> checkModel(Clingo clingo, Pointer model, ShowType shownType) {
+	private Set<String> checkModel(BaseClingo clingo, Pointer model, ShowType shownType) {
 		Set<String> result = new HashSet<String>();
 		long size = clingo.modelSymbolsSize(model, shownType);
 		long[] symbols = clingo.modelSymbols(model, shownType, size);

@@ -17,7 +17,7 @@ public class StatisticsTest {
 		String name = "base";
 		String[] arguments = null;
 		String program = "a :- not b. b :- not a.";
-		Clingo clingo = Clingo.getInstance();
+		BaseClingo clingo = BaseClingo.getInstance();
 		Pointer control = clingo.control(arguments);
 		Pointer conf = clingo.controlConfiguration(control);
 		int root = clingo.configurationRoot(conf);

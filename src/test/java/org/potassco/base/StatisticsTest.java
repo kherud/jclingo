@@ -36,13 +36,13 @@ public class StatisticsTest {
 		Pointer conf = clingo.controlConfiguration(control);
 		int rootKey = clingo.configurationRoot(conf);
 
-		// configure to enumerate all models
-		int subKey = clingo.configurationMapAt(conf, rootKey, "solve.models");
-		clingo.configurationValueSet(conf, subKey, "0");
+// configure to enumerate all models
+//		int subKey = clingo.configurationMapAt(conf, rootKey, "solve.models");
+//		clingo.configurationValueSet(conf, subKey, "0");
 
 		int confSub = clingo.configurationMapAt(conf, rootKey, "stats");
 		clingo.configurationValueSet(conf, confSub, "1");
-		clingo.controlAdd(control, name, arguments, program);
+		clingo.controlAdd(control, name, null, program);
 		Part[] parts = new Part[1];
 		parts[0] = new Part(name, null, new Size(0));
 		clingo.controlGround(control, parts, new Size(1), null, null);

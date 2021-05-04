@@ -40,7 +40,7 @@ public class Clingo extends BaseClingo {
 		// clingoLibrary.clingo_control_new(null, 0, null, null, 20, controlPointer);
 		PointerByReference ctrl = new PointerByReference();
 		@SuppressWarnings("unused")
-		boolean success = clingoLibrary.clingo_control_new(args, argumentsLength, logger, loggerData, messageLimit, ctrl);
+		byte success = clingoLibrary.clingo_control_new(args, argumentsLength, logger, loggerData, messageLimit, ctrl);
 		return ctrl.getValue();
 	}
 

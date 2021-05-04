@@ -1968,7 +1968,7 @@ public interface ClingoLibrary extends Library {
     // clingo_control_t
   
     /** {@link clingo_h#clingo_control_new} */
-    boolean clingo_control_new(StringArray arguments, int arguments_size, Pointer logger, Pointer logger_data, int message_limit, PointerByReference control);
+    public byte clingo_control_new(StringArray arguments, int arguments_size, Pointer logger, Pointer logger_data, int message_limit, PointerByReference control);
   
     /** {@link clingo_h#clingo_control_free} */
     void clingo_control_free(Pointer control);

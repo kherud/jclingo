@@ -15,7 +15,7 @@ public class AtomsTest {
 	@Test
 	public void testSymbolicAtoms() {
 		String name = "base";
-		BaseClingo clingo = BaseClingo.getInstance(); 
+		BaseClingo clingo = new BaseClingo(); 
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, "a. b. c. d. e.");
         Part[] parts = new Part[1];
@@ -73,7 +73,7 @@ public class AtomsTest {
 	@Test
 	public void testTheoryAtoms() {
 		String name = "base";
-		BaseClingo clingo = BaseClingo.getInstance();
+		BaseClingo clingo = new BaseClingo();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name,
 				null,
@@ -102,7 +102,7 @@ public class AtomsTest {
 	@Test
 	public void testConstants() {
 		String name = "base";
-		BaseClingo clingo = BaseClingo.getInstance();
+		BaseClingo clingo = new BaseClingo();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name,
 				null,

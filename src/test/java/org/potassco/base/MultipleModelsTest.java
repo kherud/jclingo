@@ -15,7 +15,7 @@ public class MultipleModelsTest {
 	public void test() {
 		String name = "base";
 		String program = "1 {p(1..3)} 2.";
-		BaseClingo clingo = BaseClingo.getInstance();
+		BaseClingo clingo = new BaseClingo();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, program);
         Part[] parts = new Part[1];

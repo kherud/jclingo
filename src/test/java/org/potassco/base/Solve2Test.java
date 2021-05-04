@@ -16,7 +16,7 @@ public class Solve2Test {
 	@Test
 	public void testTravellingSalesperson() {
 		String name = "base";
-		BaseClingo clingo = BaseClingo.getInstance();
+		Clingo clingo = new Clingo();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name,
 				null,
@@ -65,7 +65,7 @@ public class Solve2Test {
 	@Test
 	public void testMultiModels() {
 		String name = "base";
-		BaseClingo clingo = BaseClingo.getInstance();
+		Clingo clingo = new Clingo();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name,
 				null,

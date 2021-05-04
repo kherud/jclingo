@@ -30,14 +30,14 @@ public class VersionTest {
 
 	@Test
 	public void test2() {
-		BaseClingo clingo = BaseClingo.getInstance();
+		BaseClingo clingo = new BaseClingo();
 		assertEquals("5.5.0", clingo.version());
 	}
 
 	@Test
 	public void test3() {
 		String name = "base";
-		BaseClingo clingo = BaseClingo.getInstance();
+		Clingo clingo = new Clingo();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, "a. b.");
         Part[] parts = new Part[1];

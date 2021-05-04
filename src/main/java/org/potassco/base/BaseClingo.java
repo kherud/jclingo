@@ -3,14 +3,12 @@ package org.potassco.base;
 import java.util.List;
 
 import org.potassco.cpp.clingo_h;
-import org.potassco.dto.Solution;
 import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ErrorCode;
 import org.potassco.enums.ExternalType;
 import org.potassco.enums.HeuristicType;
 import org.potassco.enums.ModelType;
 import org.potassco.enums.ShowType;
-import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
 import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;
@@ -61,21 +59,9 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class BaseClingo {
 
-    /**
-     * SingletonHolder is loaded on the first execution of Singleton.getInstance() 
-     * or the first access to SingletonHolder.INSTANCE, not before.
-     */
-    private static class ClingoHolder { 
-        private static final BaseClingo INSTANCE = new BaseClingo();
-    }
-
-    public static BaseClingo getInstance() {
-        return ClingoHolder.INSTANCE;
-    }
-    
 	private ClingoLibrary clingoLibrary;
 
-	private BaseClingo() {
+	public BaseClingo() {
 		super();
 		this.clingoLibrary = ClingoLibrary.INSTANCE;
 	}
@@ -2344,56 +2330,6 @@ public class BaseClingo {
      */
     public int main(Pointer application, String arguments, int size, Pointer data) {
 		return clingoLibrary.clingo_main(application, arguments, size, data);
-    }
-
-    // **********************************************************************************
-    
-    /**
-	 * @param name
-	 * {@link clingo_h#clingo_control_ground}
-     * @param control 
-	 */
-	public void ground(Pointer control, String name) {
-        Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, new Size(0));
-        controlGround(control, parts, new Size(1), null, null);
-	}
-
-	public Solution solve(Pointer control) throws ClingoException {
-		BaseClingo clingo = BaseClingo.getInstance();
-        Solution solution = new Solution();
-        SolveEventCallback cb = new SolveEventCallback() {
-            public boolean call(int type, Pointer event, Pointer data, Pointer goon) {
-                SolveEventType t = SolveEventType.fromValue(type);
-                switch (t) {
-                    case MODEL:
-                    	long size = clingo.modelSymbolsSize(event, ShowType.SHOWN);
-                        solution.setSize(size);
-                        long[] symbols = clingo.modelSymbols(event, ShowType.SHOWN, size);
-                        for (int i = 0; i < size; ++i) {
-                            long len = clingo.symbolToStringSize(symbols[i]);
-                            String symbol = clingo.symbolToString(symbols[i], len);
-                            solution.addSymbol(symbol.trim());
-                        }
-                        break;
-                    case STATISTICS:
-                        break;
-                    case UNSAT:
-                        break;
-                    case FINISH:
-//                        Pointer<Integer> p_event = (Pointer<Integer>) event;
-//                        handler.onFinish(new SolveResult(p_event.get()));
-//                        goon.set(true);
-                        return true;
-                }
-                return true;
-            }
-        };
-        Pointer handle = controlSolve(control, SolveMode.ASYNC, null, 0, cb, null);
-        clingo.solveHandleClose(handle);
-        // clean up
-        controlFree(control);
-		return solution;
     }
 
 }

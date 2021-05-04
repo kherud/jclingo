@@ -14,7 +14,7 @@ public class BasicTest {
 	@Test
 	public void testCleanupSetting() {
 		String name = "base";
-		BaseClingo clingo = BaseClingo.getInstance();
+		BaseClingo clingo = new BaseClingo();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, "a. b.");
         Part[] parts = new Part[1];
@@ -28,7 +28,7 @@ public class BasicTest {
 	@Test
 	public void testEnumerationAssumptionSetting() {
 		String name = "base";
-		BaseClingo clingo = BaseClingo.getInstance();
+		BaseClingo clingo = new BaseClingo();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, "a. b.");
         Part[] parts = new Part[1];
@@ -42,7 +42,7 @@ public class BasicTest {
 	@Test
 	public void testIsConflicting() {
 		String name = "base";
-		BaseClingo clingo = BaseClingo.getInstance();
+		BaseClingo clingo = new BaseClingo();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, "a. not a.");
         Part[] parts = new Part[1];
@@ -58,7 +58,7 @@ public class BasicTest {
 	@Test
 	public void testExternalAtoms() {
 		String name = "base";
-		BaseClingo clingo = BaseClingo.getInstance();
+		Clingo clingo = new Clingo();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name,
 				null,
@@ -72,7 +72,7 @@ public class BasicTest {
 	@Test
 	public void testTravellingSalesperson() {
 		String name = "base";
-		BaseClingo clingo = BaseClingo.getInstance();
+		Clingo clingo = new Clingo();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name,
 				null,

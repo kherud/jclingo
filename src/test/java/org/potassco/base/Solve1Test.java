@@ -23,7 +23,7 @@ public class Solve1Test {
 	@Test
 	public void testAb1() {
 		String name = "base";
-		BaseClingo clingo = new BaseClingo();
+		Clingo clingo = new Clingo();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, "1 {a; b} 1. #show c : b. #show a/0.");
         Part[] parts = new Part[1];
@@ -67,7 +67,7 @@ public class Solve1Test {
 	public void testAb2() {
 		String name = "base";
 		String program = "1 {a; b} 1. #show c : b. #show a/0.";
-		BaseClingo clingo = new BaseClingo();
+		Clingo clingo = new Clingo();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, program);
         Part[] parts = new Part[1];

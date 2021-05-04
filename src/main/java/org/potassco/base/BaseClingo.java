@@ -59,7 +59,7 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class BaseClingo {
 
-	private ClingoLibrary clingoLibrary;
+	protected ClingoLibrary clingoLibrary;
 
 	public BaseClingo() {
 		super();
@@ -1145,7 +1145,7 @@ public class BaseClingo {
     }
 
     /**
-     * Get the description of an entry.e.
+     * Get the description of an entry.
      * @param configuration the target configuration
      * @param key the key
      * @return 
@@ -1861,35 +1861,16 @@ public class BaseClingo {
     // clingo_ground_callback_t
     // clingo_control_t
     
-	/**
-	 * Create a new control object.
-	 * <p>
-	 * A control object has to be freed using clingo_control_free().
-	 * TODO: This will be done in the Control class.
-	 * @param arguments array of command line arguments
-	 * @return resulting control object
-	 */
-	public Pointer control(String[] arguments) {
-		PointerByReference parray = null;
-		int argumentsLength = 0;
-		if (arguments != null) {
-			// https://github.com/nativelibs4java/nativelibs4java/issues/476
-			StringArray sarray = new StringArray(arguments);
-			parray = new PointerByReference();
-			parray.setPointer(sarray);
-			argumentsLength = arguments.length;
-		}
-		// TODO
-		Pointer logger = null;
-		Pointer loggerData = null;
-		int messageLimit = 20;
+	public Pointer control(String[] arguments, Pointer logger, Pointer loggerData, int messageLimit) {
 		PointerByReference ctrl = new PointerByReference();
+		int argumentsLength = (arguments == null ? 0 : arguments.length);
+		StringArray args = new StringArray(arguments);
 		@SuppressWarnings("unused")
-//        clingoLibrary.clingo_control_new(null, 0, null, null, 20, controlPointer);
-		boolean success = clingoLibrary.clingo_control_new(parray, argumentsLength, logger, loggerData, messageLimit, ctrl);
+		boolean success = clingoLibrary.clingo_control_new(args , argumentsLength , logger, loggerData, messageLimit, ctrl);
 		return ctrl.getValue();
 	}
-
+	
+	
 	/**
 	 * Free a control object created with {@link BaseClingo#controlNew(String[])}.
 	 * @param control the target

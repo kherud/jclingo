@@ -7,6 +7,7 @@ import org.potassco.cpp.typedef;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.StringArray;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -1967,7 +1968,7 @@ public interface ClingoLibrary extends Library {
     // clingo_control_t
   
     /** {@link clingo_h#clingo_control_new} */
-    boolean clingo_control_new(PointerByReference arguments, int arguments_size, Pointer logger, Pointer logger_data, int message_limit, PointerByReference control);
+    boolean clingo_control_new(StringArray arguments, int arguments_size, Pointer logger, Pointer logger_data, int message_limit, PointerByReference control);
   
     /** {@link clingo_h#clingo_control_free} */
     void clingo_control_free(Pointer control);

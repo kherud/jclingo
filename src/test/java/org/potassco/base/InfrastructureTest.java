@@ -105,7 +105,7 @@ public class InfrastructureTest {
 	public void testConfiguration1() {
 		String name = "base";
 		String program = "a. b.";
-		BaseClingo clingo = new BaseClingo();
+		Clingo clingo = new Clingo();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, program);
 //		clingo.controlGround(control, name); - not used here!
@@ -123,7 +123,7 @@ public class InfrastructureTest {
 	public void testStatistics() {
 		String name = "base";
 //		String program = "a. b.";
-		BaseClingo clingo = new BaseClingo();
+		Clingo clingo = new Clingo();
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name, null, name);
 //		clingo.ground(name); - not used here!

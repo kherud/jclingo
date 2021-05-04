@@ -10,8 +10,38 @@ import org.potassco.jna.Size;
 import org.potassco.jna.SolveEventCallback;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.StringArray;
+import com.sun.jna.ptr.PointerByReference;
 
 public class Clingo extends BaseClingo {
+
+	/**
+	 * Create a new control object.
+	 * <p>
+	 * A control object has to be freed using clingo_control_free().
+	 * TODO: This will be done in the Control class.
+	 * @param arguments array of command line arguments
+	 * @return resulting control object
+	 */
+	public Pointer control(String[] arguments) {
+			int argumentsLength;
+			StringArray args;
+			if (arguments == null) {
+				argumentsLength = 0;
+				args = null;
+			} else {
+				argumentsLength = arguments.length;
+				args = new StringArray(arguments);
+			}
+			Pointer logger = null;
+			Pointer loggerData = null;
+			int messageLimit = 20;
+	//      clingoLibrary.clingo_control_new(null, 0, null, null, 20, controlPointer);
+			PointerByReference ctrl = new PointerByReference();
+			@SuppressWarnings("unused")
+			boolean success = clingoLibrary.clingo_control_new(args, argumentsLength, logger, loggerData, messageLimit, ctrl);
+			return ctrl.getValue();
+		}
 
 	/**
 	 * @param name

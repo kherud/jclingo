@@ -25,29 +25,29 @@ public class StatisticsTest {
 		expected.add("a");
 		expected.add("b");
 		int expectedModels = 2;
-		
+
 		String name = "base";
 //		String[] arguments = {"0"};
-		String[] arguments = {"-n", "0"};
+		String[] arguments = { "-n", "0" };
 //		String[] arguments = null;
 		String program = "a :- not b. b :- not a.";
 		Clingo clingo = new Clingo();
 		Pointer control = clingo.control(arguments);
 		Pointer conf = clingo.controlConfiguration(control);
 		int rootKey = clingo.configurationRoot(conf);
-		
+
 		// configure to enumerate all models
 		int subKey = clingo.configurationMapAt(conf, rootKey, "solve.models");
 		clingo.configurationValueSet(conf, subKey, "0");
-		
+
 		int confSub = clingo.configurationMapAt(conf, rootKey, "stats");
 		clingo.configurationValueSet(conf, confSub, "1");
 		clingo.controlAdd(control, name, arguments, program);
-        Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, new Size(0));
+		Part[] parts = new Part[1];
+		parts[0] = new Part(name, null, new Size(0));
 		clingo.controlGround(control, parts, new Size(1), null, null);
 		SolveEventCallback eventHandler = null;
-		Pointer handle = clingo.controlSolve(control, SolveMode.YIELD, null, 0, eventHandler , null);
+		Pointer handle = clingo.controlSolve(control, SolveMode.YIELD, null, 0, eventHandler, null);
 		boolean modelExists = true;
 		int m = 0;
 		while (modelExists) {

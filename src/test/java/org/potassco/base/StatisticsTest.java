@@ -18,13 +18,13 @@ public class StatisticsTest {
 		String[] arguments = null;
 		String program = "a :- not b. b :- not a.";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control();
-		Pointer conf = control.configuration();
+		Pointer control = clingo.control(arguments);
+		Pointer conf = clingo.controlConfiguration(control);
 		int root = clingo.configurationRoot(conf);
 		int confSub = clingo.configurationMapAt(conf, root, "stats");
 		clingo.configurationValueSet(conf, confSub, "1");
-		control.add(name, arguments, program);
-		control.ground(name);
+		clingo.controlAdd(control, name, arguments, program);
+//		clingo.controlGround(control, name);
 //		Pointer handle = control.solve(SolveMode.YIELD, null, 0, eventHandler, null);
 //		boolean modelExists = true;
 //		while (modelExists) {

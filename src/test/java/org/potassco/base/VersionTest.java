@@ -7,12 +7,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
-import org.potassco.base.Clingo;
-import org.potassco.base.ClingoException;
-import org.potassco.base.Control;
 import org.potassco.dto.Solution;
 import org.potassco.jna.ClingoLibrary;
+import org.potassco.jna.Part;
+import org.potassco.jna.Size;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 
 public class VersionTest {
@@ -38,10 +38,13 @@ public class VersionTest {
 	public void test3() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, null, "a. b.");
-		control.ground(name);
+		Pointer control = clingo.control(null);
+		clingo.controlAdd(control, name, null, "a. b.");
+        Part[] parts = new Part[1];
+        parts[0] = new Part(name, null, new Size(0));
+		clingo.controlGround(control, parts, new Size(1), null, null);
 		try {
-			Solution solution = control.solve();
+			Solution solution = clingo.solve(control);
 			assertEquals(2, solution.getSize());
 			String[] strArray = { "a", "b" };
 			Set<String> expected = new HashSet<String>(Arrays.asList(strArray));

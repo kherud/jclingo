@@ -2,19 +2,12 @@ package org.potassco.base;
 
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.junit.Test;
-import org.potassco.base.Clingo;
-import org.potassco.base.ClingoException;
-import org.potassco.base.Control;
 import org.potassco.dto.Solution;
-import org.potassco.jna.ClingoLibrary;
+import org.potassco.jna.Part;
+import org.potassco.jna.Size;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
 
 public class BasicTest {
 
@@ -22,31 +15,40 @@ public class BasicTest {
 	public void testCleanupSetting() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, null, "a. b.");
-		control.ground(name);
-		assertTrue(control.getEnableCleanup());
-		control.setEnableCleanup(false);
-		assertFalse(control.getEnableCleanup());
+		Pointer control = clingo.control(null);
+		clingo.controlAdd(control, name, null, "a. b.");
+        Part[] parts = new Part[1];
+        parts[0] = new Part(name, null, new Size(0));
+		clingo.controlGround(control, parts, new Size(1), null, null);
+		assertTrue(clingo.controlGetEnableCleanup(control));
+		clingo.controlSetEnableCleanup(control, false);
+		assertFalse(clingo.controlGetEnableCleanup(control));
 	}
 
 	@Test
 	public void testEnumerationAssumptionSetting() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, null, "a. b.");
-		control.ground(name);
-		assertTrue(control.getEnableEnumerationAssumption());
-		control.setEnableEnumerationAssumption(false);
-		assertFalse(control.getEnableEnumerationAssumption());
+		Pointer control = clingo.control(null);
+		clingo.controlAdd(control, name, null, "a. b.");
+        Part[] parts = new Part[1];
+        parts[0] = new Part(name, null, new Size(0));
+		clingo.controlGround(control, parts, new Size(1), null, null);
+		assertTrue(clingo.controlGetEnableEnumerationAssumption(control));
+		clingo.controlSetEnableEnumerationAssumption(control, false);
+		assertFalse(clingo.controlGetEnableEnumerationAssumption(control));
 	}
 
 	@Test
 	public void testIsConflicting() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, null, "a. not a.");
-		control.ground(name);
-		assertTrue(control.isConflicting());
+		Pointer control = clingo.control(null);
+		clingo.controlAdd(control, name, null, "a. not a.");
+        Part[] parts = new Part[1];
+        parts[0] = new Part(name, null, new Size(0));
+		clingo.controlGround(control, parts, new Size(1), null, null);
+		assertTrue(clingo.controlIsConflicting(control));
 	}
 
 	/**
@@ -57,7 +59,8 @@ public class BasicTest {
 	public void testExternalAtoms() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name,
+		Pointer control = clingo.control(null);
+		clingo.controlAdd(control, name,
 				null,
 				"p(1). p(2). p(3). "
 				+ "#external q(X) : p(X). "
@@ -70,7 +73,8 @@ public class BasicTest {
 	public void testTravellingSalesperson() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name,
+		Pointer control = clingo.control(null);
+		clingo.controlAdd(control, name,
 				null,
 				"node(1..6). "
 				+ ""
@@ -98,9 +102,11 @@ public class BasicTest {
 				+ " "
 				+ "#minimize { C,X,Y : cycle(X,Y), cost(X,Y,C) }. "
 				+ "");
-		control.ground(name);
+        Part[] parts = new Part[1];
+        parts[0] = new Part(name, null, new Size(0));
+		clingo.controlGround(control, parts, new Size(1), null, null);
 		try {
-			Solution solution = control.solve();
+			Solution solution = clingo.solve(control);
 			assertEquals(52, solution.getSize());
 //			String[] strArray = { "a", "b" };
 //			Set<String> expected = new HashSet<String>(Arrays.asList(strArray));

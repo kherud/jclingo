@@ -24,7 +24,7 @@ public class ErrorHandlingTest {
 		assertEquals(myMessage, clingo.errorMessage());
 
 		clingo.setError(0, "");
-		assertEquals(ErrorCode.SUCCESS, clingo.getError());
+		assertEquals(0, clingo.getError());
 
 		assertEquals("operation undefined", clingo.warningString(0));
 		// TODO: typo in clingo api: errer

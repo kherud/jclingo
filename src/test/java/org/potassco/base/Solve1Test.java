@@ -24,9 +24,12 @@ public class Solve1Test {
 	public void testAb1() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, null, "1 {a; b} 1. #show c : b. #show a/0.");
-		control.ground(name);
-		Pointer handle = control.solve(SolveMode.YIELD, null, 0, null, null);
+		Pointer control = clingo.control(null);
+		clingo.controlAdd(control, name, null, "1 {a; b} 1. #show c : b. #show a/0.");
+        Part[] parts = new Part[1];
+        parts[0] = new Part(name, null, new Size(0));
+		clingo.controlGround(control, parts, new Size(1), null, null);
+		Pointer handle = clingo.controlSolve(control, SolveMode.YIELD, null, 0, null, null);
 		boolean modelExits = true;
 		while (modelExits) {
 			clingo.solveHandleResume(handle);
@@ -53,7 +56,7 @@ public class Solve1Test {
 		}
         clingo.solveHandleClose(handle);
         // clean up
-        control.free();
+        clingo.controlFree(control);
         fail("Result differs from origin.");
 	}
 
@@ -65,13 +68,12 @@ public class Solve1Test {
 		String name = "base";
 		String program = "1 {a; b} 1. #show c : b. #show a/0.";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control();
-		control.controlNew(null);
-		control.add(name, null, program);
+		Pointer control = clingo.control(null);
+		clingo.controlAdd(control, name, null, program);
         Part[] parts = new Part[1];
         parts[0] = new Part(name, null, new Size(0));
-        control.ground(parts, new Size(1), null, null);
-		Pointer handle = control.solve(SolveMode.YIELD, null, 0, null, null);
+        clingo.controlGround(control, parts, new Size(1), null, null);
+		Pointer handle = clingo.controlSolve(control, SolveMode.YIELD, null, 0, null, null);
 		boolean modelExits = true;
 		while (modelExits) {
 			clingo.solveHandleResume(handle);
@@ -98,7 +100,7 @@ public class Solve1Test {
 		}
         clingo.solveHandleClose(handle);
         // clean up
-        control.free();
+        clingo.controlFree(control);
         fail("Result differs from origin.");
 	}
 

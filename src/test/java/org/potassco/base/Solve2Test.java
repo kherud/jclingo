@@ -3,12 +3,8 @@ package org.potassco.base;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.potassco.base.Clingo;
-import org.potassco.base.ClingoException;
-import org.potassco.base.Control;
 import org.potassco.dto.Solution;
 import org.potassco.jna.GroundCallbackT;
-import org.potassco.jna.Location;
 import org.potassco.jna.Part;
 import org.potassco.jna.Size;
 import org.potassco.jna.SymbolCallbackT;
@@ -21,7 +17,8 @@ public class Solve2Test {
 	public void testTravellingSalesperson() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name,
+		Pointer control = clingo.control(null);
+		clingo.controlAdd(control, name,
 				null,
 				"node(1..6). "
 				+ ""
@@ -49,9 +46,11 @@ public class Solve2Test {
 				+ " "
 				+ "#minimize { C,X,Y : cycle(X,Y), cost(X,Y,C) }. "
 				+ "");
-		control.ground(name);
+        Part[] parts = new Part[1];
+        parts[0] = new Part(name, null, new Size(0));
+		clingo.controlGround(control, parts, new Size(1), null, null);
 		try {
-			Solution solution = control.solve();
+			Solution solution = clingo.solve(control);
 			assertEquals(52, solution.getSize());
 //			String[] strArray = { "a", "b" };
 //			Set<String> expected = new HashSet<String>(Arrays.asList(strArray));
@@ -67,12 +66,13 @@ public class Solve2Test {
 	public void testMultiModels() {
 		String name = "base";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name,
+		Pointer control = clingo.control(null);
+		clingo.controlAdd(control, name,
 				null,
 				"{elected(ann; bob; carol; dan; elaine; fred)} = 3.");
         Part[] parts = new Part[1];
         parts[0] = new Part(name, null, new Size(0));
-		control.ground(parts, new Size(1), new GroundCallbackT() {
+		clingo.controlGround(control, parts, new Size(1), new GroundCallbackT() {
 			@Override
 			public boolean call(Pointer location, String name, Pointer arguments, long argumentsSize, Pointer data,
 					SymbolCallbackT symbolCallback, Pointer symbolCallbackData) {
@@ -81,7 +81,7 @@ public class Solve2Test {
 			}
 		}, null);
 		try {
-			Solution solution = control.solve();
+			Solution solution = clingo.solve(control);
 			assertEquals(3, solution.getSize());
 //			clingo.solveHandleModel(null)
 		} catch (ClingoException e) {

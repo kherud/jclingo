@@ -106,9 +106,10 @@ public class InfrastructureTest {
 		String name = "base";
 		String program = "a. b.";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control(name, null, program);
-//		control.ground(name); - not used here!
-		Pointer conf = control.configuration();
+		Pointer control = clingo.control(null);
+		clingo.controlAdd(control, name, null, program);
+//		clingo.controlGround(control, name); - not used here!
+		Pointer conf = clingo.controlConfiguration(control);
 		int root = clingo.configurationRoot(conf);
 		assertEquals(root, clingo.configurationRoot(conf));
 		assertEquals(ConfigurationType.MAP, clingo.configurationType(conf, root));
@@ -121,12 +122,12 @@ public class InfrastructureTest {
 	@Test
 	public void testStatistics() {
 		String name = "base";
-		String program = "a. b.";
+//		String program = "a. b.";
 		Clingo clingo = Clingo.getInstance();
-		Control control = clingo.control();
-		control.add(name, null, name);
+		Pointer control = clingo.control(null);
+		clingo.controlAdd(control, name, null, name);
 //		clingo.ground(name); - not used here!
-		Pointer stats = control.statistics();
+		Pointer stats = clingo.controlStatistics(control);
 		long root = clingo.statisticsRoot(stats);
 		assertEquals(StatisticsType.EMPTY, clingo.statisticsType(stats, root));
 		assertEquals(0L, clingo.clingoStatisticsArraySize(stats, root));

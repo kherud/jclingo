@@ -1,4 +1,4 @@
-package org.potassco.base;
+package org.potassco.api;
 
 public class SolveEventHandler {
 

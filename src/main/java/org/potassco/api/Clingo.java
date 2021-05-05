@@ -1,5 +1,6 @@
-package org.potassco.base;
+package org.potassco.api;
 
+import org.potassco.base.BaseClingo;
 import org.potassco.cpp.clingo_h;
 import org.potassco.dto.Solution;
 import org.potassco.enums.ShowType;

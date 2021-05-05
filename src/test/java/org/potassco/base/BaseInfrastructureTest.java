@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.potassco.api.ClingoException;
 import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;

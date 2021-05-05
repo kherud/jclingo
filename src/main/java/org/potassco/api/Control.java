@@ -1,5 +1,6 @@
-package org.potassco.base;
+package org.potassco.api;
 
+import org.potassco.base.BaseClingo;
 import org.potassco.dto.Solution;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveEventType;

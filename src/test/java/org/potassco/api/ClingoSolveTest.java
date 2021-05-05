@@ -1,4 +1,4 @@
-package org.potassco.base;
+package org.potassco.api;
 
 import static org.junit.Assert.*;
 
@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
+import org.potassco.api.Clingo;
+import org.potassco.api.Control;
 import org.potassco.dto.Solution;
 import org.potassco.jna.GroundCallbackT;
 import org.potassco.jna.Part;

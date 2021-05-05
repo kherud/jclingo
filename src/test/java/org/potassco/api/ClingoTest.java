@@ -1,8 +1,10 @@
-package org.potassco.base;
+package org.potassco.api;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.potassco.api.Clingo;
+import org.potassco.api.Control;
 import org.potassco.dto.Solution;
 
 public class ClingoTest {

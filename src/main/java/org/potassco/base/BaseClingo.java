@@ -2,6 +2,7 @@ package org.potassco.base;
 
 import java.util.List;
 
+import org.potassco.api.ClingoException;
 import org.potassco.cpp.clingo_h;
 import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ErrorCode;

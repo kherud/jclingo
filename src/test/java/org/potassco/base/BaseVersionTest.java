@@ -7,10 +7,10 @@ import org.potassco.jna.ClingoLibrary;
 
 import com.sun.jna.ptr.IntByReference;
 
-public class VersionTest {
+public class BaseVersionTest {
 
 	@Test
-	public void test1() {
+	public void version1() {
 		IntByReference major = new IntByReference();
 		IntByReference minor = new IntByReference();
 		IntByReference patch = new IntByReference();
@@ -21,9 +21,8 @@ public class VersionTest {
 	}
 
 	@Test
-	public void test2() {
-		BaseClingo clingo = new BaseClingo();
-		assertEquals("5.5.0", clingo.version());
+	public void version2() {
+		assertEquals("5.5.0", BaseClingo.version());
 	}
 
 }

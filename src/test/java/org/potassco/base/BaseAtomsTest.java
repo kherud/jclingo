@@ -15,36 +15,35 @@ public class BaseAtomsTest {
 	@Test
 	public void testSymbolicAtoms() {
 		String name = "base";
-		BaseClingo clingo = new BaseClingo(); 
-		Pointer control = clingo.control(null, null, null, 0);
-		clingo.controlAdd(control, name, null, "a. b. c. d. e.");
+		Pointer control = BaseClingo.control(null, null, null, 0);
+		BaseClingo.controlAdd(control, name, null, "a. b. c. d. e.");
         Part[] parts = new Part[1];
         parts[0] = new Part(name, null, new Size(0));
-		clingo.controlGround(control, parts, new Size(1), null, null);
-		Pointer atoms = clingo.controlSymbolicAtoms(control);
-		assertEquals(5, clingo.symbolicAtomsSize(atoms));
-//		Pointer signature = clingo.signatureCreate(c, 0, true);
-		Pointer iteratorBegin = clingo.symbolicAtomsBegin(atoms, null);
-		long symbol1 = clingo.symbolicAtomsSymbol(atoms, iteratorBegin);
-		assertEquals("a", clingo.symbolName(symbol1));
-		assertTrue(clingo.symbolicAtomsIsFact(atoms, iteratorBegin));
-		Pointer iteratorNext = clingo.symbolicAtomsNext(atoms, iteratorBegin);
-		Pointer iteratorNextNext = clingo.symbolicAtomsNext(atoms, iteratorNext);
-		long symbol2 = clingo.symbolicAtomsSymbol(atoms, iteratorNextNext);
-		assertEquals("c", clingo.symbolName(symbol2));
-		Pointer iteratorEnd = clingo.symbolicAtomsEnd(atoms);
+		BaseClingo.controlGround(control, parts, new Size(1), null, null);
+		Pointer atoms = BaseClingo.controlSymbolicAtoms(control);
+		assertEquals(5, BaseClingo.symbolicAtomsSize(atoms));
+//		Pointer signature = BaseClingo.signatureCreate(c, 0, true);
+		Pointer iteratorBegin = BaseClingo.symbolicAtomsBegin(atoms, null);
+		long symbol1 = BaseClingo.symbolicAtomsSymbol(atoms, iteratorBegin);
+		assertEquals("a", BaseClingo.symbolName(symbol1));
+		assertTrue(BaseClingo.symbolicAtomsIsFact(atoms, iteratorBegin));
+		Pointer iteratorNext = BaseClingo.symbolicAtomsNext(atoms, iteratorBegin);
+		Pointer iteratorNextNext = BaseClingo.symbolicAtomsNext(atoms, iteratorNext);
+		long symbol2 = BaseClingo.symbolicAtomsSymbol(atoms, iteratorNextNext);
+		assertEquals("c", BaseClingo.symbolName(symbol2));
+		Pointer iteratorEnd = BaseClingo.symbolicAtomsEnd(atoms);
 		String[] strArray = { "a", "b", "c", "d", "e" };
 		int j = 0;
-		for (Pointer i = clingo.symbolicAtomsBegin(atoms, null);
-				!clingo.symbolicAtomsIteratorIsEqualTo(atoms, i, iteratorEnd);
-				i = clingo.symbolicAtomsNext(atoms, i)) {
-			long s = clingo.symbolicAtomsSymbol(atoms, i);
-			assertEquals(strArray[j], clingo.symbolName(s));
+		for (Pointer i = BaseClingo.symbolicAtomsBegin(atoms, null);
+				!BaseClingo.symbolicAtomsIteratorIsEqualTo(atoms, i, iteratorEnd);
+				i = BaseClingo.symbolicAtomsNext(atoms, i)) {
+			long s = BaseClingo.symbolicAtomsSymbol(atoms, i);
+			assertEquals(strArray[j], BaseClingo.symbolName(s));
 			j++;
 		}
-//		long symbol3 = clingo.symbolicAtomsSymbol(atoms, iteratorEnd);
-//		assertEquals("e", clingo.symbolName(symbol3));
-//		Pointer iteratorFind = clingo.symbolicAtomsFind(atoms, symbol2);
+//		long symbol3 = BaseClingo.symbolicAtomsSymbol(atoms, iteratorEnd);
+//		assertEquals("e", BaseClingo.symbolName(symbol3));
+//		Pointer iteratorFind = BaseClingo.symbolicAtomsFind(atoms, symbol2);
 		
 		
 	}
@@ -67,52 +66,21 @@ public class BaseAtomsTest {
 		};
 	}
 
-	/**
-	 * {@link https://github.com/potassco/clingo/blob/master/libpyclingo/clingo/tests/test_atoms.py}
-	 */
-	@Test
-	public void testTheoryAtoms() {
-		String name = "base";
-		BaseClingo clingo = new BaseClingo(); 
-		Pointer control = clingo.control(null, null, null, 0);
-		clingo.controlAdd(control, name,
-				null,
-				"#theory test { "
-				+ "    t { }; "
-				+ "    &a/0 : t, head; "
-				+ "    &b/0 : t, {=}, t, head "
-				+ "}.");
-		clingo.controlAdd(control, name, null, "{a; b}.");
-		clingo.controlAdd(control, name, null, "&a { 1; 2,3: a,b }.");
-        Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, new Size(0));
-		clingo.controlGround(control, parts, new Size(1), null, null);
-		Pointer theoryAtoms = clingo.controlTheoryAtoms(control);
-		assertEquals(1, clingo.theoryAtomsSize(theoryAtoms));
-		assertEquals(TermType.SYMBOL, clingo.theoryAtomsTermType(theoryAtoms, 0));
-		assertEquals(0, clingo.theoryAtomsTermNumber(theoryAtoms, 0));
-		assertEquals("a", clingo.theoryAtomsTermName(theoryAtoms, 0));
-		long[] args = clingo.theoryAtomsTermArguments(theoryAtoms, 0);
-		assertEquals(null, args);
-		assertEquals("a", clingo.theoryAtomsTermToString(theoryAtoms, 0).trim());
-	}
-
 	@Test
 	public void testConstants() {
 		String name = "base";
-		BaseClingo clingo = new BaseClingo(); 
-		Pointer control = clingo.control(null, null, null, 0);
-		clingo.controlAdd(control, name,
+		Pointer control = BaseClingo.control(null, null, null, 0);
+		BaseClingo.controlAdd(control, name,
 				null,
 				"#const n=6. "
 				+ "like(1,2; 3,4). "
 				+ "dislike(2,3; 1,3).");
         Part[] parts = new Part[1];
         parts[0] = new Part(name, null, new Size(0));
-		clingo.controlGround(control, parts, new Size(1), null, null);
+		BaseClingo.controlGround(control, parts, new Size(1), null, null);
 		String constName = "n";
-		assertTrue(clingo.controlHasConst(control, constName));
-		int symbol = clingo.controlGetConst(control, constName);
-		assertEquals(symbol, clingo.controlGetConst(control, constName));
+		assertTrue(BaseClingo.controlHasConst(control, constName));
+		int symbol = BaseClingo.controlGetConst(control, constName);
+		assertEquals(symbol, BaseClingo.controlGetConst(control, constName));
 	}
 }

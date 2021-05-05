@@ -61,18 +61,22 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class BaseClingo {
 
-	protected ClingoLibrary clingoLibrary;
+	private static ClingoLibrary clingoLibrary;
 
-	public BaseClingo() {
-		super();
-		this.clingoLibrary = ClingoLibrary.INSTANCE;
-	}
-
+    static {
+        clingoLibrary = ClingoLibrary.INSTANCE;
+    }
+    
+	/**
+	 * This class should not be instantiated.
+	 */
+	private BaseClingo() {}
+	
 	/*
 	 * ******* Version *******
 	 */
 
-	public String version() {
+	public static String version() {
 		IntByReference major = new IntByReference();
 		IntByReference minor = new IntByReference();
 		IntByReference patch = new IntByReference();
@@ -90,21 +94,21 @@ public class BaseClingo {
 	 * @param code
 	 * @return the error string
 	 */
-	public String errorString(int code) {
+	public static String errorString(int code) {
 		return clingoLibrary.clingo_error_string(code);
 	}
 
 	/**
 	 * @return the last error code set by a clingo API call.
 	 */
-	public int errorCode() {
+	public static int errorCode() {
 		return clingoLibrary.clingo_error_code();
 	}
 
 	/**
 	 * @return the last error message set if an API call fails.
 	 */
-	public String errorMessage() {
+	public static String errorMessage() {
 		return clingoLibrary.clingo_error_message();
 	}
 
@@ -114,14 +118,14 @@ public class BaseClingo {
 	 * @param code    code the error code
 	 * @param message message the error message
 	 */
-	public void setError(int code, String message) {
+	public static void setError(int code, String message) {
 		clingoLibrary.clingo_set_error(code, message);
 	}
 
 	/**
 	 * @return the last error code set if an API call fails.
 	 */
-	public int getError() {
+	public static int getError() {
 //    	return ErrorCode.fromValue(clingoLibrary.clingo_error_code());
 		// Since errors may be user defined, we just return an int and not an ErrorCode
 		return clingoLibrary.clingo_error_code();
@@ -133,7 +137,7 @@ public class BaseClingo {
 	 * @param code
 	 * @return the error string
 	 */
-	public String warningString(int code) {
+	public static String warningString(int code) {
 		return clingoLibrary.clingo_warning_string(code);
 	}
 
@@ -154,7 +158,7 @@ public class BaseClingo {
 	 * @return
 	 * @throws ClingoException
 	 */
-	public Pointer signatureCreate(String name, int arity, boolean positive) throws ClingoException {
+	public static Pointer signatureCreate(String name, int arity, boolean positive) throws ClingoException {
 		PointerByReference sigPointer = new PointerByReference();
 		int pos = positive ? 1 : 0;
 		int success = clingoLibrary.clingo_signature_create(name, arity, pos, sigPointer);
@@ -173,7 +177,7 @@ public class BaseClingo {
 	 * @param signature [in] signature the target signature
 	 * @return the name of the signature
 	 */
-	public String signatureName(Pointer signature) {
+	public static String signatureName(Pointer signature) {
 		return clingoLibrary.clingo_signature_name(signature);
 	}
 
@@ -183,7 +187,7 @@ public class BaseClingo {
 	 * @param signature [in] signature the target signature
 	 * @return the arity of the signature
 	 */
-	public int signatureArity(Pointer signature) {
+	public static int signatureArity(Pointer signature) {
 		return clingoLibrary.clingo_signature_arity(signature);
 	}
 
@@ -193,7 +197,7 @@ public class BaseClingo {
 	 * @param signature the target signature
 	 * @return
 	 */
-	public boolean signatureIsPositive(Pointer signature) {
+	public static boolean signatureIsPositive(Pointer signature) {
 		return clingoLibrary.clingo_signature_is_positive(signature) == 1;
 	}
 
@@ -203,7 +207,7 @@ public class BaseClingo {
 	 * @param signature the target signature
 	 * @return
 	 */
-	public boolean signatureIsNegative(Pointer signature) {
+	public static boolean signatureIsNegative(Pointer signature) {
 		return clingoLibrary.clingo_signature_is_negative(signature) == 1;
 	}
 
@@ -214,7 +218,7 @@ public class BaseClingo {
 	 * @param b second signature
 	 * @return
 	 */
-	public boolean signatureIsEqualTo(Pointer a, Pointer b) {
+	public static boolean signatureIsEqualTo(Pointer a, Pointer b) {
 		return clingoLibrary.clingo_signature_is_equal_to(a, b) == 1;
 	}
 
@@ -228,7 +232,7 @@ public class BaseClingo {
 	 * @param b second signature
 	 * @return
 	 */
-	public boolean signatureIsLessThan(Pointer a, Pointer b) {
+	public static boolean signatureIsLessThan(Pointer a, Pointer b) {
 		return clingoLibrary.clingo_signature_is_less_than(a, b) == 1;
 	}
 
@@ -238,7 +242,7 @@ public class BaseClingo {
 	 * @param signature the target signature
 	 * @return
 	 */
-	public int signatureHash(Pointer signature) {
+	public static int signatureHash(Pointer signature) {
 		Size hash = clingoLibrary.clingo_signature_hash(signature);
 		return hash.intValue();
 	}
@@ -255,7 +259,7 @@ public class BaseClingo {
 	 * @param number
 	 * @return a reference to the symbol
 	 */
-	public long symbolCreateNumber(int number) {
+	public static long symbolCreateNumber(int number) {
 		SymbolByReference sbr = new SymbolByReference();
 		clingoLibrary.clingo_symbol_create_number(number, sbr);
 		return sbr.getValue();
@@ -266,7 +270,7 @@ public class BaseClingo {
 	 * 
 	 * @return a reference to the symbol
 	 */
-	public long symbolCreateSupremum() {
+	public static long symbolCreateSupremum() {
 		SymbolByReference pointer = new SymbolByReference();
 		clingoLibrary.clingo_symbol_create_supremum(pointer);
 		return pointer.getValue();
@@ -277,7 +281,7 @@ public class BaseClingo {
 	 * 
 	 * @return a reference to the symbol
 	 */
-	public long symbolCreateInfimum() {
+	public static long symbolCreateInfimum() {
 		SymbolByReference pointer = new SymbolByReference();
 		clingoLibrary.clingo_symbol_create_supremum(pointer);
 		return pointer.getValue();
@@ -288,7 +292,7 @@ public class BaseClingo {
 	 * 
 	 * @return a reference to the symbol
 	 */
-	public long symbolCreateString(String string) {
+	public static long symbolCreateString(String string) {
 		SymbolByReference symb = new SymbolByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_create_string(string, symb);
@@ -305,7 +309,7 @@ public class BaseClingo {
 	 * @param positive whether the symbol has a classical negation sign
 	 * @return a reference to the symbol
 	 */
-	public long symbolCreateId(String name, boolean positive) {
+	public static long symbolCreateId(String name, boolean positive) {
 		SymbolByReference symb = new SymbolByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_create_id(name, (byte) (positive ? 1 : 0), symb);
@@ -322,7 +326,7 @@ public class BaseClingo {
 	 * @param positive  whether the symbol has a classical negation sign
 	 * @return a reference to the symbol
 	 */
-	public long symbolCreateFunction(String name, List<Long> arguments, boolean positive) {
+	public static long symbolCreateFunction(String name, List<Long> arguments, boolean positive) {
 		SymbolByReference symb = new SymbolByReference();
 		int argSize = arguments.size();
 		Size argumentsSize = new Size(argSize);
@@ -347,7 +351,7 @@ public class BaseClingo {
 	 * @param symbol reference to a symbol
 	 * @return the resulting number
 	 */
-	public int symbolNumber(long symbol) {
+	public static int symbolNumber(long symbol) {
 		IntByReference ibr = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_number(symbol, ibr);
@@ -360,7 +364,7 @@ public class BaseClingo {
 	 * @param symbol reference to a symbol
 	 * @return the resulting name
 	 */
-	public String symbolName(long symbol) {
+	public static String symbolName(long symbol) {
 		String[] pointer = new String[1];
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_name(symbol, pointer);
@@ -376,7 +380,7 @@ public class BaseClingo {
 	 * @param symbol reference to a symbol
 	 * @return the resulting string
 	 */
-	public String symbolString(long symbol) {
+	public static String symbolString(long symbol) {
 		// https://stackoverflow.com/questions/29162569/jna-passing-string-by-reference-to-dll-but-non-return
 		String[] r1 = new String[1];
 		@SuppressWarnings("unused")
@@ -390,7 +394,7 @@ public class BaseClingo {
 	 * @param symbol reference to a symbol
 	 * @return true if positive
 	 */
-	public boolean symbolIsPositive(long symbol) {
+	public static boolean symbolIsPositive(long symbol) {
 		ByteByReference p_positive = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_is_positive(symbol, p_positive);
@@ -404,7 +408,7 @@ public class BaseClingo {
 	 * @param symbol reference to a symbol
 	 * @return true if negative
 	 */
-	public boolean symbolIsNegative(long symbol) {
+	public static boolean symbolIsNegative(long symbol) {
 		ByteByReference p_positive = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_is_negative(symbol, p_positive);
@@ -418,7 +422,7 @@ public class BaseClingo {
 	 * @param symbol the target symbol
 	 * @return the resulting arguments as an array of symbol references
 	 */
-	public long[] symbolArguments(long symbol) {
+	public static long[] symbolArguments(long symbol) {
 		PointerByReference p_p_arguments = new PointerByReference();
 		SizeByReference p_arguments_size = new SizeByReference();
 		@SuppressWarnings("unused")
@@ -434,7 +438,7 @@ public class BaseClingo {
 	 * @param symbol [in] symbol the target symbol
 	 * @return the type of the symbol
 	 */
-	public SymbolType symbolType(long symbol) {
+	public static SymbolType symbolType(long symbol) {
 		int t = clingoLibrary.clingo_symbol_type(symbol);
 		return SymbolType.fromValue(t);
 	}
@@ -448,7 +452,6 @@ public class BaseClingo {
 	@SuppressWarnings("unused")
 	private long symbolToStringSize(long symbol) {
 		SizeByReference size = new SizeByReference();
-		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_to_string_size(symbol, size);
 		return size.getValue();
 	}
@@ -458,7 +461,7 @@ public class BaseClingo {
 	 * @param symbol the target symbol
 	 * @return the resulting string
 	 */
-	public String symbolToString(long symbol) {
+	public static String symbolToString(long symbol) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success1 = clingoLibrary.clingo_symbol_to_string_size(symbol, size);
@@ -476,7 +479,7 @@ public class BaseClingo {
 	 * @param b second symbol
 	 * @return true if two symbols are equal.
 	 */
-	public boolean symbolIsEqualTo(long a, long b) {
+	public static boolean symbolIsEqualTo(long a, long b) {
 		byte success = clingoLibrary.clingo_symbol_is_equal_to(a, b);
 		return success == 1;
 	}
@@ -492,7 +495,7 @@ public class BaseClingo {
 	 * @param b second symbol
 	 * @return
 	 */
-	public boolean symbolIsLessThan(long a, long b) {
+	public static boolean symbolIsLessThan(long a, long b) {
 		byte success = clingoLibrary.clingo_symbol_is_less_than(a, b);
 		return success == 1;
 	}
@@ -503,7 +506,7 @@ public class BaseClingo {
 	 * @param symbol symbol the target symbol
 	 * @return the hash code of the symbol
 	 */
-	public int symbolHash(long symbol) {
+	public static int symbolHash(long symbol) {
 		Size hash = clingoLibrary.clingo_symbol_hash(symbol);
 		return hash.intValue();
 	}
@@ -517,7 +520,7 @@ public class BaseClingo {
 	 * @param string the string to internalize
 	 * @return the internalized string
 	 */
-	public String addString(String string) {
+	public static String addString(String string) {
 		String[] x = new String[1];
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_add_string(string, x);
@@ -533,7 +536,7 @@ public class BaseClingo {
 	 * @param string the string to parse
 	 * @return the resulting symbol
 	 */
-	public long parseTerm(String string) {
+	public static long parseTerm(String string) {
 		// TODO: logger
 		Pointer logger = null;
 		PointerByReference loggerData = null;
@@ -553,7 +556,7 @@ public class BaseClingo {
 	 * 
 	 * @return the number of atoms
 	 */
-	public long symbolicAtomsSize(Pointer atoms) {
+	public static long symbolicAtomsSize(Pointer atoms) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_size(atoms, size);
@@ -568,7 +571,7 @@ public class BaseClingo {
 	 * @param signature optional signature
 	 * @return the resulting iterator
 	 */
-	public Pointer symbolicAtomsBegin(Pointer atoms, Pointer signature) {
+	public static Pointer symbolicAtomsBegin(Pointer atoms, Pointer signature) {
 		PointerByReference iterator = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_begin(atoms, signature, iterator);
@@ -581,7 +584,7 @@ public class BaseClingo {
 	 * @param atoms the target
 	 * @return the resulting iterator
 	 */
-	public Pointer symbolicAtomsEnd(Pointer atoms) {
+	public static Pointer symbolicAtomsEnd(Pointer atoms) {
 		PointerByReference iterator = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_end(atoms, iterator);
@@ -595,7 +598,7 @@ public class BaseClingo {
 	 * @param symbol the symbol to lookup
 	 * @return iterator pointing to the symbolic atom or to the end
 	 */
-	public Pointer symbolicAtomsFind(Pointer atoms, long symbol) {
+	public static Pointer symbolicAtomsFind(Pointer atoms, long symbol) {
 		PointerByReference iterator = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_find(atoms, symbol, iterator);
@@ -610,7 +613,7 @@ public class BaseClingo {
 	 * @param iteratorB the second iterator
 	 * @return whether the two iterators are equal
 	 */
-	public boolean symbolicAtomsIteratorIsEqualTo(Pointer atoms, Pointer iteratorA, Pointer iteratorB) {
+	public static boolean symbolicAtomsIteratorIsEqualTo(Pointer atoms, Pointer iteratorA, Pointer iteratorB) {
 		ByteByReference equal = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_iterator_is_equal_to(atoms, iteratorA, iteratorB, equal);
@@ -624,7 +627,7 @@ public class BaseClingo {
 	 * @param iterator iterator to the atom
 	 * @return the resulting symbol
 	 */
-	public long symbolicAtomsSymbol(Pointer atoms, Pointer iterator) {
+	public static long symbolicAtomsSymbol(Pointer atoms, Pointer iterator) {
 		LongByReference p_symbol = new LongByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_symbol(atoms, iterator, p_symbol);
@@ -641,7 +644,7 @@ public class BaseClingo {
 	 * @param iterator iterator to the atom
 	 * @return fact whether the atom is a fact
 	 */
-	public boolean symbolicAtomsIsFact(Pointer atoms, Pointer iterator) {
+	public static boolean symbolicAtomsIsFact(Pointer atoms, Pointer iterator) {
 		ByteByReference p_fact = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_is_fact(atoms, iterator, p_fact);
@@ -658,7 +661,7 @@ public class BaseClingo {
 	 * @param iterator iterator to the atom
 	 * @return whether the atom is a external
 	 */
-	public long symbolicAtomsIsExternal(Pointer atoms, Pointer iterator) {
+	public static long symbolicAtomsIsExternal(Pointer atoms, Pointer iterator) {
 		ByteByReference p_external = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_is_external(atoms, iterator, p_external);
@@ -676,7 +679,7 @@ public class BaseClingo {
 	 * @param iterator iterator to the atom
 	 * @return the associated literal
 	 */
-	public Pointer symbolicAtomsLiteral(Pointer atoms, Pointer iterator) {
+	public static Pointer symbolicAtomsLiteral(Pointer atoms, Pointer iterator) {
 		PointerByReference p_literal = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_literal(atoms, iterator, p_literal);
@@ -689,7 +692,7 @@ public class BaseClingo {
 	 * @param atoms the target
 	 * @return the number of signatures
 	 */
-	public long symbolicAtomsSignaturesSize(Pointer atoms) {
+	public static long symbolicAtomsSignaturesSize(Pointer atoms) {
 		SizeByReference p_size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_signatures_size(atoms, p_size);
@@ -703,7 +706,7 @@ public class BaseClingo {
 	 * @param size  the number of signatures
 	 * @return the resulting signatures
 	 */
-	public Pointer symbolicAtomsSignatures(Pointer atoms, long size) {
+	public static Pointer symbolicAtomsSignatures(Pointer atoms, long size) {
 		PointerByReference p_signatures = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_signatures(atoms, p_signatures, size);
@@ -717,7 +720,7 @@ public class BaseClingo {
 	 * @param iterator the current iterator
 	 * @return the succeeding iterator
 	 */
-	public Pointer symbolicAtomsNext(Pointer atoms, Pointer iterator) {
+	public static Pointer symbolicAtomsNext(Pointer atoms, Pointer iterator) {
 		PointerByReference p_next = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_next(atoms, iterator, p_next);
@@ -732,7 +735,7 @@ public class BaseClingo {
 	 * @param iterator the iterator
 	 * @return whether the iterator points to some element within the sequence
 	 */
-	public byte symbolicAtomsIsValid(Pointer atoms, Pointer iterator) {
+	public static byte symbolicAtomsIsValid(Pointer atoms, Pointer iterator) {
 		ByteByReference p_valid = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_is_valid(atoms, iterator, p_valid);
@@ -752,7 +755,7 @@ public class BaseClingo {
 	 * @param term  id of the term
 	 * @return the resulting type
 	 */
-	public TermType theoryAtomsTermType(Pointer atoms, int term) {
+	public static TermType theoryAtomsTermType(Pointer atoms, int term) {
 		IntByReference type = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_term_type(atoms, term, type);
@@ -766,7 +769,7 @@ public class BaseClingo {
 	 * @param term  id of the term
 	 * @return the resulting number
 	 */
-	public int theoryAtomsTermNumber(Pointer atoms, int term) {
+	public static int theoryAtomsTermNumber(Pointer atoms, int term) {
 		IntByReference number = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_term_number(atoms, term, number);
@@ -785,7 +788,7 @@ public class BaseClingo {
 	 * @param term  id of the term
 	 * @return the resulting name
 	 */
-	public String theoryAtomsTermName(Pointer atoms, int term) {
+	public static String theoryAtomsTermName(Pointer atoms, int term) {
 		String[] name = new String[1];
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_term_name(atoms, term, name);
@@ -801,7 +804,7 @@ public class BaseClingo {
 	 * @param term  id of the term
 	 * @return the resulting arguments in form of an array of term ids
 	 */
-	public long[] theoryAtomsTermArguments(Pointer atoms, int term) {
+	public static long[] theoryAtomsTermArguments(Pointer atoms, int term) {
 		PointerByReference arguments = new PointerByReference();
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
@@ -829,7 +832,6 @@ public class BaseClingo {
 	@SuppressWarnings("unused")
 	private long theoryAtomsTermToStringSize(Pointer atoms, int term) {
 		SizeByReference size = new SizeByReference();
-		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_term_to_string_size(atoms, term, size);
 		return size.getValue();
 	}
@@ -841,7 +843,7 @@ public class BaseClingo {
 	 * @param term id of the term
 	 * @return the resulting string
 	 */
-	public String theoryAtomsTermToString(Pointer atoms, int term) {
+	public static String theoryAtomsTermToString(Pointer atoms, int term) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success1 = clingoLibrary.clingo_theory_atoms_term_to_string_size(atoms, term, size);
@@ -861,7 +863,7 @@ public class BaseClingo {
 	 * @param element id of the element
 	 * @return the resulting array of term ids
 	 */
-	public long[] theoryAtomsElementTuple(Pointer atoms, int element) {
+	public static long[] theoryAtomsElementTuple(Pointer atoms, int element) {
 		PointerByReference tuple = new PointerByReference();
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
@@ -877,13 +879,18 @@ public class BaseClingo {
 	 * @param element id of the element
 	 * @return the resulting array of aspif literals
 	 */
-	public long[] theoryAtomsElementCondition(Pointer atoms, int element) {
+	public static long[] theoryAtomsElementCondition(Pointer atoms, int element) {
 		PointerByReference condition = new PointerByReference();
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_element_condition(atoms, element, condition, size);
 		int s = Math.toIntExact(size.getValue());
-		return condition.getValue().getLongArray(0, s);
+		if (s < 1) {
+			long result[] = {};
+			return result;
+		} else {
+			return condition.getValue().getLongArray(0, s);
+		}
 	}
 
 	/**
@@ -898,7 +905,7 @@ public class BaseClingo {
 	 * @param element id of the element
 	 * @return the resulting condition id
 	 */
-	public int theoryAtomsElementConditionId(Pointer atoms, int element) {
+	public static int theoryAtomsElementConditionId(Pointer atoms, int element) {
 		IntByReference condition = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_element_condition_id(atoms, element, condition);
@@ -930,7 +937,7 @@ public class BaseClingo {
 	 * @param element id of the element
 	 * @return the resulting string
 	 */
-	public String theoryAtomsElementToString(Pointer atoms, int element) {
+	public static String theoryAtomsElementToString(Pointer atoms, int element) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success1 = clingoLibrary.clingo_theory_atoms_element_to_string_size(atoms, element, size);
@@ -949,7 +956,7 @@ public class BaseClingo {
 	 * @param atoms the target
 	 * @return the resulting number
 	 */
-	public long theoryAtomsSize(Pointer atoms) {
+	public static long theoryAtomsSize(Pointer atoms) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_size(atoms, size);
@@ -963,7 +970,7 @@ public class BaseClingo {
 	 * @param atom  id of the atom
 	 * @return the resulting term id
 	 */
-	public long theoryAtomsAtomTerm(Pointer atoms, int atom) {
+	public static long theoryAtomsAtomTerm(Pointer atoms, int atom) {
 		IntByReference term = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_atom_term(atoms, atom, term);
@@ -977,7 +984,7 @@ public class BaseClingo {
 	 * @param atom  id of the atom
 	 * @return the resulting array of elements
 	 */
-	public long[] theoryAtomsAtomElements(Pointer atoms, int atom) {
+	public static long[] theoryAtomsAtomElements(Pointer atoms, int atom) {
 		PointerByReference elements = new PointerByReference();
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
@@ -993,7 +1000,7 @@ public class BaseClingo {
 	 * @param atom  id of the atom
 	 * @return whether the theory atom has a guard
 	 */
-	public byte theoryAtomsAtomHasGuard(Pointer atoms, int atom) {
+	public static byte theoryAtomsAtomHasGuard(Pointer atoms, int atom) {
 		ByteByReference hasGuard = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_atom_has_guard(atoms, atom, hasGuard);
@@ -1011,7 +1018,7 @@ public class BaseClingo {
 	 * @return
 	 * @return
 	 */
-	public long[] theoryAtomsAtomGuard(Pointer atoms, int atom) {
+	public static long[] theoryAtomsAtomGuard(Pointer atoms, int atom) {
 		PointerByReference connective = new PointerByReference();
 		IntByReference term = new IntByReference();
 		@SuppressWarnings("unused")
@@ -1027,7 +1034,7 @@ public class BaseClingo {
 	 * @param atom  id of the atom
 	 * @return the resulting literal
 	 */
-	public int theoryAtomsAtomLiteral(Pointer atoms, int atom) {
+	public static int theoryAtomsAtomLiteral(Pointer atoms, int atom) {
 		IntByReference literal = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_atom_literal(atoms, atom, literal);
@@ -1059,7 +1066,7 @@ public class BaseClingo {
 	 * @param atom id of the atom
 	 * @return the resulting size
 	 */
-	public String theoryAtomsAtomToString(Pointer atoms, int atom) {
+	public static String theoryAtomsAtomToString(Pointer atoms, int atom) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success1 = clingoLibrary.clingo_theory_atoms_atom_to_string_size(atoms, atom, size);
@@ -1083,7 +1090,7 @@ public class BaseClingo {
 	 * 
 	 * @param p_backend the target
 	 */
-	public void backendBegin(Pointer p_backend) {
+	public static void backendBegin(Pointer p_backend) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_begin(p_backend);
 	}
@@ -1093,7 +1100,7 @@ public class BaseClingo {
 	 * 
 	 * @param p_backend the target
 	 */
-	public void backendEnd(Pointer p_backend) {
+	public static void backendEnd(Pointer p_backend) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_end(p_backend);
 	}
@@ -1109,7 +1116,7 @@ public class BaseClingo {
 	 * @param bodySize the number of literals in the body
 	 */
 	// TODO: Remove size parameters
-	public void backendRule(Pointer backend, byte choice, int head, long headSize, int body, long bodySize) {
+	public static void backendRule(Pointer backend, byte choice, int head, long headSize, int body, long bodySize) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_rule(backend, choice, head, headSize, body, bodySize);
 	}
@@ -1127,7 +1134,7 @@ public class BaseClingo {
 	 * @param body       the weighted body literals
 	 * @param bodySize   the number of weighted literals in the body
 	 */
-	public void backendWeightRule(Pointer backend, byte choice, int head, long headSize, int lowerBound, int body,
+	public static void backendWeightRule(Pointer backend, byte choice, int head, long headSize, int lowerBound, int body,
 			long bodySize) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_weight_rule(backend, choice, head, headSize, lowerBound, body,
@@ -1142,7 +1149,7 @@ public class BaseClingo {
 	 * @param literals the weighted literals whose sum to minimize
 	 * @param size     the number of weighted literals
 	 */
-	public void backendWeightMinimize(Pointer backend, int priority, int literals, long size) {
+	public static void backendWeightMinimize(Pointer backend, int priority, int literals, long size) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_minimize(backend, priority, literals, size);
 	}
@@ -1154,7 +1161,7 @@ public class BaseClingo {
 	 * @param atoms   the atoms to project on
 	 * @param size    the number of atoms
 	 */
-	public void backendWeightProject(Pointer backend, int atoms, long size) {
+	public static void backendWeightProject(Pointer backend, int atoms, long size) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_project(backend, atoms, size);
 	}
@@ -1166,7 +1173,7 @@ public class BaseClingo {
 	 * @param atom    the external atom
 	 * @param type    the type of the external statement
 	 */
-	public void backendWeightExternal(Pointer backend, int atom, ExternalType type) {
+	public static void backendWeightExternal(Pointer backend, int atom, ExternalType type) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_external(backend, atom, type.getValue());
 	}
@@ -1179,7 +1186,7 @@ public class BaseClingo {
 	 *                 negative literals false for the next solve call)
 	 * @param size     the number of atoms
 	 */
-	public void backendWeightAssume(Pointer backend, int literals, long size) {
+	public static void backendWeightAssume(Pointer backend, int literals, long size) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_assume(backend, literals, size);
 	}
@@ -1196,7 +1203,7 @@ public class BaseClingo {
 	 *                  modification
 	 * @param size      the number of atoms in the condition
 	 */
-	public void backendWeightHeuristic(Pointer backend, int atom, HeuristicType type, int bias, int priority,
+	public static void backendWeightHeuristic(Pointer backend, int atom, HeuristicType type, int bias, int priority,
 			int condition, long size) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_heuristic(backend, atom, type.getValue(), bias, priority, condition,
@@ -1212,7 +1219,7 @@ public class BaseClingo {
 	 * @param condition the condition under which the edge is part of the graph
 	 * @param size      the number of atoms in the condition
 	 */
-	public void backendWeightAcycEdge(Pointer backend, int nodeU, int nodeV, int condition, long size) {
+	public static void backendWeightAcycEdge(Pointer backend, int nodeU, int nodeV, int condition, long size) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_acyc_edge(backend, nodeU, nodeV, condition, size);
 	}
@@ -1224,7 +1231,7 @@ public class BaseClingo {
 	 * @param symbol  optional symbol to associate the atom with
 	 * @return the resulting atom
 	 */
-	public int backendWeightAddAtom(Pointer backend, int symbol) {
+	public static int backendWeightAddAtom(Pointer backend, int symbol) {
 		IntByReference atom = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_add_atom(backend, symbol, atom);
@@ -1241,7 +1248,7 @@ public class BaseClingo {
 	 * @param configuration the target configuration
 	 * @return the root key
 	 */
-	public int configurationRoot(Pointer configuration) {
+	public static int configurationRoot(Pointer configuration) {
 		IntByReference key = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_root(configuration, key);
@@ -1257,7 +1264,7 @@ public class BaseClingo {
 	 * @param key           the key
 	 * @return the resulting type
 	 */
-	public ConfigurationType configurationType(Pointer configuration, int key) {
+	public static ConfigurationType configurationType(Pointer configuration, int key) {
 		IntByReference type = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_type(configuration, key, type);
@@ -1272,7 +1279,7 @@ public class BaseClingo {
 	 * @return
 	 * @return the resulting type
 	 */
-	public String configurationDescription(Pointer configuration, int key) {
+	public static String configurationDescription(Pointer configuration, int key) {
 		String[] description = new String[1];
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_description(configuration, key, description);
@@ -1291,7 +1298,7 @@ public class BaseClingo {
 	 * @param key           the key
 	 * @return the resulting size
 	 */
-	public long configurationArraySize(Pointer configuration, int key) {
+	public static long configurationArraySize(Pointer configuration, int key) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_array_size(configuration, key, size);
@@ -1311,7 +1318,7 @@ public class BaseClingo {
 	 * @param offset        the offset in the array
 	 * @return the resulting subkey
 	 */
-	public long configurationArrayAt(Pointer configuration, int key, long offset) {
+	public static long configurationArrayAt(Pointer configuration, int key, long offset) {
 		IntByReference subkey = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_array_at(configuration, key, offset, subkey);
@@ -1330,7 +1337,7 @@ public class BaseClingo {
 	 * @param key           the key
 	 * @return the resulting size
 	 */
-	public long configurationMapSize(Pointer configuration, int key) {
+	public static long configurationMapSize(Pointer configuration, int key) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_map_size(configuration, key, size);
@@ -1349,7 +1356,7 @@ public class BaseClingo {
 	 * @param name          the name to lookup the subkey
 	 * @return the resulting subkey
 	 */
-	public long configurationMapHasSubkey(Pointer configuration, int key, String name) {
+	public static long configurationMapHasSubkey(Pointer configuration, int key, String name) {
 		ByteByReference result = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_map_has_subkey(configuration, key, name, result);
@@ -1368,7 +1375,7 @@ public class BaseClingo {
 	 * @param offset        the offset of the name
 	 * @return the resulting name
 	 */
-	public String configurationMapSubkeyName(Pointer configuration, int key, long offset) {
+	public static String configurationMapSubkeyName(Pointer configuration, int key, long offset) {
 		String[] name = new String[1];
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_map_subkey_name(configuration, key, offset, name);
@@ -1387,7 +1394,7 @@ public class BaseClingo {
 	 * @param name          the name to lookup the subkey
 	 * @return the resulting subkey
 	 */
-	public int configurationMapAt(Pointer configuration, int key, String name) {
+	public static int configurationMapAt(Pointer configuration, int key, String name) {
 		IntByReference subkey = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_map_at(configuration, key, name, subkey);
@@ -1406,7 +1413,7 @@ public class BaseClingo {
 	 * @param key           the key
 	 * @return whether the entry has a value
 	 */
-	public byte configurationValueIsAssigned(Pointer configuration, int key) {
+	public static byte configurationValueIsAssigned(Pointer configuration, int key) {
 		ByteByReference assigned = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_value_is_assigned(configuration, key, assigned);
@@ -1423,7 +1430,7 @@ public class BaseClingo {
 	 * @param key           the key
 	 * @return the resulting size
 	 */
-	public long configurationValueGetSize(Pointer configuration, int key) {
+	public static long configurationValueGetSize(Pointer configuration, int key) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_value_get_size(configuration, key, size);
@@ -1442,7 +1449,7 @@ public class BaseClingo {
 	 * @param size          the size of the given char array
 	 * @return the resulting string value
 	 */
-	public String configurationValueGet(Pointer configuration, int key, long size) {
+	public static String configurationValueGet(Pointer configuration, int key, long size) {
 		byte[] value = new byte[Math.toIntExact(size)];
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_value_get(configuration, key, value, size);
@@ -1456,7 +1463,7 @@ public class BaseClingo {
 	 * @param key           the key
 	 * @param value         the value to set
 	 */
-	public void configurationValueSet(Pointer configuration, int key, String value) {
+	public static void configurationValueSet(Pointer configuration, int key, String value) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_value_set(configuration, key, value);
 	}
@@ -1473,7 +1480,7 @@ public class BaseClingo {
 	 * @param statistics the target statistics
 	 * @return the root key
 	 */
-	public long statisticsRoot(Pointer statistics) {
+	public static long statisticsRoot(Pointer statistics) {
 		IntByReference key = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_root(statistics, key);
@@ -1487,7 +1494,7 @@ public class BaseClingo {
 	 * @param[in] key the key
 	 * @return the resulting type
 	 */
-	public StatisticsType statisticsType(Pointer statistics, long key) {
+	public static StatisticsType statisticsType(Pointer statistics, long key) {
 		IntByReference type = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_type(statistics, key, type);
@@ -1505,7 +1512,7 @@ public class BaseClingo {
 	 * @param key        the key
 	 * @return the resulting size
 	 */
-	public long clingoStatisticsArraySize(Pointer statistics, long key) {
+	public static long clingoStatisticsArraySize(Pointer statistics, long key) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_array_size(statistics, key, size);
@@ -1525,7 +1532,7 @@ public class BaseClingo {
 	 * @return whether the call was success
 	 */
 
-	public int statisticsArrayAt(Pointer statistics, long key, long offset) {
+	public static int statisticsArrayAt(Pointer statistics, long key, long offset) {
 		IntByReference subkey = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_array_at(statistics, key, offset, subkey);
@@ -1544,7 +1551,7 @@ public class BaseClingo {
 	 * @param[out] subkey the resulting subkey
 	 * @return whether the call was success
 	 */
-	public int statisticsArrayPush(Pointer statistics, long key, int type) {
+	public static int statisticsArrayPush(Pointer statistics, long key, int type) {
 		IntByReference subkey = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_array_push(statistics, key, type, subkey);
@@ -1564,7 +1571,7 @@ public class BaseClingo {
 	 * @param[out] size the resulting number
 	 * @return whether the call was success
 	 */
-	public long statisticsMapSize(Pointer statistics, long key) {
+	public static long statisticsMapSize(Pointer statistics, long key) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_map_size(statistics, key, size);
@@ -1583,7 +1590,7 @@ public class BaseClingo {
 	 * @param[out] result true if the map has a subkey with the given name
 	 * @return whether the call was success
 	 */
-	public byte statisticsMapHasSubkey(Pointer statistics, long key, String name) {
+	public static byte statisticsMapHasSubkey(Pointer statistics, long key, String name) {
 		ByteByReference result = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_map_has_subkey(statistics, key, name, result);
@@ -1602,7 +1609,7 @@ public class BaseClingo {
 	 * @param[out] name the resulting name
 	 * @return whether the call was success
 	 */
-	public String statisticsMapSubkeyName(Pointer statistics, long key, long offset) {
+	public static String statisticsMapSubkeyName(Pointer statistics, long key, long offset) {
 		String[] name = new String[1];
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_map_subkey_name(statistics, key, offset, name);
@@ -1622,7 +1629,7 @@ public class BaseClingo {
 	 * @param[out] subkey the resulting subkey
 	 * @return whether the call was success
 	 */
-	public int statisticsMapAt(Pointer statistics, long key, String name) {
+	public static int statisticsMapAt(Pointer statistics, long key, String name) {
 		IntByReference subkey = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_map_at(statistics, key, name, subkey);
@@ -1642,7 +1649,7 @@ public class BaseClingo {
 	 * @param[out] subkey the index of the resulting subkey
 	 * @return whether the call was success
 	 */
-	public int statisticsMapAddSubkey(Pointer statistics, long key, String name, int type) {
+	public static int statisticsMapAddSubkey(Pointer statistics, long key, String name, int type) {
 		IntByReference subkey = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_map_add_subkey(statistics, key, name, type, subkey);
@@ -1660,7 +1667,7 @@ public class BaseClingo {
 	 * @param[out] value the resulting value
 	 * @return whether the call was successful
 	 */
-	public double statisticsValueGet(Pointer statistics, long key) {
+	public static double statisticsValueGet(Pointer statistics, long key) {
 		DoubleByReference value = new DoubleByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_value_get(statistics, key, value);
@@ -1678,7 +1685,7 @@ public class BaseClingo {
 	 * @param[out] value the new value
 	 * @return whether the call was success
 	 */
-	public void statisticsValueSet(Pointer statistics, long key, double value) {
+	public static void statisticsValueSet(Pointer statistics, long key, double value) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_value_set(statistics, key, value);
 	}
@@ -1695,7 +1702,7 @@ public class BaseClingo {
 	 * @param model the target
 	 * @return the type of the model
 	 */
-	public ModelType modelType(Pointer model) {
+	public static ModelType modelType(Pointer model) {
 		IntByReference type = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_type(model, type);
@@ -1708,7 +1715,7 @@ public class BaseClingo {
 	 * @param model the target
 	 * @return the number of the model
 	 */
-	public long modelNumber(Pointer model) {
+	public static long modelNumber(Pointer model) {
 		LongByReference number = new LongByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_number(model, number);
@@ -1722,7 +1729,7 @@ public class BaseClingo {
 	 * @param show  which symbols to select - {@link ShowType}
 	 * @return the number symbols
 	 */
-	public long modelSymbolsSize(Pointer model, ShowType show) {
+	public static long modelSymbolsSize(Pointer model, ShowType show) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_symbols_size(model, show.getValue(), size);
@@ -1742,7 +1749,7 @@ public class BaseClingo {
 	 * @return the resulting symbols as an array[size] of symbol references
 	 * @see clingo_model_symbols_size()
 	 */
-	public long[] modelSymbols(Pointer model, ShowType show, long size) {
+	public static long[] modelSymbols(Pointer model, ShowType show, long size) {
 		long[] symbols = new long[Math.toIntExact(size)];
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_symbols(model, show.getValue(), symbols, size);
@@ -1757,7 +1764,7 @@ public class BaseClingo {
 	 * @param[out] contained whether the atom is contained
 	 * @return whether the call was successful
 	 */
-	public byte modelContains(Pointer model, long atom) {
+	public static byte modelContains(Pointer model, long atom) {
 		ByteByReference contained = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_contains(model, atom, contained);
@@ -1772,7 +1779,7 @@ public class BaseClingo {
 	 * @param[out] result whether the literal is true
 	 * @return whether the call was successful
 	 */
-	public byte modelIsTrue(Pointer model, long literal) {
+	public static byte modelIsTrue(Pointer model, long literal) {
 		ByteByReference result = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_is_true(model, literal, result);
@@ -1786,7 +1793,7 @@ public class BaseClingo {
 	 * @param[out] size the number of costs
 	 * @return whether the call was successful
 	 */
-	public long modelCostSize(Pointer model) {
+	public static long modelCostSize(Pointer model) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_cost_size(model, size);
@@ -1806,7 +1813,7 @@ public class BaseClingo {
 	 * @see clingo_model_cost_size()
 	 * @see clingo_model_optimality_proven()
 	 */
-	public int modelCost(Pointer model, long size) {
+	public static int modelCost(Pointer model, long size) {
 		IntByReference costs = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_cost(model, costs, size);
@@ -1822,7 +1829,7 @@ public class BaseClingo {
 	 *
 	 * @see clingo_model_cost()
 	 */
-	public byte modelOptimalityProven(Pointer model) {
+	public static byte modelOptimalityProven(Pointer model) {
 		ByteByReference proven = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_optimality_proven(model, proven);
@@ -1836,7 +1843,7 @@ public class BaseClingo {
 	 * @param[out] id the resulting thread id
 	 * @return whether the call was successful
 	 */
-	public int modelThreadId(Pointer model) {
+	public static int modelThreadId(Pointer model) {
 		IntByReference id = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_thread_id(model, id);
@@ -1855,7 +1862,7 @@ public class BaseClingo {
 	 * @param[in] size the number of symbols to add
 	 * @return whether the call was successful
 	 */
-	public void modelExtend(Pointer model, long symbols, long size) {
+	public static void modelExtend(Pointer model, long symbols, long size) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_extend(model, symbols, size);
 	}
@@ -1871,7 +1878,7 @@ public class BaseClingo {
 	 * @param[out] control the resulting solve control object
 	 * @return whether the call was successful
 	 */
-	public Pointer modelContext(Pointer model) {
+	public static Pointer modelContext(Pointer model) {
 		PointerByReference control = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_context(model, control);
@@ -1885,7 +1892,7 @@ public class BaseClingo {
 	 * @param[out] atoms the resulting object
 	 * @return whether the call was successful
 	 */
-	public Pointer solveControlSymbolicAtoms(Pointer control) {
+	public static Pointer solveControlSymbolicAtoms(Pointer control) {
 		PointerByReference atoms = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_solve_control_symbolic_atoms(control, atoms);
@@ -1906,7 +1913,7 @@ public class BaseClingo {
 	 *         codes: - ::clingo_error_bad_alloc - ::clingo_error_runtime if adding
 	 *         the clause fails
 	 */
-	public void solveControlAddClause(Pointer control, Pointer clause, long size) {
+	public static void solveControlAddClause(Pointer control, Pointer clause, long size) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_solve_control_add_clause(control, clause, size);
 	}
@@ -1932,7 +1939,7 @@ public class BaseClingo {
 	 * @param handle the target
 	 * @return the solve result
 	 */
-	public int solveHandleGet(Pointer handle) {
+	public static int solveHandleGet(Pointer handle) {
 		IntByReference res = new IntByReference();
 		@SuppressWarnings("unused")
 		boolean success = clingoLibrary.clingo_solve_handle_get(handle, res);
@@ -1950,7 +1957,7 @@ public class BaseClingo {
 	 * @param timeout the maximum time to wait
 	 * @return whether the search has finished
 	 */
-	public boolean solveHandleWait(Pointer handle, double timeout) {
+	public static boolean solveHandleWait(Pointer handle, double timeout) {
 		ByteByReference result = new ByteByReference();
 		clingoLibrary.clingo_solve_handle_wait(handle, timeout, result);
 		return result.getValue() == 1;
@@ -1962,7 +1969,7 @@ public class BaseClingo {
 	 * @param handle the target
 	 * @return the model (it is NULL if there are no more models)
 	 */
-	public Pointer solveHandleModel(Pointer handle) {
+	public static Pointer solveHandleModel(Pointer handle) {
 		PointerByReference model = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_solve_handle_model(handle, model);
@@ -1980,7 +1987,7 @@ public class BaseClingo {
 	 * @param handle the target
 	 * @return
 	 */
-	public long[] solveHandleCore(Pointer handle) {
+	public static long[] solveHandleCore(Pointer handle) {
 		PointerByReference core = new PointerByReference();
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
@@ -1999,7 +2006,7 @@ public class BaseClingo {
 	 * @note This function does not block.
 	 * @param handle the target
 	 */
-	public void solveHandleResume(Pointer handle) {
+	public static void solveHandleResume(Pointer handle) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_solve_handle_resume(handle);
 	}
@@ -2009,7 +2016,7 @@ public class BaseClingo {
 	 * 
 	 * @param handle the target
 	 */
-	public void solveHandleCancel(Pointer handle) {
+	public static void solveHandleCancel(Pointer handle) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_solve_handle_cancel(handle);
 	}
@@ -2022,7 +2029,7 @@ public class BaseClingo {
 	 * 
 	 * @param handle the target
 	 */
-	public void solveHandleClose(Pointer handle) {
+	public static void solveHandleClose(Pointer handle) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_solve_handle_close(handle);
 	}
@@ -2049,7 +2056,7 @@ public class BaseClingo {
 	// clingo_ground_callback_t
 	// clingo_control_t
 
-	public Pointer control(String[] arguments, Pointer logger, Pointer loggerData, int messageLimit) {
+	public static Pointer control(String[] arguments, Pointer logger, Pointer loggerData, int messageLimit) {
 		int argumentsLength;
 		StringArray args;
 		if (arguments == null) {
@@ -2071,7 +2078,7 @@ public class BaseClingo {
 	 * @param control the target
 	 */
 	// TODO: make invisible / remove if close is working properly
-	public void controlFree(Pointer control) {
+	public static void controlFree(Pointer control) {
 		clingoLibrary.clingo_control_free(control);
 	}
 
@@ -2081,7 +2088,7 @@ public class BaseClingo {
 	 * @param control the target
 	 * @param file    path to the file
 	 */
-	public void controlLoad(Pointer control, String file) {
+	public static void controlLoad(Pointer control, String file) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_load(control, file);
 	}
@@ -2101,7 +2108,7 @@ public class BaseClingo {
 	 * @param parametersSize number of parameters
 	 * @param program        string representation of the program
 	 */
-	public void controlAdd(Pointer control, String name, String[] parameters, String program) {
+	public static void controlAdd(Pointer control, String name, String[] parameters, String program) {
 		if (parameters == null) {
 			parameters = new String[0];
 		}
@@ -2123,7 +2130,7 @@ public class BaseClingo {
 	 * @param ground_callback      callback to implement external functions
 	 * @param ground_callback_data user data for ground_callback
 	 */
-	public void controlGround(Pointer control, Part[] parts, Size parts_size, GroundCallbackT ground_callback,
+	public static void controlGround(Pointer control, Part[] parts, Size parts_size, GroundCallbackT ground_callback,
 			Pointer ground_callback_data) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_ground(control, parts, parts_size, ground_callback,
@@ -2147,7 +2154,7 @@ public class BaseClingo {
 	 * @param data            the user data for the event handler
 	 * @return handle to the current search to enumerate models
 	 */
-	public Pointer controlSolve(Pointer control, SolveMode mode, Pointer assumptions, int assumptionsSize,
+	public static Pointer controlSolve(Pointer control, SolveMode mode, Pointer assumptions, int assumptionsSize,
 			SolveEventCallback notify, Pointer data) {
 		PointerByReference handle = new PointerByReference();
 		@SuppressWarnings("unused")
@@ -2172,7 +2179,7 @@ public class BaseClingo {
 	 * @see clingo_control_get_enable_cleanup()
 	 * @see clingo_control_set_enable_cleanup()
 	 */
-	public void controlCleanup(Pointer control) {
+	public static void controlCleanup(Pointer control) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_cleanup(control);
 	}
@@ -2188,7 +2195,7 @@ public class BaseClingo {
 	 * @param literal literal to assign
 	 * @param value   the truth value
 	 */
-	public void controlAssignExternal(Pointer control, int literal, TruthValue value) {
+	public static void controlAssignExternal(Pointer control, int literal, TruthValue value) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_assign_external(control, literal, value.getValue());
 	}
@@ -2204,7 +2211,7 @@ public class BaseClingo {
 	 * 
 	 * @param literal literal to release
 	 */
-	public void controlReleaseExternal(Pointer control, int literal) {
+	public static void controlReleaseExternal(Pointer control, int literal) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_release_external(control, literal);
 	}
@@ -2221,7 +2228,7 @@ public class BaseClingo {
 	 * @param data       user data passed to the propagator functions
 	 * @param sequential whether the propagator should be called sequentially
 	 */
-	public void controlRegisterPropagator(Pointer control, Pointer propagator, Pointer data, boolean sequential) {
+	public static void controlRegisterPropagator(Pointer control, Pointer propagator, Pointer data, boolean sequential) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_register_propagator(control, propagator, data,
 				(byte) (sequential ? 1 : 0));
@@ -2239,7 +2246,7 @@ public class BaseClingo {
 	 * 
 	 * @return
 	 */
-	public boolean controlIsConflicting(Pointer control) {
+	public static boolean controlIsConflicting(Pointer control) {
 		byte isConflicting = clingoLibrary.clingo_control_is_conflicting(control);
 		return isConflicting == 1;
 	}
@@ -2262,7 +2269,7 @@ public class BaseClingo {
 	 *            solving. Otherwise, not all of its entries have valid values.
 	 * @return the statistics object
 	 */
-	public Pointer controlStatistics(Pointer control) {
+	public static Pointer controlStatistics(Pointer control) {
 		PointerByReference statistics = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_statistics(control, statistics);
@@ -2273,7 +2280,7 @@ public class BaseClingo {
 	 * Interrupt the active solve call (or the following solve call right at the
 	 * beginning).
 	 */
-	public void controlInterrupt(Pointer control) {
+	public static void controlInterrupt(Pointer control) {
 		clingoLibrary.clingo_control_interrupt(control);
 	}
 
@@ -2288,7 +2295,7 @@ public class BaseClingo {
 	 *            returned pointer can be casted to a ClaspFacade pointer.
 	 * @return clasp pointer to the ClaspFacade object (may be <code>nullptr</code>)
 	 */
-	public Pointer controlClaspFacade(Pointer control) {
+	public static Pointer controlClaspFacade(Pointer control) {
 		PointerByReference claspFacade = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_clasp_facade(control, claspFacade);
@@ -2302,7 +2309,7 @@ public class BaseClingo {
 	 * 
 	 * @return the configuration object
 	 */
-	public Pointer controlConfiguration(Pointer control) {
+	public static Pointer controlConfiguration(Pointer control) {
 		PointerByReference configuration = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_configuration(control, configuration);
@@ -2325,7 +2332,7 @@ public class BaseClingo {
 	 *            enabled.
 	 * @param enable whether to enable the assumption
 	 */
-	public void controlSetEnableEnumerationAssumption(Pointer control, boolean enable) {
+	public static void controlSetEnableEnumerationAssumption(Pointer control, boolean enable) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_set_enable_enumeration_assumption(control, (byte) (enable ? 1 : 0));
 	}
@@ -2337,7 +2344,7 @@ public class BaseClingo {
 	 * 
 	 * @return
 	 */
-	public boolean controlGetEnableEnumerationAssumption(Pointer control) {
+	public static boolean controlGetEnableEnumerationAssumption(Pointer control) {
 		byte enabled = clingoLibrary.clingo_control_get_enable_enumeration_assumption(control);
 		return enabled == 1;
 	}
@@ -2352,7 +2359,7 @@ public class BaseClingo {
 	 * @see clingo_control_get_enable_cleanup()
 	 * @param enable whether to enable cleanups
 	 */
-	public void controlSetEnableCleanup(Pointer control, boolean enable) {
+	public static void controlSetEnableCleanup(Pointer control, boolean enable) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_set_enable_cleanup(control, (byte) (enable ? 1 : 0));
 	}
@@ -2367,7 +2374,7 @@ public class BaseClingo {
 	 * @see clingo_control_set_enable_cleanup()
 	 * @return whether automatic cleanup is enabled.
 	 */
-	public boolean controlGetEnableCleanup(Pointer control) {
+	public static boolean controlGetEnableCleanup(Pointer control) {
 		byte enabled = clingoLibrary.clingo_control_get_enable_cleanup(control);
 		return enabled == 1;
 	}
@@ -2381,7 +2388,7 @@ public class BaseClingo {
 	 * @param name of the constant
 	 * @return the resulting symbol
 	 */
-	public int controlGetConst(Pointer control, String name) {
+	public static int controlGetConst(Pointer control, String name) {
 		IntByReference symbol = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_get_const(control, name, symbol);
@@ -2396,7 +2403,7 @@ public class BaseClingo {
 	 * @param name the name of the constant
 	 * @return whether a matching constant definition exists
 	 */
-	public boolean controlHasConst(Pointer control, String name) {
+	public static boolean controlHasConst(Pointer control, String name) {
 		ByteByReference exists = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_has_const(control, name, exists);
@@ -2411,7 +2418,7 @@ public class BaseClingo {
 	 * 
 	 * @return
 	 */
-	public Pointer controlSymbolicAtoms(Pointer control) {
+	public static Pointer controlSymbolicAtoms(Pointer control) {
 		PointerByReference atoms = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_symbolic_atoms(control, atoms);
@@ -2425,7 +2432,7 @@ public class BaseClingo {
 	 * 
 	 * @return the theory atoms object
 	 */
-	public Pointer controlTheoryAtoms(Pointer control) {
+	public static Pointer controlTheoryAtoms(Pointer control) {
 		PointerByReference atoms = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_theory_atoms(control, atoms);
@@ -2440,7 +2447,7 @@ public class BaseClingo {
 	 * @param data     user data passed to the observer functions
 	 * @return
 	 */
-	public void controlRegisterObserver(Pointer control, Pointer observer, boolean replace, Pointer data) {
+	public static void controlRegisterObserver(Pointer control, Pointer observer, boolean replace, Pointer data) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_register_observer(control, observer, (byte) (replace ? 1 : 0),
 				data);
@@ -2455,7 +2462,7 @@ public class BaseClingo {
 	 * 
 	 * @return the backend object
 	 */
-	public Pointer controlBackend(Pointer control) {
+	public static Pointer controlBackend(Pointer control) {
 		PointerByReference backend = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_backend(control, backend);
@@ -2469,7 +2476,7 @@ public class BaseClingo {
 	 * 
 	 * @return the program builder object
 	 */
-	public Pointer controlProgramBuilder(Pointer control) {
+	public static Pointer controlProgramBuilder(Pointer control) {
 		PointerByReference builder = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_program_builder(control, builder);
@@ -2510,7 +2517,7 @@ public class BaseClingo {
 	 *                    help output
 	 * @return
 	 */
-	public void optionsAdd(Pointer options, String group, String option, String description, OptionParseCallbackT parse,
+	public static void optionsAdd(Pointer options, String group, String option, String description, OptionParseCallbackT parse,
 			Pointer data, byte multi, String argument) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_options_add(options, group, option, description, parse, data, multi,
@@ -2531,7 +2538,7 @@ public class BaseClingo {
 	 * @param target      target boolean set to true if the flag is given on the
 	 *                    command-line
 	 */
-	public void optionsAddFlag(Pointer options, String group, String option, String description, boolean target) {
+	public static void optionsAddFlag(Pointer options, String group, String option, String description, boolean target) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_options_add_flag(options, group, option, description,
 				(byte) (target ? 1 : 0));
@@ -2548,7 +2555,7 @@ public class BaseClingo {
 	 * @param[in] data user data to pass to callbacks in application
 	 * @return exit code to return from main function
 	 */
-	public int main(Pointer application, String arguments, int size, Pointer data) {
+	public static int main(Pointer application, String arguments, int size, Pointer data) {
 		return clingoLibrary.clingo_main(application, arguments, size, data);
 	}
 

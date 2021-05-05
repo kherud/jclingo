@@ -20,31 +20,26 @@ public class ClingoSolveTest {
 	@Test
 	public void test3() {
 		String name = "base";
-		Clingo clingo = new Clingo(); 
-		Pointer control = clingo.control(null);
-		clingo.controlAdd(control, name, null, "a. b.");
+		Clingo clingo = new Clingo();
+		Control control = clingo.control(null);
+		control.add(name, null, "a. b.");
         Part[] parts = new Part[1];
         parts[0] = new Part(name, null, new Size(0));
-		clingo.controlGround(control, parts, new Size(1), null, null);
-		try {
-			Solution solution = clingo.solve(control);
-			assertEquals(2, solution.getSize());
-			String[] strArray = { "a", "b" };
-			Set<String> expected = new HashSet<String>(Arrays.asList(strArray));
-			Set<String> actual = solution.getSymbols();
-			assertTrue(expected.equals(actual));
-		} catch (ClingoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		control.ground();
+		Solution solution = control.solve();
+		assertEquals(2, solution.getSize());
+		String[] strArray = { "a", "b" };
+		Set<String> expected = new HashSet<String>(Arrays.asList(strArray));
+		Set<String> actual = solution.getSymbols();
+		assertTrue(expected.equals(actual));
 	}
 
 	@Test
 	public void testTravellingSalesperson() {
 		String name = "base";
 		Clingo clingo = new Clingo(); 
-		Pointer control = clingo.control(null);
-		clingo.controlAdd(control, name,
+		Control control = clingo.control(null);
+		control.add(name,
 				null,
 				"node(1..6). "
 				+ ""
@@ -72,48 +67,33 @@ public class ClingoSolveTest {
 				+ " "
 				+ "#minimize { C,X,Y : cycle(X,Y), cost(X,Y,C) }. "
 				+ "");
-        Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, new Size(0));
-		clingo.controlGround(control, parts, new Size(1), null, null);
-		try {
-			Solution solution = clingo.solve(control);
-			assertEquals(52, solution.getSize());
-//			String[] strArray = { "a", "b" };
-//			Set<String> expected = new HashSet<String>(Arrays.asList(strArray));
-//			Set<String> actual = solution.getSymbols();
-//			assertTrue(expected.equals(actual));
-		} catch (ClingoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		control.ground();
+		Solution solution = control.solve();
+		assertEquals(52, solution.getSize());
+//		String[] strArray = { "a", "b" };
+//		Set<String> expected = new HashSet<String>(Arrays.asList(strArray));
+//		Set<String> actual = solution.getSymbols();
+//		assertTrue(expected.equals(actual));
 	}
 
 	@Test
 	public void testMultiModels() {
 		String name = "base";
 		Clingo clingo = new Clingo(); 
-		Pointer control = clingo.control(null, null, null, 0);
-		clingo.controlAdd(control, name,
+		Control control = clingo.control(null);
+		control.add(name,
 				null,
 				"{elected(ann; bob; carol; dan; elaine; fred)} = 3.");
-        Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, new Size(0));
-		clingo.controlGround(control, parts, new Size(1), new GroundCallbackT() {
+		control.ground(new GroundCallbackT() {
 			@Override
 			public boolean call(Pointer location, String name, Pointer arguments, long argumentsSize, Pointer data,
 					SymbolCallbackT symbolCallback, Pointer symbolCallbackData) {
 				System.out.println("GroundCallbackT");
 				return true;
 			}
-		}, null);
-		try {
-			Solution solution = clingo.solve(control);
-			assertEquals(3, solution.getSize());
-//			clingo.solveHandleModel(null)
-		} catch (ClingoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		});
+		Solution solution = control.solve();
+		assertEquals(3, solution.getSize());
 	}
 
 //	solveHandleModel

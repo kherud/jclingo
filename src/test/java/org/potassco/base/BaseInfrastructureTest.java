@@ -16,20 +16,19 @@ public class BaseInfrastructureTest {
 
 	@Test
 	public void testSignature() {
-		BaseClingo clingo = new BaseClingo();
 		try {
 			String name = "test";
 			int arity = 2;
 			boolean positive = true;
-			Pointer signature = clingo.signatureCreate(name, arity, positive);
-			assertEquals(name, clingo.signatureName(signature));
-			assertEquals(arity, clingo.signatureArity(signature));
-			assertEquals(positive, clingo.signatureIsPositive(signature));
-			assertEquals(!positive, clingo.signatureIsNegative(signature));
-			assertTrue(clingo.signatureIsEqualTo(signature, clingo.signatureCreate("test", 2, true)));
-			assertTrue(clingo.signatureIsLessThan(signature, clingo.signatureCreate("test", 3, true)));
-			int hash = clingo.signatureHash(signature);
-			assertEquals(hash , clingo.signatureHash(signature)); // returns the same hash
+			Pointer signature = BaseClingo.signatureCreate(name, arity, positive);
+			assertEquals(name, BaseClingo.signatureName(signature));
+			assertEquals(arity, BaseClingo.signatureArity(signature));
+			assertEquals(positive, BaseClingo.signatureIsPositive(signature));
+			assertEquals(!positive, BaseClingo.signatureIsNegative(signature));
+			assertTrue(BaseClingo.signatureIsEqualTo(signature, BaseClingo.signatureCreate("test", 2, true)));
+			assertTrue(BaseClingo.signatureIsLessThan(signature, BaseClingo.signatureCreate("test", 3, true)));
+			int hash = BaseClingo.signatureHash(signature);
+			assertEquals(hash , BaseClingo.signatureHash(signature)); // returns the same hash
 		} catch (ClingoException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -38,81 +37,77 @@ public class BaseInfrastructureTest {
 
 	@Test
 	public void testSymbolHandling() {
-		BaseClingo clingo = new BaseClingo();
 		int number = 42;
-		long num = clingo.symbolCreateNumber(number);
-		assertEquals(number, clingo.symbolNumber(num));
+		long num = BaseClingo.symbolCreateNumber(number);
+		assertEquals(number, BaseClingo.symbolNumber(num));
 		// TODO: Is this correct?
-		assertEquals(false, clingo.symbolIsPositive(num));
+		assertEquals(false, BaseClingo.symbolIsPositive(num));
 		// TODO: Is this correct?
-		assertEquals(false, clingo.symbolIsNegative(num));
+		assertEquals(false, BaseClingo.symbolIsNegative(num));
 		
 		String c = "clingo";
-		assertEquals(c, clingo.symbolString(clingo.symbolCreateString(c)));
-		long sup = clingo.symbolCreateSupremum();
-		assertEquals(sup, clingo.symbolCreateSupremum());
-		long inf = clingo.symbolCreateInfimum();
-		assertEquals(inf, clingo.symbolCreateInfimum());
+		assertEquals(c, BaseClingo.symbolString(BaseClingo.symbolCreateString(c)));
+		long sup = BaseClingo.symbolCreateSupremum();
+		assertEquals(sup, BaseClingo.symbolCreateSupremum());
+		long inf = BaseClingo.symbolCreateInfimum();
+		assertEquals(inf, BaseClingo.symbolCreateInfimum());
 		
 		String p = "potassco";
-		long ps = clingo.symbolCreateId(p, true);
-		assertEquals(null, clingo.symbolString(ps));
-		assertEquals(p, clingo.symbolName(ps));
-		assertEquals(true, clingo.symbolIsPositive(ps));
-		assertEquals(false, clingo.symbolIsNegative(ps));
+		long ps = BaseClingo.symbolCreateId(p, true);
+		assertEquals(null, BaseClingo.symbolString(ps));
+		assertEquals(p, BaseClingo.symbolName(ps));
+		assertEquals(true, BaseClingo.symbolIsPositive(ps));
+		assertEquals(false, BaseClingo.symbolIsNegative(ps));
 	}
 
 	@Test
 	public void testSymbolCreateFunction() {
-		BaseClingo clingo = new BaseClingo();
 		int number = 42;
-		long num = clingo.symbolCreateNumber(number);
+		long num = BaseClingo.symbolCreateNumber(number);
 		String c = "clingo";
-		long s = clingo.symbolCreateString(c);
+		long s = BaseClingo.symbolCreateString(c);
 		String p = "potassco";
 		List<Long> args = new ArrayList<Long>();
 		args.add(num);
 		args.add(s);
-		long f = clingo.symbolCreateFunction(p, args, true);
-		assertEquals(p, clingo.symbolName(f));
-		assertEquals(true, clingo.symbolIsPositive(f));
-//		clingo.symbolArguments(f, null, null); TODO: infuctional
-		assertEquals(SymbolType.FUNCTION, clingo.symbolType(f));
-//	TODO:	assertEquals(p, clingo.symbolToString(f, new Size(2)));
-		assertFalse(clingo.symbolIsEqualTo(s, f));
-		assertTrue(clingo.symbolIsEqualTo(num, clingo.symbolCreateNumber(number)));
-		assertTrue(clingo.symbolIsLessThan(s, f));
-		int hash = clingo.symbolHash(f);
-		assertEquals(hash, clingo.symbolHash(f));
-		long[] res = clingo.symbolArguments(f);
+		long f = BaseClingo.symbolCreateFunction(p, args, true);
+		assertEquals(p, BaseClingo.symbolName(f));
+		assertEquals(true, BaseClingo.symbolIsPositive(f));
+//		BaseClingo.symbolArguments(f, null, null); TODO: infuctional
+		assertEquals(SymbolType.FUNCTION, BaseClingo.symbolType(f));
+//	TODO:	assertEquals(p, BaseClingo.symbolToString(f, new Size(2)));
+		assertFalse(BaseClingo.symbolIsEqualTo(s, f));
+		assertTrue(BaseClingo.symbolIsEqualTo(num, BaseClingo.symbolCreateNumber(number)));
+		assertTrue(BaseClingo.symbolIsLessThan(s, f));
+		int hash = BaseClingo.symbolHash(f);
+		assertEquals(hash, BaseClingo.symbolHash(f));
+		long[] res = BaseClingo.symbolArguments(f);
 		for (int i = 0; i < res.length; i++) {
-			assertFalse(clingo.symbolIsEqualTo(args.get(i), res[i]));
+			assertFalse(BaseClingo.symbolIsEqualTo(args.get(i), res[i]));
 		}
 	}
 
 	@Test
 	public void testSymbolType() {
-		BaseClingo clingo = new BaseClingo();
 		String c = "clingo";
-		assertEquals(c, clingo.addString(c));
+		assertEquals(c, BaseClingo.addString(c));
 		String t = "f(a,42)";
-		long symbol = clingo.parseTerm(t);
-		assertEquals(SymbolType.FUNCTION, clingo.symbolType(symbol));
+		long symbol = BaseClingo.parseTerm(t);
+		assertEquals(SymbolType.FUNCTION, BaseClingo.symbolType(symbol));
 	}
 
 	@Test
 	public void testConfiguration1() {
 		String name = "base";
 		String program = "a. b.";
-		BaseClingo clingo = new BaseClingo(); 
-		Pointer control = clingo.control(null, null, null, 0);
-		clingo.controlAdd(control, name, null, program);
-//		clingo.controlGround(control, name); - not used here!
-		Pointer conf = clingo.controlConfiguration(control);
-		int root = clingo.configurationRoot(conf);
-		assertEquals(root, clingo.configurationRoot(conf));
-		assertEquals(ConfigurationType.MAP, clingo.configurationType(conf, root));
-		assertEquals("Options", clingo.configurationDescription(conf, root));
+		Pointer control = BaseClingo.control(null, null, null, 0);
+		BaseClingo.controlAdd(control, name, null, program);
+//		BaseClingo.controlGround(control, name); - not used here!
+		Pointer conf = BaseClingo.controlConfiguration(control);
+		int root = BaseClingo.configurationRoot(conf);
+		assertEquals(root, BaseClingo.configurationRoot(conf));
+		assertEquals(ConfigurationType.MAP, BaseClingo.configurationType(conf, root));
+		assertEquals("Options", BaseClingo.configurationDescription(conf, root));
 	}
 
 	/**
@@ -122,14 +117,13 @@ public class BaseInfrastructureTest {
 	public void testStatistics() {
 		String name = "base";
 //		String program = "a. b.";
-		BaseClingo clingo = new BaseClingo(); 
-		Pointer control = clingo.control(null, null, null, 0);
-		clingo.controlAdd(control, name, null, name);
-//		clingo.ground(name); - not used here!
-		Pointer stats = clingo.controlStatistics(control);
-		long root = clingo.statisticsRoot(stats);
-		assertEquals(StatisticsType.EMPTY, clingo.statisticsType(stats, root));
-		assertEquals(0L, clingo.clingoStatisticsArraySize(stats, root));
+		Pointer control = BaseClingo.control(null, null, null, 0);
+		BaseClingo.controlAdd(control, name, null, name);
+//		BaseClingo.ground(name); - not used here!
+		Pointer stats = BaseClingo.controlStatistics(control);
+		long root = BaseClingo.statisticsRoot(stats);
+		assertEquals(StatisticsType.EMPTY, BaseClingo.statisticsType(stats, root));
+		assertEquals(0L, BaseClingo.clingoStatisticsArraySize(stats, root));
 	}
 
 // TODO

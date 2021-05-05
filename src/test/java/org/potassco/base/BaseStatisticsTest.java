@@ -31,35 +31,34 @@ public class BaseStatisticsTest {
 		String[] arguments = { "-n", "0" };
 //		String[] arguments = null;
 		String program = "a :- not b. b :- not a.";
-		BaseClingo clingo = new BaseClingo(); 
-		Pointer control = clingo.control(arguments, null, null, 0);
-		Pointer conf = clingo.controlConfiguration(control);
-		int rootKey = clingo.configurationRoot(conf);
+		Pointer control = BaseClingo.control(arguments, null, null, 0);
+		Pointer conf = BaseClingo.controlConfiguration(control);
+		int rootKey = BaseClingo.configurationRoot(conf);
 
 // configure to enumerate all models
-//		int subKey = clingo.configurationMapAt(conf, rootKey, "solve.models");
-//		clingo.configurationValueSet(conf, subKey, "0");
+//		int subKey = BaseClingo.configurationMapAt(conf, rootKey, "solve.models");
+//		BaseClingo.configurationValueSet(conf, subKey, "0");
 
-		int confSub = clingo.configurationMapAt(conf, rootKey, "stats");
-		clingo.configurationValueSet(conf, confSub, "1");
-		clingo.controlAdd(control, name, null, program);
+		int confSub = BaseClingo.configurationMapAt(conf, rootKey, "stats");
+		BaseClingo.configurationValueSet(conf, confSub, "1");
+		BaseClingo.controlAdd(control, name, null, program);
 		Part[] parts = new Part[1];
 		parts[0] = new Part(name, null, new Size(0));
-		clingo.controlGround(control, parts, new Size(1), null, null);
+		BaseClingo.controlGround(control, parts, new Size(1), null, null);
 		SolveEventCallback eventHandler = null;
-		Pointer handle = clingo.controlSolve(control, SolveMode.YIELD, null, 0, eventHandler, null);
+		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, 0, eventHandler, null);
 		boolean modelExists = true;
 		int m = 0;
 		while (modelExists) {
-			clingo.solveHandleResume(handle);
-			Pointer model = clingo.solveHandleModel(handle);
+			BaseClingo.solveHandleResume(handle);
+			Pointer model = BaseClingo.solveHandleModel(handle);
 			if (model != null) {
 				// print_model
 //				System.out.println("Model:");
-				long numAtoms = clingo.modelSymbolsSize(model, ShowType.SHOWN);
-				long[] atoms = clingo.modelSymbols(model, ShowType.SHOWN, numAtoms);
+				long numAtoms = BaseClingo.modelSymbolsSize(model, ShowType.SHOWN);
+				long[] atoms = BaseClingo.modelSymbols(model, ShowType.SHOWN, numAtoms);
 				for (int i = 0; i < atoms.length; i++) {
-					String str = clingo.symbolToString(atoms[i]);
+					String str = BaseClingo.symbolToString(atoms[i]);
 //					System.out.println(str);
 					assertTrue(expected.contains(str.trim()));
 				}

@@ -66,8 +66,7 @@ public class Clingo extends BaseClingo {
 					solution.setSize(size);
 					long[] symbols = clingo.modelSymbols(event, ShowType.SHOWN, size);
 					for (int i = 0; i < size; ++i) {
-						long len = clingo.symbolToStringSize(symbols[i]);
-						String symbol = clingo.symbolToString(symbols[i], len);
+						String symbol = clingo.symbolToString(symbols[i]);
 						solution.addSymbol(symbol.trim());
 					}
 					break;

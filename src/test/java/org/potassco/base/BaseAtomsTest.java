@@ -10,13 +10,13 @@ import org.potassco.jna.SymbolCallbackT;
 
 import com.sun.jna.Pointer;
 
-public class AtomsTest {
+public class BaseAtomsTest {
 
 	@Test
 	public void testSymbolicAtoms() {
 		String name = "base";
-		Clingo clingo = new Clingo(); 
-		Pointer control = clingo.control(null);
+		BaseClingo clingo = new BaseClingo(); 
+		Pointer control = clingo.control(null, null, null, 0);
 		clingo.controlAdd(control, name, null, "a. b. c. d. e.");
         Part[] parts = new Part[1];
         parts[0] = new Part(name, null, new Size(0));
@@ -73,8 +73,8 @@ public class AtomsTest {
 	@Test
 	public void testTheoryAtoms() {
 		String name = "base";
-		Clingo clingo = new Clingo();
-		Pointer control = clingo.control(null);
+		BaseClingo clingo = new BaseClingo(); 
+		Pointer control = clingo.control(null, null, null, 0);
 		clingo.controlAdd(control, name,
 				null,
 				"#theory test { "
@@ -94,16 +94,14 @@ public class AtomsTest {
 		assertEquals("a", clingo.theoryAtomsTermName(theoryAtoms, 0));
 		long[] args = clingo.theoryAtomsTermArguments(theoryAtoms, 0);
 		assertEquals(null, args);
-		long stringSize = clingo.theoryAtomsTermToStringSize(theoryAtoms, 0);
-		assertEquals(2, stringSize);
-		assertEquals("a", clingo.theoryAtomsTermToString(theoryAtoms, 0, stringSize).trim());
+		assertEquals("a", clingo.theoryAtomsTermToString(theoryAtoms, 0).trim());
 	}
 
 	@Test
 	public void testConstants() {
 		String name = "base";
-		Clingo clingo = new Clingo();
-		Pointer control = clingo.control(null);
+		BaseClingo clingo = new BaseClingo(); 
+		Pointer control = clingo.control(null, null, null, 0);
 		clingo.controlAdd(control, name,
 				null,
 				"#const n=6. "

@@ -14,7 +14,7 @@ import org.potassco.jna.SolveEventCallback;
 
 import com.sun.jna.Pointer;
 
-public class StatisticsTest {
+public class BaseStatisticsTest {
 
 	/**
 	 * https://potassco.org/clingo/c-api/5.5/statistics_8c-example.html
@@ -31,8 +31,8 @@ public class StatisticsTest {
 		String[] arguments = { "-n", "0" };
 //		String[] arguments = null;
 		String program = "a :- not b. b :- not a.";
-		Clingo clingo = new Clingo();
-		Pointer control = clingo.control(arguments);
+		BaseClingo clingo = new BaseClingo(); 
+		Pointer control = clingo.control(arguments, null, null, 0);
 		Pointer conf = clingo.controlConfiguration(control);
 		int rootKey = clingo.configurationRoot(conf);
 
@@ -59,8 +59,7 @@ public class StatisticsTest {
 				long numAtoms = clingo.modelSymbolsSize(model, ShowType.SHOWN);
 				long[] atoms = clingo.modelSymbols(model, ShowType.SHOWN, numAtoms);
 				for (int i = 0; i < atoms.length; i++) {
-					long n = clingo.symbolToStringSize(atoms[i]);
-					String str = clingo.symbolToString(atoms[i], n);
+					String str = clingo.symbolToString(atoms[i]);
 //					System.out.println(str);
 					assertTrue(expected.contains(str.trim()));
 				}

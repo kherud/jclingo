@@ -9,15 +9,15 @@ import org.potassco.jna.Size;
 
 import com.sun.jna.Pointer;
 
-public class MultipleModelsTest {
+public class BaseMultipleModelsTest {
 
 	@Test
 	public void test() {
 		String name = "base";
 		String program = "1 {p(1..3)} 2.";
-		Clingo clingo = new Clingo();
 		String[] arguments = { "0" }; // enumerate all models
-		Pointer control = clingo.control(arguments);
+		BaseClingo clingo = new BaseClingo(); 
+		Pointer control = clingo.control(arguments, null, null, 0);
 		clingo.controlAdd(control, name, null, program);
 		Part[] parts = new Part[1];
 		parts[0] = new Part(name, null, new Size(0));

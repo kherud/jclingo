@@ -2,6 +2,10 @@ package org.potassco.base;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Test;
 import org.potassco.dto.Solution;
 import org.potassco.jna.GroundCallbackT;
@@ -11,12 +15,34 @@ import org.potassco.jna.SymbolCallbackT;
 
 import com.sun.jna.Pointer;
 
-public class Solve2Test {
+public class ClingoSolveTest {
+
+	@Test
+	public void test3() {
+		String name = "base";
+		Clingo clingo = new Clingo(); 
+		Pointer control = clingo.control(null);
+		clingo.controlAdd(control, name, null, "a. b.");
+        Part[] parts = new Part[1];
+        parts[0] = new Part(name, null, new Size(0));
+		clingo.controlGround(control, parts, new Size(1), null, null);
+		try {
+			Solution solution = clingo.solve(control);
+			assertEquals(2, solution.getSize());
+			String[] strArray = { "a", "b" };
+			Set<String> expected = new HashSet<String>(Arrays.asList(strArray));
+			Set<String> actual = solution.getSymbols();
+			assertTrue(expected.equals(actual));
+		} catch (ClingoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@Test
 	public void testTravellingSalesperson() {
 		String name = "base";
-		Clingo clingo = new Clingo();
+		Clingo clingo = new Clingo(); 
 		Pointer control = clingo.control(null);
 		clingo.controlAdd(control, name,
 				null,
@@ -65,8 +91,8 @@ public class Solve2Test {
 	@Test
 	public void testMultiModels() {
 		String name = "base";
-		Clingo clingo = new Clingo();
-		Pointer control = clingo.control(null);
+		Clingo clingo = new Clingo(); 
+		Pointer control = clingo.control(null, null, null, 0);
 		clingo.controlAdd(control, name,
 				null,
 				"{elected(ann; bob; carol; dan; elaine; fred)} = 3.");

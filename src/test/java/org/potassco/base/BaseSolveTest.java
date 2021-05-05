@@ -15,7 +15,7 @@ import org.potassco.jna.Size;
 
 import com.sun.jna.Pointer;
 
-public class Solve1Test {
+public class BaseSolveTest {
 
 	/**
 	 * https://potassco.org/clingo/c-api/5.5/model_8c-example.html
@@ -23,8 +23,8 @@ public class Solve1Test {
 	@Test
 	public void testAb1() {
 		String name = "base";
-		Clingo clingo = new Clingo();
-		Pointer control = clingo.control(null);
+		BaseClingo clingo = new BaseClingo(); 
+		Pointer control = clingo.control(null, null, null, 0);
 		clingo.controlAdd(control, name, null, "1 {a; b} 1. #show c : b. #show a/0.");
         Part[] parts = new Part[1];
         parts[0] = new Part(name, null, new Size(0));
@@ -67,8 +67,8 @@ public class Solve1Test {
 	public void testAb2() {
 		String name = "base";
 		String program = "1 {a; b} 1. #show c : b. #show a/0.";
-		Clingo clingo = new Clingo();
-		Pointer control = clingo.control(null);
+		BaseClingo clingo = new BaseClingo(); 
+		Pointer control = clingo.control(null, null, null, 0);
 		clingo.controlAdd(control, name, null, program);
         Part[] parts = new Part[1];
         parts[0] = new Part(name, null, new Size(0));

@@ -12,7 +12,7 @@ import org.potassco.enums.SymbolType;
 
 import com.sun.jna.Pointer;
 
-public class InfrastructureTest {
+public class BaseInfrastructureTest {
 
 	@Test
 	public void testSignature() {
@@ -78,7 +78,6 @@ public class InfrastructureTest {
 		assertEquals(true, clingo.symbolIsPositive(f));
 //		clingo.symbolArguments(f, null, null); TODO: infuctional
 		assertEquals(SymbolType.FUNCTION, clingo.symbolType(f));
-		assertEquals(20, clingo.symbolToStringSize(f));
 //	TODO:	assertEquals(p, clingo.symbolToString(f, new Size(2)));
 		assertFalse(clingo.symbolIsEqualTo(s, f));
 		assertTrue(clingo.symbolIsEqualTo(num, clingo.symbolCreateNumber(number)));
@@ -105,8 +104,8 @@ public class InfrastructureTest {
 	public void testConfiguration1() {
 		String name = "base";
 		String program = "a. b.";
-		Clingo clingo = new Clingo();
-		Pointer control = clingo.control(null);
+		BaseClingo clingo = new BaseClingo(); 
+		Pointer control = clingo.control(null, null, null, 0);
 		clingo.controlAdd(control, name, null, program);
 //		clingo.controlGround(control, name); - not used here!
 		Pointer conf = clingo.controlConfiguration(control);
@@ -123,8 +122,8 @@ public class InfrastructureTest {
 	public void testStatistics() {
 		String name = "base";
 //		String program = "a. b.";
-		Clingo clingo = new Clingo();
-		Pointer control = clingo.control(null);
+		BaseClingo clingo = new BaseClingo(); 
+		Pointer control = clingo.control(null, null, null, 0);
 		clingo.controlAdd(control, name, null, name);
 //		clingo.ground(name); - not used here!
 		Pointer stats = clingo.controlStatistics(control);
@@ -133,7 +132,7 @@ public class InfrastructureTest {
 		assertEquals(0L, clingo.clingoStatisticsArraySize(stats, root));
 	}
 
-
+// TODO
 //    public int statisticsArrayAt(Pointer statistics, long key, long offset) {
 //    public int statisticsArrayPush(Pointer statistics, long key, int type) {
 //    public long statisticsMapSize(Pointer statistics, long key) {

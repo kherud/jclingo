@@ -138,7 +138,7 @@ public interface ClingoLibrary extends Library {
     public int clingo_symbol_type(long symbol);
 
     /** {@link clingo_h#clingo_symbol_to_string_size} */
-    public boolean clingo_symbol_to_string_size(long symbol, SizeByReference p_size);
+    public byte clingo_symbol_to_string_size(long symbol, SizeByReference p_size);
 //    public byte clingo_symbol_to_string_size(Symbol symbol, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_symbol_to_string} */

@@ -439,22 +439,33 @@ public class BaseClingo {
 		return SymbolType.fromValue(t);
 	}
 
-	public long symbolToStringSize(long symbol) {
+	/**
+	 * We provide just on function: {@link #symbolToString(long)}
+	 * Keep for futer releases of the clingo API!
+	 * @param symbol
+	 * @return
+	 */
+	@SuppressWarnings("unused")
+	private long symbolToStringSize(long symbol) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
-		boolean success = clingoLibrary.clingo_symbol_to_string_size(symbol, size);
+		byte success = clingoLibrary.clingo_symbol_to_string_size(symbol, size);
 		return size.getValue();
 	}
 
 	/**
-	 * @param symbol [in] symbol the target symbol
-	 * @param size   [in] size the size of the string
+	 * Get the string representation of a symbol.
+	 * @param symbol the target symbol
 	 * @return the resulting string
 	 */
-	public String symbolToString(long symbol, long size) {
-		byte[] str = new byte[Math.toIntExact(size)];
+	public String symbolToString(long symbol) {
+		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_symbol_to_string(symbol, str, size);
+		byte success1 = clingoLibrary.clingo_symbol_to_string_size(symbol, size);
+		long s = size.getValue();
+		byte[] str = new byte[Math.toIntExact(s)];
+		@SuppressWarnings("unused")
+		byte success2 = clingoLibrary.clingo_symbol_to_string(symbol, str, s);
 		return new String(str);
 	}
 
@@ -805,6 +816,9 @@ public class BaseClingo {
 	}
 
 	/**
+	 * We provide just one function {@link #theoryAtomsTermToString(Pointer, int, long)}.
+	 * Keep for future API releases.
+	 * <p>
 	 * Get the size of the string representation of the given theory term (including
 	 * the terminating 0).
 	 * 
@@ -812,7 +826,8 @@ public class BaseClingo {
 	 * @param term  id of the term
 	 * @return the resulting size
 	 */
-	public long theoryAtomsTermToStringSize(Pointer atoms, int term) {
+	@SuppressWarnings("unused")
+	private long theoryAtomsTermToStringSize(Pointer atoms, int term) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_term_to_string_size(atoms, term, size);
@@ -823,15 +838,17 @@ public class BaseClingo {
 	 * Get the string representation of the given theory term.
 	 * 
 	 * @param atoms container where the term is stored
-	 * @param term  id of the term
-	 * @param size  the size of the string. The caller has to know the length of the
-	 *              string to return.
+	 * @param term id of the term
 	 * @return the resulting string
 	 */
-	public String theoryAtomsTermToString(Pointer atoms, int term, long size) {
-		byte[] str = new byte[Math.toIntExact(size)];
+	public String theoryAtomsTermToString(Pointer atoms, int term) {
+		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_theory_atoms_term_to_string(atoms, term, str, size);
+		byte success1 = clingoLibrary.clingo_theory_atoms_term_to_string_size(atoms, term, size);
+		long s = size.getValue();
+		byte[] str = new byte[Math.toIntExact(s)];
+		@SuppressWarnings("unused")
+		byte success2 = clingoLibrary.clingo_theory_atoms_term_to_string(atoms, term, str, s);
 		return new String(str);
 	}
 
@@ -889,6 +906,9 @@ public class BaseClingo {
 	}
 
 	/**
+	 * We provide just one function {@link #theoryAtomsTermToString(Pointer, int, long)}.
+	 * Keep for future API releases.
+	 * <p>
 	 * Get the size of the string representation of the given theory element
 	 * (including the terminating 0).
 	 * 
@@ -896,9 +916,9 @@ public class BaseClingo {
 	 * @param element id of the element
 	 * @return the resulting size
 	 */
-	public long theoryAtomsElementToStringSize(Pointer atoms, int element) {
+	@SuppressWarnings("unused")
+	private long theoryAtomsElementToStringSize(Pointer atoms, int element) {
 		SizeByReference size = new SizeByReference();
-		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_element_to_string_size(atoms, element, size);
 		return size.getValue();
 	}
@@ -906,16 +926,18 @@ public class BaseClingo {
 	/**
 	 * Get the string representation of the given theory element.
 	 * 
-	 * @param atoms   container where the element is stored
+	 * @param atoms container where the element is stored
 	 * @param element id of the element
-	 * @param size    the size of the string. The caller hast to provide the length
-	 *                of the requested string.
 	 * @return the resulting string
 	 */
-	public String theoryAtomsElementToString(Pointer atoms, int element, long size) {
-		byte[] str = new byte[Math.toIntExact(size)];
+	public String theoryAtomsElementToString(Pointer atoms, int element) {
+		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_theory_atoms_element_to_string(atoms, element, str, size);
+		byte success1 = clingoLibrary.clingo_theory_atoms_element_to_string_size(atoms, element, size);
+		long s = size.getValue();
+		byte[] str = new byte[Math.toIntExact(s)];
+		@SuppressWarnings("unused")
+		byte success2 = clingoLibrary.clingo_theory_atoms_element_to_string(atoms, element, str, s);
 		return new String(str);
 	}
 
@@ -1013,6 +1035,9 @@ public class BaseClingo {
 	}
 
 	/**
+	 * We provide just one function {@link #theoryAtomsTermToString(Pointer, int, long)}.
+	 * Keep for future API releases.
+	 * <p>
 	 * Get the size of the string representation of the given theory atom (including
 	 * the terminating 0).
 	 * 
@@ -1020,9 +1045,9 @@ public class BaseClingo {
 	 * @param atom  id of the atom
 	 * @return the resulting size
 	 */
-	public long theoryAtomsAtomToStringSize(Pointer atoms, int atom) {
+	@SuppressWarnings("unused")
+	private long theoryAtomsAtomToStringSize(Pointer atoms, int atom) {
 		SizeByReference size = new SizeByReference();
-		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_atom_to_string_size(atoms, atom, size);
 		return size.getValue();
 	}
@@ -1031,15 +1056,17 @@ public class BaseClingo {
 	 * Get the string representation of the given theory atom.
 	 * 
 	 * @param atoms container where the atom is stored
-	 * @param atom  id of the atom
-	 * @param size  the size of the string. The caller hast to provide the size of
-	 *              the expected string.
+	 * @param atom id of the atom
 	 * @return the resulting size
 	 */
-	public String theoryAtomsAtomToString(Pointer atoms, int atom, long size) {
-		byte[] str = new byte[Math.toIntExact(size)];
+	public String theoryAtomsAtomToString(Pointer atoms, int atom) {
+		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_theory_atoms_atom_to_string(atoms, atom, str, size);
+		byte success1 = clingoLibrary.clingo_theory_atoms_atom_to_string_size(atoms, atom, size);
+		long s = size.getValue();
+		byte[] str = new byte[Math.toIntExact(s)];
+		@SuppressWarnings("unused")
+		byte success2 = clingoLibrary.clingo_theory_atoms_atom_to_string(atoms, atom, str, s);
 		return new String(str);
 	}
 
@@ -1081,6 +1108,7 @@ public class BaseClingo {
 	 * @param body     body literals
 	 * @param bodySize the number of literals in the body
 	 */
+	// TODO: Remove size parameters
 	public void backendRule(Pointer backend, byte choice, int head, long headSize, int body, long bodySize) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_rule(backend, choice, head, headSize, body, bodySize);
@@ -2022,9 +2050,16 @@ public class BaseClingo {
 	// clingo_control_t
 
 	public Pointer control(String[] arguments, Pointer logger, Pointer loggerData, int messageLimit) {
+		int argumentsLength;
+		StringArray args;
+		if (arguments == null) {
+			argumentsLength = 0;
+			args = null;
+		} else {
+			argumentsLength = arguments.length;
+			args = new StringArray(arguments);
+		}
 		PointerByReference ctrl = new PointerByReference();
-		int argumentsLength = (arguments == null ? 0 : arguments.length);
-		StringArray args = new StringArray(arguments);
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_new(args, argumentsLength, logger, loggerData, messageLimit, ctrl);
 		return ctrl.getValue();

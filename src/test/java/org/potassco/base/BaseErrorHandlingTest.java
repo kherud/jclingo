@@ -3,9 +3,8 @@ package org.potassco.base;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.potassco.enums.ErrorCode;
 
-public class ErrorHandlingTest {
+public class BaseErrorHandlingTest {
 
 	@Test
 	public void testErrorMessage() {

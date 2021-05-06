@@ -2148,6 +2148,7 @@ public class BaseClingo {
 	 * <p>
 	 * See the @ref Solution module for more information.
 	 * 
+	 * @param control         the target
 	 * @param mode            configures the search mode
 	 * @param assumptions     array of assumptions to solve under
 	 * @param assumptionsSize number of assumptions

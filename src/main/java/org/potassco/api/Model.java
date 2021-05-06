@@ -48,8 +48,8 @@ public class Model {
 	 * @param show  which symbols to select - {@link ShowType}
 	 * @return the number symbols
 	 */
-	private long modelSymbolsSize(Pointer model, ShowType show) {
-		return BaseClingo.modelSymbolsSize(model, show);
+	private long modelSymbolsSize(ShowType show) {
+		return BaseClingo.modelSymbolsSize(this.pointer, show);
 	}
 
 	/**

@@ -6,6 +6,10 @@ import org.junit.Test;
 import org.potassco.api.Clingo;
 import org.potassco.api.Control;
 import org.potassco.dto.Solution;
+import org.potassco.enums.SolveMode;
+import org.potassco.jna.SolveEventCallback;
+
+import com.sun.jna.Pointer;
 
 public class ClingoTest {
 
@@ -43,7 +47,14 @@ public class ClingoTest {
 				+ "#minimize { C,X,Y : cycle(X,Y), cost(X,Y,C) }. "
 				+ "");
 		control.ground();
-		Solution solution = control.solve();
+		Solution solution = new Solution();
+		control.solve(SolveMode.YIELD, null, new SolveEventCallback() {
+			@Override
+			public boolean call(int type, Pointer event, Pointer data, Pointer goon) {
+				// TODO Auto-generated method stub
+				return true;
+			}
+		}, null);
 		assertEquals(52, solution.getSize());
 	}
 

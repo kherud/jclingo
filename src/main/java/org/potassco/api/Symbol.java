@@ -71,6 +71,19 @@ public class Symbol {
 		return new Symbol(BaseClingo.symbolCreateFunction(name, arguments, positive));
 	}
 
+	/**
+	 * Parse a term in string form.
+	 * <p>
+	 * The result of this function is a symbol. The input term can contain
+	 * unevaluated functions, which are evaluated during parsing.
+	 * 
+	 * @param string the string to parse
+	 * @return the resulting symbol
+	 */
+	public static Symbol parseTerm(String string) {
+		return new Symbol(BaseClingo.parseTerm(string));
+	}
+
 	private long reference;
 	
 	private Symbol() {}

@@ -407,8 +407,8 @@ public class Control implements AutoCloseable {
 	 * 
 	 * @return the backend object
 	 */
-	public Pointer backend() {
-		return BaseClingo.controlBackend(this.control);
+	public Backend backend() {
+		return new Backend(BaseClingo.controlBackend(this.control));
 	}
 
 	/**
@@ -431,6 +431,10 @@ public class Control implements AutoCloseable {
 	public void ground(GroundCallbackT groundCallbackT) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void solve(SolveMode solveMode, Pointer assumptions, SolveEventCallback notify, Pointer data) {
+		BaseClingo.controlSolve(this.control, solveMode, assumptions, 0, notify, data);
 	}
 
 	public Solution solve() {

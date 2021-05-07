@@ -405,36 +405,12 @@ public interface ClingoLibrary extends Library {
     /** {@link clingo_h#clingo_propagate_control_propagate} */
 	public byte clingo_propagate_control_propagate(Pointer p_control, ByteByReference p_result);
     
-    //! @}
-    
-    //! Typedef for @ref ::clingo_propagator::init().
-// public static final typedef<bool> clingo_propagator_init_callback_t = null; // typedef bool (*clingo_propagator_init_callback_t) (clingo_propagate_init_t *, void *);
-    
-    //! Typedef for @ref ::clingo_propagator::propagate().
-// public static final typedef<bool> clingo_propagator_propagate_callback_t = null; // typedef bool (*clingo_propagator_propagate_callback_t) (clingo_propagate_control_t *, clingo_literal_t const *, size_t, void *);
-    
-    //! Typedef for @ref ::clingo_propagator::undo().
-// public static final typedef<c_void> clingo_propagator_undo_callback_t = null; // typedef void (*clingo_propagator_undo_callback_t) (clingo_propagate_control_t const *, clingo_literal_t const *, size_t, void *);
-    
-    //! Typedef for @ref ::clingo_propagator::check().
-// public static final typedef<bool> clingo_propagator_check_callback_t = null; // typedef bool (*clingo_propagator_check_callback_t) (clingo_propagate_control_t *, void *);
-    
-    //! An instance of this struct has to be registered with a solver to implement a custom propagator.
-    //!
-    //! Not all callbacks have to be implemented and can be set to NULL if not needed.
-    //! @see Propagator
-    //typedef struct clingo_propagator {
-    //! This function is called once before each solving step.
-    //! It is used to map relevant program literals to solver literals, add watches for solver literals, and initialize the data structures used during propagation.
-    //!
-    //! @note This is the last point to access symbolic and theory atoms.
-    //! Once the search has started, they are no longer accessible.
-    //!
-    //! @param[in] init initizialization object
-    //! @param[in] data user data for the callback
-    //! @return whether the call was successful
-    //! @see ::clingo_propagator_init_callback_t
-// bool (*init) (clingo_propagate_init_t *init, void *data);
+    // clingo_propagator_init_callback_t
+    // clingo_propagator_propagate_callback_t    
+    // clingo_propagator_undo_callback_t    
+    // clingo_propagator_check_callback_t    
+    // clingo_propagate_init_t
+
     //! Can be used to propagate solver literals given a @link clingo_assignment_t partial assignment@endlink.
     //!
     //! Called during propagation with a non-empty array of @link clingo_propagate_init_add_watch() watched solver literals@endlink

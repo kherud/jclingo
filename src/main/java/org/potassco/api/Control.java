@@ -1,11 +1,11 @@
 package org.potassco.api;
 
-import org.potassco.base.BaseClingo;
 import org.potassco.dto.Solution;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
 import org.potassco.enums.TruthValue;
+import org.potassco.jna.BaseClingo;
 import org.potassco.jna.GroundCallbackT;
 import org.potassco.jna.Part;
 import org.potassco.jna.Size;

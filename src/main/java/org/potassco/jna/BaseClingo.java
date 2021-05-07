@@ -1,4 +1,4 @@
-package org.potassco.base;
+package org.potassco.jna;
 
 import java.util.List;
 
@@ -15,14 +15,6 @@ import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;
 import org.potassco.enums.TermType;
 import org.potassco.enums.TruthValue;
-import org.potassco.jna.ClingoLibrary;
-import org.potassco.jna.GroundCallbackT;
-import org.potassco.jna.OptionParseCallbackT;
-import org.potassco.jna.Part;
-import org.potassco.jna.Size;
-import org.potassco.jna.SizeByReference;
-import org.potassco.jna.SolveEventCallback;
-import org.potassco.jna.SymbolByReference;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.StringArray;

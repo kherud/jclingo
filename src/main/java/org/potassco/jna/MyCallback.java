@@ -1,4 +1,4 @@
-package org.potassco.base;
+package org.potassco.jna;
 
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;

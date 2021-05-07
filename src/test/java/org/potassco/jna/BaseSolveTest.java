@@ -1,4 +1,4 @@
-package org.potassco.base;
+package org.potassco.jna;
 
 import static org.junit.Assert.*;
 
@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.potassco.enums.ModelType;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveMode;
+import org.potassco.jna.BaseClingo;
 import org.potassco.jna.Part;
 import org.potassco.jna.Size;
 

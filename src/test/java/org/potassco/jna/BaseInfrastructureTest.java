@@ -1,4 +1,4 @@
-package org.potassco.base;
+package org.potassco.jna;
 
 import static org.junit.Assert.*;
 
@@ -10,6 +10,7 @@ import org.potassco.api.ClingoException;
 import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;
+import org.potassco.jna.BaseClingo;
 
 import com.sun.jna.Pointer;
 

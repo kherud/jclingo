@@ -1,6 +1,6 @@
 package org.potassco.api;
 
-import org.potassco.base.BaseClingo;
+import org.potassco.jna.BaseClingo;
 
 import com.sun.jna.Pointer;
 

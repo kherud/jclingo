@@ -2,8 +2,8 @@ package org.potassco.api;
 
 import java.util.List;
 
-import org.potassco.base.BaseClingo;
 import org.potassco.enums.SymbolType;
+import org.potassco.jna.BaseClingo;
 
 public class Symbol {
 	/**

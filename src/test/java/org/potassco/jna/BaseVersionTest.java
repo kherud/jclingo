@@ -1,8 +1,9 @@
-package org.potassco.base;
+package org.potassco.jna;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.potassco.jna.BaseClingo;
 import org.potassco.jna.ClingoLibrary;
 
 import com.sun.jna.ptr.IntByReference;

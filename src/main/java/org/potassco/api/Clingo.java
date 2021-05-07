@@ -2,7 +2,6 @@ package org.potassco.api;
 
 import java.util.List;
 
-import org.potassco.base.BaseClingo;
 import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ExternalType;
 import org.potassco.enums.HeuristicType;
@@ -13,6 +12,7 @@ import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;
 import org.potassco.enums.TermType;
 import org.potassco.enums.TruthValue;
+import org.potassco.jna.BaseClingo;
 import org.potassco.jna.GroundCallbackT;
 import org.potassco.jna.OptionParseCallbackT;
 import org.potassco.jna.Part;

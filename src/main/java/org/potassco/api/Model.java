@@ -1,8 +1,8 @@
 package org.potassco.api;
 
-import org.potassco.base.BaseClingo;
 import org.potassco.enums.ModelType;
 import org.potassco.enums.ShowType;
+import org.potassco.jna.BaseClingo;
 import org.potassco.jna.ClingoLibrary;
 
 import com.sun.jna.Pointer;

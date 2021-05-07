@@ -1,8 +1,8 @@
 package org.potassco.api;
 
-import org.potassco.base.BaseClingo;
 import org.potassco.enums.ExternalType;
 import org.potassco.enums.HeuristicType;
+import org.potassco.jna.BaseClingo;
 
 import com.sun.jna.Pointer;
 

@@ -373,102 +373,37 @@ public interface ClingoLibrary extends Library {
 	public byte clingo_propagate_init_add_minimize(Pointer propagate_init, int literal, int weight, int priority);
 
     /** {@link clingo_h#clingo_propagate_init_propagate} */
-	public byte clingo_propagate_init_propagate(Pointer propagate_init, byte p_result);
+	public byte clingo_propagate_init_propagate(Pointer propagate_init, ByteByReference p_result);
     
-    //! @}
+    // clingo_clause_type_e
+    // clingo_clause_type_t
+	// clingo_propagate_control_t
     
-    //! Enumeration of clause types determining the lifetime of a clause.
-    //!
-    //! Clauses in the solver are either cleaned up based on a configurable deletion policy or at the end of a solving step.
-    //! The values of this enumeration determine if a clause is subject to one of the above deletion strategies.
-/* enum clingo_clause_type_e {
-      clingo_clause_type_learnt          = 0, //!< clause is subject to the solvers deletion policy
-      clingo_clause_type_static          = 1, //!< clause is not subject to the solvers deletion policy
-      clingo_clause_type_volatile        = 2, //!< like ::clingo_clause_type_learnt but the clause is deleted after a solving step
-      clingo_clause_type_volatile_static = 3  //!< like ::clingo_clause_type_static but the clause is deleted after a solving step
-  }; */ public static final typedef<c_enum> clingo_clause_type_e = null;
-    //! Corresponding type to ::clingo_clause_type.
-// public static final typedef<c_int> clingo_clause_type_t = null;
-    
-    //! This object can be used to add clauses and propagate literals while solving.
-// public static final typedef<struct> clingo_propagate_control_t = null;
-    
-    //! @name Propagation Functions
-    //! @{
-    
-    //! Get the id of the underlying solver thread.
-    //!
-    //! Thread ids are consecutive numbers starting with zero.
-    //!
-    //! @param[in] control the target
-    //! @return the thread id
-// public clingo_id_t clingo_propagate_control_thread_id(final clingo_propagate_control_t p_control); // CLINGO_VISIBILITY_DEFAULT clingo_id_t clingo_propagate_control_thread_id(clingo_propagate_control_t const *control);
-    //! Get the assignment associated with the underlying solver.
-    //!
-    //! @param[in] control the target
-    //! @return the assignment
-// public clingo_assignment_t clingo_propagate_control_assignment(final clingo_propagate_control_t p_control); // CLINGO_VISIBILITY_DEFAULT clingo_assignment_t const *clingo_propagate_control_assignment(clingo_propagate_control_t const *control);
-    //! Adds a new volatile literal to the underlying solver thread.
-    //!
-    //! @attention The literal is only valid within the current solving step and solver thread.
-    //! All volatile literals and clauses involving a volatile literal are deleted after the current search.
-    //!
-    //! @param[in] control the target
-    //! @param[out] result the (positive) solver literal
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_logic if the assignment is conflicting
-// public bool clingo_propagate_control_add_literal(clingo_propagate_control_t p_control, clingo_literal_t p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_control_add_literal(clingo_propagate_control_t *control, clingo_literal_t *result);
-    //! Add a watch for the solver literal in the given phase.
-    //!
-    //! @note Unlike @ref clingo_propagate_init_add_watch() this does not add a watch to all solver threads but just the current one.
-    //!
-    //! @param[in] control the target
-    //! @param[in] literal the literal to watch
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-    //! - ::clingo_error_logic if the literal is invalid
-    //! @see clingo_propagate_control_remove_watch()
-// public bool clingo_propagate_control_add_watch(clingo_propagate_control_t p_control, clingo_literal_t literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_control_add_watch(clingo_propagate_control_t *control, clingo_literal_t literal);
-    //! Check whether a literal is watched in the current solver thread.
-    //!
-    //! @param[in] control the target
-    //! @param[in] literal the literal to check
-    //!
-    //! @return whether the literal is watched
-// public bool clingo_propagate_control_has_watch(final clingo_propagate_control_t p_control, clingo_literal_t literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_control_has_watch(clingo_propagate_control_t const *control, clingo_literal_t literal);
-    //! Removes the watch (if any) for the given solver literal.
-    //!
-    //! @note Similar to @ref clingo_propagate_init_add_watch() this just removes the watch in the current solver thread.
-    //!
-    //! @param[in] control the target
-    //! @param[in] literal the literal to remove
-// public void clingo_propagate_control_remove_watch(clingo_propagate_control_t p_control, clingo_literal_t literal); // CLINGO_VISIBILITY_DEFAULT void clingo_propagate_control_remove_watch(clingo_propagate_control_t *control, clingo_literal_t literal);
-    //! Add the given clause to the solver.
-    //!
-    //! This method sets its result to false if the current propagation must be stopped for the solver to backtrack.
-    //!
-    //! @attention No further calls on the control object or functions on the assignment should be called when the result of this method is false.
-    //!
-    //! @param[in] control the target
-    //! @param[in] clause the clause to add
-    //! @param[in] size the size of the clause
-    //! @param[in] type the clause type determining its lifetime
-    //! @param[out] result result indicating whether propagation has to be stopped
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-// public bool clingo_propagate_control_add_clause(clingo_propagate_control_t p_control, final clingo_literal_t p_clause, size_t size, clingo_clause_type_t type, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_control_add_clause(clingo_propagate_control_t *control, clingo_literal_t const *clause, size_t size, clingo_clause_type_t type, bool *result);
-    //! Propagate implied literals (resulting from added clauses).
-    //!
-    //! This method sets its result to false if the current propagation must be stopped for the solver to backtrack.
-    //!
-    //! @attention No further calls on the control object or functions on the assignment should be called when the result of this method is false.
-    //!
-    //! @param[in] control the target
-    //! @param[out] result result indicating whether propagation has to be stopped
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-// public bool clingo_propagate_control_propagate(clingo_propagate_control_t p_control, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_control_propagate(clingo_propagate_control_t *control, bool *result);
+    // Propagation Functions
+
+    /** {@link clingo_h#clingo_propagate_control_thread_id} */
+	public int clingo_propagate_control_thread_id(Pointer p_control);
+
+    /** {@link clingo_h#clingo_propagate_control_assignment} */
+	public Pointer clingo_propagate_control_assignment(Pointer p_control);
+
+    /** {@link clingo_h#clingo_propagate_control_add_literal} */
+	public byte clingo_propagate_control_add_literal(Pointer p_control, IntByReference p_result);
+
+    /** {@link clingo_h#clingo_propagate_control_add_watch} */
+	public byte clingo_propagate_control_add_watch(Pointer p_control, int literal);
+
+    /** {@link clingo_h#clingo_propagate_control_has_watch} */
+	public byte clingo_propagate_control_has_watch(Pointer p_control, int literal);
+
+    /** {@link clingo_h#clingo_propagate_control_remove_watch} */
+	public void clingo_propagate_control_remove_watch(Pointer p_control, int literal);
+
+    /** {@link clingo_h#clingo_propagate_control_add_clause} */
+	public byte clingo_propagate_control_add_clause(Pointer p_control, int p_clause, long size, int type, ByteByReference p_result);
+
+    /** {@link clingo_h#clingo_propagate_control_propagate} */
+	public byte clingo_propagate_control_propagate(Pointer p_control, ByteByReference p_result);
     
     //! @}
     

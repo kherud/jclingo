@@ -12,7 +12,7 @@
  * <li>clingo_truth_value_t (c_int): int
  * <li>clingo_propagator_check_mode_t (c_int): int
  * <li>clingo_weight_constraint_type_t (c_int): int
- * <li>
+ * <li>clingo_clause_type_t (c_int): int
  * <li>
  * <li>
  * <li>

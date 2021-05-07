@@ -1306,132 +1306,286 @@ public class BaseClingo {
 	
 	// Initialization Functions
 
-	public static long assignmentTrailAt(Pointer assignment, int offset) {
-		IntByReference literal = new IntByReference();
+	/**
+	 * Map the given program literal or condition id to its solver literal.
+	 * @param propagateInit the target
+	 * @param aspifLiteral the aspif literal to map
+	 * @return the resulting solver literal
+	 */
+	public static long propagateInitSolverLiteral(Pointer propagateInit, int aspifLiteral) {
+		IntByReference solverLiteral = new IntByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_propagate_init_solver_literal(assignment, offset, literal);
-		return literal.getValue();
+		byte success = clingoLibrary.clingo_propagate_init_solver_literal(propagateInit, aspifLiteral, solverLiteral);
+		return solverLiteral.getValue();
 	}
-	
-    //! Map the given program literal or condition id to its solver literal.
-    //!
-    //! @param[in] init the target
-    //! @param[in] aspif_literal the aspif literal to map
-    //! @param[out] solver_literal the resulting solver literal
-    //! @return whether the call was successful
-// public bool clingo_propagate_init_solver_literal(final clingo_propagate_init_t p_init, clingo_literal_t aspif_literal, clingo_literal_t p_solver_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_solver_literal(clingo_propagate_init_t const *init, clingo_literal_t aspif_literal, clingo_literal_t *solver_literal);
-    //! Add a watch for the solver literal in the given phase.
-    //!
-    //! @param[in] init the target
-    //! @param[in] solver_literal the solver literal
-    //! @return whether the call was successful
-// public bool clingo_propagate_init_add_watch(clingo_propagate_init_t p_init, clingo_literal_t solver_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_watch(clingo_propagate_init_t *init, clingo_literal_t solver_literal);
-    //! Add a watch for the solver literal in the given phase to the given solver thread.
-    //!
-    //! @param[in] init the target
-    //! @param[in] solver_literal the solver literal
-    //! @param[in] thread_id the id of the solver thread
-    //! @return whether the call was successful
-// public bool clingo_propagate_init_add_watch_to_thread(clingo_propagate_init_t p_init, clingo_literal_t solver_literal, clingo_id_t thread_id); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_watch_to_thread(clingo_propagate_init_t *init, clingo_literal_t solver_literal, clingo_id_t thread_id);
-    //! Get an object to inspect the symbolic atoms.
-    //!
-    //! @param[in] init the target
-    //! @param[out] atoms the resulting object
-    //! @return whether the call was successful
-// public bool clingo_propagate_init_symbolic_atoms(final clingo_propagate_init_t p_init, final clingo_symbolic_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_symbolic_atoms(clingo_propagate_init_t const *init, clingo_symbolic_atoms_t const **atoms);
-    //! Get an object to inspect the theory atoms.
-    //!
-    //! @param[in] init the target
-    //! @param[out] atoms the resulting object
-    //! @return whether the call was successful
-// public bool clingo_propagate_init_theory_atoms(final clingo_propagate_init_t p_init, final clingo_theory_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_theory_atoms(clingo_propagate_init_t const *init, clingo_theory_atoms_t const **atoms);
-    //! Get the number of threads used in subsequent solving.
-    //!
-    //! @param[in] init the target
-    //! @return the number of threads
-    //! @see clingo_propagate_control_thread_id()
-// public int clingo_propagate_init_number_of_threads(final clingo_propagate_init_t p_init); // CLINGO_VISIBILITY_DEFAULT int clingo_propagate_init_number_of_threads(clingo_propagate_init_t const *init);
-    //! Configure when to call the check method of the propagator.
-    //!
-    //! @param[in] init the target
-    //! @param[in] mode bitmask when to call the propagator
-    //! @see @ref ::clingo_propagator::check()
-// public void clingo_propagate_init_set_check_mode(clingo_propagate_init_t p_init, clingo_propagator_check_mode_t mode); // CLINGO_VISIBILITY_DEFAULT void clingo_propagate_init_set_check_mode(clingo_propagate_init_t *init, clingo_propagator_check_mode_t mode);
-    //! Get the current check mode of the propagator.
-    //!
-    //! @param[in] init the target
-    //! @return bitmask when to call the propagator
-    //! @see clingo_propagate_init_set_check_mode()
-// public clingo_propagator_check_mode_t clingo_propagate_init_get_check_mode(final clingo_propagate_init_t p_init); // CLINGO_VISIBILITY_DEFAULT clingo_propagator_check_mode_t clingo_propagate_init_get_check_mode(clingo_propagate_init_t const *init);
-    //! Get the top level assignment solver.
-    //!
-    //! @param[in] init the target
-    //! @return the assignment
-// public clingo_assignment_t clingo_propagate_init_assignment(final clingo_propagate_init_t p_init); // CLINGO_VISIBILITY_DEFAULT clingo_assignment_t const *clingo_propagate_init_assignment(clingo_propagate_init_t const *init);
-    //! Add a literal to the solver.
-    //!
-    //! To be able to use the variable in clauses during propagation or add watches to it, it has to be frozen.
-    //! Otherwise, it might be removed during preprocessing.
-    //!
-    //! @attention If varibales were added, subsequent calls to functions adding constraints or ::clingo_propagate_init_propagate() are expensive.
-    //! It is best to add varables in batches.
-    //!
-    //! @param[in] init the target
-    //! @param[in] freeze whether to freeze the literal
-    //! @param[out] result the added literal
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-// public bool clingo_propagate_init_add_literal(clingo_propagate_init_t p_init, bool freeze, clingo_literal_t p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_literal(clingo_propagate_init_t *init, bool freeze, clingo_literal_t *result);
-    //! Add the given clause to the solver.
-    //!
-    //! @attention No further calls on the init object or functions on the assignment should be called when the result of this method is false.
-    //!
-    //! @param[in] init the target
-    //! @param[in] clause the clause to add
-    //! @param[in] size the size of the clause
-    //! @param[out] result result indicating whether the problem became unsatisfiable
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-// public bool clingo_propagate_init_add_clause(clingo_propagate_init_t p_init, final clingo_literal_t p_clause, size_t size, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_clause(clingo_propagate_init_t *init, clingo_literal_t const *clause, size_t size, bool *result);
-    //! Add the given weight constraint to the solver.
-    //!
-    //! This function adds a constraint of form `literal <=> { lit=weight | (lit, weight) in literals } >= bound` to the solver.
-    //! Depending on the type the `<=>` connective can be either a left implication, right implication, or equivalence.
-    //!
-    //! @attention No further calls on the init object or functions on the assignment should be called when the result of this method is false.
-    //!
-    //! @param[in] init the target
-    //! @param[in] literal the literal of the constraint
-    //! @param[in] literals the weighted literals
-    //! @param[in] size the number of weighted literals
-    //! @param[in] bound the bound of the constraint
-    //! @param[in] type the type of the weight constraint
-    //! @param[in] compare_equal if true compare equal instead of less than equal
-    //! @param[out] result result indicating whether the problem became unsatisfiable
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-// public bool clingo_propagate_init_add_weight_constraint(clingo_propagate_init_t p_init, clingo_literal_t literal, final clingo_weighted_literal_t p_literals, size_t size, clingo_weight_t bound, clingo_weight_constraint_type_t type, bool compare_equal, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_weight_constraint(clingo_propagate_init_t *init, clingo_literal_t literal, clingo_weighted_literal_t const *literals, size_t size, clingo_weight_t bound, clingo_weight_constraint_type_t type, bool compare_equal, bool *result);
-    //! Add the given literal to minimize to the solver.
-    //!
-    //! This corresponds to a weak constraint of form `:~ literal. [weight@priority]`.
-    //!
-    //! @param[in] init the target
-    //! @param[in] literal the literal to minimize
-    //! @param[in] weight the weight of the literal
-    //! @param[in] priority the priority of the literal
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-// public bool clingo_propagate_init_add_minimize(clingo_propagate_init_t p_init, clingo_literal_t literal, clingo_weight_t weight, clingo_weight_t priority); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_add_minimize(clingo_propagate_init_t *init, clingo_literal_t literal, clingo_weight_t weight, clingo_weight_t priority);
-    //! Propagates consequences of the underlying problem excluding registered propagators.
-    //!
-    //! @note The function has no effect if SAT-preprocessing is enabled.
-    //! @attention No further calls on the init object or functions on the assignment should be called when the result of this method is false.
-    //!
-    //! @param[in] init the target
-    //! @param[out] result result indicating whether the problem became unsatisfiable
-    //! @return whether the call was successful; might set one of the following error codes:
-    //! - ::clingo_error_bad_alloc
-// public bool clingo_propagate_init_propagate(clingo_propagate_init_t p_init, bool p_result); // CLINGO_VISIBILITY_DEFAULT bool clingo_propagate_init_propagate(clingo_propagate_init_t *init, bool *result);
+
+	/**
+	 * Add a watch for the solver literal in the given phase.
+	 * @param propagateInit the target
+	 * @param solverLiteral the solver literal
+	 */
+	public static void propagateInitAddWatch(Pointer propagateInit, int solverLiteral) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_propagate_init_add_watch(propagateInit, solverLiteral);
+	}
+
+	/**
+	 * Add a watch for the solver literal in the given phase to the given solver thread.
+	 * @param propagateInit the target
+	 * @param solverLiteral the solver literal
+	 * @param threadId the id of the solver thread
+	 */
+	public static void propagateInitAddWatchToThread(Pointer propagateInit, int solverLiteral, int threadId) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_propagate_init_add_watch_to_thread(propagateInit, solverLiteral, threadId);
+	}
+
+	/**
+	 * Get an object to inspect the symbolic atoms.
+	 * @param propagateInit the target
+	 * @return the resulting object
+	 */
+	public static Pointer propagateInitSymbolicAtoms(Pointer propagateInit) {
+		PointerByReference atoms = new PointerByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_propagate_init_symbolic_atoms(propagateInit, atoms);
+		return atoms.getValue();
+	}
+
+	/**
+	 * Get an object to inspect the theory atoms.
+	 * @param propagateInit the target
+	 * @return the resulting object
+	 */
+	public static Pointer propagateInitTheoryAtoms(Pointer propagateInit) {
+		PointerByReference atoms = new PointerByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_propagate_init_theory_atoms(propagateInit, atoms);
+		return atoms.getValue();
+	}
+
+	/**
+	 * Get the number of threads used in subsequent solving.
+	 * @param propagateInit the target
+	 * @return the number of threads
+	 */
+	public static int propagateInitNumberOfThreads(Pointer propagateInit) {
+		return clingoLibrary.clingo_propagate_init_number_of_threads(propagateInit);
+	}
+
+	/**
+	 * Configure when to call the check method of the propagator.
+	 * @param propagateInit the target
+	 * @param mode bitmask when to call the propagator
+	 */
+	public static void propagateInitSetCheckMode(Pointer propagateInit, int mode) {
+		clingoLibrary.clingo_propagate_init_set_check_mode(propagateInit, mode);
+	}
+
+	/**
+	 * Get the current check mode of the propagator.
+	 * @param propagateInit the target
+	 * @return bitmask when to call the propagator
+	 */
+	public static int propagateInitGetCheckMode(Pointer propagateInit) {
+		return clingoLibrary.clingo_propagate_init_get_check_mode(propagateInit);
+	}
+
+	/**
+	 * Get the top level assignment solver.
+	 * @param propagateInit the target
+	 * @return the assignment
+	 */
+	public static Pointer propagateInitAssignment(Pointer propagateInit) {
+		return clingoLibrary.clingo_propagate_init_assignment(propagateInit);
+	}
+
+	/**
+	 * Add a literal to the solver.
+	 * <p>
+	 * To be able to use the variable in clauses during propagation or add watches to it, it has to be frozen.
+	 * Otherwise, it might be removed during preprocessing.
+	 * 
+	 * @attention If varibales were added, subsequent calls to functions adding constraints or ::clingo_propagate_init_propagate() are expensive.
+	 * It is best to add varables in batches.
+	 * @param propagateInit
+	 * @param freeze whether to freeze the literal
+	 * @return the added literal
+	 */
+	public static int propagateInitAddLiteral(Pointer propagateInit, byte freeze) {
+		IntByReference result = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_propagate_init_add_literal(propagateInit, freeze, result);
+		return result.getValue();
+	}
+
+	/**
+	 * Add the given clause to the solver.
+	 * <p>
+	 * @attention No further calls on the init object or functions on the assignment should be called when the result of this method is false.
+	 * @param propagateInit the target
+	 * @param clause the clause to add
+	 * @param size the size of the clause
+	 * @return indicating whether the problem became unsatisfiable
+	 */
+	public static byte propagateInitAddClause(Pointer propagateInit, int clause, long size) {
+		ByteByReference result = new ByteByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_propagate_init_add_clause(propagateInit, clause, size, result);
+		return result.getValue();
+	}
+
+	/**
+	 * Add the given weight constraint to the solver.
+	 * <p>
+	 * This function adds a constraint of form `literal <=> { lit=weight | (lit, weight) in literals } >= bound` to the solver.
+	 * Depending on the type the `<=>` connective can be either a left implication, right implication, or equivalence.
+	 * 
+	 * @attention No further calls on the init object or functions on the assignment should be called when the result of this method is false.
+	 * @param propagateInit the target
+	 * @param literal the literal of the constraint
+	 * @param literals the weighted literals
+	 * @param size the number of weighted literals
+	 * @param bound the bound of the constraint
+	 * @param type the type of the weight constraint
+	 * @param compareEqual if true compare equal instead of less than equal
+	 * @return result indicating whether the problem became unsatisfiable
+	 */
+	public static byte propagateInitAddWeightConstraint(Pointer propagateInit, int literal, Pointer literals, long size, int bound, int type, byte compareEqual) {
+		ByteByReference result = new ByteByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_propagate_init_add_weight_constraint(propagateInit, literal, literals, size, bound, type, compareEqual, result);
+		return result.getValue();
+	}
+
+	/**
+	 * Add the given literal to minimize to the solver.
+	 * <p>
+	 * This corresponds to a weak constraint of form `:~ literal. [weight@priority]`.
+	 * @param propagateInit
+	 * @param literal
+	 * @param weight
+	 * @param priority
+	 */
+	public static void propagateInitAddMinimize(Pointer propagateInit, int literal, int weight, int priority) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_propagate_init_add_minimize(propagateInit, literal, weight, priority);
+	}
+
+	/**
+	 * Propagates consequences of the underlying problem excluding registered propagators.
+	 * <p>
+	 * @note The function has no effect if SAT-preprocessing is enabled.
+	 * 
+	 * @attention No further calls on the init object or functions on the assignment should be called when the result of this method is false.
+	 * @param propagateInit
+	 * @return
+	 */
+	public static byte propagateInitPropagate(Pointer propagateInit) {
+		ByteByReference result = new ByteByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_propagate_init_propagate(propagateInit, result);
+		return result.getValue();
+	}
+
+	/**
+	 * Get the id of the underlying solver thread.
+	 * @param control the target
+	 * @return the thread id
+	 */
+	public static int propagateControlThreadId(Pointer control) {
+		return clingoLibrary.clingo_propagate_control_thread_id(control);
+	}
+
+	/**
+	 * Get the assignment associated with the underlying solver.
+	 * @param control the target
+	 * @return the assignment
+	 */
+	public static Pointer propagateControlAssignment(Pointer control) {
+		return clingoLibrary.clingo_propagate_control_assignment(control);
+	}
+
+	/**
+	 * Adds a new volatile literal to the underlying solver thread.
+	 * <p>
+	 * @attention The literal is only valid within the current solving step and solver thread.
+	 * All volatile literals and clauses involving a volatile literal are deleted after the current search.
+	 * @param control the target
+	 * @return the (positive) solver literal
+	 */
+	public static int propagateControlAddLiteral(Pointer control) {
+		IntByReference result = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_propagate_control_add_literal(control, result);
+		return result.getValue();
+	}
+
+	/**
+	 * Add a watch for the solver literal in the given phase.
+	 * <p>
+	 * @note Unlike @ref clingo_propagate_init_add_watch() this does not add a watch to all solver threads but just the current one.
+	 * @param control the target
+	 * @param literal the literal to watch
+	 */
+	public static void propagateControlAddWatch(Pointer control, int literal) {
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_propagate_control_add_watch(control, literal);
+	}
+
+	/**
+	 * Check whether a literal is watched in the current solver thread.
+	 * @param control the target
+	 * @param literal the literal to check
+	 * @return
+	 */
+	public static boolean propagateControlHasWatch(Pointer control, int literal) {
+		return clingoLibrary.clingo_propagate_control_has_watch(control, literal) == 1;
+	}
+
+	/**
+	 * Removes the watch (if any) for the given solver literal.
+	 * <p>
+	 * @note Similar to @ref clingo_propagate_init_add_watch() this just removes the watch in the current solver thread.
+	 * @param control the target
+	 * @param literal the literal to remove
+	 */
+	public static void propagateControlRemoveWatch(Pointer control, int literal) {
+		clingoLibrary.clingo_propagate_control_remove_watch(control, literal);
+	}
+
+	/**
+	 * Add the given clause to the solver.
+	 * <p>
+	 * This method sets its result to false if the current propagation must be stopped for the solver to backtrack.
+	 * @attention No further calls on the control object or functions on the assignment should be called when the result of this method is false.
+	 * @param control the target
+	 * @param clause the clause to add
+	 * @param size the size of the clause
+	 * @param type the clause type determining its lifetime
+	 * @return indicating whether propagation has to be stopped
+	 */
+	public static boolean propagateControlAddClause(Pointer control, int clause, long size, int type) {
+		ByteByReference result = new ByteByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_propagate_control_add_clause(control, clause, size, type, result);
+		return result.getValue() == 1;
+	}
+
+	/**
+	 * Propagate implied literals (resulting from added clauses).
+	 * <p>
+	 * This method sets its result to false if the current propagation must be stopped for the solver to backtrack.
+	 * @attention No further calls on the control object or functions on the assignment should be called when the result of this method is false.
+	 * @param control the target
+	 * @return indicating whether propagation has to be stopped
+	 */
+	public static boolean propagateControlPropagate(Pointer control) {
+		ByteByReference result = new ByteByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_propagate_control_propagate(control, result);
+		return result.getValue() == 1;
+	}
 
 	/*
 	 * ********** backend **********

@@ -270,161 +270,60 @@ public interface ClingoLibrary extends Library {
 
     // propagator
     
-    //! @example propagator.c
-    //! The example shows how to write a simple propagator for the pigeon hole problem. For
-    //! a detailed description of what is implemented here and some background, take a look at the following paper:
-    //!
-    //! https://www.cs.uni-potsdam.de/wv/publications/#DBLP:conf/iclp/GebserKKOSW16x
-    //!
-    //! ## Output ##
-    //!
-    //! The output is empty because the pigeon hole problem is unsatisfiable.
-    //!
-    //! ## Code ##
+    // public static final typedef<struct> clingo_assignment_t = null;
     
-    //! @defgroup Propagator Theory Propagation
-    //! Extend the search with propagators for arbitrary theories.
-    //!
-    //! For an example, see @ref propagator.c.
-    //! @ingroup Control
+    // Assignment Functions
+
+    /** {@link clingo_h#clingo_assignment_decision_level} */
+    public int clingo_assignment_decision_level(Pointer assignment);
+
+    /** {@link clingo_h#clingo_assignment_root_level} */
+    public int clingo_assignment_root_level(Pointer assignment);
+
+    /** {@link clingo_h#clingo_assignment_has_conflict} */
+    public byte clingo_assignment_has_conflict(Pointer assignment);
+
+    /** {@link clingo_h#clingo_assignment_has_literal} */
+    public byte clingo_assignment_has_literal(Pointer assignment, int literal);
+
+    /** {@link clingo_h#clingo_assignment_level} */
+    public byte clingo_assignment_level(Pointer assignment, int literal, IntByReference p_level);
     
-    //! @addtogroup Propagator
-    //! @{
-    
-    //! Represents a (partial) assignment of a particular solver.
-    //!
-    //! An assignment assigns truth values to a set of literals.
-    //! A literal is assigned to either @link clingo_assignment_truth_value() true or false, or is unassigned@endlink.
-    //! Furthermore, each assigned literal is associated with a @link clingo_assignment_level() decision level@endlink.
-    //! There is exactly one @link clingo_assignment_decision() decision literal@endlink for each decision level greater than zero.
-    //! Assignments to all other literals on the same level are consequences implied by the current and possibly previous decisions.
-    //! Assignments on level zero are immediate consequences of the current program.
-    //! Decision levels are consecutive numbers starting with zero up to and including the @link clingo_assignment_decision_level() current decision level@endlink.
-// public static final typedef<struct> clingo_assignment_t = null;
-    
-    //! @name Assignment Functions
-    //! @{
-    
-    //! Get the current decision level.
-    //!
-    //! @param[in] assignment the target assignment
-    //! @return the decision level
-// public uint32_t clingo_assignment_decision_level(final clingo_assignment_t p_assignment); // CLINGO_VISIBILITY_DEFAULT uint32_t clingo_assignment_decision_level(clingo_assignment_t const *assignment);
-    //! Get the current root level.
-    //!
-    //! Decisions levels smaller or equal to the root level are not backtracked during solving.
-    //!
-    //! @param[in] assignment the target assignment
-    //! @return the decision level
-// public uint32_t clingo_assignment_root_level(final clingo_assignment_t p_assignment); // CLINGO_VISIBILITY_DEFAULT uint32_t clingo_assignment_root_level(clingo_assignment_t const *assignment);
-    //! Check if the given assignment is conflicting.
-    //!
-    //! @param[in] assignment the target assignment
-    //! @return whether the assignment is conflicting
-// public bool clingo_assignment_has_conflict(final clingo_assignment_t p_assignment); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_has_conflict(clingo_assignment_t const *assignment);
-    //! Check if the given literal is part of a (partial) assignment.
-    //!
-    //! @param[in] assignment the target assignment
-    //! @param[in] literal the literal
-    //! @return whether the literal is valid
-// public bool clingo_assignment_has_literal(final clingo_assignment_t p_assignment, clingo_literal_t literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_has_literal(clingo_assignment_t const *assignment, clingo_literal_t literal);
-    //! Determine the decision level of a given literal.
-    //!
-    //! @param[in] assignment the target assignment
-    //! @param[in] literal the literal
-    //! @param[out] level the resulting level
-    //! @return whether the call was successful
-// public bool clingo_assignment_level(final clingo_assignment_t p_assignment, clingo_literal_t literal, uint32_t p_level); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_level(clingo_assignment_t const *assignment, clingo_literal_t literal, uint32_t *level);
-    //! Determine the decision literal given a decision level.
-    //!
-    //! @param[in] assignment the target assignment
-    //! @param[in] level the level
-    //! @param[out] literal the resulting literal
-    //! @return whether the call was successful
-// public bool clingo_assignment_decision(final clingo_assignment_t p_assignment, uint32_t level, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_decision(clingo_assignment_t const *assignment, uint32_t level, clingo_literal_t *literal);
-    //! Check if a literal has a fixed truth value.
-    //!
-    //! @param[in] assignment the target assignment
-    //! @param[in] literal the literal
-    //! @param[out] is_fixed whether the literal is fixed
-    //! @return whether the call was successful
-// public bool clingo_assignment_is_fixed(final clingo_assignment_t p_assignment, clingo_literal_t literal, bool p_is_fixed); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_is_fixed(clingo_assignment_t const *assignment, clingo_literal_t literal, bool *is_fixed);
-    //! Check if a literal is true.
-    //!
-    //! @param[in] assignment the target assignment
-    //! @param[in] literal the literal
-    //! @param[out] is_true whether the literal is true
-    //! @return whether the call was successful
-    //! @see clingo_assignment_truth_value()
-// public bool clingo_assignment_is_true(final clingo_assignment_t p_assignment, clingo_literal_t literal, bool p_is_true); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_is_true(clingo_assignment_t const *assignment, clingo_literal_t literal, bool *is_true);
-    //! Check if a literal has a fixed truth value.
-    //!
-    //! @param[in] assignment the target assignment
-    //! @param[in] literal the literal
-    //! @param[out] is_false whether the literal is false
-    //! @return whether the call was successful
-    //! @see clingo_assignment_truth_value()
-// public bool clingo_assignment_is_false(final clingo_assignment_t p_assignment, clingo_literal_t literal, bool p_is_false); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_is_false(clingo_assignment_t const *assignment, clingo_literal_t literal, bool *is_false);
-    //! Determine the truth value of a given literal.
-    //!
-    //! @param[in] assignment the target assignment
-    //! @param[in] literal the literal
-    //! @param[out] value the resulting truth value
-    //! @return whether the call was successful
-// public bool clingo_assignment_truth_value(final clingo_assignment_t p_assignment, clingo_literal_t literal, clingo_truth_value_t p_value); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_truth_value(clingo_assignment_t const *assignment, clingo_literal_t literal, clingo_truth_value_t *value);
-    //! The number of (positive) literals in the assignment.
-    //!
-    //! @param[in] assignment the target
-    //! @return the number of literals
-// public size_t clingo_assignment_size(final clingo_assignment_t p_assignment); // CLINGO_VISIBILITY_DEFAULT size_t clingo_assignment_size(clingo_assignment_t const *assignment);
-    //! The (positive) literal at the given offset in the assignment.
-    //!
-    //! @param[in] assignment the target
-    //! @param[in] offset the offset of the literal
-    //! @param[out] literal the literal
-    //! @return whether the call was successful
-// public bool clingo_assignment_at(final clingo_assignment_t p_assignment, size_t offset, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_at(clingo_assignment_t const *assignment, size_t offset, clingo_literal_t *literal);
-    //! Check if the assignment is total, i.e. there are no free literal.
-    //!
-    //! @param[in] assignment the target
-    //! @return wheather the assignment is total
-// public bool clingo_assignment_is_total(final clingo_assignment_t p_assignment); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_is_total(clingo_assignment_t const *assignment);
-    //! Returns the number of literals in the trail, i.e., the number of assigned literals.
-    //!
-    //! @param[in] assignment the target
-    //! @param[out] size the number of literals in the trail
-    //! @return whether the call was successful
-// public bool clingo_assignment_trail_size(final clingo_assignment_t p_assignment, uint32_t p_size); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_trail_size(clingo_assignment_t const *assignment, uint32_t *size);
-    //! Returns the offset of the decision literal with the given decision level in
-    //! the trail.
-    //!
-    //! @note Literals in the trail are ordered by decision levels, where the first
-    //! literal with a larger level than the previous literals is a decision; the
-    //! following literals with same level are implied by this decision literal.
-    //! Each decision level up to and including the current decision level has a
-    //! valid offset in the trail.
-    //!
-    //! @param[in] assignment the target
-    //! @param[in] level the decision level
-    //! @param[out] offset the offset of the decision literal
-    //! @return whether the call was successful
-// public bool clingo_assignment_trail_begin(final clingo_assignment_t p_assignment, uint32_t level, uint32_t p_offset); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_trail_begin(clingo_assignment_t const *assignment, uint32_t level, uint32_t *offset);
-    //! Returns the offset following the last literal with the given decision level.
-    //!
-    //! @note This function is the counter part to clingo_assignment_trail_begin().
-    //!
-    //! @param[in] assignment the target
-    //! @param[in] level the decision level
-    //! @param[out] offset the offset
-    //! @return whether the call was successful
-// public bool clingo_assignment_trail_end(final clingo_assignment_t p_assignment, uint32_t level, uint32_t p_offset); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_trail_end(clingo_assignment_t const *assignment, uint32_t level, uint32_t *offset);
-    //! Returns the literal at the given position in the trail.
-    //!
-    //! @param[in] assignment the target
-    //! @param[in] offset the offset of the literal
-    //! @param[out] literal the literal
-    //! @return whether the call was successful
-// public bool clingo_assignment_trail_at(final clingo_assignment_t p_assignment, uint32_t offset, clingo_literal_t p_literal); // CLINGO_VISIBILITY_DEFAULT bool clingo_assignment_trail_at(clingo_assignment_t const *assignment, uint32_t offset, clingo_literal_t *literal);
+    /** {@link clingo_h#clingo_assignment_decision} */
+    public byte clingo_assignment_decision(Pointer assignment, int level, IntByReference p_literal);
+
+    /** {@link clingo_h#clingo_assignment_is_fixed} */
+    public byte clingo_assignment_is_fixed(Pointer assignment, int literal, ByteByReference is_fixed);
+
+    /** {@link clingo_h#clingo_assignment_is_true} */
+	public byte clingo_assignment_is_true(Pointer assignment, int literal, ByteByReference is_true);
+
+    /** {@link clingo_h#clingo_assignment_is_false} */
+	public byte clingo_assignment_is_false(Pointer assignment, int literal, ByteByReference is_false);
+
+    /** {@link clingo_h#clingo_assignment_truth_value} */
+	public byte clingo_assignment_truth_value(Pointer assignment, int literal, IntByReference value);
+
+    /** {@link clingo_h#clingo_assignment_size} */
+	public long clingo_assignment_size(Pointer assignment);
+
+    /** {@link clingo_h#clingo_assignment_size} */
+	public byte clingo_assignment_at(Pointer assignment, long offset, IntByReference literal);
+
+    /** {@link clingo_h#clingo_assignment_is_total} */
+	public byte clingo_assignment_is_total(Pointer assignment);
+
+    /** {@link clingo_h#clingo_assignment_trail_size} */
+	public byte clingo_assignment_trail_size(Pointer assignment, SizeByReference size);
+
+    /** {@link clingo_h#clingo_assignment_trail_begin} */
+	public byte clingo_assignment_trail_begin(Pointer assignment, int level, IntByReference offset);
+
+    /** {@link clingo_h#clingo_assignment_trail_end} */
+	public byte clingo_assignment_trail_end(Pointer assignment, int level, IntByReference offset);
+
+    /** {@link clingo_h#clingo_assignment_trail_at} */
+	public byte clingo_assignment_trail_at(Pointer assignment, int offset, IntByReference literal);
     
     //! @}
     

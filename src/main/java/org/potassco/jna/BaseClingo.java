@@ -1073,6 +1073,236 @@ public class BaseClingo {
 	/*
 	 * ********** propagator **********
 	 */
+	
+	/* 
+	 * https://potassco.org/clingo/c-api/5.5/propagator_8c-example.html
+	 * The example shows how to write a simple propagator for the pigeon hole problem. For
+	 * a detailed description of what is implemented here and some background, take a look at the following paper:
+	 * https://www.cs.uni-potsdam.de/wv/publications/#DBLP:conf/iclp/GebserKKOSW16x
+	 */
+	
+	/*
+	 * Represents a (partial) assignment of a particular solver.
+	 * <p>
+	 * An assignment assigns truth values to a set of literals.
+	 * A literal is assigned to either @link clingo_assignment_truth_value() true or false, or is unassigned@endlink.
+	 * Furthermore, each assigned literal is associated with a @link clingo_assignment_level() decision level@endlink.
+	 * There is exactly one @link clingo_assignment_decision() decision literal@endlink for each decision level greater than zero.
+	 * Assignments to all other literals on the same level are consequences implied by the current and possibly previous decisions.
+	 * Assignments on level zero are immediate consequences of the current program.
+	 * Decision levels are consecutive numbers starting with zero up to and including the @link clingo_assignment_decision_level() current decision level@endlink.
+	 */
+	
+	// clingo_assignment_t
+
+    // Assignment Functions
+    
+	/**
+	 * Get the current decision level.
+	 * @param assignment the target assignment
+	 * @return the decision level
+	 */
+	public static int assignmentDecisionLevel(Pointer assignment) {
+		return clingoLibrary.clingo_assignment_decision_level(assignment);
+	}
+
+	/**
+	 * Get the current root level.
+	 * @param assignment the target assignment
+	 * @return the decision level
+	 */
+	public static int assignmentRootLevel(Pointer assignment) {
+		return clingoLibrary.clingo_assignment_decision_level(assignment);
+	}
+
+	/**
+	 * Check if the given assignment is conflicting.
+	 * @param assignment the target assignment
+	 * @return whether the assignment is conflicting
+	 */
+	public static boolean assignmentHasConflict(Pointer assignment) {
+		byte hasConflict = clingoLibrary.clingo_assignment_has_conflict(assignment);
+		return hasConflict == 1;
+	}
+
+	/**
+	 * Check if the given literal is part of a (partial) assignment.
+	 * @param assignment the target assignment
+	 * @param literal the literal
+	 * @return whether the literal is valid
+	 */
+	public static boolean assignmentHasLiteral(Pointer assignment, int literal) {
+		byte hasLiteral = clingoLibrary.clingo_assignment_has_literal(assignment, literal);
+		return hasLiteral == 1;
+	}
+
+	/**
+	 * Determine the decision level of a given literal.
+	 * @param assignment the target assignment
+	 * @param literal the literal
+	 * @return the resulting level
+	 */
+	public static int assignmentLevel(Pointer assignment, int literal) {
+		IntByReference level = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_assignment_level(assignment, literal, level);
+		return level.getValue();
+	}
+
+	/**
+	 * Determine the decision literal given a decision level.
+	 * @param assignment the target assignment
+	 * @param literal the level
+	 * @return the resulting literal
+	 */
+	public static int assignmentDecision(Pointer assignment, int level) {
+		IntByReference literal = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_assignment_decision(assignment, level, literal);
+		return literal.getValue();
+	}
+
+	/**
+	 * Check if a literal has a fixed truth value.
+	 * @param assignment the target assignment
+	 * @param literal the literal
+	 * @return whether the literal is fixed
+	 */
+	public static boolean assignmentIsFixed(Pointer assignment, int literal) {
+		ByteByReference isFixed = new ByteByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_assignment_is_fixed(assignment, literal, isFixed);
+		return isFixed.getValue() == 1;
+	}
+
+	/**
+	 * Check if a literal is true.
+	 * @param assignment the target assignment
+	 * @param literal the literal
+	 * @return whether the literal is true
+	 */
+	public static boolean assignmentIsTrue(Pointer assignment, int literal) {
+		ByteByReference isTrue = new ByteByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_assignment_is_true(assignment, literal, isTrue);
+		return isTrue.getValue() == 1;
+	}
+
+	/**
+	 * Check if a literal has a fixed truth value.
+	 * @param assignment the target assignment
+	 * @param literal the literal
+	 * @return whether the literal is false
+	 */
+	public static boolean assignmentIsFalse(Pointer assignment, int literal) {
+		ByteByReference isFalse = new ByteByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_assignment_is_false(assignment, literal, isFalse);
+		return isFalse.getValue() == 1;
+	}
+
+	/**
+	 * Determine the truth value of a given literal.
+	 * @param assignment the target assignment
+	 * @param literal the literal
+	 * @return the resulting truth value
+	 */
+	public static int assignmentTruthValue(Pointer assignment, int literal) {
+		IntByReference value = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_assignment_truth_value(assignment, literal, value);
+		return value.getValue();
+	}
+
+	/**
+	 * The number of (positive) literals in the assignment.
+	 * @param assignment the target assignment
+	 * @return the number of literals
+	 */
+	public static long assignmentSize(Pointer assignment) {
+		return clingoLibrary.clingo_assignment_size(assignment);
+	}
+
+	/**
+	 * The (positive) literal at the given offset in the assignment.
+	 * @param assignment the target assignment
+	 * @param offset the offset of the literal
+	 * @return the literal
+	 */
+	public static int assignmentAt(Pointer assignment, int offset) {
+		IntByReference literal = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_assignment_at(assignment, offset, literal);
+		return literal.getValue();
+	}
+
+	/**
+	 * Check if the assignment is total, i.e. there are no free literal.
+	 * @param assignment the target assignment
+	 * @return wheather the assignment is total
+	 */
+	public static boolean assignmentIsTotal(Pointer assignment) {
+		return clingoLibrary.clingo_assignment_is_total(assignment) == 1;
+	}
+
+	/**
+	 * Returns the number of literals in the trail, i.e., the number of assigned literals.
+	 * @param assignment the target assignment
+	 * @return the number of literals in the trail
+	 */
+	public static long assignmentTrailSize(Pointer assignment) {
+		SizeByReference size = new SizeByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_assignment_trail_size(assignment, size);
+		return size.getValue();
+	}
+
+	/**
+	 * Returns the offset of the decision literal with the given decision level in the trail.
+	 * <p>
+	 * @note Literals in the trail are ordered by decision levels, where the first
+	 * literal with a larger level than the previous literals is a decision; the
+	 * following literals with same level are implied by this decision literal.
+	 * Each decision level up to and including the current decision level has a
+	 * valid offset in the trail.
+	 * @param assignment the target assignment
+	 * @param level the decision level
+	 * @return the offset of the decision literal
+	 */
+	public static long assignmentTrailBegin(Pointer assignment, int level) {
+		IntByReference offset = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_assignment_trail_begin(assignment, level, offset);
+		return offset.getValue();
+	}
+
+	/**
+	 * Returns the offset following the last literal with the given decision level.
+	 * <p>
+	 * @note This function is the counter part to clingo_assignment_trail_begin().
+	 * @param assignment the target assignment
+	 * @param level the decision level
+	 * @return the offset
+	 */
+	public static long assignmentTrailEnd(Pointer assignment, int level) {
+		IntByReference offset = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_assignment_trail_end(assignment, level, offset);
+		return offset.getValue();
+	}
+
+	/**
+	 * Returns the literal at the given position in the trail.
+	 * @param assignment the target assignment
+	 * @param offset the offset of the literal
+	 * @return the literal
+	 */
+	public static long assignmentTrailAt(Pointer assignment, int offset) {
+		IntByReference literal = new IntByReference();
+		@SuppressWarnings("unused")
+		byte success = clingoLibrary.clingo_assignment_trail_at(assignment, offset, literal);
+		return literal.getValue();
+	}
 
 	/*
 	 * ********** backend **********

@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.potassco.jna.BaseClingo;
 
-public class BaseErrorHandlingTest {
+public class ErrorHandlingTest {
 
 	@Test
 	public void testErrorMessage() {

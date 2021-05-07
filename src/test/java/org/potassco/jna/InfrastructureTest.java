@@ -14,7 +14,7 @@ import org.potassco.jna.BaseClingo;
 
 import com.sun.jna.Pointer;
 
-public class BaseInfrastructureTest {
+public class InfrastructureTest {
 
 	@Test
 	public void testSignature() {

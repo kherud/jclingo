@@ -10,7 +10,7 @@ import org.potassco.jna.Size;
 
 import com.sun.jna.Pointer;
 
-public class BaseMultipleModelsTest {
+public class MultipleModelsTest {
 
 	@Test
 	public void test() {

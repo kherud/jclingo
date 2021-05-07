@@ -11,7 +11,7 @@ import org.potassco.jna.SymbolCallbackT;
 
 import com.sun.jna.Pointer;
 
-public class BaseAtomsTest {
+public class AtomsTest {
 
 	@Test
 	public void testSymbolicAtoms() {

@@ -15,7 +15,7 @@ import org.potassco.jna.SolveEventCallback;
 
 import com.sun.jna.Pointer;
 
-public class BaseStatisticsTest {
+public class StatisticsTest {
 
 	/**
 	 * https://potassco.org/clingo/c-api/5.5/statistics_8c-example.html

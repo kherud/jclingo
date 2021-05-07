@@ -16,7 +16,7 @@ import org.potassco.jna.Size;
 
 import com.sun.jna.Pointer;
 
-public class BaseSolveTest {
+public class SolveTest {
 
 	/**
 	 * https://potassco.org/clingo/c-api/5.5/model_8c-example.html

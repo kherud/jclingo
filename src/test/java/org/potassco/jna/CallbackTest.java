@@ -15,7 +15,7 @@ import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 
-public class BaseCallbackTest {
+public class CallbackTest {
 
 	@Test
 	public void test() {

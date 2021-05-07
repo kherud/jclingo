@@ -10,7 +10,7 @@ import org.potassco.jna.Size;
 
 import com.sun.jna.Pointer;
 
-public class BaseTheoryAtomsTest {
+public class TheoryAtomsTest {
 
 	/**
 	 * {@link https://github.com/potassco/clingo/blob/master/libpyclingo/clingo/tests/test_atoms.py}

@@ -10,14 +10,16 @@
  * <li>clingo_external_type_t (c_int): int
  * <li>clingo_heuristic_type_t (c_int): int
  * <li>clingo_truth_value_t (c_int): int
+ * <li>clingo_propagator_check_mode_t (c_int): int
+ * <li>clingo_weight_constraint_type_t (c_int): int
+ * <li>
+ * <li>
  * <li>
  * <li>
  * <li>clingo_location_t - struct: Location
  * <li>clingo_weighted_literal_t - struct
- * <li>
- * <li>
- * <li>
- * <li>
+ * <li>clingo_symbolic_atoms_t - struct
+ * <li>clingo_assignment_t - struct
  * <li>
  * <li>
  * <li>size_t: long

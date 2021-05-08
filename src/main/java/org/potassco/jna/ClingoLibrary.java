@@ -94,7 +94,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_signature_is_less_than(Pointer a, Pointer b); // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_is_less_than(clingo_signature_t a, clingo_signature_t b);
 
     /** {@link clingo_h#clingo_signature_hash} */
-    public Size clingo_signature_hash(Pointer signature); // CLINGO_VISIBILITY_DEFAULT size_t clingo_signature_hash(clingo_signature_t signature);
+    public long clingo_signature_hash(Pointer signature); // CLINGO_VISIBILITY_DEFAULT size_t clingo_signature_hash(clingo_signature_t signature);
 
     /** {@link clingo_h#clingo_symbol_create_number} */
     public void clingo_symbol_create_number(int number, SymbolByReference p_symbol);
@@ -112,7 +112,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_symbol_create_id(String p_name, byte positive, SymbolByReference p_symbol);
 
     /** {@link clingo_h#clingo_symbol_create_function} */
-    public byte clingo_symbol_create_function(String p_name, SymbolByReference[] p_arguments, Size arguments_size, byte positive, SymbolByReference p_symbol);
+    public byte clingo_symbol_create_function(String p_name, SymbolByReference[] p_arguments, long arguments_size, byte positive, SymbolByReference p_symbol);
 
     // Symbol Inspection Functions
 
@@ -154,7 +154,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_symbol_is_less_than(long a, long b); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_is_less_than(clingo_symbol_t a, clingo_symbol_t b);
 
     /** {@link clingo_h#clingo_symbol_hash} */
-    public Size clingo_symbol_hash(long symbol); // CLINGO_VISIBILITY_DEFAULT size_t clingo_symbol_hash(clingo_symbol_t symbol);
+    public long clingo_symbol_hash(long symbol); // CLINGO_VISIBILITY_DEFAULT size_t clingo_symbol_hash(clingo_symbol_t symbol);
 
     /** {@link clingo_h#clingo_add_string} */
     public byte clingo_add_string(String p_string, String[] p_p_result);
@@ -1681,7 +1681,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_control_load(Pointer p_control, String p_file);
 
     /** {@link clingo_h#clingo_control_add} */
-    public byte  clingo_control_add(Pointer p_control, String name, String[] parameters, Size parameters_size, String program);
+    public byte  clingo_control_add(Pointer p_control, String name, String[] parameters, long parameters_size, String program);
 
     /** {@link clingo_h#clingo_control_ground} */
     public byte clingo_control_ground(Pointer p_control, Part[] p_parts, long parts_size, GroundCallbackT ground_callback, Pointer p_ground_callback_data);

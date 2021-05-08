@@ -1,7 +1,6 @@
 package org.potassco.ast.structs;
 
 import org.potassco.cpp.clingo_h;
-import org.potassco.jna.Size;
 
 import com.sun.jna.Structure;
 

@@ -29,7 +29,7 @@ public class InfrastructureTest {
 			assertEquals(!positive, BaseClingo.signatureIsNegative(signature));
 			assertTrue(BaseClingo.signatureIsEqualTo(signature, BaseClingo.signatureCreate("test", 2, true)));
 			assertTrue(BaseClingo.signatureIsLessThan(signature, BaseClingo.signatureCreate("test", 3, true)));
-			int hash = BaseClingo.signatureHash(signature);
+			long hash = BaseClingo.signatureHash(signature);
 			assertEquals(hash , BaseClingo.signatureHash(signature)); // returns the same hash
 		} catch (ClingoException e) {
 			// TODO Auto-generated catch block
@@ -81,7 +81,7 @@ public class InfrastructureTest {
 		assertFalse(BaseClingo.symbolIsEqualTo(s, f));
 		assertTrue(BaseClingo.symbolIsEqualTo(num, BaseClingo.symbolCreateNumber(number)));
 		assertTrue(BaseClingo.symbolIsLessThan(s, f));
-		int hash = BaseClingo.symbolHash(f);
+		long hash = BaseClingo.symbolHash(f);
 		assertEquals(hash, BaseClingo.symbolHash(f));
 		long[] res = BaseClingo.symbolArguments(f);
 		for (int i = 0; i < res.length; i++) {

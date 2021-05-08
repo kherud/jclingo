@@ -1,23 +1,12 @@
 package org.potassco.api;
 
-import java.util.List;
-
+import org.potassco.cpp.clingo_h;
 import org.potassco.enums.ConfigurationType;
-import org.potassco.enums.ExternalType;
-import org.potassco.enums.HeuristicType;
-import org.potassco.enums.ModelType;
-import org.potassco.enums.ShowType;
-import org.potassco.enums.SolveMode;
 import org.potassco.enums.StatisticsType;
-import org.potassco.enums.SymbolType;
 import org.potassco.enums.TermType;
-import org.potassco.enums.TruthValue;
 import org.potassco.jna.BaseClingo;
-import org.potassco.jna.GroundCallbackT;
 import org.potassco.jna.OptionParseCallbackT;
 import org.potassco.jna.Part;
-import org.potassco.jna.Size;
-import org.potassco.jna.SolveEventCallback;
 
 import com.sun.jna.Pointer;
 
@@ -186,7 +175,7 @@ public class Clingo {
 	 * @param signature the target signature
 	 * @return
 	 */
-	public int signatureHash(Pointer signature) {
+	public long signatureHash(Pointer signature) {
 		return BaseClingo.signatureHash(signature);
 	}
 

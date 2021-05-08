@@ -27,12 +27,12 @@ import com.sun.jna.Structure;
 public class Location extends Structure {
 	public String begin_file;
 	public String end_file;
-	public Size begin_line;
-	public Size end_line;
-	public Size begin_column;
-	public Size end_column;
+	public long begin_line;
+	public long end_line;
+	public long begin_column;
+	public long end_column;
 	
-	public Location(String begin_file, String end_file, Size begin_line, Size end_line, Size begin_column, Size end_column) {
+	public Location(String begin_file, String end_file, long begin_line, long end_line, long begin_column, long end_column) {
 		super();
 		this.begin_file = begin_file;
 		this.end_file = end_file;

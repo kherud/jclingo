@@ -4,16 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.potassco.dto.Solution;
-import org.potassco.enums.ShowType;
-import org.potassco.enums.SolveMode;
-import org.potassco.jna.BaseClingo;
-import org.potassco.jna.ClingoLibrary;
-import org.potassco.jna.Part;
-import org.potassco.jna.Size;
 
-import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
 
 public class CallbackTest {
 

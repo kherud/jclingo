@@ -235,9 +235,9 @@ public class BaseClingo {
 	 * @param signature the target signature
 	 * @return
 	 */
-	public static int signatureHash(Pointer signature) {
-		Size hash = clingoLibrary.clingo_signature_hash(signature);
-		return hash.intValue();
+	public static long signatureHash(Pointer signature) {
+		long hash = clingoLibrary.clingo_signature_hash(signature);
+		return hash;
 	}
 
 	/*
@@ -322,7 +322,7 @@ public class BaseClingo {
 	public static long symbolCreateFunction(String name, List<Long> arguments, boolean positive) {
 		SymbolByReference symb = new SymbolByReference();
 		int argSize = arguments.size();
-		Size argumentsSize = new Size(argSize);
+		long argumentsSize = argSize;
 		SymbolByReference[] args = new SymbolByReference[argSize];
 		int i = 0;
 		for (long s : arguments) {
@@ -499,9 +499,8 @@ public class BaseClingo {
 	 * @param symbol symbol the target symbol
 	 * @return the hash code of the symbol
 	 */
-	public static int symbolHash(long symbol) {
-		Size hash = clingoLibrary.clingo_symbol_hash(symbol);
-		return hash.intValue();
+	public static long symbolHash(long symbol) {
+		return clingoLibrary.clingo_symbol_hash(symbol);
 	}
 
 	/**
@@ -1737,7 +1736,7 @@ public class BaseClingo {
 	 * @param symbol  optional symbol to associate the atom with
 	 * @return the resulting atom
 	 */
-	public static int backendWeightAddAtom(Pointer backend, int symbol) {
+	public static int backendAddAtom(Pointer backend, int symbol) {
 		IntByReference atom = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_add_atom(backend, symbol, atom);
@@ -2618,7 +2617,7 @@ public class BaseClingo {
 		if (parameters == null) {
 			parameters = new String[0];
 		}
-		clingoLibrary.clingo_control_add(control, name, parameters, new Size(parameters.length), program);
+		clingoLibrary.clingo_control_add(control, name, parameters, parameters.length, program);
 	}
 
 	/**

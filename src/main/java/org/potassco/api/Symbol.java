@@ -206,7 +206,7 @@ public class Symbol {
 	 * 
 	 * @return the hash code of the symbol
 	 */
-	public int symbolHash() {
+	public long symbolHash() {
 		return BaseClingo.symbolHash(this.reference);
 	}
 

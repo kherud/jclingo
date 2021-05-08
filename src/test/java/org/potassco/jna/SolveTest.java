@@ -10,9 +10,6 @@ import org.junit.Test;
 import org.potassco.enums.ModelType;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveMode;
-import org.potassco.jna.BaseClingo;
-import org.potassco.jna.Part;
-import org.potassco.jna.Size;
 
 import com.sun.jna.Pointer;
 

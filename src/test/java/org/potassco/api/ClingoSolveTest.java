@@ -7,12 +7,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
-import org.potassco.api.Clingo;
-import org.potassco.api.Control;
 import org.potassco.dto.Solution;
 import org.potassco.jna.GroundCallbackT;
 import org.potassco.jna.Part;
-import org.potassco.jna.Size;
 import org.potassco.jna.SymbolCallbackT;
 
 import com.sun.jna.Pointer;

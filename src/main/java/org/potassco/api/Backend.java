@@ -148,8 +148,8 @@ public class Backend {
 	 * @param symbol  optional symbol to associate the atom with
 	 * @return the resulting atom
 	 */
-	public int weightAddAtom(int symbol) {
-		return BaseClingo.backendWeightAddAtom(this.pointer, symbol);
+	public int addAtom(int symbol) {
+		return BaseClingo.backendAddAtom(this.pointer, symbol);
 	}
 
 }

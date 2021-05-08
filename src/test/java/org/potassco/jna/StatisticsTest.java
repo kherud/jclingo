@@ -8,10 +8,6 @@ import java.util.Set;
 import org.junit.Test;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveMode;
-import org.potassco.jna.BaseClingo;
-import org.potassco.jna.Part;
-import org.potassco.jna.Size;
-import org.potassco.jna.SolveEventCallback;
 
 import com.sun.jna.Pointer;
 

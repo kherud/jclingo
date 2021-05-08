@@ -3,11 +3,6 @@ package org.potassco.jna;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.potassco.enums.TermType;
-import org.potassco.jna.BaseClingo;
-import org.potassco.jna.Part;
-import org.potassco.jna.Size;
-import org.potassco.jna.SymbolCallbackT;
 
 import com.sun.jna.Pointer;
 

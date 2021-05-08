@@ -4,9 +4,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.potassco.enums.SolveMode;
-import org.potassco.jna.BaseClingo;
-import org.potassco.jna.Part;
-import org.potassco.jna.Size;
 
 import com.sun.jna.Pointer;
 

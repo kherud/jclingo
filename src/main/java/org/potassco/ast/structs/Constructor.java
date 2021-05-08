@@ -1,8 +1,6 @@
 package org.potassco.ast.structs;
 
 import org.potassco.cpp.clingo_h;
-import org.potassco.jna.Size;
-
 import com.sun.jna.Structure;
 
 /**
@@ -13,5 +11,5 @@ import com.sun.jna.Structure;
 public class Constructor extends Structure {
 	  private String name; // char const *name;
 	  private Argument arguments; // clingo_ast_argument_t const *arguments;
-	  private Size size; // size_t size;
+	  private long size; // size_t size;
 }

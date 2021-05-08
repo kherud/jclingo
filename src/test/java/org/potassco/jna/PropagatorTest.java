@@ -2,14 +2,50 @@ package org.potassco.jna;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.Callback;
+import com.sun.jna.Structure;
+import com.sun.jna.ptr.IntByReference;
 
 public class PropagatorTest {
 
+class PropagatorData extends Structure {
+	public IntByReference pigeons;
+	public long pigeonsSize;
+	public State state;
+	public long stateSize;
+
+	public PropagatorData(IntByReference pigeons, long pigeonsSize, State state, long stateSize) {
+		super();
+		this.pigeons = pigeons;
+		this.pigeonsSize = pigeonsSize;
+		this.state = state;
+		this.stateSize = stateSize;
+	}
+
+	protected List<String> getFieldOrder() {
+		return Arrays.asList("pigeons", "pigeonsSize", "state", "stateSize");
+	}
+
+}
+
+class State extends Structure {
+	public int holes;
+	public long size;
+
+	protected List<String> getFieldOrder() {
+		return Arrays.asList("holes", "size");
+	}
+
+}
+
 	/**
-	 * https://potassco.org/clingo/c-api/5.5/propagator_8c-example.html
+	 * @see <a href="https://potassco.org/clingo/c-api/5.5/propagator_8c-example.html">propagator.c</a>
 	 */
 	@Test
 	public void test() {
@@ -20,17 +56,11 @@ public class PropagatorTest {
 		long pigeons = BaseClingo.symbolCreateNumber(9);
 		Pointer control = BaseClingo.control(null, null, null, 0);
 		
-		  // using the default implementation for the model check
-		  clingo_propagator_t prop = {
-		    (clingo_propagator_init_callback_t)init,
-		    (clingo_propagator_propagate_callback_t)propagate,
-		    (clingo_propagator_undo_callback_t)undo,
-		    NULL,
-		    NULL,
-		  };
-		  propagator_t prop_data = { NULL, 0, NULL, 0 };
+
+		Propagator prop = new Propagator(null, null, null, null, null);
+		PropagatorData propData = new PropagatorData(null, 0L, null, 0L);
 		  
-		BaseClingo.controlRegisterPropagator(control, prop, prop_data, false);
+		BaseClingo.controlRegisterPropagator(control, prop, propData, false);
 		
 		
 		

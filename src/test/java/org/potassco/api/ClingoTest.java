@@ -3,8 +3,6 @@ package org.potassco.api;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.potassco.api.Clingo;
-import org.potassco.api.Control;
 import org.potassco.dto.Solution;
 import org.potassco.enums.SolveMode;
 import org.potassco.jna.SolveEventCallback;

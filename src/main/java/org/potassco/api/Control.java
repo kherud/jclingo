@@ -8,7 +8,6 @@ import org.potassco.enums.TruthValue;
 import org.potassco.jna.BaseClingo;
 import org.potassco.jna.GroundCallbackT;
 import org.potassco.jna.Part;
-import org.potassco.jna.Size;
 import org.potassco.jna.SolveEventCallback;
 
 import com.sun.jna.Pointer;
@@ -92,7 +91,6 @@ public class Control implements AutoCloseable {
 	 * 
 	 * @param name           name of the program block
 	 * @param parameters     string array of parameters of the program block
-	 * @param parametersSize number of parameters
 	 * @param program        string representation of the program
 	 */
 	public void add(String name, String[] parameters, String program) {
@@ -110,13 +108,13 @@ public class Control implements AutoCloseable {
 	 *       specification are by default put into a program called `base` without
 	 *       arguments.
 	 * @param parts                array of parts to ground
-	 * @param parts_size           size of the parts array
-	 * @param ground_callback      callback to implement external functions
-	 * @param ground_callback_data user data for ground_callback
+	 * @param groundCallback      callback to implement external functions
+	 * @param groundCallbackData user data for ground_callback
 	 */
-	public void ground(Part[] parts, Size parts_size, GroundCallbackT ground_callback,
-			Pointer ground_callback_data) {
-		BaseClingo.controlGround(this.control, parts, parts_size, ground_callback, ground_callback_data);
+	public void ground(Part[] parts, GroundCallbackT groundCallback,
+			Pointer groundCallbackData) {
+		long partsSize = (parts == null ? 0 : parts.length);
+		BaseClingo.controlGround(this.control, parts, partsSize, groundCallback, groundCallbackData);
 	}
 
 	/*
@@ -275,8 +273,10 @@ public class Control implements AutoCloseable {
 	 * 
 	 * @return the configuration object
 	 */
-	public Pointer configuration() {
-		return BaseClingo.controlConfiguration(this.control);
+	public Configuration configuration() {
+		Pointer conf = BaseClingo.controlConfiguration(this.control);
+		int key = BaseClingo.configurationRoot(conf);
+		return new Configuration(conf, key);
 	}
 
 	/**
@@ -424,8 +424,8 @@ public class Control implements AutoCloseable {
 
 	public void ground() {
         Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, new Size(0));
-        BaseClingo.controlGround(this.control, parts, new Size(1), null, null);
+        parts[0] = new Part(name, null, 0L);
+        BaseClingo.controlGround(this.control, parts, 1L, null, null);
 	}
 
 	public void ground(GroundCallbackT groundCallbackT) {

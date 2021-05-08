@@ -27,9 +27,9 @@ import com.sun.jna.Structure;
 public class Part extends Structure {
 	public String name;
 	public Pointer params;
-	public Size size;
+	public long size;
 
-	public Part(String name, Pointer params, Size size) {
+	public Part(String name, Pointer params, long size) {
 		super();
 		this.name = name;
 		this.params = params;

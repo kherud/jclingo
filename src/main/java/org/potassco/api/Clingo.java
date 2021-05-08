@@ -42,8 +42,8 @@ public class Clingo {
 	 */
 	public void ground(Pointer control, String name) {
 		Part[] parts = new Part[1];
-		parts[0] = new Part(name, null, new Size(0));
-		BaseClingo.controlGround(control, parts, new Size(1), null, null);
+		parts[0] = new Part(name, null, 0L);
+		BaseClingo.controlGround(control, parts, 1L, null, null);
 	}
 
 	public String version() {

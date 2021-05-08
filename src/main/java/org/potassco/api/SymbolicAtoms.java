@@ -6,6 +6,12 @@ import com.sun.jna.Pointer;
 
 public class SymbolicAtoms {
 
+	private Pointer reference;
+
+	public SymbolicAtoms(Pointer reference) {
+		this.reference = reference;
+	}
+
 	/**
 	 * Get the number of different atoms occurring in a logic program.
 	 * 

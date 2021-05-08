@@ -60,14 +60,14 @@ class State extends Structure {
 		Propagator prop = new Propagator(null, null, null, null, null);
 		PropagatorData propData = new PropagatorData(null, 0L, null, 0L);
 		  
-		BaseClingo.controlRegisterPropagator(control, prop, propData, false);
-		
-		
-		
-		BaseClingo.controlAdd(control, name, params , "a. b.");
-        Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, new Size(0));
-		BaseClingo.controlGround(control, parts, new Size(1), null, null);
+//		BaseClingo.controlRegisterPropagator(control, prop, propData, false);
+//		
+//		
+//		
+//		BaseClingo.controlAdd(control, name, params , "a. b.");
+//        Part[] parts = new Part[1];
+//        parts[0] = new Part(name, null, 0L);
+//		BaseClingo.controlGround(control, parts, 1L, null, null);
 		
 	}
 

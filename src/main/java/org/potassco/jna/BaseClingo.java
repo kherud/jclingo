@@ -1428,7 +1428,7 @@ public class BaseClingo {
 	 * @param size the size of the clause
 	 * @return indicating whether the problem became unsatisfiable
 	 */
-	public static byte propagateInitAddClause(Pointer propagateInit, int clause, long size) {
+	public static byte propagateInitAddClause(Pointer propagateInit, int[] clause, long size) {
 		ByteByReference result = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_propagate_init_add_clause(propagateInit, clause, size, result);
@@ -1451,11 +1451,11 @@ public class BaseClingo {
 	 * @param compareEqual if true compare equal instead of less than equal
 	 * @return result indicating whether the problem became unsatisfiable
 	 */
-	public static byte propagateInitAddWeightConstraint(Pointer propagateInit, int literal, Pointer literals, long size, int bound, int type, byte compareEqual) {
+	public static boolean propagateInitAddWeightConstraint(Pointer propagateInit, int literal, Pointer literals, long size, int bound, int type, byte compareEqual) {
 		ByteByReference result = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_propagate_init_add_weight_constraint(propagateInit, literal, literals, size, bound, type, compareEqual, result);
-		return result.getValue();
+		return result.getValue() == 1;
 	}
 
 	/**
@@ -1481,11 +1481,11 @@ public class BaseClingo {
 	 * @param propagateInit
 	 * @return
 	 */
-	public static byte propagateInitPropagate(Pointer propagateInit) {
+	public static boolean propagateInitPropagate(Pointer propagateInit) {
 		ByteByReference result = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_propagate_init_propagate(propagateInit, result);
-		return result.getValue();
+		return result.getValue() == 1;
 	}
 
 	/**
@@ -2632,15 +2632,15 @@ public class BaseClingo {
 	 *       specification are by default put into a program called `base` without
 	 *       arguments.
 	 * @param parts                array of parts to ground
-	 * @param parts_size           size of the parts array
-	 * @param ground_callback      callback to implement external functions
-	 * @param ground_callback_data user data for ground_callback
+	 * @param partsSize           size of the parts array
+	 * @param groundCallback      callback to implement external functions
+	 * @param groundCallbackData user data for ground_callback
 	 */
-	public static void controlGround(Pointer control, Part[] parts, Size parts_size, GroundCallbackT ground_callback,
-			Pointer ground_callback_data) {
+	public static void controlGround(Pointer control, Part[] parts, long partsSize, GroundCallbackT groundCallback,
+			Pointer groundCallbackData) {
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_control_ground(control, parts, parts_size, ground_callback,
-				ground_callback_data);
+		byte success = clingoLibrary.clingo_control_ground(control, parts, partsSize, groundCallback,
+				groundCallbackData);
 	}
 
 	/*

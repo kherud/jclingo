@@ -364,7 +364,7 @@ public interface ClingoLibrary extends Library {
 	public byte clingo_propagate_init_add_literal(Pointer propagate_init, byte freeze, IntByReference p_result);
 
     /** {@link clingo_h#clingo_propagate_init_add_clause} */
-	public byte clingo_propagate_init_add_clause(Pointer propagate_init, int p_clause, long size, ByteByReference p_result);
+	public byte clingo_propagate_init_add_clause(Pointer propagate_init, int[] p_clause, long size, ByteByReference p_result);
 
     /** {@link clingo_h#clingo_propagate_init_add_weight_constraint} */
 	public byte clingo_propagate_init_add_weight_constraint(Pointer propagate_init, int literal, Pointer p_literals, long size, int bound, int type, byte compare_equal, ByteByReference p_result);
@@ -1684,7 +1684,7 @@ public interface ClingoLibrary extends Library {
     public byte  clingo_control_add(Pointer p_control, String name, String[] parameters, Size parameters_size, String program);
 
     /** {@link clingo_h#clingo_control_ground} */
-    public byte clingo_control_ground(Pointer p_control, Part[] p_parts, Size parts_size, GroundCallbackT ground_callback, Pointer p_ground_callback_data);
+    public byte clingo_control_ground(Pointer p_control, Part[] p_parts, long parts_size, GroundCallbackT ground_callback, Pointer p_ground_callback_data);
     
     // Solving Functions
 

@@ -26,7 +26,7 @@ public class ClingoSolveTest {
 		Control control = clingo.control(null);
 		control.add(name, null, "a. b.");
         Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, new Size(0));
+        parts[0] = new Part(name, null, 0L);
 		control.ground();
 		Solution solution = control.solve();
 		assertEquals(2, solution.getSize());

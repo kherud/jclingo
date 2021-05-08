@@ -17,8 +17,8 @@ public class BaseTest {
 		Pointer control = BaseClingo.control(null, null, null, 0);
 		BaseClingo.controlAdd(control, name, null, "a. b.");
         Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, new Size(0));
-		BaseClingo.controlGround(control, parts, new Size(1), null, null);
+        parts[0] = new Part(name, null, 0L);
+		BaseClingo.controlGround(control, parts, 1L, null, null);
 		assertTrue(BaseClingo.controlGetEnableCleanup(control));
 		BaseClingo.controlSetEnableCleanup(control, false);
 		assertFalse(BaseClingo.controlGetEnableCleanup(control));
@@ -30,8 +30,8 @@ public class BaseTest {
 		Pointer control = BaseClingo.control(null, null, null, 0);
 		BaseClingo.controlAdd(control, name, null, "a. b.");
         Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, new Size(0));
-		BaseClingo.controlGround(control, parts, new Size(1), null, null);
+        parts[0] = new Part(name, null, 0L);
+		BaseClingo.controlGround(control, parts, 1L, null, null);
 		assertTrue(BaseClingo.controlGetEnableEnumerationAssumption(control));
 		BaseClingo.controlSetEnableEnumerationAssumption(control, false);
 		assertFalse(BaseClingo.controlGetEnableEnumerationAssumption(control));
@@ -43,8 +43,8 @@ public class BaseTest {
 		Pointer control = BaseClingo.control(null, null, null, 0);
 		BaseClingo.controlAdd(control, name, null, "a. not a.");
         Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, new Size(0));
-		BaseClingo.controlGround(control, parts, new Size(1), null, null);
+        parts[0] = new Part(name, null, 0L);
+		BaseClingo.controlGround(control, parts, 1L, null, null);
 		assertTrue(BaseClingo.controlIsConflicting(control));
 	}
 

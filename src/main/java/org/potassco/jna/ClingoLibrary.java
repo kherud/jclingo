@@ -997,8 +997,7 @@ public interface ClingoLibrary extends Library {
     // Functions to construct ASTs
     
   	/** {@link clingo_h#clingo_ast_build} */
-  	// TODO: trailing dots / objects
-  	public byte clingo_ast_build(int type, PointerByReference p_p_ast);
+  	public byte clingo_ast_build(int type, PointerByReference p_p_ast, Object... object);
     
     // Functions to manage life time of ASTs
 

@@ -5,7 +5,10 @@ package org.potassco.jna;
  * <ul>
  * <li>bool: byte
  * <li>
+ * <li>clingo_ast_attribute_t (int): int
+ * <li>clingo_ast_attribute_type_t (int): int
  * <li>clingo_ast_type_t (int): int
+ * <li>clingo_ast_unpool_type_bitset_t (c_int): int
  * <li>clingo_atom_t (uint32_t): int
  * <li>clingo_clause_type_t (c_int): int
  * <li>clingo_error_t (c_int): int
@@ -18,9 +21,6 @@ package org.potassco.jna;
  * <li>clingo_truth_value_t (c_int): int
  * <li>clingo_weight_constraint_type_t (c_int): int
  * <li>clingo_weight_t (int32_t): int
- * <li>clingo_ast_attribute_t (int): int
- * <li>clingo_ast_unpool_type_bitset_t (c_int): int
- * <li>clingo_ast_attribute_type_t (int): int
  * <li>
  * <li>
  * <li>

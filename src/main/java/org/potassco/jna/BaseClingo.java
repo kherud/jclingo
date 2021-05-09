@@ -2552,10 +2552,10 @@ public class BaseClingo {
 	 * @param type the type of AST to construct
 	 * @return the resulting AST
 	 */
-	public static Pointer astBuild(int type) {
+	public static Pointer astBuild(int type, Object... object) {
 		PointerByReference ast = new PointerByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_ast_build(type, ast);
+		byte success = clingoLibrary.clingo_ast_build(type, ast, object);
 		return ast.getValue();
 	}
 	

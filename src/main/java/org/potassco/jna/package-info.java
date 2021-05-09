@@ -20,6 +20,8 @@ package org.potassco.jna;
  * <li>clingo_weight_t (int32_t): int
  * <li>clingo_ast_attribute_t (int): int
  * <li>clingo_ast_unpool_type_bitset_t (c_int): int
+ * <li>clingo_ast_attribute_type_t (int): int
+ * <li>
  * <li>
  * <li>
  * <li>clingo_assignment_t - struct
@@ -27,6 +29,7 @@ package org.potassco.jna;
  * <li>clingo_location_t - struct: Location
  * <li>clingo_symbolic_atoms_t - struct
  * <li>clingo_weighted_literal_t - struct
+ * <li>
  * <li>
  * <li>
  * <li>size_t: long

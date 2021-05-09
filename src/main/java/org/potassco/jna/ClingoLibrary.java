@@ -1030,7 +1030,7 @@ public interface ClingoLibrary extends Library {
     // Functions to convert ASTs to strings
 
   	/** {@link clingo_h#clingo_ast_to_string_size} */
-	public byte clingo_ast_to_string_size(Pointer p_ast, SizeByReference p_size);
+	public byte clingo_ast_to_string_size(Pointer p_ast, LongByReference p_size);
 	
   	/** {@link clingo_h#clingo_ast_to_string} */
 	public byte clingo_ast_to_string(Pointer p_ast, byte[] p_string, long size);
@@ -1038,13 +1038,13 @@ public interface ClingoLibrary extends Library {
     // Functions to inspect ASTs
 
   	/** {@link clingo_h#clingo_ast_get_type} */
-	public byte clingo_ast_get_type(Pointer p_ast, PointerByReference p_type);
+	public byte clingo_ast_get_type(Pointer p_ast, IntByReference p_type);
 
   	/** {@link clingo_h#clingo_ast_has_attribute} */
 	public byte clingo_ast_has_attribute(Pointer p_ast, Pointer attribute, ByteByReference p_has_attribute);
 
   	/** {@link clingo_h#clingo_ast_attribute_type} */
-	public byte clingo_ast_attribute_type(Pointer p_ast, Pointer attribute, PointerByReference p_type);
+	public byte clingo_ast_attribute_type(Pointer p_ast, Pointer attribute, IntByReference p_type);
     
     // Functions to get/set numeric attributes of ASTs
 
@@ -1065,68 +1065,68 @@ public interface ClingoLibrary extends Library {
     // Functions to get/set location attributes of ASTs
 
   	/** {@link clingo_h#clingo_ast_attribute_get_location} */
-	public byte clingo_ast_attribute_get_location(Pointer p_ast, int attribute, PointerByReference p_value);
+	public byte clingo_ast_attribute_get_location(Pointer p_ast, Pointer attribute, PointerByReference p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_set_location} */
-	public byte clingo_ast_attribute_set_location(Pointer p_ast, int attribute, Pointer p_value);
+	public byte clingo_ast_attribute_set_location(Pointer p_ast, Pointer attribute, Pointer p_value);
     
     // Functions to get/set string attributes of ASTs
 
   	/** {@link clingo_h#clingo_ast_attribute_get_string} */
-	public byte clingo_ast_attribute_get_string(Pointer p_ast, int attribute, String[] p_p_value);
+	public byte clingo_ast_attribute_get_string(Pointer p_ast, Pointer attribute, String[] p_p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_get_string} */
-	public byte clingo_ast_attribute_set_string(Pointer p_ast, int attribute, String p_value);
+	public byte clingo_ast_attribute_set_string(Pointer p_ast, Pointer attribute, String p_value);
     
     // Functions to get/set AST attributes of ASTs
 
   	/** {@link clingo_h#clingo_ast_attribute_get_ast} */
-	public byte clingo_ast_attribute_get_ast(Pointer p_ast, int attribute, IntByReference p_p_value);
+	public byte clingo_ast_attribute_get_ast(Pointer p_ast, Pointer attribute, IntByReference p_p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_set_ast} */
-	public byte clingo_ast_attribute_set_ast(Pointer p_ast, int attribute, int p_value);
+	public byte clingo_ast_attribute_set_ast(Pointer p_ast, Pointer attribute, int p_value);
     
     // Functions to get/set optional AST attributes of ASTs
 
   	/** {@link clingo_h#clingo_ast_attribute_get_optional_ast} */
-	public byte clingo_ast_attribute_get_optional_ast(Pointer p_ast, int attribute, IntByReference p_p_value);
+	public byte clingo_ast_attribute_get_optional_ast(Pointer p_ast, Pointer attribute, IntByReference p_p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_set_optional_ast} */
-	public byte clingo_ast_attribute_set_optional_ast(Pointer p_ast, int attribute, int p_value);
+	public byte clingo_ast_attribute_set_optional_ast(Pointer p_ast, Pointer attribute, int p_value);
     
     // Functions to get/set string array attributes of ASTs
 
   	/** {@link clingo_h#clingo_ast_attribute_get_string_at} */
-	public byte clingo_ast_attribute_get_string_at(Pointer p_ast, int attribute, long index, String[] p_p_value);
+	public byte clingo_ast_attribute_get_string_at(Pointer p_ast, Pointer attribute, long index, String[] p_p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_set_string_at} */
-	public byte clingo_ast_attribute_set_string_at(Pointer p_ast, int attribute, long index, String p_value);
+	public byte clingo_ast_attribute_set_string_at(Pointer p_ast, Pointer attribute, long index, String p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_delete_string_at} */
-	public byte clingo_ast_attribute_delete_string_at(Pointer p_ast, int attribute, long index);
+	public byte clingo_ast_attribute_delete_string_at(Pointer p_ast, Pointer attribute, long index);
 
   	/** {@link clingo_h#clingo_ast_attribute_size_string_array} */
-	public byte clingo_ast_attribute_size_string_array(Pointer p_ast, int attribute, LongByReference p_size);
+	public byte clingo_ast_attribute_size_string_array(Pointer p_ast, Pointer attribute, LongByReference p_size);
 
   	/** {@link clingo_h#clingo_ast_attribute_insert_string_at} */
-	public byte clingo_ast_attribute_insert_string_at(Pointer p_ast, int attribute, long index, String p_value);
+	public byte clingo_ast_attribute_insert_string_at(Pointer p_ast, Pointer attribute, long index, String p_value);
     
     // Functions to get/set AST array attributes of ASTs
 
   	/** {@link clingo_h#clingo_ast_attribute_get_ast_at} */
-	public byte clingo_ast_attribute_get_ast_at(Pointer p_ast, int attribute, long index, IntByReference p_p_value);
+	public byte clingo_ast_attribute_get_ast_at(Pointer p_ast, Pointer attribute, long index, IntByReference p_p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_set_ast_at} */
-	public byte clingo_ast_attribute_set_ast_at(Pointer p_ast, int attribute, long index, int p_value);
+	public byte clingo_ast_attribute_set_ast_at(Pointer p_ast, Pointer attribute, long index, int p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_delete_ast_at} */
-	public byte clingo_ast_attribute_delete_ast_at(Pointer p_ast, int attribute, long index);
+	public byte clingo_ast_attribute_delete_ast_at(Pointer p_ast, Pointer attribute, long index);
 
   	/** {@link clingo_h#clingo_ast_attribute_size_ast_array} */
-	public byte clingo_ast_attribute_size_ast_array(Pointer p_ast, int attribute, LongByReference p_size);
+	public byte clingo_ast_attribute_size_ast_array(Pointer p_ast, Pointer attribute, LongByReference p_size);
 
   	/** {@link clingo_h#clingo_ast_attribute_insert_ast_at} */
-	public byte clingo_ast_attribute_insert_ast_at(Pointer p_ast, int attribute, long index, int p_value);
+	public byte clingo_ast_attribute_insert_ast_at(Pointer p_ast, Pointer attribute, long index, int p_value);
     
     // Functions to construct ASTs from strings
     
@@ -1149,7 +1149,7 @@ public interface ClingoLibrary extends Library {
 	public byte clingo_program_builder_end(Pointer p_builder);
 
   	/** {@link clingo_h#clingo_program_builder_add} */
-	public byte clingo_program_builder_add(Pointer p_builder, int p_ast);
+	public byte clingo_program_builder_add(Pointer p_builder, Pointer p_ast);
     
     // Functions to unpool ASts
     

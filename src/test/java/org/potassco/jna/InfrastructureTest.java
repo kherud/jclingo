@@ -10,7 +10,6 @@ import org.potassco.api.ClingoException;
 import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;
-import org.potassco.jna.BaseClingo;
 
 import com.sun.jna.Pointer;
 
@@ -29,7 +28,7 @@ public class InfrastructureTest {
 			assertEquals(!positive, BaseClingo.signatureIsNegative(signature));
 			assertTrue(BaseClingo.signatureIsEqualTo(signature, BaseClingo.signatureCreate("test", 2, true)));
 			assertTrue(BaseClingo.signatureIsLessThan(signature, BaseClingo.signatureCreate("test", 3, true)));
-			long hash = BaseClingo.signatureHash(signature);
+			SizeT hash = BaseClingo.signatureHash(signature);
 			assertEquals(hash , BaseClingo.signatureHash(signature)); // returns the same hash
 		} catch (ClingoException e) {
 			// TODO Auto-generated catch block
@@ -81,7 +80,7 @@ public class InfrastructureTest {
 		assertFalse(BaseClingo.symbolIsEqualTo(s, f));
 		assertTrue(BaseClingo.symbolIsEqualTo(num, BaseClingo.symbolCreateNumber(number)));
 		assertTrue(BaseClingo.symbolIsLessThan(s, f));
-		long hash = BaseClingo.symbolHash(f);
+		SizeT hash = BaseClingo.symbolHash(f);
 		assertEquals(hash, BaseClingo.symbolHash(f));
 		long[] res = BaseClingo.symbolArguments(f);
 		for (int i = 0; i < res.length; i++) {
@@ -109,7 +108,7 @@ public class InfrastructureTest {
 		int root = BaseClingo.configurationRoot(conf);
 		assertEquals(root, BaseClingo.configurationRoot(conf));
 		assertEquals(ConfigurationType.MAP, BaseClingo.configurationType(conf, root));
-		assertEquals("OptionsSt", BaseClingo.configurationDescription(conf, root));
+		assertEquals("Options", BaseClingo.configurationDescription(conf, root));
 	}
 
 	/**
@@ -125,7 +124,7 @@ public class InfrastructureTest {
 		Pointer stats = BaseClingo.controlStatistics(control);
 		long root = BaseClingo.statisticsRoot(stats);
 		assertEquals(StatisticsType.EMPTY, BaseClingo.statisticsType(stats, root));
-		assertEquals(0L, BaseClingo.clingoStatisticsArraySize(stats, root));
+		assertEquals(0, BaseClingo.clingoStatisticsArraySize(stats, root).intValue());
 	}
 
 // TODO

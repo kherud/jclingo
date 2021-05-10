@@ -18,8 +18,8 @@ public class MultipleModelsTest {
 		BaseClingo.controlAdd(control, name, null, program);
 		PartSt[] parts = new PartSt[1];
 		parts[0] = new PartSt(name, null, 0L);
-		BaseClingo.controlGround(control, parts, 1L, null, null);
-		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, 0, null, null);
+		BaseClingo.controlGround(control, parts, new SizeT(1L), null, null);
+		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, new SizeT(), null, null);
 		boolean modelExits = true;
 		int i = 0;
 		while (modelExits) {

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.potassco.enums.ConfigurationType;
 import org.potassco.jna.BaseClingo;
+import org.potassco.jna.SizeT;
 
 import com.sun.jna.Pointer;
 
@@ -25,8 +26,8 @@ public class Configuration {
 	public List<String> getKeys() {
 		List<String> result = new LinkedList<String>();
 		ConfigurationType t = type();
-		for (long j = 0L; j < BaseClingo.configurationMapSize(this.reference, this.key); j++) {
-			String name = BaseClingo.configurationMapSubkeyName(this.reference, this.key, j);
+		for (long j = 0L; j < BaseClingo.configurationMapSize(this.reference, this.key).longValue(); j++) {
+			String name = BaseClingo.configurationMapSubkeyName(this.reference, this.key, new SizeT(j));
 			result.add(name);
 		}
 		return result;

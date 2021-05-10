@@ -41,9 +41,9 @@ public class StatisticsTest {
 		BaseClingo.controlAdd(control, name, null, program);
 		PartSt[] parts = new PartSt[1];
 		parts[0] = new PartSt(name, null, 0L);
-		BaseClingo.controlGround(control, parts, 1L, null, null);
+		BaseClingo.controlGround(control, parts, new SizeT(1L), null, null);
 		SolveEventCallback eventHandler = null;
-		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, 0, eventHandler, null);
+		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, new SizeT(), eventHandler, null);
 		boolean modelExists = true;
 		int m = 0;
 		while (modelExists) {
@@ -52,7 +52,7 @@ public class StatisticsTest {
 			if (model != null) {
 				// print_model
 //				System.out.println("ModelSt:");
-				long numAtoms = BaseClingo.modelSymbolsSize(model, ShowType.SHOWN);
+				SizeT numAtoms = BaseClingo.modelSymbolsSize(model, ShowType.SHOWN);
 				long[] atoms = BaseClingo.modelSymbols(model, ShowType.SHOWN, numAtoms);
 				for (int i = 0; i < atoms.length; i++) {
 					String str = BaseClingo.symbolToString(atoms[i]);

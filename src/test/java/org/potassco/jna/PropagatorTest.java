@@ -16,11 +16,11 @@ public class PropagatorTest {
 
 class PropagatorData extends Structure {
 	public IntByReference pigeons;
-	public long pigeonsSize;
+	public SizeT pigeonsSize;
 	public State state;
 	public long stateSize;
 
-	public PropagatorData(IntByReference pigeons, long pigeonsSize, State state, long stateSize) {
+	public PropagatorData(IntByReference pigeons, SizeT pigeonsSize, State state, long stateSize) {
 		super();
 		this.pigeons = pigeons;
 		this.pigeonsSize = pigeonsSize;
@@ -36,7 +36,7 @@ class PropagatorData extends Structure {
 
 class State extends Structure {
 	public int holes;
-	public long size;
+	public SizeT size;
 
 	protected List<String> getFieldOrder() {
 		return Arrays.asList("holes", "size");
@@ -58,7 +58,7 @@ class State extends Structure {
 		
 
 		PropagatorSt prop = new PropagatorSt(null, null, null, null, null);
-		PropagatorData propData = new PropagatorData(null, 0L, null, 0L);
+		PropagatorData propData = new PropagatorData(null, new SizeT(), null, 0L);
 		  
 //		BaseClingo.controlRegisterPropagator(control, prop, propData, false);
 //		

@@ -27,9 +27,9 @@ public class TheoryAtomsTest {
 		BaseClingo.controlAdd(control, name, null, "&a { 1; 2,3: a,b }.");
         PartSt[] parts = new PartSt[1];
         parts[0] = new PartSt(name, null, 0L);
-		BaseClingo.controlGround(control, parts, 1L, null, null);
+		BaseClingo.controlGround(control, parts, new SizeT(1L), null, null);
 		Pointer theoryAtoms = BaseClingo.controlTheoryAtoms(control);
-		assertEquals(1, BaseClingo.theoryAtomsSize(theoryAtoms));
+		assertEquals(1, BaseClingo.theoryAtomsSize(theoryAtoms).intValue());
 		assertEquals(TermType.SYMBOL, BaseClingo.theoryAtomsTermType(theoryAtoms, 0));
 		assertEquals(0, BaseClingo.theoryAtomsTermNumber(theoryAtoms, 0));
 		assertEquals("a", BaseClingo.theoryAtomsTermName(theoryAtoms, 0));
@@ -60,9 +60,9 @@ public class TheoryAtomsTest {
 			    "y :- &b(3) { } = 17.");
         PartSt[] parts = new PartSt[1];
         parts[0] = new PartSt(name, null, 0L);
-		BaseClingo.controlGround(control, parts, 1L, null, null);
+		BaseClingo.controlGround(control, parts, new SizeT(1L), null, null);
 		Pointer theoryAtoms = BaseClingo.controlTheoryAtoms(control);
-		assertEquals(2, BaseClingo.theoryAtomsSize(theoryAtoms));
+		assertEquals(2, BaseClingo.theoryAtomsSize(theoryAtoms).intValue());
 		assertEquals(TermType.NUMBER, BaseClingo.theoryAtomsTermType(theoryAtoms, 0));
 		assertEquals(3, BaseClingo.theoryAtomsTermNumber(theoryAtoms, 0));
 		assertEquals(null, BaseClingo.theoryAtomsTermName(theoryAtoms, 0));

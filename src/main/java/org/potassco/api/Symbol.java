@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.potassco.enums.SymbolType;
 import org.potassco.jna.BaseClingo;
+import org.potassco.jna.SizeT;
 
 public class Symbol {
 	/**
@@ -206,7 +207,7 @@ public class Symbol {
 	 * 
 	 * @return the hash code of the symbol
 	 */
-	public long symbolHash() {
+	public SizeT symbolHash() {
 		return BaseClingo.symbolHash(this.reference);
 	}
 

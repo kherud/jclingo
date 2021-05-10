@@ -70,7 +70,7 @@ public interface ClingoLibrary extends Library {
     // clingo_truth_value_e
     // clingo_truth_value_t
     
-    // SignatureSt Functions
+    // Signature Functions
 
     /** {@link clingo_h#clingo_signature_create} */
     int clingo_signature_create(String p_name, int arity, int positive, PointerByReference p_signature);
@@ -94,7 +94,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_signature_is_less_than(Pointer a, Pointer b); // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_is_less_than(clingo_signature_t a, clingo_signature_t b);
 
     /** {@link clingo_h#clingo_signature_hash} */
-    public long clingo_signature_hash(Pointer signature); // CLINGO_VISIBILITY_DEFAULT size_t clingo_signature_hash(clingo_signature_t signature);
+    public SizeT clingo_signature_hash(Pointer signature); // CLINGO_VISIBILITY_DEFAULT size_t clingo_signature_hash(clingo_signature_t signature);
 
     /** {@link clingo_h#clingo_symbol_create_number} */
     public void clingo_symbol_create_number(int number, LongByReference p_symbol);
@@ -112,7 +112,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_symbol_create_id(String p_name, byte positive, LongByReference p_symbol);
 
     /** {@link clingo_h#clingo_symbol_create_function} */
-    public byte clingo_symbol_create_function(String p_name, LongByReference[] p_arguments, long arguments_size, byte positive, LongByReference p_symbol);
+    public byte clingo_symbol_create_function(String p_name, LongByReference[] p_arguments, SizeT arguments_size, byte positive, LongByReference p_symbol);
 
     // Symbol Inspection Functions
 
@@ -139,11 +139,9 @@ public interface ClingoLibrary extends Library {
 
     /** {@link clingo_h#clingo_symbol_to_string_size} */
     public byte clingo_symbol_to_string_size(long symbol, SizeByReference p_size);
-//    public byte clingo_symbol_to_string_size(Symbol symbol, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_symbol_to_string} */
-    public byte clingo_symbol_to_string(long symbol, byte[] p_string, long size);
-//    boolean clingo_symbol_to_string(long symbol, byte[] string, Size size);
+    public byte clingo_symbol_to_string(long symbol, byte[] p_string, SizeT size);
     
     // Symbol Comparison Functions
 
@@ -154,7 +152,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_symbol_is_less_than(long a, long b); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbol_is_less_than(clingo_symbol_t a, clingo_symbol_t b);
 
     /** {@link clingo_h#clingo_symbol_hash} */
-    public long clingo_symbol_hash(long symbol); // CLINGO_VISIBILITY_DEFAULT size_t clingo_symbol_hash(clingo_symbol_t symbol);
+    public SizeT clingo_symbol_hash(long symbol); // CLINGO_VISIBILITY_DEFAULT size_t clingo_symbol_hash(clingo_symbol_t symbol);
 
     /** {@link clingo_h#clingo_add_string} */
     public byte clingo_add_string(String p_string, String[] p_p_result);
@@ -195,7 +193,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_symbolic_atoms_signatures_size(Pointer p_atoms, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_symbolic_atoms_signatures} */
-    public byte clingo_symbolic_atoms_signatures(Pointer p_atoms, PointerByReference p_signatures, long size);
+    public byte clingo_symbolic_atoms_signatures(Pointer p_atoms, PointerByReference p_signatures, SizeT size);
 
     /** {@link clingo_h#clingo_symbolic_atoms_signatures} */
     public byte clingo_symbolic_atoms_next(Pointer p_atoms, Pointer iterator, PointerByReference p_next);
@@ -223,7 +221,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_theory_atoms_term_to_string_size(Pointer p_atoms, int term, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_theory_atoms_term_to_string} */
-    public byte clingo_theory_atoms_term_to_string(Pointer p_atoms, int term, byte[] p_string, long size);
+    public byte clingo_theory_atoms_term_to_string(Pointer p_atoms, int term, byte[] p_string, SizeT size);
 
     // Theory Element Inspection
 
@@ -240,7 +238,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_theory_atoms_element_to_string_size(Pointer p_atoms, int element, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_theory_atoms_element_to_string} */
-    public byte clingo_theory_atoms_element_to_string(Pointer p_atoms, int element, byte[] p_string, long size);
+    public byte clingo_theory_atoms_element_to_string(Pointer p_atoms, int element, byte[] p_string, SizeT size);
 
     // Theory Atom Inspection
 
@@ -266,7 +264,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_theory_atoms_atom_to_string_size(Pointer p_atoms, int atom, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_theory_atoms_atom_to_string} */
-    public byte clingo_theory_atoms_atom_to_string(Pointer p_atoms, int atom, byte[] p_string, long size);
+    public byte clingo_theory_atoms_atom_to_string(Pointer p_atoms, int atom, byte[] p_string, SizeT size);
 
     // propagator
     
@@ -305,10 +303,10 @@ public interface ClingoLibrary extends Library {
 	public byte clingo_assignment_truth_value(Pointer assignment, int literal, IntByReference value);
 
     /** {@link clingo_h#clingo_assignment_size} */
-	public long clingo_assignment_size(Pointer assignment);
+	public SizeT clingo_assignment_size(Pointer assignment);
 
-    /** {@link clingo_h#clingo_assignment_size} */
-	public byte clingo_assignment_at(Pointer assignment, long offset, IntByReference literal);
+    /** {@link clingo_h#clingo_assignment_at} */
+	public byte clingo_assignment_at(Pointer assignment, SizeT offset, IntByReference literal);
 
     /** {@link clingo_h#clingo_assignment_is_total} */
 	public byte clingo_assignment_is_total(Pointer assignment);
@@ -364,10 +362,10 @@ public interface ClingoLibrary extends Library {
 	public byte clingo_propagate_init_add_literal(Pointer propagate_init, byte freeze, IntByReference p_result);
 
     /** {@link clingo_h#clingo_propagate_init_add_clause} */
-	public byte clingo_propagate_init_add_clause(Pointer propagate_init, int[] p_clause, long size, ByteByReference p_result);
+	public byte clingo_propagate_init_add_clause(Pointer propagate_init, int[] p_clause, SizeT size, ByteByReference p_result);
 
     /** {@link clingo_h#clingo_propagate_init_add_weight_constraint} */
-	public byte clingo_propagate_init_add_weight_constraint(Pointer propagate_init, int literal, Pointer p_literals, long size, int bound, int type, byte compare_equal, ByteByReference p_result);
+	public byte clingo_propagate_init_add_weight_constraint(Pointer propagate_init, int literal, Pointer p_literals, SizeT size, int bound, int type, byte compare_equal, ByteByReference p_result);
 
     /** {@link clingo_h#clingo_propagate_init_add_minimize} */
 	public byte clingo_propagate_init_add_minimize(Pointer propagate_init, int literal, int weight, int priority);
@@ -400,7 +398,7 @@ public interface ClingoLibrary extends Library {
 	public void clingo_propagate_control_remove_watch(Pointer p_control, int literal);
 
     /** {@link clingo_h#clingo_propagate_control_add_clause} */
-	public byte clingo_propagate_control_add_clause(Pointer p_control, int p_clause, long size, int type, ByteByReference p_result);
+	public byte clingo_propagate_control_add_clause(Pointer p_control, int p_clause, SizeT size, int type, ByteByReference p_result);
 
     /** {@link clingo_h#clingo_propagate_control_propagate} */
 	public byte clingo_propagate_control_propagate(Pointer p_control, ByteByReference p_result);
@@ -507,28 +505,28 @@ public interface ClingoLibrary extends Library {
   	public byte clingo_backend_end(Pointer p_backend);
 
 	/** {@link clingo_h#clingo_backend_rule} */
-  	public byte clingo_backend_rule(Pointer p_backend, byte choice, int p_head, long head_size, int p_body, long body_size);
+  	public byte clingo_backend_rule(Pointer p_backend, byte choice, int p_head, SizeT head_size, int p_body, SizeT body_size);
 
 	/** {@link clingo_h#clingo_backend_weight_rule} */
-  	public byte clingo_backend_weight_rule(Pointer p_backend, byte choice, int p_head, long head_size, int lower_bound, int p_body, long body_size);
+  	public byte clingo_backend_weight_rule(Pointer p_backend, byte choice, int p_head, SizeT head_size, int lower_bound, int p_body, SizeT body_size);
 
 	/** {@link clingo_h#clingo_backend_minimize} */
-  	public byte clingo_backend_minimize(Pointer p_backend, int priority, int p_literals, long size);
+  	public byte clingo_backend_minimize(Pointer p_backend, int priority, int p_literals, SizeT size);
 
 	/** {@link clingo_h#clingo_backend_project} */
-  	public byte clingo_backend_project(Pointer p_backend, int p_atoms, long size);
+  	public byte clingo_backend_project(Pointer p_backend, int p_atoms, SizeT size);
 
 	/** {@link clingo_h#clingo_backend_external} */
   	public byte clingo_backend_external(Pointer p_backend, int atom, int type);
 
 	/** {@link clingo_h#clingo_backend_assume} */
-  	public byte clingo_backend_assume(Pointer p_backend, int p_literals, long size);
+  	public byte clingo_backend_assume(Pointer p_backend, int p_literals, SizeT size);
 
 	/** {@link clingo_h#clingo_backend_heuristic} */
-  	public byte clingo_backend_heuristic(Pointer p_backend, int atom, int type, int bias, int priority, int p_condition, long size);
+  	public byte clingo_backend_heuristic(Pointer p_backend, int atom, int type, int bias, int priority, int p_condition, SizeT size);
 
 	/** {@link clingo_h#clingo_backend_acyc_edge} */
-  	public byte clingo_backend_acyc_edge(Pointer p_backend, int node_u, int node_v, int p_condition, long size);
+  	public byte clingo_backend_acyc_edge(Pointer p_backend, int node_u, int node_v, int p_condition, SizeT size);
 
   	/** {@link clingo_h#clingo_backend_add_atom} */
 	public byte clingo_backend_add_atom(Pointer p_backend, int p_symbol, IntByReference p_atom);
@@ -550,7 +548,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_configuration_array_size(Pointer p_configuration, int key, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_configuration_array_at} */
-    public byte clingo_configuration_array_at(Pointer p_configuration, int key, long offset, IntByReference p_subkey);
+    public byte clingo_configuration_array_at(Pointer p_configuration, int key, SizeT offset, IntByReference p_subkey);
     
     // Functions to access maps
     
@@ -561,7 +559,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_configuration_map_has_subkey(Pointer p_configuration, int key, String p_name, ByteByReference p_result);
 
     /** {@link clingo_h#clingo_configuration_map_subkey_name} */
-    public byte clingo_configuration_map_subkey_name(Pointer p_configuration, int key, long offset, String[] p_p_name);
+    public byte clingo_configuration_map_subkey_name(Pointer p_configuration, int key, SizeT offset, String[] p_p_name);
     
     /** {@link clingo_h#clingo_configuration_map_at} */
     public byte clingo_configuration_map_at(Pointer p_configuration, int key, final String p_name, IntByReference p_subkey);
@@ -575,7 +573,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_configuration_value_get_size(Pointer p_configuration, int key, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_configuration_value_get} */
-    public byte clingo_configuration_value_get(Pointer p_configuration, int key, byte[] p_value, long size);
+    public byte clingo_configuration_value_get(Pointer p_configuration, int key, byte[] p_value, SizeT size);
 
     /** {@link clingo_h#clingo_configuration_value_set} */
     public byte clingo_configuration_value_set(Pointer p_configuration, int key, String p_value);
@@ -595,7 +593,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_statistics_array_size(Pointer statistics, long key, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_statistics_array_at} */
-    public byte clingo_statistics_array_at(Pointer statistics, long key, long offset, IntByReference p_subkey);
+    public byte clingo_statistics_array_at(Pointer statistics, long key, SizeT offset, IntByReference p_subkey);
 
     /** {@link clingo_h#clingo_statistics_array_push} */
     public byte clingo_statistics_array_push(Pointer p_statistics, long key, int type, IntByReference p_subkey);
@@ -609,7 +607,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_statistics_map_has_subkey(Pointer statistics, long key, String p_name, ByteByReference p_result);
 
     /** {@link clingo_h#clingo_statistics_map_subkey_name} */
-    public byte clingo_statistics_map_subkey_name(Pointer statistics, long key, long offset, String[] p_p_name);
+    public byte clingo_statistics_map_subkey_name(Pointer statistics, long key, SizeT offset, String[] p_p_name);
 
     /** {@link clingo_h#clingo_statistics_map_at} */
     public byte clingo_statistics_map_at(Pointer statistics, long key, String p_name, IntByReference p_subkey);
@@ -637,19 +635,19 @@ public interface ClingoLibrary extends Library {
     public byte clingo_model_symbols_size(Pointer model, int show, SizeByReference size);
 
     /** {@link clingo_h#clingo_model_symbols} */
-    public byte clingo_model_symbols(Pointer p_model, int show, long[] p_symbols, long size);
+    public byte clingo_model_symbols(Pointer p_model, int show, long[] p_symbols, SizeT size);
 
     /** {@link clingo_h#clingo_model_contains} */
     public byte clingo_model_contains(Pointer model, long atom, ByteByReference p_contained);
 
     /** {@link clingo_h#clingo_model_is_true} */
-    public byte clingo_model_is_true(Pointer model, long literal, ByteByReference p_result);
+    public byte clingo_model_is_true(Pointer model, int literal, ByteByReference p_result);
 
     /** {@link clingo_h#clingo_model_cost_size} */
     public byte clingo_model_cost_size(Pointer model, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_model_cost} */
-    public byte clingo_model_cost(Pointer model, IntByReference p_costs, long size);
+    public byte clingo_model_cost(Pointer model, IntByReference p_costs, SizeT size);
 
     /** {@link clingo_h#clingo_model_optimality_proven} */
     public byte clingo_model_optimality_proven(Pointer model, ByteByReference p_proven);
@@ -658,7 +656,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_model_thread_id(Pointer model, IntByReference p_id);
 
     /** {@link clingo_h#clingo_model_extend} */
-    public byte clingo_model_extend(Pointer p_model, long p_symbols, long size);
+    public byte clingo_model_extend(Pointer p_model, long p_symbols, SizeT size);
     
     // Functions for Adding Clauses
     
@@ -669,7 +667,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_solve_control_symbolic_atoms(Pointer p_control, PointerByReference p_p_atoms);
     
     /** {@link clingo_h#clingo_solve_control_add_clause} */
-    public byte clingo_solve_control_add_clause(Pointer p_control, Pointer p_clause, long size);
+    public byte clingo_solve_control_add_clause(Pointer p_control, Pointer p_clause, SizeT size);
     
     // solve result
     
@@ -1024,15 +1022,15 @@ public interface ClingoLibrary extends Library {
 	public byte clingo_ast_equal(Pointer p_a, Pointer p_b);
 
   	/** {@link clingo_h#clingo_ast_hash} */
-	public long clingo_ast_hash(Pointer p_ast);
+	public SizeT clingo_ast_hash(Pointer p_ast);
     
     // Functions to convert ASTs to strings
 
   	/** {@link clingo_h#clingo_ast_to_string_size} */
-	public byte clingo_ast_to_string_size(Pointer p_ast, LongByReference p_size);
+	public byte clingo_ast_to_string_size(Pointer p_ast, SizeByReference p_size);
 	
   	/** {@link clingo_h#clingo_ast_to_string} */
-	public byte clingo_ast_to_string(Pointer p_ast, byte[] p_string, long size);
+	public byte clingo_ast_to_string(Pointer p_ast, byte[] p_string, SizeT size);
     
     // Functions to inspect ASTs
 
@@ -1096,36 +1094,36 @@ public interface ClingoLibrary extends Library {
     // Functions to get/set string array attributes of ASTs
 
   	/** {@link clingo_h#clingo_ast_attribute_get_string_at} */
-	public byte clingo_ast_attribute_get_string_at(Pointer p_ast, Pointer attribute, long index, String[] p_p_value);
+	public byte clingo_ast_attribute_get_string_at(Pointer p_ast, Pointer attribute, SizeT index, String[] p_p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_set_string_at} */
-	public byte clingo_ast_attribute_set_string_at(Pointer p_ast, Pointer attribute, long index, String p_value);
+	public byte clingo_ast_attribute_set_string_at(Pointer p_ast, Pointer attribute, SizeT index, String p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_delete_string_at} */
-	public byte clingo_ast_attribute_delete_string_at(Pointer p_ast, Pointer attribute, long index);
+	public byte clingo_ast_attribute_delete_string_at(Pointer p_ast, Pointer attribute, SizeT index);
 
   	/** {@link clingo_h#clingo_ast_attribute_size_string_array} */
-	public byte clingo_ast_attribute_size_string_array(Pointer p_ast, Pointer attribute, LongByReference p_size);
+	public byte clingo_ast_attribute_size_string_array(Pointer p_ast, Pointer attribute, SizeByReference p_size);
 
   	/** {@link clingo_h#clingo_ast_attribute_insert_string_at} */
-	public byte clingo_ast_attribute_insert_string_at(Pointer p_ast, Pointer attribute, long index, String p_value);
+	public byte clingo_ast_attribute_insert_string_at(Pointer p_ast, Pointer attribute, SizeT index, String p_value);
     
     // Functions to get/set AST array attributes of ASTs
 
   	/** {@link clingo_h#clingo_ast_attribute_get_ast_at} */
-	public byte clingo_ast_attribute_get_ast_at(Pointer p_ast, Pointer attribute, long index, IntByReference p_p_value);
+	public byte clingo_ast_attribute_get_ast_at(Pointer p_ast, Pointer attribute, SizeT index, IntByReference p_p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_set_ast_at} */
-	public byte clingo_ast_attribute_set_ast_at(Pointer p_ast, Pointer attribute, long index, int p_value);
+	public byte clingo_ast_attribute_set_ast_at(Pointer p_ast, Pointer attribute, SizeT index, int p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_delete_ast_at} */
-	public byte clingo_ast_attribute_delete_ast_at(Pointer p_ast, Pointer attribute, long index);
+	public byte clingo_ast_attribute_delete_ast_at(Pointer p_ast, Pointer attribute, SizeT index);
 
   	/** {@link clingo_h#clingo_ast_attribute_size_ast_array} */
-	public byte clingo_ast_attribute_size_ast_array(Pointer p_ast, Pointer attribute, LongByReference p_size);
+	public byte clingo_ast_attribute_size_ast_array(Pointer p_ast, Pointer attribute, SizeByReference p_size);
 
   	/** {@link clingo_h#clingo_ast_attribute_insert_ast_at} */
-	public byte clingo_ast_attribute_insert_ast_at(Pointer p_ast, Pointer attribute, long index, int p_value);
+	public byte clingo_ast_attribute_insert_ast_at(Pointer p_ast, Pointer attribute, SizeT index, int p_value);
     
     // Functions to construct ASTs from strings
     
@@ -1135,7 +1133,7 @@ public interface ClingoLibrary extends Library {
 	public byte clingo_ast_parse_string(String p_program, AstCallback callback, OnStatementDataSt p_callback_data, Pointer logger, String p_logger_data, int message_limit);
 
   	/** {@link clingo_h#clingo_ast_parse_files} */
-	public byte clingo_ast_parse_files(String const_p_const_p_files, long size, AstCallback callback, String p_callback_data, Pointer logger, String p_logger_data, int message_limit);
+	public byte clingo_ast_parse_files(String const_p_const_p_files, SizeT size, AstCallback callback, String p_callback_data, Pointer logger, String p_logger_data, int message_limit);
     
     // Object to build non-ground programs.
 	
@@ -1386,15 +1384,15 @@ public interface ClingoLibrary extends Library {
     public byte clingo_control_load(Pointer p_control, String p_file);
 
     /** {@link clingo_h#clingo_control_add} */
-    public byte  clingo_control_add(Pointer p_control, String name, String[] parameters, long parameters_size, String program);
+    public byte  clingo_control_add(Pointer p_control, String name, String[] parameters, SizeT parameters_size, String program);
 
     /** {@link clingo_h#clingo_control_ground} */
-    public byte clingo_control_ground(Pointer p_control, PartSt[] p_parts, long parts_size, GroundCallback ground_callback, Pointer p_ground_callback_data);
+    public byte clingo_control_ground(Pointer p_control, PartSt[] p_parts, SizeT parts_size, GroundCallback ground_callback, Pointer p_ground_callback_data);
     
     // Solving Functions
 
     /** {@link clingo_h#clingo_control_solve} */
-    public byte clingo_control_solve(Pointer control, int mode, Pointer assumptions, int assumptions_size, SolveEventCallback notify, Pointer data, PointerByReference handle);
+    public byte clingo_control_solve(Pointer control, int mode, Pointer assumptions, SizeT assumptions_size, SolveEventCallback notify, Pointer data, PointerByReference handle);
 
     /** {@link clingo_h#clingo_control_cleanup} */
 	public byte clingo_control_cleanup(Pointer p_control);
@@ -1475,6 +1473,6 @@ public interface ClingoLibrary extends Library {
     public byte clingo_options_add_flag(Pointer p_options, String p_group, String p_option, String p_description, byte p_target);
     
     /** {@link clingo_h#clingo_main} */
-	public int clingo_main(Pointer p_application, String p_arguments, int size, Pointer p_data);
+	public int clingo_main(Pointer p_application, String p_arguments, SizeT size, Pointer p_data);
     
 }

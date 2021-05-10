@@ -27,12 +27,12 @@ import com.sun.jna.Structure;
 public class LocationSt extends Structure {
 	public String begin_file;
 	public String end_file;
-	public long begin_line;
-	public long end_line;
-	public long begin_column;
-	public long end_column;
+	public SizeT begin_line;
+	public SizeT end_line;
+	public SizeT begin_column;
+	public SizeT end_column;
 	
-	public LocationSt(String begin_file, String end_file, long begin_line, long end_line, long begin_column, long end_column) {
+	public LocationSt(String begin_file, String end_file, SizeT begin_line, SizeT end_line, SizeT begin_column, SizeT end_column) {
 		super();
 		this.begin_file = begin_file;
 		this.end_file = end_file;
@@ -40,6 +40,15 @@ public class LocationSt extends Structure {
 		this.end_line = end_line;
 		this.begin_column = begin_column;
 		this.end_column = end_column;
+	}
+
+	public LocationSt(String begin_file, String end_file, int begin_line, int end_line, int begin_column, int end_column) {
+		this.begin_file = begin_file;
+		this.end_file = end_file;
+		this.begin_line = new SizeT(begin_line);
+		this.end_line = new SizeT(end_line);
+		this.begin_column = new SizeT(begin_column);
+		this.end_column = new SizeT(end_column);
 	}
 
 	protected List<String> getFieldOrder() {

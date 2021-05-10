@@ -8,6 +8,7 @@ import org.potassco.enums.TruthValue;
 import org.potassco.jna.BaseClingo;
 import org.potassco.jna.GroundCallback;
 import org.potassco.jna.PartSt;
+import org.potassco.jna.SizeT;
 import org.potassco.jna.SolveEventCallback;
 
 import com.sun.jna.Pointer;
@@ -113,7 +114,7 @@ public class Control implements AutoCloseable {
 	 */
 	public void ground(PartSt[] parts, GroundCallback groundCallback,
 			Pointer groundCallbackData) {
-		long partsSize = (parts == null ? 0 : parts.length);
+		SizeT partsSize = new SizeT(parts == null ? 0 : parts.length);
 		BaseClingo.controlGround(this.control, parts, partsSize, groundCallback, groundCallbackData);
 	}
 
@@ -134,7 +135,7 @@ public class Control implements AutoCloseable {
 	 * @param data            the user data for the event handler
 	 * @return handle to the current search to enumerate models
 	 */
-	public Pointer solve(SolveMode mode, Pointer assumptions, int assumptionsSize,
+	public Pointer solve(SolveMode mode, Pointer assumptions, SizeT assumptionsSize,
 			SolveEventCallback notify, Pointer data) {
 		return BaseClingo.controlSolve(this.control, mode, assumptions, assumptionsSize, notify, data);
 	}
@@ -425,7 +426,8 @@ public class Control implements AutoCloseable {
 	public void ground() {
         PartSt[] parts = new PartSt[1];
         parts[0] = new PartSt(name, null, 0L);
-        BaseClingo.controlGround(this.control, parts, 1L, null, null);
+        SizeT size = new SizeT(1L);
+        BaseClingo.controlGround(this.control, parts, size, null, null);
 	}
 
 	public void ground(GroundCallback groundCallbackT) {
@@ -434,12 +436,14 @@ public class Control implements AutoCloseable {
 	}
 
 	public void solve(SolveMode solveMode, Pointer assumptions, SolveEventCallback notify, Pointer data) {
-		BaseClingo.controlSolve(this.control, solveMode, assumptions, 0, notify, data);
+        SizeT size = new SizeT();
+		BaseClingo.controlSolve(this.control, solveMode, assumptions, size, notify, data);
 	}
 
 	public Solution solve() {
 		Solution solution = new Solution();
-		BaseClingo.controlSolve(this.control, SolveMode.YIELD, null, 0, new SolveEventCallback() {
+        SizeT size = new SizeT();
+		BaseClingo.controlSolve(this.control, SolveMode.YIELD, null, size, new SolveEventCallback() {
 			
 			@Override
 			public boolean call(int type, Pointer event, Pointer data, Pointer goon) {
@@ -457,10 +461,10 @@ public class Control implements AutoCloseable {
 				SolveEventType t = SolveEventType.fromValue(type);
 				switch (t) {
 				case MODEL:
-					long size = BaseClingo.modelSymbolsSize(event, ShowType.SHOWN);
-					solution.setSize(size);
+			        SizeT size = BaseClingo.modelSymbolsSize(event, ShowType.SHOWN);
+					solution.setSize(size.intValue());
 					long[] symbols = BaseClingo.modelSymbols(event, ShowType.SHOWN, size);
-					for (int i = 0; i < size; ++i) {
+					for (int i = 0; i < size.intValue(); ++i) {
 						String symbol = BaseClingo.symbolToString(symbols[i]);
 						solution.addSymbol(symbol.trim());
 					}
@@ -478,7 +482,8 @@ public class Control implements AutoCloseable {
 				return true;
 			}
 		};
-		Pointer handle = BaseClingo.controlSolve(control, SolveMode.ASYNC, null, 0, cb, null);
+		SizeT size = new SizeT();
+		Pointer handle = BaseClingo.controlSolve(control, SolveMode.ASYNC, null, size , cb, null);
 		BaseClingo.solveHandleClose(handle);
 		// clean up
 		BaseClingo.controlFree(control);

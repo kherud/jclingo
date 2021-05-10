@@ -7,6 +7,7 @@ import org.potassco.enums.TermType;
 import org.potassco.jna.BaseClingo;
 import org.potassco.jna.OptionParseCallback;
 import org.potassco.jna.PartSt;
+import org.potassco.jna.SizeT;
 
 import com.sun.jna.Pointer;
 
@@ -32,7 +33,8 @@ public class Clingo {
 	public void ground(Pointer control, String name) {
 		PartSt[] parts = new PartSt[1];
 		parts[0] = new PartSt(name, null, 0L);
-		BaseClingo.controlGround(control, parts, 1L, null, null);
+		SizeT size = new SizeT(1);
+		BaseClingo.controlGround(control, parts, size, null, null);
 	}
 
 	public String version() {
@@ -175,7 +177,7 @@ public class Clingo {
 	 * @param signature the target signature
 	 * @return
 	 */
-	public long signatureHash(Pointer signature) {
+	public SizeT signatureHash(Pointer signature) {
 		return BaseClingo.signatureHash(signature);
 	}
 
@@ -319,7 +321,7 @@ public class Clingo {
 	 * @param atoms the target
 	 * @return the resulting number
 	 */
-	public long theoryAtomsSize(Pointer atoms) {
+	public SizeT theoryAtomsSize(Pointer atoms) {
 		return BaseClingo.theoryAtomsSize(atoms);
 	}
 
@@ -448,7 +450,7 @@ public class Clingo {
 	 * @param key           the key
 	 * @return the resulting size
 	 */
-	public long configurationArraySize(Pointer configuration, int key) {
+	public SizeT configurationArraySize(Pointer configuration, int key) {
 		return BaseClingo.configurationArraySize(configuration, key);
 	}
 
@@ -465,7 +467,7 @@ public class Clingo {
 	 * @param offset        the offset in the array
 	 * @return the resulting subkey
 	 */
-	public long configurationArrayAt(Pointer configuration, int key, long offset) {
+	public long configurationArrayAt(Pointer configuration, int key, SizeT offset) {
 		return BaseClingo.configurationArrayAt(configuration, key, offset);
 	}
 
@@ -481,7 +483,7 @@ public class Clingo {
 	 * @param key           the key
 	 * @return the resulting size
 	 */
-	public long configurationMapSize(Pointer configuration, int key) {
+	public SizeT configurationMapSize(Pointer configuration, int key) {
 		return BaseClingo.configurationMapSize(configuration, key);
 	}
 
@@ -513,7 +515,7 @@ public class Clingo {
 	 * @param offset        the offset of the name
 	 * @return the resulting name
 	 */
-	public String configurationMapSubkeyName(Pointer configuration, int key, long offset) {
+	public String configurationMapSubkeyName(Pointer configuration, int key, SizeT offset) {
 		return BaseClingo.configurationMapSubkeyName(configuration, key, offset);
 	}
 
@@ -559,7 +561,7 @@ public class Clingo {
 	 * @param key           the key
 	 * @return the resulting size
 	 */
-	public long configurationValueGetSize(Pointer configuration, int key) {
+	public SizeT configurationValueGetSize(Pointer configuration, int key) {
 		return BaseClingo.configurationValueGetSize(configuration, key);
 	}
 
@@ -575,7 +577,7 @@ public class Clingo {
 	 * @param size          the size of the given char array
 	 * @return the resulting string value
 	 */
-	public String configurationValueGet(Pointer configuration, int key, long size) {
+	public String configurationValueGet(Pointer configuration, int key, SizeT size) {
 		return BaseClingo.configurationValueGet(configuration, key, size);
 	}
 
@@ -628,7 +630,7 @@ public class Clingo {
 	 * @param key        the key
 	 * @return the resulting size
 	 */
-	public long clingoStatisticsArraySize(Pointer statistics, long key) {
+	public SizeT clingoStatisticsArraySize(Pointer statistics, long key) {
 		return BaseClingo.clingoStatisticsArraySize(statistics, key);
 	}
 
@@ -645,7 +647,7 @@ public class Clingo {
 	 * @return whether the call was success
 	 */
 
-	public int statisticsArrayAt(Pointer statistics, long key, long offset) {
+	public int statisticsArrayAt(Pointer statistics, long key, SizeT offset) {
 		return BaseClingo.statisticsArrayAt(statistics, key, offset);
 	}
 
@@ -678,7 +680,7 @@ public class Clingo {
 	 * @param[out] size the resulting number
 	 * @return whether the call was success
 	 */
-	public long statisticsMapSize(Pointer statistics, long key) {
+	public SizeT statisticsMapSize(Pointer statistics, long key) {
 		return BaseClingo.statisticsMapSize(statistics, key);
 	}
 
@@ -710,7 +712,7 @@ public class Clingo {
 	 * @param[out] name the resulting name
 	 * @return whether the call was success
 	 */
-	public String statisticsMapSubkeyName(Pointer statistics, long key, long offset) {
+	public String statisticsMapSubkeyName(Pointer statistics, long key, SizeT offset) {
 		return BaseClingo.statisticsMapSubkeyName(statistics, key, offset);
 	}
 
@@ -807,7 +809,7 @@ public class Clingo {
 	 *         codes: - ::clingo_error_bad_alloc - ::clingo_error_runtime if adding
 	 *         the clause fails
 	 */
-	public void solveControlAddClause(Pointer control, Pointer clause, long size) {
+	public void solveControlAddClause(Pointer control, Pointer clause, SizeT size) {
 		BaseClingo.solveControlAddClause(control, clause, size);
 		;
 	}
@@ -994,7 +996,7 @@ public class Clingo {
 	 * @param[in] data user data to pass to callbacks in application
 	 * @return exit code to return from main function
 	 */
-	public int main(Pointer application, String arguments, int size, Pointer data) {
+	public int main(Pointer application, String arguments, SizeT size, Pointer data) {
 		return BaseClingo.main(application, arguments, size, data);
 	}
 

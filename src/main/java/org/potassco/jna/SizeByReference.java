@@ -31,15 +31,15 @@ public class SizeByReference extends ByReference {
 		}
 	}
 
-	public long getValue() {
+	public SizeT getValue() {
 		Pointer p = getPointer();
 		switch (Native.SIZE_T_SIZE) {
 		case 2:
-			return p.getShort(0) & 0xFFFFL;
+			return new SizeT(p.getShort(0) & 0xFFFFL);
 		case 4:
-			return p.getInt(0) & 0xFFFFFFFFL;
+			return new SizeT(p.getInt(0) & 0xFFFFFFFFL);
 		case 8:
-			return p.getLong(0);
+			return new SizeT(p.getLong(0));
 		default:
 			throw new RuntimeException("Unsupported size: " + Native.SIZE_T_SIZE);
 		}

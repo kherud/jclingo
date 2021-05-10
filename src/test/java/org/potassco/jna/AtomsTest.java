@@ -15,9 +15,10 @@ public class AtomsTest {
 		BaseClingo.controlAdd(control, name, null, "a. b. c. d. e.");
         PartSt[] parts = new PartSt[1];
         parts[0] = new PartSt(name, null, 0L);
-		BaseClingo.controlGround(control, parts, 1L, null, null);
+		SizeT size = new SizeT(1L);
+		BaseClingo.controlGround(control, parts, size, null, null);
 		Pointer atoms = BaseClingo.controlSymbolicAtoms(control);
-		assertEquals(5, BaseClingo.symbolicAtomsSize(atoms));
+		assertEquals(5, BaseClingo.symbolicAtomsSize(atoms).intValue());
 //		Pointer signature = BaseClingo.signatureCreate(c, 0, true);
 		Pointer iteratorBegin = BaseClingo.symbolicAtomsBegin(atoms, null);
 		long symbol1 = BaseClingo.symbolicAtomsSymbol(atoms, iteratorBegin);
@@ -73,7 +74,8 @@ public class AtomsTest {
 				+ "dislike(2,3; 1,3).");
         PartSt[] parts = new PartSt[1];
         parts[0] = new PartSt(name, null, 0L);
-		BaseClingo.controlGround(control, parts, 1L, null, null);
+		SizeT size = new SizeT(1L);
+		BaseClingo.controlGround(control, parts, size, null, null);
 		String constName = "n";
 		assertTrue(BaseClingo.controlHasConst(control, constName));
 		int symbol = BaseClingo.controlGetConst(control, constName);

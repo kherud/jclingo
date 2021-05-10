@@ -1,6 +1,7 @@
 package org.potassco.api;
 
 import org.potassco.jna.BaseClingo;
+import org.potassco.jna.SizeT;
 
 import com.sun.jna.Pointer;
 
@@ -9,14 +10,14 @@ public class PropagateInit {
 	private Pointer reference;
 
 	public boolean addClause(int[] clause) {
-		return BaseClingo.propagateInitAddClause(this.reference, clause, clause.length) == 1;
+		return BaseClingo.propagateInitAddClause(this.reference, clause, new SizeT(clause.length)) == 1;
 	}
 	
 	public int addLiteral(boolean freeze) {
 		return BaseClingo.propagateInitAddLiteral(this.reference, (byte) (freeze ? 1 : 0));
 	}
 
-	public boolean addWeightConstraint(int literal, Pointer literals, long size, int bound, int type, byte compareEqual) {
+	public boolean addWeightConstraint(int literal, Pointer literals, SizeT size, int bound, int type, byte compareEqual) {
 		return BaseClingo.propagateInitAddWeightConstraint(this.reference, literal, literals, size, bound, type, compareEqual);
 	}
 

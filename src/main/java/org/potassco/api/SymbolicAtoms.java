@@ -1,6 +1,7 @@
 package org.potassco.api;
 
 import org.potassco.jna.BaseClingo;
+import org.potassco.jna.SizeT;
 
 import com.sun.jna.Pointer;
 
@@ -17,7 +18,7 @@ public class SymbolicAtoms {
 	 * 
 	 * @return the number of atoms
 	 */
-	public long symbolicAtomsSize(Pointer atoms) {
+	public SizeT symbolicAtomsSize(Pointer atoms) {
 		return BaseClingo.symbolicAtomsSize(atoms);
 	}
 
@@ -126,7 +127,7 @@ public class SymbolicAtoms {
 	 * @param atoms the target
 	 * @return the number of signatures
 	 */
-	public long symbolicAtomsSignaturesSize(Pointer atoms) {
+	public SizeT symbolicAtomsSignaturesSize(Pointer atoms) {
 		return BaseClingo.symbolicAtomsSignaturesSize(atoms);
 	}
 
@@ -137,7 +138,7 @@ public class SymbolicAtoms {
 	 * @param size  the number of signatures
 	 * @return the resulting signatures
 	 */
-	public Pointer symbolicAtomsSignatures(Pointer atoms, long size) {
+	public Pointer symbolicAtomsSignatures(Pointer atoms, SizeT size) {
 		return BaseClingo.symbolicAtomsSignatures(atoms, size);
 	}
 

@@ -4,6 +4,7 @@ import org.potassco.enums.ModelType;
 import org.potassco.enums.ShowType;
 import org.potassco.jna.BaseClingo;
 import org.potassco.jna.ClingoLibrary;
+import org.potassco.jna.SizeT;
 
 import com.sun.jna.Pointer;
 
@@ -48,7 +49,7 @@ public class Model {
 	 * @param show  which symbols to select - {@link ShowType}
 	 * @return the number symbols
 	 */
-	private long modelSymbolsSize(ShowType show) {
+	private SizeT modelSymbolsSize(ShowType show) {
 		return BaseClingo.modelSymbolsSize(this.pointer, show);
 	}
 
@@ -65,7 +66,7 @@ public class Model {
 	 * @return the resulting symbols as an array[size] of symbol references
 	 * @see clingo_model_symbols_size()
 	 */
-	public long[] symbols(ShowType show, long size) {
+	public long[] symbols(ShowType show, SizeT size) {
 		return BaseClingo.modelSymbols(this.pointer, show, size);
 	}
 
@@ -89,7 +90,7 @@ public class Model {
 	 * @param[out] result whether the literal is true
 	 * @return whether the call was successful
 	 */
-	public byte isTrue(long literal) {
+	public byte isTrue(int literal) {
 		return BaseClingo.modelIsTrue(this.pointer, literal);
 	}
 
@@ -100,7 +101,7 @@ public class Model {
 	 * @param[out] size the number of costs
 	 * @return whether the call was successful
 	 */
-	private long modelCostSize(Pointer model) {
+	private SizeT modelCostSize(Pointer model) {
 		return BaseClingo.modelCostSize(model);
 	}
 
@@ -117,7 +118,7 @@ public class Model {
 	 * @see clingo_model_cost_size()
 	 * @see clingo_model_optimality_proven()
 	 */
-	public int cost(long size) {
+	public int cost(SizeT size) {
 		return BaseClingo.modelCost(this.pointer, size);
 	}
 
@@ -157,7 +158,7 @@ public class Model {
 	 * @param[in] size the number of symbols to add
 	 * @return whether the call was successful
 	 */
-	public void extend(long symbols, long size) {
+	public void extend(long symbols, SizeT size) {
 		BaseClingo.modelExtend(this.pointer, symbols, size);
 		;
 	}

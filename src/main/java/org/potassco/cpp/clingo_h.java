@@ -254,7 +254,7 @@ public static final typedef<c_int> clingo_truth_value_t = null;
 //! represent classical negation).
 public static final typedef<uint64_t> clingo_signature_t = null;
 
-//! @name SignatureSt Functions
+//! @name Signature Functions
 //! @{
 
 //! Create a new signature.

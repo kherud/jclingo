@@ -38,7 +38,7 @@ package org.potassco.jna;
  * <li>clingo_truth_value_t (int): int
  * <li>clingo_weight_constraint_type_t (int): int
  * <li>clingo_weight_t (int32_t): int
- * <li>
+ * <li>clingo_signature_t (uint64_t): long
  * <li>
  * <li>
  * <li>clingo_assignment_t - struct

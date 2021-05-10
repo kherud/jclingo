@@ -102,7 +102,7 @@ public class SymbolicAtoms {
 	 * @param iterator iterator to the atom
 	 * @return whether the atom is a external
 	 */
-	public long symbolicAtomsIsExternal(Pointer atoms, Pointer iterator) {
+	public boolean symbolicAtomsIsExternal(Pointer atoms, Pointer iterator) {
 		return BaseClingo.symbolicAtomsIsExternal(atoms, iterator);
 	}
 
@@ -135,11 +135,10 @@ public class SymbolicAtoms {
 	 * Get the predicate signatures occurring in a logic program.
 	 * 
 	 * @param atoms the target
-	 * @param size  the number of signatures
 	 * @return the resulting signatures
 	 */
-	public Pointer symbolicAtomsSignatures(Pointer atoms, SizeT size) {
-		return BaseClingo.symbolicAtomsSignatures(atoms, size);
+	public Pointer[] symbolicAtomsSignatures(Pointer atoms) {
+		return BaseClingo.symbolicAtomsSignatures(atoms);
 	}
 
 	/**
@@ -161,7 +160,7 @@ public class SymbolicAtoms {
 	 * @param iterator the iterator
 	 * @return whether the iterator points to some element within the sequence
 	 */
-	public byte symbolicAtomsIsValid(Pointer atoms, Pointer iterator) {
+	public boolean symbolicAtomsIsValid(Pointer atoms, Pointer iterator) {
 		return BaseClingo.symbolicAtomsIsValid(atoms, iterator);
 	}
 

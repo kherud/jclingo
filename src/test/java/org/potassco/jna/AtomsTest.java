@@ -2,6 +2,9 @@ package org.potassco.jna;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 
 import com.sun.jna.Pointer;
@@ -40,29 +43,48 @@ public class AtomsTest {
 		}
 //		long symbol3 = BaseClingo.symbolicAtomsSymbol(atoms, iteratorEnd);
 //		assertEquals("e", BaseClingo.symbolName(symbol3));
-//		Pointer iteratorFind = BaseClingo.symbolicAtomsFind(atoms, symbol2);
-		
-		
-	}
-// TODO
-// 	public long symbolicAtomsIsExternal(Pointer atoms, Pointer iterator) {
-// 	public Pointer symbolicAtomsLiteral(Pointer atoms, Pointer iterator) {
-// 	public long symbolicAtomsSignaturesSize(Pointer atoms) {
-// 	public Pointer symbolicAtomsSignatures(Pointer atoms, long size) {
-// 	public boolean symbolicAtomsIsValid(Pointer atoms, Pointer iterator) {
-	
-	@Test
-	public void testCallback() {
-		SymbolCallback sb = new SymbolCallback() {
-			
-			@Override
-			public boolean call(Pointer symbols, Pointer symbolsSize, Pointer data) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-		};
+		Pointer iteratorFind = BaseClingo.symbolicAtomsFind(atoms, symbol2);
+		long c = BaseClingo.symbolicAtomsSymbol(atoms, iteratorFind);
+		assertEquals("c", BaseClingo.symbolName(c));
+		assertFalse(BaseClingo.symbolicAtomsIsExternal(atoms, iteratorFind));
 	}
 
+	/**
+	 * See guide p. 45
+	 */
+	@Test
+	public void testExternalSymbolicAtoms() {
+		String name = "base";
+		Pointer control = BaseClingo.control(null, null, null, 0);
+		BaseClingo.controlAdd(control, name, null, "p(1). p(2). p(3). #external q(X) : p(X). q(1). r(X) :- q(X).");
+        PartSt[] parts = new PartSt[1];
+        parts[0] = new PartSt(name, null, 0L);
+		SizeT size = new SizeT(1L);
+		BaseClingo.controlGround(control, parts, size, null, null);
+		Pointer atoms = BaseClingo.controlSymbolicAtoms(control);
+
+		List<Pointer> ourAtoms = new ArrayList<Pointer>(); 
+		Pointer iteratorEnd = BaseClingo.symbolicAtomsEnd(atoms);
+		for (Pointer i = BaseClingo.symbolicAtomsBegin(atoms, null);
+				!BaseClingo.symbolicAtomsIteratorIsEqualTo(atoms, i, iteratorEnd);
+				i = BaseClingo.symbolicAtomsNext(atoms, i)) {
+			ourAtoms.add(i);
+		}
+		Pointer a4 = ourAtoms.get(4);
+		long c = BaseClingo.symbolicAtomsSymbol(atoms, a4);
+		assertEquals("q", BaseClingo.symbolName(c));
+		assertTrue(BaseClingo.symbolicAtomsIsExternal(atoms, a4));
+		assertTrue(BaseClingo.symbolicAtomsIsValid(atoms, a4));
+		System.out.println(BaseClingo.symbolicAtomsLiteral(atoms, a4));
+		Pointer[] s = BaseClingo.symbolicAtomsSignatures(atoms);
+		String[] strArray = { "p", "q", "r" };
+		for (int i = 0; i < s.length; i++) {
+			assertEquals(strArray[i], BaseClingo.signatureName(s[i]));
+			assertEquals(1, BaseClingo.signatureArity(s[i]));
+			assertEquals(true, BaseClingo.signatureIsPositive(s[i]));
+		}
+	}
+	
 	@Test
 	public void testConstants() {
 		String name = "base";

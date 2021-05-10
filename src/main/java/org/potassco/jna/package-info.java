@@ -20,6 +20,7 @@ package org.potassco.jna;
  * Type mapping
  * <ul>
  * <li>bool: byte
+ * <li>size_t: long
  * <li>
  * <li>clingo_ast_attribute_t (int): int
  * <li>clingo_ast_attribute_type_t (int): int
@@ -48,6 +49,5 @@ package org.potassco.jna;
  * <li>
  * <li>
  * <li>
- * <li>size_t: long
  * </ul>
  */

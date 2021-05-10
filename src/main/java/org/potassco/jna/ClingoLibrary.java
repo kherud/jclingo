@@ -97,22 +97,22 @@ public interface ClingoLibrary extends Library {
     public long clingo_signature_hash(Pointer signature); // CLINGO_VISIBILITY_DEFAULT size_t clingo_signature_hash(clingo_signature_t signature);
 
     /** {@link clingo_h#clingo_symbol_create_number} */
-    public void clingo_symbol_create_number(int number, SymbolByReference p_symbol);
+    public void clingo_symbol_create_number(int number, LongByReference p_symbol);
 
     /** {@link clingo_h#clingo_symbol_create_supremum} */
-    public void clingo_symbol_create_supremum(SymbolByReference p_symbol);
+    public void clingo_symbol_create_supremum(LongByReference p_symbol);
 
     /** {@link clingo_h#clingo_symbol_create_infimum} */
-    public void clingo_symbol_create_infimum(SymbolByReference p_symbol);
+    public void clingo_symbol_create_infimum(LongByReference p_symbol);
 
     /** {@link clingo_h#clingo_symbol_create_string} */
-    public byte clingo_symbol_create_string(String p_string, SymbolByReference p_symbol);
+    public byte clingo_symbol_create_string(String p_string, LongByReference p_symbol);
 
     /** {@link clingo_h#clingo_symbol_create_id} */
-    public byte clingo_symbol_create_id(String p_name, byte positive, SymbolByReference p_symbol);
+    public byte clingo_symbol_create_id(String p_name, byte positive, LongByReference p_symbol);
 
     /** {@link clingo_h#clingo_symbol_create_function} */
-    public byte clingo_symbol_create_function(String p_name, SymbolByReference[] p_arguments, long arguments_size, byte positive, SymbolByReference p_symbol);
+    public byte clingo_symbol_create_function(String p_name, LongByReference[] p_arguments, long arguments_size, byte positive, LongByReference p_symbol);
 
     // Symbol Inspection Functions
 

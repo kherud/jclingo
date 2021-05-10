@@ -255,7 +255,7 @@ public class BaseClingo {
 	 * @return a reference to the symbol
 	 */
 	public static long symbolCreateNumber(int number) {
-		SymbolByReference sbr = new SymbolByReference();
+		LongByReference sbr = new LongByReference();
 		clingoLibrary.clingo_symbol_create_number(number, sbr);
 		return sbr.getValue();
 	}
@@ -266,7 +266,7 @@ public class BaseClingo {
 	 * @return a reference to the symbol
 	 */
 	public static long symbolCreateSupremum() {
-		SymbolByReference pointer = new SymbolByReference();
+		LongByReference pointer = new LongByReference();
 		clingoLibrary.clingo_symbol_create_supremum(pointer);
 		return pointer.getValue();
 	}
@@ -277,7 +277,7 @@ public class BaseClingo {
 	 * @return a reference to the symbol
 	 */
 	public static long symbolCreateInfimum() {
-		SymbolByReference pointer = new SymbolByReference();
+		LongByReference pointer = new LongByReference();
 		clingoLibrary.clingo_symbol_create_supremum(pointer);
 		return pointer.getValue();
 	}
@@ -288,7 +288,7 @@ public class BaseClingo {
 	 * @return a reference to the symbol
 	 */
 	public static long symbolCreateString(String string) {
-		SymbolByReference symb = new SymbolByReference();
+		LongByReference symb = new LongByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_create_string(string, symb);
 		return symb.getValue();
@@ -305,7 +305,7 @@ public class BaseClingo {
 	 * @return a reference to the symbol
 	 */
 	public static long symbolCreateId(String name, boolean positive) {
-		SymbolByReference symb = new SymbolByReference();
+		LongByReference symb = new LongByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_create_id(name, (byte) (positive ? 1 : 0), symb);
 		return symb.getValue();
@@ -322,13 +322,13 @@ public class BaseClingo {
 	 * @return a reference to the symbol
 	 */
 	public static long symbolCreateFunction(String name, List<Long> arguments, boolean positive) {
-		SymbolByReference symb = new SymbolByReference();
+		LongByReference symb = new LongByReference();
 		int argSize = arguments.size();
 		long argumentsSize = argSize;
-		SymbolByReference[] args = new SymbolByReference[argSize];
+		LongByReference[] args = new LongByReference[argSize];
 		int i = 0;
 		for (long s : arguments) {
-			args[i] = new SymbolByReference();
+			args[i] = new LongByReference();
 			args[i].setValue(s);
 			i++;
 		}

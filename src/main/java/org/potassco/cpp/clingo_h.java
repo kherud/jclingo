@@ -742,7 +742,7 @@ public bool clingo_theory_atoms_term_type(final clingo_theory_atoms_t p_atoms, c
 //! @param[in] term id of the term
 //! @param[out] number the resulting number
 //! @return whether the call was successful
-public bool clingo_theory_atoms_term_number(final clingo_theory_atoms_t p_atoms, clingo_id_t term, c_int p_number); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_number(clingo_theory_atoms_t const *atoms, clingo_id_t term, int *number);
+public bool clingo_theory_atoms_term_number(final clingo_theory_atoms_t p_atoms, clingo_id_t term, int p_number); // CLINGO_VISIBILITY_DEFAULT bool clingo_theory_atoms_term_number(clingo_theory_atoms_t const *atoms, clingo_id_t term, int *number);
 //! Get the name of the given constant or function theory term.
 //!
 //! @note

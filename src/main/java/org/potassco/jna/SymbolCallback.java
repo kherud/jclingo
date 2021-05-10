@@ -12,7 +12,7 @@ import com.sun.jna.Pointer;
  * @author Josef Schneeberger
  * {@link clingo_h#clingo_symbol_callback_t}
  */
-public abstract class SymbolCallbackT implements Callback {
+public abstract class SymbolCallback implements Callback {
     public abstract boolean call(Pointer symbols, Pointer symbolsSize, Pointer data);
 
     /**

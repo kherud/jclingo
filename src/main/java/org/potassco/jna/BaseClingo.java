@@ -137,7 +137,7 @@ public class BaseClingo {
 	}
 
 	/*
-	 * ******************* Signature Functions *******************
+	 * ******************* SignatureSt Functions *******************
 	 */
 
 	/**
@@ -665,8 +665,8 @@ public class BaseClingo {
 	/**
 	 * Returns the (numeric) aspif literal corresponding to the given symbolic atom.
 	 * 
-	 * Such a literal can be mapped to a solver literal (see the \ref Propagator
-	 * module) or be used in rules in aspif format (see the \ref ProgramBuilder
+	 * Such a literal can be mapped to a solver literal (see the \ref PropagatorSt
+	 * module) or be used in rules in aspif format (see the \ref ProgramBuilderSt
 	 * module).
 	 * 
 	 * @param atoms    the target
@@ -1096,7 +1096,7 @@ public class BaseClingo {
 	
 	// clingo_assignment_t
 
-    // Assignment Functions
+    // AssignmentSt Functions
     
 	/**
 	 * Get the current decision level.
@@ -2410,7 +2410,7 @@ public class BaseClingo {
 	 * Add a clause that applies to the current solving step during model
 	 * enumeration.
 	 *
-	 * @note The @ref Propagator module provides a more sophisticated interface to
+	 * @note The @ref PropagatorSt module provides a more sophisticated interface to
 	 *       add clauses - even on partial assignments.
 	 *
 	 * @param[in] control the target
@@ -3001,7 +3001,7 @@ public class BaseClingo {
 	 * @param loggerData user data for the logger
 	 * @param messageLimit the maximum number of times the logger is called
 	 */
-	public static void astParseString(String program, AstCallback callback, String callbackData, Pointer logger,
+	public static void astParseString(String program, AstCallback callback, OnStatementDataSt callbackData, Pointer logger,
 			String loggerData, int messageLimit) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_ast_parse_string(program, callback, callbackData, logger, loggerData,
@@ -3084,7 +3084,7 @@ public class BaseClingo {
     
     //! @defgroup ProgramInspection Program Inspection
     //! Functions and data structures to inspect programs.
-    //! @ingroup Control
+    //! @ingroup ControlSt
     
     //! @addtogroup ProgramInspection
     //! @{
@@ -3370,7 +3370,7 @@ public class BaseClingo {
 	 * @param groundCallback      callback to implement external functions
 	 * @param groundCallbackData user data for ground_callback
 	 */
-	public static void controlGround(Pointer control, Part[] parts, long partsSize, GroundCallbackT groundCallback,
+	public static void controlGround(Pointer control, PartSt[] parts, long partsSize, GroundCallback groundCallback,
 			Pointer groundCallbackData) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_ground(control, parts, partsSize, groundCallback,
@@ -3463,7 +3463,7 @@ public class BaseClingo {
 	 * If the sequential flag is set to true, the propagator is called sequentially
 	 * when solving with multiple threads.
 	 * <p>
-	 * See the @ref Propagator module for more information.
+	 * See the @ref PropagatorSt module for more information.
 	 * 
 	 * @param propagator the propagator
 	 * @param data       user data passed to the propagator functions
@@ -3495,13 +3495,13 @@ public class BaseClingo {
 	/**
 	 * Get a statistics object to inspect solver statistics.
 	 * <p>
-	 * Statistics are updated after a solve call.
+	 * StatisticsSt are updated after a solve call.
 	 * <p>
-	 * See the @ref Statistics module for more information.
+	 * See the @ref StatisticsSt module for more information.
 	 * <p>
 	 * 
 	 * @attention The level of detail of the statistics depends on the stats option
-	 *            (which can be set using @ref Configuration module or passed as an
+	 *            (which can be set using @ref ConfigurationSt module or passed as an
 	 *            option when @link clingo_control_new creating the control
 	 *            object@endlink). The default level zero only provides basic
 	 *            statistics, level one provides extended and accumulated
@@ -3546,7 +3546,7 @@ public class BaseClingo {
 	/**
 	 * Get a configuration object to change the solver configuration.
 	 * <p>
-	 * See the @ref Configuration module for more information.
+	 * See the @ref ConfigurationSt module for more information.
 	 * 
 	 * @return the configuration object
 	 */
@@ -3669,7 +3669,7 @@ public class BaseClingo {
 	/**
 	 * Get an object to inspect theory atoms that occur in the grounding.
 	 * <p>
-	 * See the @ref TheoryAtoms module for more information.
+	 * See the @ref TheoryAtomsSt module for more information.
 	 * 
 	 * @return the theory atoms object
 	 */
@@ -3699,7 +3699,7 @@ public class BaseClingo {
 	/**
 	 * Get an object to add ground directives to the program.
 	 * <p>
-	 * See the @ref ProgramBuilder module for more information.
+	 * See the @ref ProgramBuilderSt module for more information.
 	 * 
 	 * @return the backend object
 	 */
@@ -3713,7 +3713,7 @@ public class BaseClingo {
 	/**
 	 * Get an object to add non-ground directives to the program.
 	 * <p>
-	 * See the @ref ProgramBuilder module for more information.
+	 * See the @ref ProgramBuilderSt module for more information.
 	 * 
 	 * @return the program builder object
 	 */
@@ -3743,7 +3743,7 @@ public class BaseClingo {
 	 * Parameter option specifies the name(s) of the option. For example, "ping,p"
 	 * adds the short option "-p" and its long form "--ping". It is also possible to
 	 * associate an option with a help level by adding ",@l" to the option
-	 * specification. Options with a level greater than zero are only shown if the
+	 * specification. OptionsSt with a level greater than zero are only shown if the
 	 * argument to help is greater or equal to l.
 	 *
 	 * @param options     object to register the option with
@@ -3758,7 +3758,7 @@ public class BaseClingo {
 	 *                    help output
 	 * @return
 	 */
-	public static void optionsAdd(Pointer options, String group, String option, String description, OptionParseCallbackT parse,
+	public static void optionsAdd(Pointer options, String group, String option, String description, OptionParseCallback parse,
 			Pointer data, byte multi, String argument) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_options_add(options, group, option, description, parse, data, multi,

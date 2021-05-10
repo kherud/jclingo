@@ -1,9 +1,16 @@
 package org.potassco.jna;
 
+import org.potassco.cpp.clingo_h;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
-public class Application extends Structure {
+/**
+ * This struct contains a set of functions to customize the clingo application.
+ * @author Josef Schneeberger
+ * {@link clingo_h#clingo_application_t}
+ */
+public class ApplicationSt extends Structure {
 	public String name;
 	public String version;
 	public int message_limit;

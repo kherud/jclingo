@@ -1,4 +1,4 @@
-package org.potassco.structs;
+package org.potassco.jna;
 
 import org.potassco.cpp.clingo_h;
 
@@ -7,7 +7,7 @@ import com.sun.jna.Structure;
 /**
  * Object to initialize a user-defined propagator before each solving step.
  *
- * Each @link SymbolicAtoms symbolic@endlink or @link TheoryAtoms theory atom@endlink is uniquely associated with an aspif atom in form of a positive integer (@ref ::clingo_literal_t).
+ * Each @link SymbolicAtoms symbolic@endlink or @link TheoryAtomsSt theory atom@endlink is uniquely associated with an aspif atom in form of a positive integer (@ref ::clingo_literal_t).
  * Aspif literals additionally are signed to represent default negation.
  * Furthermore, there are non-zero integer solver literals (also represented using @ref ::clingo_literal_t).
  * There is a surjective mapping from program atoms to solver literals.
@@ -18,6 +18,6 @@ import com.sun.jna.Structure;
  * @author Josef Schneeberger
  * {@link clingo_h#clingo_propagate_init_t}
  */
-public class PropagateInit extends Structure {
+public class PropagateInitSt extends Structure {
 
 }

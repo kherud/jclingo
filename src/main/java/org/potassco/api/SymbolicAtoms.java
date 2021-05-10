@@ -108,8 +108,8 @@ public class SymbolicAtoms {
 	/**
 	 * Returns the (numeric) aspif literal corresponding to the given symbolic atom.
 	 * 
-	 * Such a literal can be mapped to a solver literal (see the \ref Propagator
-	 * module) or be used in rules in aspif format (see the \ref ProgramBuilder
+	 * Such a literal can be mapped to a solver literal (see the \ref PropagatorSt
+	 * module) or be used in rules in aspif format (see the \ref ProgramBuilderSt
 	 * module).
 	 * 
 	 * @param atoms    the target

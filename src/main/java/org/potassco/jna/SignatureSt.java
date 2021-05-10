@@ -15,7 +15,7 @@ import com.sun.jna.Structure;
  *
  * @author Josef Schneeberger {@link clingo_h#clingo_signature_t}
  */
-public class Signature extends Structure {
+public class SignatureSt extends Structure {
 	public String name;
 	public int arity;
 	public int positive;

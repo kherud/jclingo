@@ -5,8 +5,8 @@ import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.StatisticsType;
 import org.potassco.enums.TermType;
 import org.potassco.jna.BaseClingo;
-import org.potassco.jna.OptionParseCallbackT;
-import org.potassco.jna.Part;
+import org.potassco.jna.OptionParseCallback;
+import org.potassco.jna.PartSt;
 
 import com.sun.jna.Pointer;
 
@@ -16,7 +16,7 @@ public class Clingo {
 	 * Create a new control object.
 	 * <p>
 	 * A control object has to be freed using clingo_control_free(). TODO: This will
-	 * be done in the Control class.
+	 * be done in the ControlSt class.
 	 * 
 	 * @param arguments array of command line arguments
 	 * @return resulting control object
@@ -30,8 +30,8 @@ public class Clingo {
 	 * @param control
 	 */
 	public void ground(Pointer control, String name) {
-		Part[] parts = new Part[1];
-		parts[0] = new Part(name, null, 0L);
+		PartSt[] parts = new PartSt[1];
+		parts[0] = new PartSt(name, null, 0L);
 		BaseClingo.controlGround(control, parts, 1L, null, null);
 	}
 
@@ -81,7 +81,7 @@ public class Clingo {
 	}
 
 	/*
-	 * ******************* Signature Functions *******************
+	 * ******************* SignatureSt Functions *******************
 	 */
 
 	/**
@@ -797,7 +797,7 @@ public class Clingo {
 	 * Add a clause that applies to the current solving step during model
 	 * enumeration.
 	 *
-	 * @note The @ref Propagator module provides a more sophisticated interface to
+	 * @note The @ref PropagatorSt module provides a more sophisticated interface to
 	 *       add clauses - even on partial assignments.
 	 *
 	 * @param[in] control the target
@@ -945,7 +945,7 @@ public class Clingo {
 	 * Parameter option specifies the name(s) of the option. For example, "ping,p"
 	 * adds the short option "-p" and its long form "--ping". It is also possible to
 	 * associate an option with a help level by adding ",@l" to the option
-	 * specification. Options with a level greater than zero are only shown if the
+	 * specification. OptionsSt with a level greater than zero are only shown if the
 	 * argument to help is greater or equal to l.
 	 *
 	 * @param options     object to register the option with
@@ -960,7 +960,7 @@ public class Clingo {
 	 *                    help output
 	 * @return
 	 */
-	public void optionsAdd(Pointer options, String group, String option, String description, OptionParseCallbackT parse,
+	public void optionsAdd(Pointer options, String group, String option, String description, OptionParseCallback parse,
 			Pointer data, byte multi, String argument) {
 		BaseClingo.optionsAdd(options, group, option, description, parse, data, multi, argument);
 	}

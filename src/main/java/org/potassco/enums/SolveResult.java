@@ -7,7 +7,7 @@ import org.potassco.cpp.clingo_h;
 
 /**
  * Enumeration of solve result types.
- * @note documented in Control Module
+ * @note documented in ControlSt Module
  * @author Josef Schneeberger
  * {@link clingo_h#clingo_solve_result_e}
  */

@@ -39,8 +39,8 @@ public class StatisticsTest {
 		int confSub = BaseClingo.configurationMapAt(conf, rootKey, "stats");
 		BaseClingo.configurationValueSet(conf, confSub, "1");
 		BaseClingo.controlAdd(control, name, null, program);
-		Part[] parts = new Part[1];
-		parts[0] = new Part(name, null, 0L);
+		PartSt[] parts = new PartSt[1];
+		parts[0] = new PartSt(name, null, 0L);
 		BaseClingo.controlGround(control, parts, 1L, null, null);
 		SolveEventCallback eventHandler = null;
 		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, 0, eventHandler, null);
@@ -51,7 +51,7 @@ public class StatisticsTest {
 			Pointer model = BaseClingo.solveHandleModel(handle);
 			if (model != null) {
 				// print_model
-//				System.out.println("Model:");
+//				System.out.println("ModelSt:");
 				long numAtoms = BaseClingo.modelSymbolsSize(model, ShowType.SHOWN);
 				long[] atoms = BaseClingo.modelSymbols(model, ShowType.SHOWN, numAtoms);
 				for (int i = 0; i < atoms.length; i++) {

@@ -6,8 +6,8 @@ import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
 import org.potassco.enums.TruthValue;
 import org.potassco.jna.BaseClingo;
-import org.potassco.jna.GroundCallbackT;
-import org.potassco.jna.Part;
+import org.potassco.jna.GroundCallback;
+import org.potassco.jna.PartSt;
 import org.potassco.jna.SolveEventCallback;
 
 import com.sun.jna.Pointer;
@@ -111,7 +111,7 @@ public class Control implements AutoCloseable {
 	 * @param groundCallback      callback to implement external functions
 	 * @param groundCallbackData user data for ground_callback
 	 */
-	public void ground(Part[] parts, GroundCallbackT groundCallback,
+	public void ground(PartSt[] parts, GroundCallback groundCallback,
 			Pointer groundCallbackData) {
 		long partsSize = (parts == null ? 0 : parts.length);
 		BaseClingo.controlGround(this.control, parts, partsSize, groundCallback, groundCallbackData);
@@ -195,7 +195,7 @@ public class Control implements AutoCloseable {
 	 * If the sequential flag is set to true, the propagator is called sequentially
 	 * when solving with multiple threads.
 	 * <p>
-	 * See the @ref Propagator module for more information.
+	 * See the @ref PropagatorSt module for more information.
 	 * 
 	 * @param propagator the propagator
 	 * @param data       user data passed to the propagator functions
@@ -224,13 +224,13 @@ public class Control implements AutoCloseable {
 	/**
 	 * Get a statistics object to inspect solver statistics.
 	 * <p>
-	 * Statistics are updated after a solve call.
+	 * StatisticsSt are updated after a solve call.
 	 * <p>
-	 * See the @ref Statistics module for more information.
+	 * See the @ref StatisticsSt module for more information.
 	 * <p>
 	 * 
 	 * @attention The level of detail of the statistics depends on the stats option
-	 *            (which can be set using @ref Configuration module or passed as an
+	 *            (which can be set using @ref ConfigurationSt module or passed as an
 	 *            option when @link clingo_control_new creating the control
 	 *            object@endlink). The default level zero only provides basic
 	 *            statistics, level one provides extended and accumulated
@@ -269,7 +269,7 @@ public class Control implements AutoCloseable {
 	/**
 	 * Get a configuration object to change the solver configuration.
 	 * <p>
-	 * See the @ref Configuration module for more information.
+	 * See the @ref ConfigurationSt module for more information.
 	 * 
 	 * @return the configuration object
 	 */
@@ -378,7 +378,7 @@ public class Control implements AutoCloseable {
 	/**
 	 * Get an object to inspect theory atoms that occur in the grounding.
 	 * <p>
-	 * See the @ref TheoryAtoms module for more information.
+	 * See the @ref TheoryAtomsSt module for more information.
 	 * 
 	 * @return the theory atoms object
 	 */
@@ -403,7 +403,7 @@ public class Control implements AutoCloseable {
 	/**
 	 * Get an object to add ground directives to the program.
 	 * <p>
-	 * See the @ref ProgramBuilder module for more information.
+	 * See the @ref ProgramBuilderSt module for more information.
 	 * 
 	 * @return the backend object
 	 */
@@ -414,7 +414,7 @@ public class Control implements AutoCloseable {
 	/**
 	 * Get an object to add non-ground directives to the program.
 	 * <p>
-	 * See the @ref ProgramBuilder module for more information.
+	 * See the @ref ProgramBuilderSt module for more information.
 	 * 
 	 * @return the program builder object
 	 */
@@ -423,12 +423,12 @@ public class Control implements AutoCloseable {
 	}
 
 	public void ground() {
-        Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, 0L);
+        PartSt[] parts = new PartSt[1];
+        parts[0] = new PartSt(name, null, 0L);
         BaseClingo.controlGround(this.control, parts, 1L, null, null);
 	}
 
-	public void ground(GroundCallbackT groundCallbackT) {
+	public void ground(GroundCallback groundCallbackT) {
 		// TODO Auto-generated method stub
 		
 	}

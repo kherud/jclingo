@@ -32,7 +32,7 @@ package org.potassco.cpp;
 //!
 //! The documentation is structured into different modules.
 //! To get an overview, checkout the [Modules](modules.html) page.
-//! To get started, take a look at the documentation of the @ref Control module.
+//! To get started, take a look at the documentation of the @ref ControlSt module.
 //!
 //! The source code of clingo is available on [github.com/potassco/clingo](https://github.com/potassco/clingo).
 //!
@@ -125,7 +125,7 @@ public static final typedef<uint32_t> clingo_atom_t = null;
 public static final typedef<uint32_t> clingo_id_t = null;
 //! Signed integer type for weights in sum aggregates and minimize constraints.
 public static final typedef<int32_t> clingo_weight_t = null;
-//! A Literal with an associated weight.
+//! A LiteralSt with an associated weight.
 /* typedef struct clingo_weighted_literal {
     clingo_literal_t literal;
     clingo_weight_t weight;
@@ -254,7 +254,7 @@ public static final typedef<c_int> clingo_truth_value_t = null;
 //! represent classical negation).
 public static final typedef<uint64_t> clingo_signature_t = null;
 
-//! @name Signature Functions
+//! @name SignatureSt Functions
 //! @{
 
 //! Create a new signature.
@@ -530,7 +530,7 @@ public bool clingo_parse_term(final c_char p_string, clingo_logger_t logger, c_v
 //! Inspection of atoms occurring in ground logic programs.
 //!
 //! For an example, see @ref symbolic-atoms.c.
-//! @ingroup Control
+//! @ingroup ControlSt
 
 //! @addtogroup SymbolicAtoms
 //! @{
@@ -616,8 +616,8 @@ public bool clingo_symbolic_atoms_is_fact(final clingo_symbolic_atoms_t p_atoms,
 public bool clingo_symbolic_atoms_is_external(final clingo_symbolic_atoms_t p_atoms, clingo_symbolic_atom_iterator_t iterator, bool p_external); // CLINGO_VISIBILITY_DEFAULT bool clingo_symbolic_atoms_is_external(clingo_symbolic_atoms_t const *atoms, clingo_symbolic_atom_iterator_t iterator, bool *external);
 //! Returns the (numeric) aspif literal corresponding to the given symbolic atom.
 //!
-//! Such a literal can be mapped to a solver literal (see the \ref Propagator
-//! module) or be used in rules in aspif format (see the \ref ProgramBuilder
+//! Such a literal can be mapped to a solver literal (see the \ref PropagatorSt
+//! module) or be used in rules in aspif format (see the \ref ProgramBuilderSt
 //! module).
 //!
 //! @param[in] atoms the target
@@ -677,9 +677,9 @@ public static final typedef<bool> clingo_symbol_callback_t = null; // typedef bo
 //!
 //! @verbatim@endverbatim
 //!
-//! This is a very simple example that uses the @link ProgramBuilder backend@endlink to let theory atoms affect answer sets.
+//! This is a very simple example that uses the @link ProgramBuilderSt backend@endlink to let theory atoms affect answer sets.
 //! In general, the backend can be used to implement a custom theory by translating it to a logic program.
-//! On the other hand, a @link Propagator propagator@endlink can be used to implement a custom theory without adding any constraints in advance.
+//! On the other hand, a @link PropagatorSt propagator@endlink can be used to implement a custom theory without adding any constraints in advance.
 //! Or both approaches can be combined.
 //!
 //! ## Output ##
@@ -688,15 +688,15 @@ public static final typedef<bool> clingo_symbol_callback_t = null; // typedef bo
 //! ./theory-atoms 0
 //! number of grounded theory atoms: 2
 //! theory atom b/1 has a guard: true
-//! Model: y
-//! Model: x y
+//! ModelSt: y
+//! ModelSt: x y
 //! ~~~~~~~~~~~~
 //!
 //! ## Code ##
 
-//! @defgroup TheoryAtoms Theory Atom Inspection
+//! @defgroup TheoryAtomsSt Theory Atom Inspection
 //! Inspection of theory atoms occurring in ground logic programs.
-//! @ingroup Control
+//! @ingroup ControlSt
 //!
 //! During grounding, theory atoms get consecutive numbers starting with zero.
 //! The total number of theory atoms can be obtained using clingo_theory_atoms_size().
@@ -707,7 +707,7 @@ public static final typedef<bool> clingo_symbol_callback_t = null; // typedef bo
 //!
 //! For an example, see @ref theory-atoms.c.
 
-//! @addtogroup TheoryAtoms
+//! @addtogroup TheoryAtomsSt
 //! @{
 
 //! Enumeration of theory term types.
@@ -921,13 +921,13 @@ public bool clingo_theory_atoms_atom_to_string(final clingo_theory_atoms_t p_ato
 //!
 //! ## Code ##
 
-//! @defgroup Propagator Theory Propagation
+//! @defgroup PropagatorSt Theory Propagation
 //! Extend the search with propagators for arbitrary theories.
 //!
 //! For an example, see @ref propagator.c.
-//! @ingroup Control
+//! @ingroup ControlSt
 
-//! @addtogroup Propagator
+//! @addtogroup PropagatorSt
 //! @{
 
 //! Represents a (partial) assignment of a particular solver.
@@ -941,7 +941,7 @@ public bool clingo_theory_atoms_atom_to_string(final clingo_theory_atoms_t p_ato
 //! Decision levels are consecutive numbers starting with zero up to and including the @link clingo_assignment_decision_level() current decision level@endlink.
 public static final typedef<struct> clingo_assignment_t = null;
 
-//! @name Assignment Functions
+//! @name AssignmentSt Functions
 //! @{
 
 //! Get the current decision level.
@@ -1091,7 +1091,7 @@ public static final typedef<c_int> clingo_weight_constraint_type_t = null;
 
 //! Object to initialize a user-defined propagator before each solving step.
 //!
-//! Each @link SymbolicAtoms symbolic@endlink or @link TheoryAtoms theory atom@endlink is uniquely associated with an aspif atom in form of a positive integer (@ref ::clingo_literal_t).
+//! Each @link SymbolicAtoms symbolic@endlink or @link TheoryAtomsSt theory atom@endlink is uniquely associated with an aspif atom in form of a positive integer (@ref ::clingo_literal_t).
 //! Aspif literals additionally are signed to represent default negation.
 //! Furthermore, there are non-zero integer solver literals (also represented using @ref ::clingo_literal_t).
 //! There is a surjective mapping from program atoms to solver literals.
@@ -1335,7 +1335,7 @@ public static final typedef<bool> clingo_propagator_check_callback_t = null; // 
 //! An instance of this struct has to be registered with a solver to implement a custom propagator.
 //!
 //! Not all callbacks have to be implemented and can be set to NULL if not needed.
-//! @see Propagator
+//! @see PropagatorSt
 //typedef struct clingo_propagator {
     //! This function is called once before each solving step.
     //! It is used to map relevant program literals to solver literals, add watches for solver literals, and initialize the data structures used during propagation.
@@ -1439,23 +1439,23 @@ public static final typedef<bool> clingo_propagator_check_callback_t = null; // 
 //!
 //! ~~~~~~~~~~~~
 //! ./backend 0
-//! Model: a b
-//! Model: a b c
-//! Model:
-//! Model: a
-//! Model: b
+//! ModelSt: a b
+//! ModelSt: a b c
+//! ModelSt:
+//! ModelSt: a
+//! ModelSt: b
 //! ~~~~~~~~~~~~
 //!
 //! ## Code ##
 
-//! @defgroup ProgramBuilder Program Building
+//! @defgroup ProgramBuilderSt Program Building
 //! Add non-ground program representations (ASTs) to logic programs or extend the ground (aspif) program.
-//! @ingroup Control
+//! @ingroup ControlSt
 //!
 //! For an example about ground logic programs, see @ref backend.c.
 //! For an example about non-ground logic programs, see @ref ast.c and the @ref AST module.
 
-//! @addtogroup ProgramBuilder
+//! @addtogroup ProgramBuilderSt
 //! @{
 
 //! Enumeration of different heuristic modifiers.
@@ -1603,23 +1603,23 @@ public bool clingo_backend_add_atom(clingo_backend_t p_backend, clingo_symbol_t 
 //!
 //! ~~~~~~~~
 //! ./configuration
-//! Model: a
-//! Model: b
+//! ModelSt: a
+//! ModelSt: b
 //! ~~~~~~~~
 //!
 //! ## Code ##
 
-//! @defgroup Configuration Solver Configuration
-//! Configuration of search and enumeration algorithms.
+//! @defgroup ConfigurationSt Solver ConfigurationSt
+//! ConfigurationSt of search and enumeration algorithms.
 //!
 //! Entries in a configuration are organized hierarchically.
 //! Subentries are either accessed by name for map entries or by offset for array entries.
 //! Value entries have a string value that can be inspected or modified.
 //!
 //! For an example, see @ref configuration.c.
-//! @ingroup Control
+//! @ingroup ControlSt
 
-//! @addtogroup Configuration
+//! @addtogroup ConfigurationSt
 //! @{
 
 //! Enumeration for entries of the configuration.
@@ -1772,8 +1772,8 @@ public bool clingo_configuration_value_set(clingo_configuration_t p_configuratio
 //!
 //! ~~~~~~~~
 //! ./statistics 0
-//! Model: a
-//! Model: b
+//! ModelSt: a
+//! ModelSt: b
 //! problem:
 //!   lp:
 //!     atoms:
@@ -1796,13 +1796,13 @@ public bool clingo_configuration_value_set(clingo_configuration_t p_configuratio
 //!
 //! ## Code ##
 
-//! @defgroup Statistics Statistics
+//! @defgroup StatisticsSt StatisticsSt
 //! Inspect search and problem statistics.
 //!
-//! @ingroup Control
+//! @ingroup ControlSt
 //! For an example, see @ref statistics.c.
 
-//! @addtogroup Statistics
+//! @addtogroup StatisticsSt
 //! @{
 
 //! Enumeration for entries of the statistics.
@@ -1960,13 +1960,13 @@ public bool clingo_statistics_value_set(clingo_statistics_t p_statistics, uint64
 //!
 //! ## Code ##
 
-//! @defgroup Model Model Inspection
+//! @defgroup ModelSt ModelSt Inspection
 //! Inspection of models and a high-level interface to add constraints during solving.
 //!
 //! For an example, see @ref model.c.
-//! @ingroup Control
+//! @ingroup ControlSt
 
-//! @addtogroup Model
+//! @addtogroup ModelSt
 //! @{
 
 //! Object to add clauses during search.
@@ -2114,7 +2114,7 @@ public bool clingo_solve_control_symbolic_atoms(final clingo_solve_control_t p_c
 //! Add a clause that applies to the current solving step during model
 //! enumeration.
 //!
-//! @note The @ref Propagator module provides a more sophisticated
+//! @note The @ref PropagatorSt module provides a more sophisticated
 //! interface to add clauses - even on partial assignments.
 //!
 //! @param[in] control the target
@@ -2130,7 +2130,7 @@ public bool clingo_solve_control_add_clause(clingo_solve_control_t p_control, fi
 
 // {{{1 solve result
 
-// NOTE: documented in Control Module
+// NOTE: documented in ControlSt Module
 /* enum clingo_solve_result_e {
     clingo_solve_result_satisfiable   = 1,
     clingo_solve_result_unsatisfiable = 2,
@@ -2169,7 +2169,7 @@ public static final typedef<unsigned> clingo_solve_result_bitset_t = null;
 //! as well as iteratively receiving models and solve results.
 //!
 //! For an example showing how to solve asynchronously, see @ref solve-async.c.
-//! @ingroup Control
+//! @ingroup ControlSt
 
 //! @addtogroup Solution
 //! @{
@@ -2291,12 +2291,12 @@ public bool clingo_solve_handle_close(clingo_solve_handle_t p_handle); // CLINGO
 //! ~~~~~~~~
 //! ./ast 0
 //! Solving with enable = false...
-//! Model:
+//! ModelSt:
 //! Solving with enable = true...
-//! Model: enable a
-//! Model: enable b
+//! ModelSt: enable a
+//! ModelSt: enable b
 //! Solving with enable = false...
-//! Model:
+//! ModelSt:
 //! ~~~~~~~~
 //!
 //! ## Code ##
@@ -3030,7 +3030,7 @@ public bool clingo_ast_unpool(clingo_ast_t p_ast, clingo_ast_unpool_type_bitset_
 
 //! @defgroup ProgramInspection Program Inspection
 //! Functions and data structures to inspect programs.
-//! @ingroup Control
+//! @ingroup ControlSt
 
 //! @addtogroup ProgramInspection
 //! @{
@@ -3242,18 +3242,18 @@ public bool clingo_ast_unpool(clingo_ast_t p_ast, clingo_ast_unpool_type_bitset_
 //!
 //! ~~~~~~~~~~~~
 //! ./control 0
-//! Model: a
-//! Model: b
+//! ModelSt: a
+//! ModelSt: b
 //! ~~~~~~~~~~~~
 //!
 //! ## Code ##
 
-//! @defgroup Control Grounding and Solving
+//! @defgroup ControlSt Grounding and Solving
 //! Functions to control the grounding and solving process.
 //!
 //! For an example, see @ref control.c.
 
-//! @addtogroup Control
+//! @addtogroup ControlSt
 //! @{
 
 //! @enum clingo_solve_result_e
@@ -3335,7 +3335,7 @@ public bool clingo_ast_unpool(clingo_ast_t p_ast, clingo_ast_unpool_type_bitset_
 //! ~~~~~~~~~~~~~~~
 public static final typedef<bool> clingo_ground_callback_t = null; // typedef bool (*clingo_ground_callback_t) (clingo_location_t const *location, char const *name, clingo_symbol_t const *arguments, size_t arguments_size, void *data, clingo_symbol_callback_t symbol_callback, void *symbol_callback_data);
 
-//! Control object holding grounding and solving state.
+//! ControlSt object holding grounding and solving state.
 public static final typedef<struct> clingo_control_t = null; // typedef struct clingo_control clingo_control_t;
 
 //! Create a new control object.
@@ -3481,7 +3481,7 @@ public bool clingo_control_release_external(clingo_control_t p_control, clingo_l
 //! If the sequential flag is set to true, the propagator is called
 //! sequentially when solving with multiple threads.
 //!
-//! See the @ref Propagator module for more information.
+//! See the @ref PropagatorSt module for more information.
 //!
 //! @param[in] control the target
 //! @param[in] propagator the propagator
@@ -3504,13 +3504,13 @@ public bool clingo_control_is_conflicting(final clingo_control_t p_control); // 
 
 //! Get a statistics object to inspect solver statistics.
 //!
-//! Statistics are updated after a solve call.
+//! StatisticsSt are updated after a solve call.
 //!
-//! See the @ref Statistics module for more information.
+//! See the @ref StatisticsSt module for more information.
 //!
 //! @attention
 //! The level of detail of the statistics depends on the stats option
-//! (which can be set using @ref Configuration module or passed as an option when @link clingo_control_new creating the control object@endlink).
+//! (which can be set using @ref ConfigurationSt module or passed as an option when @link clingo_control_new creating the control object@endlink).
 //! The default level zero only provides basic statistics,
 //! level one provides extended and accumulated statistics,
 //! and level two provides per-thread statistics.
@@ -3541,12 +3541,12 @@ public bool clingo_control_clasp_facade(clingo_control_t p_control, c_void p_p_c
 
 //! @}
 
-//! @name Configuration Functions
+//! @name ConfigurationSt Functions
 //! @{
 
 //! Get a configuration object to change the solver configuration.
 //!
-//! See the @ref Configuration module for more information.
+//! See the @ref ConfigurationSt module for more information.
 //!
 //! @param[in] control the target
 //! @param[out] configuration the configuration object
@@ -3630,7 +3630,7 @@ public bool clingo_control_has_const(final clingo_control_t p_control, final c_c
 public bool clingo_control_symbolic_atoms(final clingo_control_t p_control, final clingo_symbolic_atoms_t p_p_atoms); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_symbolic_atoms(clingo_control_t const *control, clingo_symbolic_atoms_t const **atoms);
 //! Get an object to inspect theory atoms that occur in the grounding.
 //!
-//! See the @ref TheoryAtoms module for more information.
+//! See the @ref TheoryAtomsSt module for more information.
 //!
 //! @param[in] control the target
 //! @param[out] atoms the theory atoms object
@@ -3651,7 +3651,7 @@ public bool clingo_control_register_observer(clingo_control_t p_control, final c
 
 //! Get an object to add ground directives to the program.
 //!
-//! See the @ref ProgramBuilder module for more information.
+//! See the @ref ProgramBuilderSt module for more information.
 //!
 //! @param[in] control the target
 //! @param[out] backend the backend object
@@ -3660,7 +3660,7 @@ public bool clingo_control_register_observer(clingo_control_t p_control, final c
 public bool clingo_control_backend(clingo_control_t p_control, final clingo_backend_t p_p_backend); // CLINGO_VISIBILITY_DEFAULT bool clingo_control_backend(clingo_control_t *control, clingo_backend_t **backend);
 //! Get an object to add non-ground directives to the program.
 //!
-//! See the @ref ProgramBuilder module for more information.
+//! See the @ref ProgramBuilderSt module for more information.
 //!
 //! @param[in] control the target
 //! @param[out] builder the program builder object
@@ -3694,7 +3694,7 @@ public bool clingo_control_program_builder(clingo_control_t p_control, clingo_pr
 //!
 //! Models       : 1+
 //! Calls        : 1
-//! Time         : 0.004s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+//! Time         : 0.004s (Solving: 0.00s 1st ModelSt: 0.00s Unsat: 0.00s)
 //! CPU Time     : 0.004s
 //! ~~~~~~~~~~~~
 //!
@@ -3761,7 +3761,7 @@ public static final typedef<bool> clingo_model_printer_t = null; // typedef bool
 //! Parameter option specifies the name(s) of the option.
 //! For example, "ping,p" adds the short option "-p" and its long form "--ping".
 //! It is also possible to associate an option with a help level by adding ",@l" to the option specification.
-//! Options with a level greater than zero are only shown if the argument to help is greater or equal to l.
+//! OptionsSt with a level greater than zero are only shown if the argument to help is greater or equal to l.
 //!
 //! @param[in] options object to register the option with
 //! @param[in] group options are grouped into sections as given by this string

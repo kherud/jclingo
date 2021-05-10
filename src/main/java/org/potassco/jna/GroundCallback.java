@@ -49,8 +49,8 @@ import com.sun.jna.Pointer;
  * @author Josef Schneeberger
  * {@link clingo_h#clingo_ground_callback_t}
  */
-public abstract class GroundCallbackT implements Callback {
-    public abstract boolean call(Pointer location, String name, Pointer arguments, long argumentsSize, Pointer data, SymbolCallbackT symbolCallback, Pointer symbolCallbackData);
+public abstract class GroundCallback implements Callback {
+    public abstract boolean call(Pointer location, String name, Pointer arguments, long argumentsSize, Pointer data, SymbolCallback symbolCallback, Pointer symbolCallbackData);
 
     /**
      * @param symbols array of symbols
@@ -59,7 +59,7 @@ public abstract class GroundCallbackT implements Callback {
      * @return
      */
  // typedef bool (*clingo_ground_callback_t) (clingo_location_t const *location, char const *name, clingo_symbol_t const *arguments, size_t arguments_size, void *data, clingo_symbol_callback_t symbol_callback, void *symbol_callback_data);
-    public boolean callback(Pointer location, String name, Pointer arguments, long argumentsSize, Pointer data, SymbolCallbackT symbolCallback, Pointer symbolCallbackData) {
+    public boolean callback(Pointer location, String name, Pointer arguments, long argumentsSize, Pointer data, SymbolCallback symbolCallback, Pointer symbolCallbackData) {
         return call(location, name, arguments, argumentsSize, data, symbolCallback, symbolCallbackData);
     }
 }

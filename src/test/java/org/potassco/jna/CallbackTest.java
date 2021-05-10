@@ -14,8 +14,8 @@ public class CallbackTest {
 		String name = "base";
 		Pointer control = BaseClingo.control(null, null, null, 0);
 		BaseClingo.controlAdd(control, name, null, "a. b.");
-        Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, 0L);
+        PartSt[] parts = new PartSt[1];
+        parts[0] = new PartSt(name, null, 0L);
 		BaseClingo.controlGround(control, parts, 1L, null, null);
 		Solution solution = new Solution();
 //		ClingoLibrary.clingo_solve_event_callback_t notify = new ClingoLibrary.clingo_solve_event_callback_t() {

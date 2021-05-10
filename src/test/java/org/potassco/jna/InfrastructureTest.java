@@ -109,7 +109,7 @@ public class InfrastructureTest {
 		int root = BaseClingo.configurationRoot(conf);
 		assertEquals(root, BaseClingo.configurationRoot(conf));
 		assertEquals(ConfigurationType.MAP, BaseClingo.configurationType(conf, root));
-		assertEquals("Options", BaseClingo.configurationDescription(conf, root));
+		assertEquals("OptionsSt", BaseClingo.configurationDescription(conf, root));
 	}
 
 	/**

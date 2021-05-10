@@ -24,12 +24,12 @@ import com.sun.jna.Structure;
  * @author Josef Schneeberger
  * {@link clingo_h#clingo_part_t}
  */
-public class Part extends Structure {
+public class PartSt extends Structure {
 	public String name;
 	public Pointer params;
 	public long size;
 
-	public Part(String name, Pointer params, long size) {
+	public PartSt(String name, Pointer params, long size) {
 		super();
 		this.name = name;
 		this.params = params;

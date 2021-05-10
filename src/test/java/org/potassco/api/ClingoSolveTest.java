@@ -8,9 +8,9 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.potassco.dto.Solution;
-import org.potassco.jna.GroundCallbackT;
-import org.potassco.jna.Part;
-import org.potassco.jna.SymbolCallbackT;
+import org.potassco.jna.GroundCallback;
+import org.potassco.jna.PartSt;
+import org.potassco.jna.SymbolCallback;
 
 import com.sun.jna.Pointer;
 
@@ -22,8 +22,8 @@ public class ClingoSolveTest {
 		Clingo clingo = new Clingo();
 		Control control = clingo.control(null);
 		control.add(name, null, "a. b.");
-        Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, 0L);
+        PartSt[] parts = new PartSt[1];
+        parts[0] = new PartSt(name, null, 0L);
 		control.ground();
 		Solution solution = control.solve();
 		assertEquals(2, solution.getSize());
@@ -83,11 +83,11 @@ public class ClingoSolveTest {
 		control.add(name,
 				null,
 				"{elected(ann; bob; carol; dan; elaine; fred)} = 3.");
-		control.ground(new GroundCallbackT() {
+		control.ground(new GroundCallback() {
 			@Override
 			public boolean call(Pointer location, String name, Pointer arguments, long argumentsSize, Pointer data,
-					SymbolCallbackT symbolCallback, Pointer symbolCallbackData) {
-				System.out.println("GroundCallbackT");
+					SymbolCallback symbolCallback, Pointer symbolCallbackData) {
+				System.out.println("GroundCallback");
 				return true;
 			}
 		});

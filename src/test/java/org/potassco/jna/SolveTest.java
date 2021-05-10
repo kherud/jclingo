@@ -23,8 +23,8 @@ public class SolveTest {
 		String name = "base";
 		Pointer control = BaseClingo.control(null, null, null, 0);
 		BaseClingo.controlAdd(control, name, null, "1 {a; b} 1. #show c : b. #show a/0.");
-        Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, 0L);
+        PartSt[] parts = new PartSt[1];
+        parts[0] = new PartSt(name, null, 0L);
 		BaseClingo.controlGround(control, parts, 1L, null, null);
 		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, 0, null, null);
 		boolean modelExits = true;
@@ -66,8 +66,8 @@ public class SolveTest {
 		String program = "1 {a; b} 1. #show c : b. #show a/0.";
 		Pointer control = BaseClingo.control(null, null, null, 0);
 		BaseClingo.controlAdd(control, name, null, program);
-        Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, 0L);
+        PartSt[] parts = new PartSt[1];
+        parts[0] = new PartSt(name, null, 0L);
         BaseClingo.controlGround(control, parts, 1L, null, null);
 		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, 0, null, null);
 		boolean modelExits = true;

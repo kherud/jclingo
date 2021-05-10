@@ -1,18 +1,29 @@
-package org.potassco.structs;
+package org.potassco.jna;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.potassco.cpp.clingo_h;
+import com.sun.jna.Callback;
+import org.potassco.jna.PropagatorSt.PropagatorCheckCallback;
+import org.potassco.jna.PropagatorSt.PropagatorDecideCallback;
+import org.potassco.jna.PropagatorSt.PropagatorInitCallback;
+import org.potassco.jna.PropagatorSt.PropagatorPropagateCallback;
+import org.potassco.jna.PropagatorSt.PropagatorUndoCallback;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
 /**
  * An instance of this struct has to be registered with a solver to implement a custom propagator.
  *
  * Not all callbacks have to be implemented and can be set to NULL if not needed.
- * @see Propagator
+ * @see PropagatorSt
  * @author Josef Schneeberger
  * {@link clingo_h#clingo_propagator}
  */
-public class Propagator extends Structure {
+public class PropagatorSt extends Structure {
+
 	/**
 	 * This function is called once before each solving step.
 	 * It is used to map relevant program literals to solver literals, add watches for solver literals, and initialize the data structures used during propagation.
@@ -26,7 +37,7 @@ public class Propagator extends Structure {
 	 * @see ::clingo_propagator_init_callback_t
 	 */
 	//  bool (*init) (clingo_propagate_init_t *init, void *data);
-//	public boolean init(PropagateInit init, Object data) {}
+//	public boolean init(PropagateInitSt init, Object data) {}
 	/**
 	 * Can be used to propagate solver literals given a @link clingo_assignment_t partial assignment@endlink.
 	 *
@@ -114,5 +125,45 @@ public class Propagator extends Structure {
 	 */
 	/*    bool (*decide) (clingo_id_t thread_id, clingo_assignment_t const *assignment, clingo_literal_t fallback, void *data, clingo_literal_t *decision);
 	} clingo_propagator_t; */
+
+	interface PropagatorDecideCallback extends Callback {
+		boolean callback(int init, int data);
+	}
+
+	interface PropagatorCheckCallback extends Callback {
+
+	}
+
+	interface PropagatorUndoCallback extends Callback {
+
+	}
+
+	interface PropagatorPropagateCallback extends Callback {
+
+	}
+
+	interface PropagatorInitCallback extends Callback {
+
+	}
+
+	public PropagatorInitCallback init;
+	public PropagatorPropagateCallback propagate;
+	public PropagatorUndoCallback undo;
+	public PropagatorCheckCallback check;
+	public PropagatorDecideCallback decide;
+	
+	public PropagatorSt(PropagatorInitCallback init, PropagatorPropagateCallback propagate, PropagatorUndoCallback undo,
+			PropagatorCheckCallback check, PropagatorDecideCallback decide) {
+		super();
+		this.init = init;
+		this.propagate = propagate;
+		this.undo = undo;
+		this.check = check;
+		this.decide = decide;
+	}
+
+	protected List<String> getFieldOrder() {
+		return Arrays.asList("init", "propagate", "undo", "check", "decide");
+	}
 
 }

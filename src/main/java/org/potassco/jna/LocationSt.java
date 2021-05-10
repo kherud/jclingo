@@ -24,7 +24,7 @@ import com.sun.jna.Structure;
  * @author Josef Schneeberger
  * {@link clingo_h#clingo_location_t}
  */
-public class Location extends Structure {
+public class LocationSt extends Structure {
 	public String begin_file;
 	public String end_file;
 	public long begin_line;
@@ -32,7 +32,7 @@ public class Location extends Structure {
 	public long begin_column;
 	public long end_column;
 	
-	public Location(String begin_file, String end_file, long begin_line, long end_line, long begin_column, long end_column) {
+	public LocationSt(String begin_file, String end_file, long begin_line, long end_line, long begin_column, long end_column) {
 		super();
 		this.begin_file = begin_file;
 		this.end_file = end_file;

@@ -42,7 +42,7 @@ public interface ClingoLibrary extends Library {
     // typedef<uint32_t> clingo_id_t = null;
     //! Signed integer type for weights in sum aggregates and minimize constraints.
     // typedef<int32_t> clingo_weight_t = null;
-    //! A Literal with an associated weight.
+    //! A LiteralSt with an associated weight.
     // typedef<struct> clingo_weighted_literal_t
     
     //! Enumeration of error codes.
@@ -70,7 +70,7 @@ public interface ClingoLibrary extends Library {
     // clingo_truth_value_e
     // clingo_truth_value_t
     
-    // Signature Functions
+    // SignatureSt Functions
 
     /** {@link clingo_h#clingo_signature_create} */
     int clingo_signature_create(String p_name, int arity, int positive, PointerByReference p_signature);
@@ -272,7 +272,7 @@ public interface ClingoLibrary extends Library {
     
     // public static final typedef<struct> clingo_assignment_t = null;
     
-    // Assignment Functions
+    // AssignmentSt Functions
 
     /** {@link clingo_h#clingo_assignment_decision_level} */
     public int clingo_assignment_decision_level(Pointer assignment);
@@ -533,7 +533,7 @@ public interface ClingoLibrary extends Library {
   	/** {@link clingo_h#clingo_backend_add_atom} */
 	public byte clingo_backend_add_atom(Pointer p_backend, int p_symbol, IntByReference p_atom);
 
-    // Configuration
+    // ConfigurationSt
 
     /** {@link clingo_h#clingo_configuration_root} */
     public byte clingo_configuration_root(Pointer p_configuration, IntByReference p_key);
@@ -719,12 +719,12 @@ public interface ClingoLibrary extends Library {
     //! ~~~~~~~~
     //! ./ast 0
     //! Solving with enable = false...
-    //! Model:
+    //! ModelSt:
     //! Solving with enable = true...
-    //! Model: enable a
-    //! Model: enable b
+    //! ModelSt: enable a
+    //! ModelSt: enable b
     //! Solving with enable = false...
-    //! Model:
+    //! ModelSt:
     //! ~~~~~~~~
     //!
     //! ## Code ##
@@ -1132,7 +1132,7 @@ public interface ClingoLibrary extends Library {
     // clingo_ast_callback_t
 
   	/** {@link clingo_h#clingo_ast_parse_string} */
-	public byte clingo_ast_parse_string(String p_program, AstCallback callback, String p_callback_data, Pointer logger, String p_logger_data, int message_limit);
+	public byte clingo_ast_parse_string(String p_program, AstCallback callback, OnStatementDataSt p_callback_data, Pointer logger, String p_logger_data, int message_limit);
 
   	/** {@link clingo_h#clingo_ast_parse_files} */
 	public byte clingo_ast_parse_files(String const_p_const_p_files, long size, AstCallback callback, String p_callback_data, Pointer logger, String p_logger_data, int message_limit);
@@ -1163,7 +1163,7 @@ public interface ClingoLibrary extends Library {
 	// TODO
     //! @defgroup ProgramInspection Program Inspection
     //! Functions and data structures to inspect programs.
-    //! @ingroup Control
+    //! @ingroup ControlSt
     
     //! @addtogroup ProgramInspection
     //! @{
@@ -1365,7 +1365,7 @@ public interface ClingoLibrary extends Library {
     
     // clingo_ground_program_observer_t
     
-    // Control
+    // ControlSt
     
     // clingo_solve_result_e
     // clingo_solve_result_bitset_t
@@ -1389,7 +1389,7 @@ public interface ClingoLibrary extends Library {
     public byte  clingo_control_add(Pointer p_control, String name, String[] parameters, long parameters_size, String program);
 
     /** {@link clingo_h#clingo_control_ground} */
-    public byte clingo_control_ground(Pointer p_control, Part[] p_parts, long parts_size, GroundCallbackT ground_callback, Pointer p_ground_callback_data);
+    public byte clingo_control_ground(Pointer p_control, PartSt[] p_parts, long parts_size, GroundCallback ground_callback, Pointer p_ground_callback_data);
     
     // Solving Functions
 
@@ -1420,7 +1420,7 @@ public interface ClingoLibrary extends Library {
     /** {@link clingo_h#clingo_control_clasp_facade} */
     public byte clingo_control_clasp_facade(Pointer p_control, PointerByReference p_p_clasp);
     
-    // Configuration Functions
+    // ConfigurationSt Functions
 
     /** {@link clingo_h#clingo_control_configuration} */
     public byte clingo_control_configuration(Pointer p_control, PointerByReference p_p_configuration);
@@ -1469,7 +1469,7 @@ public interface ClingoLibrary extends Library {
   	// clingo_application_t
 
     /** {@link clingo_h#clingo_options_add} */
-    public byte clingo_options_add(Pointer p_options, String p_group, String p_option, String p_description, OptionParseCallbackT p_parse /*(char const *value, void *data)*/, Pointer p_data, byte multi, String p_argument);
+    public byte clingo_options_add(Pointer p_options, String p_group, String p_option, String p_description, OptionParseCallback p_parse /*(char const *value, void *data)*/, Pointer p_data, byte multi, String p_argument);
 
     /** {@link clingo_h#clingo_options_add_flag} */
     public byte clingo_options_add_flag(Pointer p_options, String p_group, String p_option, String p_description, byte p_target);

@@ -1,4 +1,4 @@
-package org.potassco.structs;
+package org.potassco.jna;
 
 import org.potassco.cpp.clingo_h;
 
@@ -18,6 +18,6 @@ import com.sun.jna.Structure;
  * @author Josef Schneeberger
  * {@link clingo_h#clingo_assignment_t}
  */
-public class Assignment extends Structure {
+public class AssignmentSt extends Structure {
 
 }

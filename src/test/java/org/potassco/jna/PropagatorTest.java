@@ -57,7 +57,7 @@ class State extends Structure {
 		Pointer control = BaseClingo.control(null, null, null, 0);
 		
 
-		Propagator prop = new Propagator(null, null, null, null, null);
+		PropagatorSt prop = new PropagatorSt(null, null, null, null, null);
 		PropagatorData propData = new PropagatorData(null, 0L, null, 0L);
 		  
 //		BaseClingo.controlRegisterPropagator(control, prop, propData, false);
@@ -65,8 +65,8 @@ class State extends Structure {
 //		
 //		
 //		BaseClingo.controlAdd(control, name, params , "a. b.");
-//        Part[] parts = new Part[1];
-//        parts[0] = new Part(name, null, 0L);
+//        PartSt[] parts = new PartSt[1];
+//        parts[0] = new PartSt(name, null, 0L);
 //		BaseClingo.controlGround(control, parts, 1L, null, null);
 		
 	}

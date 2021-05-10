@@ -25,8 +25,8 @@ public class TheoryAtomsTest {
 				+ "}.");
 		BaseClingo.controlAdd(control, name, null, "{a; b}.");
 		BaseClingo.controlAdd(control, name, null, "&a { 1; 2,3: a,b }.");
-        Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, 0L);
+        PartSt[] parts = new PartSt[1];
+        parts[0] = new PartSt(name, null, 0L);
 		BaseClingo.controlGround(control, parts, 1L, null, null);
 		Pointer theoryAtoms = BaseClingo.controlTheoryAtoms(control);
 		assertEquals(1, BaseClingo.theoryAtomsSize(theoryAtoms));
@@ -58,8 +58,8 @@ public class TheoryAtomsTest {
 			    "}." +
 			    "x :- &a { 1+2 }." +
 			    "y :- &b(3) { } = 17.");
-        Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, 0L);
+        PartSt[] parts = new PartSt[1];
+        parts[0] = new PartSt(name, null, 0L);
 		BaseClingo.controlGround(control, parts, 1L, null, null);
 		Pointer theoryAtoms = BaseClingo.controlTheoryAtoms(control);
 		assertEquals(2, BaseClingo.theoryAtomsSize(theoryAtoms));

@@ -13,8 +13,8 @@ public class AtomsTest {
 		String name = "base";
 		Pointer control = BaseClingo.control(null, null, null, 0);
 		BaseClingo.controlAdd(control, name, null, "a. b. c. d. e.");
-        Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, 0L);
+        PartSt[] parts = new PartSt[1];
+        parts[0] = new PartSt(name, null, 0L);
 		BaseClingo.controlGround(control, parts, 1L, null, null);
 		Pointer atoms = BaseClingo.controlSymbolicAtoms(control);
 		assertEquals(5, BaseClingo.symbolicAtomsSize(atoms));
@@ -52,7 +52,7 @@ public class AtomsTest {
 	
 	@Test
 	public void testCallback() {
-		SymbolCallbackT sb = new SymbolCallbackT() {
+		SymbolCallback sb = new SymbolCallback() {
 			
 			@Override
 			public boolean call(Pointer symbols, Pointer symbolsSize, Pointer data) {
@@ -71,8 +71,8 @@ public class AtomsTest {
 				"#const n=6. "
 				+ "like(1,2; 3,4). "
 				+ "dislike(2,3; 1,3).");
-        Part[] parts = new Part[1];
-        parts[0] = new Part(name, null, 0L);
+        PartSt[] parts = new PartSt[1];
+        parts[0] = new PartSt(name, null, 0L);
 		BaseClingo.controlGround(control, parts, 1L, null, null);
 		String constName = "n";
 		assertTrue(BaseClingo.controlHasConst(control, constName));

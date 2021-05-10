@@ -12,7 +12,7 @@ import com.sun.jna.Pointer;
 //! @param[in] data user data for the callback
 //!
 //! @return whether the call was successful
-public abstract class MainFunctionCallbackT implements Callback {
+public abstract class MainFunctionCallback implements Callback {
     public abstract boolean call(int type, Pointer event, Pointer data, Pointer goon);
 
     public boolean callback(int type, Pointer event, Pointer data, Pointer goon) {

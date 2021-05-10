@@ -1,6 +1,22 @@
 package org.potassco.jna;
 
 /**
+ * C basic Types
+ * https://en.wikipedia.org/wiki/C_data_types
+ * https://stackoverflow.com/questions/11438794/is-the-size-of-c-int-2-bytes-or-4-bytes
+ * 
+ * <ul>
+ * <li>bool
+ * <li>int: Basic signed integer type. Capable of containing at least the [−32,767, +32,767] range. 16 bit
+ * <li>c_int
+ * <li>size_t: Unsigned integer. 16 bit
+ * <li>uint32_t
+ * <li>int32_t
+ * <li>uint64_t
+ * <li>unsigned: Basic unsigned integer type. Contains at least the [0, 65,535] range. 16 bit
+ * </ul>
+ * 
+ * 
  * Type mapping
  * <ul>
  * <li>bool: byte

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.potassco.enums.TruthValue;
 
 import com.sun.jna.Pointer;
 
@@ -41,6 +42,7 @@ public class AtomsTest {
 			assertEquals(strArray[j], BaseClingo.symbolName(s));
 			j++;
 		}
+// iteratorEnd points to the last+1 atom
 //		long symbol3 = BaseClingo.symbolicAtomsSymbol(atoms, iteratorEnd);
 //		assertEquals("e", BaseClingo.symbolName(symbol3));
 		Pointer iteratorFind = BaseClingo.symbolicAtomsFind(atoms, symbol2);
@@ -75,7 +77,10 @@ public class AtomsTest {
 		assertEquals("q", BaseClingo.symbolName(c));
 		assertTrue(BaseClingo.symbolicAtomsIsExternal(atoms, a4));
 		assertTrue(BaseClingo.symbolicAtomsIsValid(atoms, a4));
-		System.out.println(BaseClingo.symbolicAtomsLiteral(atoms, a4));
+//		System.out.println(BaseClingo.symbolicAtomsLiteral(atoms, a4));
+		int a4literal = BaseClingo.symbolicAtomsLiteral(atoms, a4);
+		BaseClingo.controlAssignExternal(control, a4literal, TruthValue.FREE);
+		// TODO: test if successful
 		Pointer[] s = BaseClingo.symbolicAtomsSignatures(atoms);
 		String[] strArray = { "p", "q", "r" };
 		for (int i = 0; i < s.length; i++) {
@@ -84,6 +89,11 @@ public class AtomsTest {
 			assertEquals(true, BaseClingo.signatureIsPositive(s[i]));
 		}
 	}
+
+	/**
+	 * TODO {@link BaseClingo#controlAssignExternal(Pointer, int, org.potassco.base.enums.TruthValue)} 
+	 * TODO {@link BaseClingo#controlReleaseExternal(Pointer, int)} 
+	 */
 	
 	@Test
 	public void testConstants() {

@@ -187,7 +187,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_symbolic_atoms_is_external(Pointer p_atoms, Pointer iterator, ByteByReference p_external);
 
     /** {@link clingo_h#clingo_symbolic_atoms_literal} */
-    public byte clingo_symbolic_atoms_literal(Pointer p_atoms, Pointer iterator, PointerByReference p_literal);
+    public byte clingo_symbolic_atoms_literal(Pointer p_atoms, Pointer iterator, IntByReference p_literal);
 
     /** {@link clingo_h#clingo_symbolic_atoms_signatures_size} */
     public byte clingo_symbolic_atoms_signatures_size(Pointer p_atoms, SizeByReference p_size);

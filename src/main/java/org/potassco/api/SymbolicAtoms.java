@@ -117,7 +117,7 @@ public class SymbolicAtoms {
 	 * @param iterator iterator to the atom
 	 * @return the associated literal
 	 */
-	public Pointer symbolicAtomsLiteral(Pointer atoms, Pointer iterator) {
+	public int symbolicAtomsLiteral(Pointer atoms, Pointer iterator) {
 		return BaseClingo.symbolicAtomsLiteral(atoms, iterator);
 	}
 

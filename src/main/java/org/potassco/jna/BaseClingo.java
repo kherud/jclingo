@@ -143,14 +143,10 @@ public class BaseClingo {
 	/**
 	 * Create a new signature.
 	 *
-	 * @param[in] name name of the signature
-	 * @param[in] arity arity of the signature
-	 * @param[in] positive false if the signature has a classical negation sign
-	 * @param[out] signature the resulting signature
-	 * @return whether the call was successful; might set one of the following error
-	 *         codes: - ::clingo_error_bad_alloc
-	 *         {@link clingo_h#clingo_signature_create}
-	 * @return
+	 * @param name name of the signature
+	 * @param arity arity of the signature
+	 * @param positive false if the signature has a classical negation sign
+	 * @return the resulting signature
 	 * @throws ClingoException
 	 */
 	public static Pointer signatureCreate(String name, int arity, boolean positive) throws ClingoException {
@@ -673,11 +669,11 @@ public class BaseClingo {
 	 * @param iterator iterator to the atom
 	 * @return the associated literal
 	 */
-	public static Pointer symbolicAtomsLiteral(Pointer atoms, Pointer iterator) {
-		PointerByReference p_literal = new PointerByReference();
+	public static int symbolicAtomsLiteral(Pointer atoms, Pointer iterator) {
+		IntByReference literal = new IntByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_symbolic_atoms_literal(atoms, iterator, p_literal);
-		return p_literal.getValue();
+		byte success = clingoLibrary.clingo_symbolic_atoms_literal(atoms, iterator, literal);
+		return literal.getValue();
 	}
 
 	/**

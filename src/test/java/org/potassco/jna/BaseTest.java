@@ -48,21 +48,4 @@ public class BaseTest {
 		assertTrue(BaseClingo.controlIsConflicting(control));
 	}
 
-	/**
-	 * TODO {@link BaseClingo#controlAssignExternal(Pointer, int, org.potassco.base.enums.TruthValue)} 
-	 * TODO {@link BaseClingo#controlReleaseExternal(Pointer, int)} 
-	 */
-	@Test
-	public void testExternalAtoms() {
-		String name = "base";
-		Pointer control = BaseClingo.control(null, null, null, 0);
-		BaseClingo.controlAdd(control, name,
-				null,
-				"p(1). p(2). p(3). "
-				+ "#external q(X) : p(X). "
-				+ "q(1). "
-				+ "r(X) :- q(X).");
-//		BaseClingo.ground(name);
-	}
-
 }

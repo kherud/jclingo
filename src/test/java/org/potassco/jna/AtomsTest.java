@@ -67,20 +67,22 @@ public class AtomsTest {
 
 		List<Pointer> ourAtoms = new ArrayList<Pointer>(); 
 		Pointer iteratorEnd = BaseClingo.symbolicAtomsEnd(atoms);
+		int j = 1;
 		for (Pointer i = BaseClingo.symbolicAtomsBegin(atoms, null);
 				!BaseClingo.symbolicAtomsIteratorIsEqualTo(atoms, i, iteratorEnd);
 				i = BaseClingo.symbolicAtomsNext(atoms, i)) {
 			ourAtoms.add(i);
+			assertEquals(j++, BaseClingo.symbolicAtomsLiteral(atoms, i));
 		}
 		Pointer a4 = ourAtoms.get(4);
 		long c = BaseClingo.symbolicAtomsSymbol(atoms, a4);
 		assertEquals("q", BaseClingo.symbolName(c));
 		assertTrue(BaseClingo.symbolicAtomsIsExternal(atoms, a4));
 		assertTrue(BaseClingo.symbolicAtomsIsValid(atoms, a4));
-//		System.out.println(BaseClingo.symbolicAtomsLiteral(atoms, a4));
 		int a4literal = BaseClingo.symbolicAtomsLiteral(atoms, a4);
 		BaseClingo.controlAssignExternal(control, a4literal, TruthValue.FREE);
 		// TODO: test if successful
+		//  {@link BaseClingo#controlReleaseExternal(Pointer, int)} 
 		Pointer[] s = BaseClingo.symbolicAtomsSignatures(atoms);
 		String[] strArray = { "p", "q", "r" };
 		for (int i = 0; i < s.length; i++) {
@@ -90,11 +92,6 @@ public class AtomsTest {
 		}
 	}
 
-	/**
-	 * TODO {@link BaseClingo#controlAssignExternal(Pointer, int, org.potassco.base.enums.TruthValue)} 
-	 * TODO {@link BaseClingo#controlReleaseExternal(Pointer, int)} 
-	 */
-	
 	@Test
 	public void testConstants() {
 		String name = "base";

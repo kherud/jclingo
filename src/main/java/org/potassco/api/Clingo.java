@@ -631,7 +631,7 @@ public class Clingo {
 	 * @return the resulting size
 	 */
 	public SizeT clingoStatisticsArraySize(Pointer statistics, long key) {
-		return BaseClingo.clingoStatisticsArraySize(statistics, key);
+		return BaseClingo.statisticsArraySize(statistics, key);
 	}
 
 	/**

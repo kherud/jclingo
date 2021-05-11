@@ -2017,7 +2017,7 @@ public class BaseClingo {
 	 * @param key        the key
 	 * @return the resulting size
 	 */
-	public static SizeT clingoStatisticsArraySize(Pointer statistics, long key) {
+	public static SizeT statisticsArraySize(Pointer statistics, long key) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_array_size(statistics, key, size);

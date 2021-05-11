@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.potassco.api.ClingoException;
 import org.potassco.enums.ConfigurationType;
+import org.potassco.enums.SolveMode;
 import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;
 
@@ -119,20 +120,49 @@ public class InfrastructureTest {
 
 	/**
 	 * {@link https://github.com/potassco/clingo/blob/master/libpyclingo/clingo/tests/test_conf.py}
-	 * Produces
-	 * <block>:2:1-2: error: syntax error, unexpected EOF
+	 * https://potassco.org/clingo/c-api/5.5/statistics_8c-example.html
 	 */
 	@Test
 	public void testStatistics() {
 		String name = "base";
-//		String program = "a. b.";
-		Pointer control = BaseClingo.control(null, null, null, 0);
-		BaseClingo.controlAdd(control, name, null, name);
-//		BaseClingo.ground(name); - not used here!
+		String[] args = {"0"};
+		Pointer control = BaseClingo.control(args, null, null, 0);
+		Pointer config = BaseClingo.controlConfiguration(control);
+		int configRoot = BaseClingo.configurationRoot(config);
+		// and set the statistics level to one to get more statistics
+		int configSub = BaseClingo.configurationMapAt(config, configRoot, "stats");
+		BaseClingo.configurationValueSet(config, configSub, "1");
+		BaseClingo.controlAdd(control, name, null, "a :- not b. b :- not a.");
+		solve(control);
+		PartSt[] parts = new PartSt[1];
+		parts[0] = new PartSt(name, null, 0L);
+		BaseClingo.controlGround(control, parts, new SizeT(1L), null, null);
+		BaseClingo.controlSolve(control, SolveMode.YIELD, null, null, null, control);
 		Pointer stats = BaseClingo.controlStatistics(control);
 		long root = BaseClingo.statisticsRoot(stats);
 		assertEquals(StatisticsType.EMPTY, BaseClingo.statisticsType(stats, root));
-		assertEquals(0, BaseClingo.clingoStatisticsArraySize(stats, root).intValue());
+		switch (BaseClingo.statisticsType(stats, root)) {
+		case VALUE:
+			double v1 = BaseClingo.statisticsValueGet(stats, root);
+			break;
+
+		case ARRAY:
+			SizeT v2 = BaseClingo.statisticsArraySize(stats, root);
+			break;
+
+		case MAP:
+			SizeT v3 = BaseClingo.statisticsMapSize(stats, root);
+			break;
+
+		case EMPTY:
+			SizeT v4 = BaseClingo.statisticsMapSize(stats, root);
+			break;
+		}
+	}
+
+	private void solve(Pointer control) {
+		// TODO Auto-generated method stub
+		
 	}
 
 // TODO

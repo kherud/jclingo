@@ -68,7 +68,7 @@ public class Symbol {
 	 * @param positive  whether the symbol has a classical negation sign
 	 * @return the symbol
 	 */
-	public static Symbol symbolCreateFunction(String name, List<Long> arguments, boolean positive) {
+	public static Symbol symbolCreateFunction(String name, long[] arguments, boolean positive) {
 		return new Symbol(BaseClingo.symbolCreateFunction(name, arguments, positive));
 	}
 

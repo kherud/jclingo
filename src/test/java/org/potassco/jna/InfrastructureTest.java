@@ -2,9 +2,6 @@ package org.potassco.jna;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 import org.potassco.api.ClingoException;
 import org.potassco.enums.ConfigurationType;
@@ -41,9 +38,7 @@ public class InfrastructureTest {
 		int number = 42;
 		long num = BaseClingo.symbolCreateNumber(number);
 		assertEquals(number, BaseClingo.symbolNumber(num));
-		// TODO: Is this correct?
 		assertEquals(false, BaseClingo.symbolIsPositive(num));
-		// TODO: Is this correct?
 		assertEquals(false, BaseClingo.symbolIsNegative(num));
 		
 		String c = "clingo";
@@ -66,25 +61,36 @@ public class InfrastructureTest {
 		int number = 42;
 		long num = BaseClingo.symbolCreateNumber(number);
 		String c = "clingo";
-		long s = BaseClingo.symbolCreateString(c);
+		long sc = BaseClingo.symbolCreateString(c);
 		String p = "potassco";
-		List<Long> args = new ArrayList<Long>();
-		args.add(num);
-		args.add(s);
+		long[] args = new long[2];
+		args[0] = num;
+		args[1] = sc;
 		long f = BaseClingo.symbolCreateFunction(p, args, true);
+		assertTrue("potassco(42,\"clingo\")".equals(BaseClingo.symbolToString(f)));
+		String s5 = BaseClingo.symbolString(f);
 		assertEquals(p, BaseClingo.symbolName(f));
 		assertEquals(true, BaseClingo.symbolIsPositive(f));
-//		BaseClingo.symbolArguments(f, null, null); TODO: infuctional
+		long[] found = BaseClingo.symbolArguments(f);
+
+		assertNull(BaseClingo.symbolName(found[0]));
+		assertEquals(SymbolType.NUMBER, BaseClingo.symbolType(found[0]));
+		assertEquals("42", BaseClingo.symbolToString(found[0]));
+
+		assertNull(BaseClingo.symbolName(found[1]));
+		assertEquals(SymbolType.STRING, BaseClingo.symbolType(found[1]));
+		assertEquals("\"" + c + "\"", BaseClingo.symbolToString(found[1]));
+
 		assertEquals(SymbolType.FUNCTION, BaseClingo.symbolType(f));
 //	TODO:	assertEquals(p, BaseClingo.symbolToString(f, new Size(2)));
-		assertFalse(BaseClingo.symbolIsEqualTo(s, f));
+		assertFalse(BaseClingo.symbolIsEqualTo(sc, f));
 		assertTrue(BaseClingo.symbolIsEqualTo(num, BaseClingo.symbolCreateNumber(number)));
-		assertTrue(BaseClingo.symbolIsLessThan(s, f));
+		assertTrue(BaseClingo.symbolIsLessThan(sc, f));
 		SizeT hash = BaseClingo.symbolHash(f);
 		assertEquals(hash, BaseClingo.symbolHash(f));
 		long[] res = BaseClingo.symbolArguments(f);
 		for (int i = 0; i < res.length; i++) {
-			assertFalse(BaseClingo.symbolIsEqualTo(args.get(i), res[i]));
+			assertTrue(BaseClingo.symbolIsEqualTo(args[i], res[i]));
 		}
 	}
 
@@ -113,6 +119,8 @@ public class InfrastructureTest {
 
 	/**
 	 * {@link https://github.com/potassco/clingo/blob/master/libpyclingo/clingo/tests/test_conf.py}
+	 * Produces
+	 * <block>:2:1-2: error: syntax error, unexpected EOF
 	 */
 	@Test
 	public void testStatistics() {

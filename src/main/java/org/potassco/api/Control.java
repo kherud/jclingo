@@ -466,7 +466,7 @@ public class Control implements AutoCloseable {
 					long[] symbols = BaseClingo.modelSymbols(event, ShowType.SHOWN, size);
 					for (int i = 0; i < size.intValue(); ++i) {
 						String symbol = BaseClingo.symbolToString(symbols[i]);
-						solution.addSymbol(symbol.trim());
+						solution.addSymbol(symbol);
 					}
 					break;
 				case STATISTICS:

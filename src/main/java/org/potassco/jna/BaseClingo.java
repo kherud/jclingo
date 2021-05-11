@@ -1,7 +1,5 @@
 package org.potassco.jna;
 
-import java.util.List;
-
 import org.potassco.api.ClingoException;
 import org.potassco.cpp.clingo_h;
 import org.potassco.cpp.struct;
@@ -18,6 +16,7 @@ import org.potassco.enums.SymbolType;
 import org.potassco.enums.TermType;
 import org.potassco.enums.TruthValue;
 
+import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.StringArray;
 import com.sun.jna.ptr.ByteByReference;
@@ -316,20 +315,11 @@ public class BaseClingo {
 	 * @param positive  whether the symbol has a classical negation sign
 	 * @return a reference to the symbol
 	 */
-	public static long symbolCreateFunction(String name, List<Long> arguments, boolean positive) {
+	public static long symbolCreateFunction(String name, long[] arguments, boolean positive) {
 		LongByReference symb = new LongByReference();
-		int argSize = arguments.size();
-		SizeT argumentsSize = new SizeT(argSize);
-		LongByReference[] args = new LongByReference[argSize];
-		int i = 0;
-		for (long s : arguments) {
-			args[i] = new LongByReference();
-			args[i].setValue(s);
-			i++;
-		}
+		SizeT argumentsSize = new SizeT(arguments.length);
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_symbol_create_function(name, args, argumentsSize, (byte) (positive ? 1 : 0),
-				symb);
+		byte success = clingoLibrary.clingo_symbol_create_function(name, arguments, argumentsSize, (byte) (positive ? 1 : 0), symb);
 		return symb.getValue();
 	}
 
@@ -358,8 +348,7 @@ public class BaseClingo {
 		String[] pointer = new String[1];
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbol_name(symbol, pointer);
-		String v = pointer[0];
-		return v;
+		return pointer[0];
 	}
 
 	/**
@@ -419,7 +408,8 @@ public class BaseClingo {
 		byte success = clingoLibrary.clingo_symbol_arguments(symbol, p_p_arguments, p_arguments_size);
 		SizeT size = p_arguments_size.getValue();
 		Pointer p = p_p_arguments.getValue();
-		return p.getLongArray(0, size.intValue());
+		long[] result = p.getLongArray(0, size.intValue());
+		return result;
 	}
 
 	/**
@@ -457,10 +447,14 @@ public class BaseClingo {
 		@SuppressWarnings("unused")
 		byte success1 = clingoLibrary.clingo_symbol_to_string_size(symbol, size);
 		SizeT s = size.getValue();
-		byte[] str = new byte[s.intValue()];
+//		byte[] str = new byte[s.intValue()];
+//		@SuppressWarnings("unused")
+//		byte success2 = clingoLibrary.clingo_symbol_to_string(symbol, str, s);
+//		return new String(str);
+		Memory str = new Memory(s.intValue());
 		@SuppressWarnings("unused")
 		byte success2 = clingoLibrary.clingo_symbol_to_string(symbol, str, s);
-		return new String(str);
+		return str.getString(0);
 	}
 
 	// Symbol Comparison Functions
@@ -846,10 +840,10 @@ public class BaseClingo {
 		@SuppressWarnings("unused")
 		byte success1 = clingoLibrary.clingo_theory_atoms_term_to_string_size(atoms, term, size);
 		SizeT s = size.getValue();
-		byte[] str = new byte[s.intValue()];
+		Memory str = new Memory(s.intValue());
 		@SuppressWarnings("unused")
 		byte success2 = clingoLibrary.clingo_theory_atoms_term_to_string(atoms, term, str, s);
-		return new String(str);
+		return str.getString(0);
 	}
 
 	// Theory Element Inspection
@@ -940,10 +934,10 @@ public class BaseClingo {
 		@SuppressWarnings("unused")
 		byte success1 = clingoLibrary.clingo_theory_atoms_element_to_string_size(atoms, element, size);
 		SizeT s = size.getValue();
-		byte[] str = new byte[s.intValue()];
+		Memory str = new Memory(s.intValue());
 		@SuppressWarnings("unused")
 		byte success2 = clingoLibrary.clingo_theory_atoms_element_to_string(atoms, element, str, s);
-		return new String(str);
+		return str.getString(0);
 	}
 
 	// Theory Atom Inspection
@@ -1069,10 +1063,10 @@ public class BaseClingo {
 		@SuppressWarnings("unused")
 		byte success1 = clingoLibrary.clingo_theory_atoms_atom_to_string_size(atoms, atom, size);
 		SizeT s = size.getValue();
-		byte[] str = new byte[s.intValue()];
+		Memory str = new Memory(s.intValue());
 		@SuppressWarnings("unused")
 		byte success2 = clingoLibrary.clingo_theory_atoms_atom_to_string(atoms, atom, str, s);
-		return new String(str);
+		return str.getString(0);
 	}
 
 	/*
@@ -1961,10 +1955,10 @@ public class BaseClingo {
 	 * @return the resulting string value
 	 */
 	public static String configurationValueGet(Pointer configuration, int key, SizeT size) {
-		byte[] value = new byte[Math.toIntExact(size.intValue())];
+		Memory value = new Memory(size.intValue());
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_value_get(configuration, key, value, size);
-		return new String(value);
+		return value.getString(0);
 	}
 
 	/**
@@ -2666,10 +2660,10 @@ public class BaseClingo {
 		@SuppressWarnings("unused")
 		byte success1 = clingoLibrary.clingo_ast_to_string_size(ast, size);
 		SizeT s = size.getValue();
-		byte[] str = new byte[s.intValue()];
+		Memory str = new Memory(s.intValue());
 		@SuppressWarnings("unused")
 		byte success2 = clingoLibrary.clingo_ast_to_string(ast, str, s);
-		return new String(str);
+		return str.getString(0);
 	}
 	
     // Functions to inspect ASTs

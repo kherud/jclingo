@@ -35,11 +35,11 @@ public class TheoryAtomsTest {
 		assertEquals("a", BaseClingo.theoryAtomsTermName(theoryAtoms, 0));
 		long[] args = BaseClingo.theoryAtomsTermArguments(theoryAtoms, 0);
 		assertEquals(null, args);
-		assertEquals("a", BaseClingo.theoryAtomsTermToString(theoryAtoms, 0).trim());
+		assertEquals("a", BaseClingo.theoryAtomsTermToString(theoryAtoms, 0));
 		long[] termIds = BaseClingo.theoryAtomsElementTuple(theoryAtoms, 0);
 		assertEquals(0, BaseClingo.theoryAtomsElementCondition(theoryAtoms, 0).length);
 		assertEquals(0, BaseClingo.theoryAtomsElementConditionId(theoryAtoms, 0));
-		assertEquals("1", BaseClingo.theoryAtomsElementToString(theoryAtoms, 0).trim());
+		assertEquals("1", BaseClingo.theoryAtomsElementToString(theoryAtoms, 0));
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class TheoryAtomsTest {
 		assertEquals(null, BaseClingo.theoryAtomsTermName(theoryAtoms, 0));
 		long[] args = BaseClingo.theoryAtomsTermArguments(theoryAtoms, 0);
 		assertEquals(null, args);
-		assertEquals("3", BaseClingo.theoryAtomsTermToString(theoryAtoms, 0).trim());
+		assertEquals("3", BaseClingo.theoryAtomsTermToString(theoryAtoms, 0));
 		long[] termIds = BaseClingo.theoryAtomsElementTuple(theoryAtoms, 0);
 		long[] condIds = BaseClingo.theoryAtomsElementCondition(theoryAtoms, 0);
 		int condId = BaseClingo.theoryAtomsElementConditionId(theoryAtoms, 0);

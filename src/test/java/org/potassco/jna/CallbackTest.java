@@ -28,7 +28,7 @@ public class CallbackTest {
 //				long[] symbols = BaseClingo.modelSymbols(event, ShowType.SHOWN, size);
 //				for (int i = 0; i < size; ++i) {
 //					String symbol = BaseClingo.symbolToString(symbols[i]);
-//					solution.addSymbol(symbol.trim());
+//					solution.addSymbol(symbol);
 //				}
 //				return true;
 //			}

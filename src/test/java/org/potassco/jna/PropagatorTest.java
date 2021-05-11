@@ -58,7 +58,7 @@ class State extends Structure {
 		
 
 		PropagatorSt prop = new PropagatorSt(null, null, null, null, null);
-		PropagatorData propData = new PropagatorData(null, new SizeT(), null, 0L);
+//		PropagatorData propData = new PropagatorData(null, new SizeT(), null, 0L);
 		  
 //		BaseClingo.controlRegisterPropagator(control, prop, propData, false);
 //		

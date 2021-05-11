@@ -5,6 +5,7 @@ import org.potassco.cpp.struct;
 import org.potassco.cpp.typedef;
 
 import com.sun.jna.Library;
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.StringArray;
@@ -112,7 +113,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_symbol_create_id(String p_name, byte positive, LongByReference p_symbol);
 
     /** {@link clingo_h#clingo_symbol_create_function} */
-    public byte clingo_symbol_create_function(String p_name, LongByReference[] p_arguments, SizeT arguments_size, byte positive, LongByReference p_symbol);
+    public byte clingo_symbol_create_function(String p_name, long[] p_arguments, SizeT arguments_size, byte positive, LongByReference p_symbol);
 
     // Symbol Inspection Functions
 
@@ -141,7 +142,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_symbol_to_string_size(long symbol, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_symbol_to_string} */
-    public byte clingo_symbol_to_string(long symbol, byte[] p_string, SizeT size);
+    public byte clingo_symbol_to_string(long symbol, Memory p_string, SizeT size);
     
     // Symbol Comparison Functions
 
@@ -221,7 +222,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_theory_atoms_term_to_string_size(Pointer p_atoms, int term, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_theory_atoms_term_to_string} */
-    public byte clingo_theory_atoms_term_to_string(Pointer p_atoms, int term, byte[] p_string, SizeT size);
+    public byte clingo_theory_atoms_term_to_string(Pointer p_atoms, int term, Memory p_string, SizeT size);
 
     // Theory Element Inspection
 
@@ -238,7 +239,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_theory_atoms_element_to_string_size(Pointer p_atoms, int element, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_theory_atoms_element_to_string} */
-    public byte clingo_theory_atoms_element_to_string(Pointer p_atoms, int element, byte[] p_string, SizeT size);
+    public byte clingo_theory_atoms_element_to_string(Pointer p_atoms, int element, Memory p_string, SizeT size);
 
     // Theory Atom Inspection
 
@@ -264,7 +265,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_theory_atoms_atom_to_string_size(Pointer p_atoms, int atom, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_theory_atoms_atom_to_string} */
-    public byte clingo_theory_atoms_atom_to_string(Pointer p_atoms, int atom, byte[] p_string, SizeT size);
+    public byte clingo_theory_atoms_atom_to_string(Pointer p_atoms, int atom, Memory p_string, SizeT size);
 
     // propagator
     
@@ -573,7 +574,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_configuration_value_get_size(Pointer p_configuration, int key, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_configuration_value_get} */
-    public byte clingo_configuration_value_get(Pointer p_configuration, int key, byte[] p_value, SizeT size);
+    public byte clingo_configuration_value_get(Pointer p_configuration, int key, Memory p_value, SizeT size);
 
     /** {@link clingo_h#clingo_configuration_value_set} */
     public byte clingo_configuration_value_set(Pointer p_configuration, int key, String p_value);
@@ -1030,7 +1031,7 @@ public interface ClingoLibrary extends Library {
 	public byte clingo_ast_to_string_size(Pointer p_ast, SizeByReference p_size);
 	
   	/** {@link clingo_h#clingo_ast_to_string} */
-	public byte clingo_ast_to_string(Pointer p_ast, byte[] p_string, SizeT size);
+	public byte clingo_ast_to_string(Pointer p_ast, Memory p_string, SizeT size);
     
     // Functions to inspect ASTs
 

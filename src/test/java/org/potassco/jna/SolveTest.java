@@ -120,7 +120,7 @@ public class SolveTest {
 //        for (int i = 0; i < size; ++i) {
 //            long len = BaseClingo.symbolToStringSize(symbols[i]);
 //            String symbol = BaseClingo.symbolToString(symbols[i], len);
-//            solution.addSymbol(symbol.trim());
+//            solution.addSymbol(symbol);
 //        }
 //		return true;
 //	}

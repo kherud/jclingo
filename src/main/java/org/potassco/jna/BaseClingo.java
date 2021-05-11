@@ -25,31 +25,28 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 
+//MIT License
+//Copyright 2021 Josef Schneeberger</br>
+//
+//Permission is hereby granted, free of charge, to any person obtaining a copy
+//of this software and associated documentation files (the "Software"), to deal
+//in the Software without restriction, including without limitation the rights
+//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//copies of the Software, and to permit persons to whom the Software is
+//furnished to do so, subject to the following conditions:</br>
+//
+//The above copyright notice and this permission notice shall be included in
+//all copies or substantial portions of the Software.</br>
+//
+//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//SOFTWARE.
+
 /**
- * MIT License</br>
- * Copyright 2021 Josef Schneeberger</br>
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:</br>
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.</br>
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- * <p>
- * BaseClingo is a singleton and holds the reference to the clingoLibrary.
- * 
  * @author Josef Schneeberger
  *
  */
@@ -164,7 +161,7 @@ public class BaseClingo {
 	 * @note The string is internalized and valid for the duration of the process.
 	 * 
 	 *       {@link clingo_h#clingo_signature_name}
-	 * @param signature [in] signature the target signature
+	 * @param signature  signature the target signature
 	 * @return the name of the signature
 	 */
 	public static String signatureName(Pointer signature) {
@@ -174,7 +171,7 @@ public class BaseClingo {
 	/**
 	 * Get the arity of a signature. {@link clingo_h#clingo_signature_arity}
 	 * 
-	 * @param signature [in] signature the target signature
+	 * @param signature  signature the target signature
 	 * @return the arity of the signature
 	 */
 	public static int signatureArity(Pointer signature) {
@@ -415,7 +412,7 @@ public class BaseClingo {
 	/**
 	 * Get the type of a symbol.
 	 * 
-	 * @param symbol [in] symbol the target symbol
+	 * @param symbol  symbol the target symbol
 	 * @return the type of the symbol
 	 */
 	public static SymbolType symbolType(long symbol) {
@@ -992,11 +989,11 @@ public class BaseClingo {
 	 * @param atom  id of the atom
 	 * @return whether the theory atom has a guard
 	 */
-	public static byte theoryAtomsAtomHasGuard(Pointer atoms, int atom) {
+	public static boolean theoryAtomsAtomHasGuard(Pointer atoms, int atom) {
 		ByteByReference hasGuard = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_theory_atoms_atom_has_guard(atoms, atom, hasGuard);
-		return hasGuard.getValue();
+		return hasGuard.getValue() == 1;
 	}
 
 	/**
@@ -1874,7 +1871,7 @@ public class BaseClingo {
 	 * 
 	 * @pre The @link clingo_configuration_type() type@endlink of the entry must
 	 *      be @ref ::clingo_configuration_type_map.
-	 * @param[in] configuration the target configuration
+	 * @param configuration the target configuration
 	 * @param configuration the target configuration
 	 * @param key           the key
 	 * @param offset        the offset of the name
@@ -1918,11 +1915,11 @@ public class BaseClingo {
 	 * @param key           the key
 	 * @return whether the entry has a value
 	 */
-	public static byte configurationValueIsAssigned(Pointer configuration, int key) {
+	public static boolean configurationValueIsAssigned(Pointer configuration, int key) {
 		ByteByReference assigned = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_value_is_assigned(configuration, key, assigned);
-		return assigned.getValue();
+		return assigned.getValue() == 1;
 	}
 
 	/**
@@ -1986,7 +1983,7 @@ public class BaseClingo {
 	 * @return the root key
 	 */
 	public static long statisticsRoot(Pointer statistics) {
-		IntByReference key = new IntByReference();
+		LongByReference key = new LongByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_root(statistics, key);
 		return key.getValue();
@@ -1995,8 +1992,8 @@ public class BaseClingo {
 	/**
 	 * Get the type of a key.
 	 * 
-	 * @param[in] statistics the target statistics
-	 * @param[in] key the key
+	 * @param statistics the target statistics
+	 * @param key the key
 	 * @return the resulting type
 	 */
 	public static StatisticsType statisticsType(Pointer statistics, long key) {
@@ -2026,19 +2023,17 @@ public class BaseClingo {
 
 	/**
 	 * Get the subkey at the given offset of an array entry.
-	 * <p>
 	 * 
 	 * @pre The @link clingo_statistics_type() type@endlink of the entry must
 	 *      be @ref ::clingo_statistics_type_array.
-	 * @param[in] statistics the target statistics
-	 * @param[in] key the key
-	 * @param[in] offset the offset in the array
-	 * @param[out] subkey the resulting subkey
-	 * @return whether the call was success
+	 * @param statistics the target statistics
+	 * @param key the key
+	 * @param offset the offset in the array
+	 * @return the resulting subkey
 	 */
 
-	public static int statisticsArrayAt(Pointer statistics, long key, SizeT offset) {
-		IntByReference subkey = new IntByReference();
+	public static long statisticsArrayAt(Pointer statistics, long key, SizeT offset) {
+		LongByReference subkey = new LongByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_array_at(statistics, key, offset, subkey);
 		return subkey.getValue();
@@ -2046,20 +2041,17 @@ public class BaseClingo {
 
 	/**
 	 * Create the subkey at the end of an array entry.
-	 * <p>
-	 * 
 	 * @pre The @link clingo_statistics_type() type@endlink of the entry must
 	 *      be @ref ::clingo_statistics_type_array.
-	 * @param[in] statistics the target statistics
-	 * @param[in] key the key
-	 * @param[in] type the type of the new subkey
-	 * @param[out] subkey the resulting subkey
-	 * @return whether the call was success
+	 * @param statistics the target statistics
+	 * @param key the key
+	 * @param type the type of the new subkey
+	 * @return the resulting subkey
 	 */
-	public static int statisticsArrayPush(Pointer statistics, long key, int type) {
-		IntByReference subkey = new IntByReference();
+	public static long statisticsArrayPush(Pointer statistics, long key, StatisticsType type) {
+		LongByReference subkey = new LongByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_statistics_array_push(statistics, key, type, subkey);
+		byte success = clingoLibrary.clingo_statistics_array_push(statistics, key, type.getValue(), subkey);
 		return subkey.getValue();
 	}
 
@@ -2067,14 +2059,12 @@ public class BaseClingo {
 
 	/**
 	 * Get the number of subkeys of a map entry.
-	 * <p>
 	 * 
 	 * @pre The @link clingo_statistics_type() type@endlink of the entry must
 	 *      be @ref ::clingo_statistics_type_map.
-	 * @param[in] statistics the target statistics
-	 * @param[in] key the key
-	 * @param[out] size the resulting number
-	 * @return whether the call was success
+	 * @param statistics the target statistics
+	 * @param key the key
+	 * @return the resulting number
 	 */
 	public static SizeT statisticsMapSize(Pointer statistics, long key) {
 		SizeByReference size = new SizeByReference();
@@ -2085,34 +2075,30 @@ public class BaseClingo {
 
 	/**
 	 * Test if the given map contains a specific subkey.
-	 * <p>
 	 * 
 	 * @pre The @link clingo_statistics_type() type@endlink of the entry must
 	 *      be @ref ::clingo_statistics_type_map.
-	 * @param[in] statistics the target statistics
-	 * @param[in] key the key
-	 * @param[in] name name of the subkey
-	 * @param[out] result true if the map has a subkey with the given name
-	 * @return whether the call was success
+	 * @param statistics the target statistics
+	 * @param key the key
+	 * @param name name of the subkey
+	 * @return true if the map has a subkey with the given name
 	 */
-	public static byte statisticsMapHasSubkey(Pointer statistics, long key, String name) {
+	public static boolean statisticsMapHasSubkey(Pointer statistics, long key, String name) {
 		ByteByReference result = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_map_has_subkey(statistics, key, name, result);
-		return result.getValue();
+		return result.getValue() == 1;
 	}
 
 	/**
 	 * Get the name associated with the offset-th subkey.
-	 * <p>
 	 * 
 	 * @pre The @link clingo_statistics_type() type@endlink of the entry must
 	 *      be @ref ::clingo_statistics_type_map.
-	 * @param[in] statistics the target statistics
-	 * @param[in] key the key
-	 * @param[in] offset the offset of the name
-	 * @param[out] name the resulting name
-	 * @return whether the call was success
+	 * @param statistics the target statistics
+	 * @param key the key
+	 * @param offset the offset of the name
+	 * @return name the resulting name
 	 */
 	public static String statisticsMapSubkeyName(Pointer statistics, long key, SizeT offset) {
 		String[] name = new String[1];
@@ -2123,19 +2109,17 @@ public class BaseClingo {
 
 	/**
 	 * Lookup a subkey under the given name.
-	 * <p>
 	 * 
 	 * @pre The @link clingo_statistics_type() type@endlink of the entry must
 	 *      be @ref ::clingo_statistics_type_map.
 	 * @note Multiple levels can be looked up by concatenating keys with a period.
-	 * @param[in] statistics the target statistics
-	 * @param[in] key the key
-	 * @param[in] name the name to lookup the subkey
-	 * @param[out] subkey the resulting subkey
-	 * @return whether the call was success
+	 * @param statistics the target statistics
+	 * @param key the key
+	 * @param name the name to lookup the subkey
+	 * @return the resulting subkey
 	 */
-	public static int statisticsMapAt(Pointer statistics, long key, String name) {
-		IntByReference subkey = new IntByReference();
+	public static long statisticsMapAt(Pointer statistics, long key, String name) {
+		LongByReference subkey = new LongByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_statistics_map_at(statistics, key, name, subkey);
 		return subkey.getValue();
@@ -2143,34 +2127,29 @@ public class BaseClingo {
 
 	/**
 	 * Add a subkey with the given name.
-	 * <p>
-	 * 
 	 * @pre The @link clingo_statistics_type() type@endlink of the entry must
 	 *      be @ref ::clingo_statistics_type_map.
-	 * @param[in] statistics the target statistics
-	 * @param[in] key the key
-	 * @param[in] name the name of the new subkey
-	 * @param[in] type the type of the new subkey
-	 * @param[out] subkey the index of the resulting subkey
-	 * @return whether the call was success
+	 * @param statistics the target statistics
+	 * @param key the key
+	 * @param name the name of the new subkey
+	 * @param type the type of the new subkey
+	 * @return the index of the resulting subkey
 	 */
-	public static int statisticsMapAddSubkey(Pointer statistics, long key, String name, int type) {
-		IntByReference subkey = new IntByReference();
+	public static long statisticsMapAddSubkey(Pointer statistics, long key, String name, StatisticsType type) {
+		LongByReference subkey = new LongByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_statistics_map_add_subkey(statistics, key, name, type, subkey);
+		byte success = clingoLibrary.clingo_statistics_map_add_subkey(statistics, key, name, type.getValue(), subkey);
 		return subkey.getValue();
 	}
 
 	/**
 	 * Get the value of the given entry.
-	 * <p>
 	 * 
 	 * @pre The @link clingo_statistics_type() type@endlink of the entry must
 	 *      be @ref ::clingo_statistics_type_value.
-	 * @param[in] statistics the target statistics
-	 * @param[in] key the key
-	 * @param[out] value the resulting value
-	 * @return whether the call was successful
+	 * @param statistics the target statistics
+	 * @param key the key
+	 * @return the resulting value
 	 */
 	public static double statisticsValueGet(Pointer statistics, long key) {
 		DoubleByReference value = new DoubleByReference();
@@ -2181,14 +2160,12 @@ public class BaseClingo {
 
 	/**
 	 * Set the value of the given entry.
-	 * <p>
 	 * 
 	 * @pre The @link clingo_statistics_type() type@endlink of the entry must
 	 *      be @ref ::clingo_statistics_type_value.
-	 * @param[in] statistics the target statistics
-	 * @param[in] key the key
-	 * @param[out] value the new value
-	 * @return whether the call was success
+	 * @param statistics the target statistics
+	 * @param key the key
+	 * @return the new value
 	 */
 	public static void statisticsValueSet(Pointer statistics, long key, double value) {
 		@SuppressWarnings("unused")
@@ -2226,7 +2203,7 @@ public class BaseClingo {
 		byte success = clingoLibrary.clingo_model_number(model, number);
 		return number.getValue();
 	}
-
+zusammenfassen und weiter
 	/**
 	 * Get the number of symbols of the selected types in the model.
 	 * 
@@ -2243,14 +2220,13 @@ public class BaseClingo {
 
 	/**
 	 * Get the symbols of the selected types in the model.
-	 * <p>
 	 * 
 	 * @note CSP assignments are represented using functions with name "$" where the
 	 *       first argument is the name of the CSP variable and the second one its
 	 *       value.
-	 * @param model [in] model the target
-	 * @param show  [in] show which symbols to select. Of {@link ShowType}
-	 * @param size  [in] size the number of selected symbols
+	 * @param model  model the target
+	 * @param show   show which symbols to select. Of {@link ShowType}
+	 * @param size   size the number of selected symbols
 	 * @return the resulting symbols as an array[size] of symbol references
 	 * @see clingo_model_symbols_size()
 	 */
@@ -2264,37 +2240,35 @@ public class BaseClingo {
 	/**
 	 * Constant time lookup to test whether an atom is in a model.
 	 *
-	 * @param[in] model the target
-	 * @param[in] atom the atom to lookup
-	 * @param[out] contained whether the atom is contained
-	 * @return whether the call was successful
+	 * @param model the target
+	 * @param atom the atom to lookup
+	 * @return whether the atom is contained
 	 */
-	public static byte modelContains(Pointer model, long atom) {
+	public static boolean modelContains(Pointer model, long atom) {
 		ByteByReference contained = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_contains(model, atom, contained);
-		return contained.getValue();
+		return contained.getValue() == 1;
 	}
 
 	/**
 	 * Check if a program literal is true in a model.
 	 *
-	 * @param[in] model the target
-	 * @param[in] literal the literal to lookup
-	 * @param[out] result whether the literal is true
-	 * @return whether the call was successful
+	 * @param model the target
+	 * @param literal the literal to lookup
+	 * @return  whether the literal is true
 	 */
-	public static byte modelIsTrue(Pointer model, int literal) {
+	public static boolean modelIsTrue(Pointer model, int literal) {
 		ByteByReference result = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_is_true(model, literal, result);
-		return result.getValue();
+		return result.getValue() == 1;
 	}
 
 	/**
 	 * Get the number of cost values of a model.
 	 *
-	 * @param[in] model the target
+	 * @param model the target
 	 * @param[out] size the number of costs
 	 * @return whether the call was successful
 	 */
@@ -2308,9 +2282,9 @@ public class BaseClingo {
 	/**
 	 * Get the cost vector of a model.
 	 *
-	 * @param[in] model the target
+	 * @param model the target
 	 * @param[out] costs the resulting costs
-	 * @param[in] size the number of costs
+	 * @param size the number of costs
 	 * @return whether the call was successful; might set one of the following error
 	 *         codes: - ::clingo_error_bad_alloc - ::clingo_error_runtime if the
 	 *         size is too small
@@ -2328,23 +2302,22 @@ public class BaseClingo {
 	/**
 	 * Whether the optimality of a model has been proven.
 	 *
-	 * @param[in] model the target
-	 * @param[out] proven whether the optimality has been proven
-	 * @return whether the call was successful
+	 * @param model the target
+	 * @return  whether the optimality has been proven
 	 *
 	 * @see clingo_model_cost()
 	 */
-	public static byte modelOptimalityProven(Pointer model) {
+	public static boolean modelOptimalityProven(Pointer model) {
 		ByteByReference proven = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_optimality_proven(model, proven);
-		return proven.getValue();
+		return proven.getValue() == 1;
 	}
 
 	/**
 	 * Get the id of the solver thread that found the model.
 	 *
-	 * @param[in] model the target
+	 * @param model the target
 	 * @param[out] id the resulting thread id
 	 * @return whether the call was successful
 	 */
@@ -2362,9 +2335,9 @@ public class BaseClingo {
 	 * is only meaningful if there is an underlying clingo application. Only models
 	 * passed to the ::clingo_solve_event_callback_t are extendable.
 	 *
-	 * @param[in] model the target
-	 * @param[in] symbols the symbols to add
-	 * @param[in] size the number of symbols to add
+	 * @param model the target
+	 * @param symbols the symbols to add
+	 * @param size the number of symbols to add
 	 * @return whether the call was successful
 	 */
 	public static void modelExtend(Pointer model, long symbols, SizeT size) {
@@ -2379,7 +2352,7 @@ public class BaseClingo {
 	 *
 	 * This object allows for adding clauses during model enumeration.
 	 * 
-	 * @param[in] model the target
+	 * @param model the target
 	 * @param[out] control the resulting solve control object
 	 * @return whether the call was successful
 	 */
@@ -2393,7 +2366,7 @@ public class BaseClingo {
 	/**
 	 * Get an object to inspect the symbolic atoms.
 	 *
-	 * @param[in] control the target
+	 * @param control the target
 	 * @param[out] atoms the resulting object
 	 * @return whether the call was successful
 	 */
@@ -2411,9 +2384,9 @@ public class BaseClingo {
 	 * @note The @ref PropagatorSt module provides a more sophisticated interface to
 	 *       add clauses - even on partial assignments.
 	 *
-	 * @param[in] control the target
-	 * @param[in] clause array of literals representing the clause
-	 * @param[in] size the size of the literal array
+	 * @param control the target
+	 * @param clause array of literals representing the clause
+	 * @param size the size of the literal array
 	 * @return whether the call was successful; might set one of the following error
 	 *         codes: - ::clingo_error_bad_alloc - ::clingo_error_runtime if adding
 	 *         the clause fails
@@ -3103,15 +3076,15 @@ public class BaseClingo {
     //!
     //! If the incremental flag is true, there can be multiple calls to @ref clingo_control_solve().
     //!
-    //! @param[in] incremental whether the program is incremental
-    //! @param[in] data user data for the callback
+    //! @param incremental whether the program is incremental
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*init_program)(bool incremental, void *data);
     //! Marks the beginning of a block of directives passed to the solver.
     //!
     //! @see @ref end_step
     //!
-    //! @param[in] data user data for the callback
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*begin_step)(void *data);
     //! Marks the end of a block of directives passed to the solver.
@@ -3120,119 +3093,119 @@ public class BaseClingo {
     //!
     //! @see @ref begin_step
     //!
-    //! @param[in] data user data for the callback
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*end_step)(void *data);
     
     //! Observe rules passed to the solver.
     //!
-    //! @param[in] choice determines if the head is a choice or a disjunction
-    //! @param[in] head the head atoms
-    //! @param[in] head_size the number of atoms in the head
-    //! @param[in] body the body literals
-    //! @param[in] body_size the number of literals in the body
-    //! @param[in] data user data for the callback
+    //! @param choice determines if the head is a choice or a disjunction
+    //! @param head the head atoms
+    //! @param head_size the number of atoms in the head
+    //! @param body the body literals
+    //! @param body_size the number of literals in the body
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*rule)(bool choice, clingo_atom_t const *head, size_t head_size, clingo_literal_t const *body, size_t body_size, void *data);
     //! Observe weight rules passed to the solver.
     //!
-    //! @param[in] choice determines if the head is a choice or a disjunction
-    //! @param[in] head the head atoms
-    //! @param[in] head_size the number of atoms in the head
-    //! @param[in] lower_bound the lower bound of the weight rule
-    //! @param[in] body the weighted body literals
-    //! @param[in] body_size the number of weighted literals in the body
-    //! @param[in] data user data for the callback
+    //! @param choice determines if the head is a choice or a disjunction
+    //! @param head the head atoms
+    //! @param head_size the number of atoms in the head
+    //! @param lower_bound the lower bound of the weight rule
+    //! @param body the weighted body literals
+    //! @param body_size the number of weighted literals in the body
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*weight_rule)(bool choice, clingo_atom_t const *head, size_t head_size, clingo_weight_t lower_bound, clingo_weighted_literal_t const *body, size_t body_size, void *data);
     //! Observe minimize constraints (or weak constraints) passed to the solver.
     //!
-    //! @param[in] priority the priority of the constraint
-    //! @param[in] literals the weighted literals whose sum to minimize
-    //! @param[in] size the number of weighted literals
-    //! @param[in] data user data for the callback
+    //! @param priority the priority of the constraint
+    //! @param literals the weighted literals whose sum to minimize
+    //! @param size the number of weighted literals
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*minimize)(clingo_weight_t priority, clingo_weighted_literal_t const* literals, size_t size, void *data);
     //! Observe projection directives passed to the solver.
     //!
-    //! @param[in] atoms the atoms to project on
-    //! @param[in] size the number of atoms
-    //! @param[in] data user data for the callback
+    //! @param atoms the atoms to project on
+    //! @param size the number of atoms
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*project)(clingo_atom_t const *atoms, size_t size, void *data);
     //! Observe shown atoms passed to the solver.
     //! \note Facts do not have an associated aspif atom.
     //! The value of the atom is set to zero.
     //!
-    //! @param[in] symbol the symbolic representation of the atom
-    //! @param[in] atom the aspif atom (0 for facts)
-    //! @param[in] data user data for the callback
+    //! @param symbol the symbolic representation of the atom
+    //! @param atom the aspif atom (0 for facts)
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*output_atom)(clingo_symbol_t symbol, clingo_atom_t atom, void *data);
     //! Observe shown terms passed to the solver.
     //!
-    //! @param[in] symbol the symbolic representation of the term
-    //! @param[in] condition the literals of the condition
-    //! @param[in] size the size of the condition
-    //! @param[in] data user data for the callback
+    //! @param symbol the symbolic representation of the term
+    //! @param condition the literals of the condition
+    //! @param size the size of the condition
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*output_term)(clingo_symbol_t symbol, clingo_literal_t const *condition, size_t size, void *data);
     //! Observe shown csp variables passed to the solver.
     //!
-    //! @param[in] symbol the symbolic representation of the variable
-    //! @param[in] value the value of the variable
-    //! @param[in] condition the literals of the condition
-    //! @param[in] size the size of the condition
-    //! @param[in] data user data for the callback
+    //! @param symbol the symbolic representation of the variable
+    //! @param value the value of the variable
+    //! @param condition the literals of the condition
+    //! @param size the size of the condition
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*output_csp)(clingo_symbol_t symbol, int value, clingo_literal_t const *condition, size_t size, void *data);
     //! Observe external statements passed to the solver.
     //!
-    //! @param[in] atom the external atom
-    //! @param[in] type the type of the external statement
-    //! @param[in] data user data for the callback
+    //! @param atom the external atom
+    //! @param type the type of the external statement
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*external)(clingo_atom_t atom, clingo_external_type_t type, void *data);
     //! Observe assumption directives passed to the solver.
     //!
-    //! @param[in] literals the literals to assume (positive literals are true and negative literals false for the next solve call)
-    //! @param[in] size the number of atoms
-    //! @param[in] data user data for the callback
+    //! @param literals the literals to assume (positive literals are true and negative literals false for the next solve call)
+    //! @param size the number of atoms
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*assume)(clingo_literal_t const *literals, size_t size, void *data);
     //! Observe heuristic directives passed to the solver.
     //!
-    //! @param[in] atom the target atom
-    //! @param[in] type the type of the heuristic modification
-    //! @param[in] bias the heuristic bias
-    //! @param[in] priority the heuristic priority
-    //! @param[in] condition the condition under which to apply the heuristic modification
-    //! @param[in] size the number of atoms in the condition
-    //! @param[in] data user data for the callback
+    //! @param atom the target atom
+    //! @param type the type of the heuristic modification
+    //! @param bias the heuristic bias
+    //! @param priority the heuristic priority
+    //! @param condition the condition under which to apply the heuristic modification
+    //! @param size the number of atoms in the condition
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*heuristic)(clingo_atom_t atom, clingo_heuristic_type_t type, int bias, unsigned priority, clingo_literal_t const *condition, size_t size, void *data);
     //! Observe edge directives passed to the solver.
     //!
-    //! @param[in] node_u the start vertex of the edge
-    //! @param[in] node_v the end vertex of the edge
-    //! @param[in] condition the condition under which the edge is part of the graph
-    //! @param[in] size the number of atoms in the condition
-    //! @param[in] data user data for the callback
+    //! @param node_u the start vertex of the edge
+    //! @param node_v the end vertex of the edge
+    //! @param condition the condition under which the edge is part of the graph
+    //! @param size the number of atoms in the condition
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*acyc_edge)(int node_u, int node_v, clingo_literal_t const *condition, size_t size, void *data);
     
     //! Observe numeric theory terms.
     //!
-    //! @param[in] term_id the id of the term
-    //! @param[in] number the value of the term
-    //! @param[in] data user data for the callback
+    //! @param term_id the id of the term
+    //! @param number the value of the term
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*theory_term_number)(clingo_id_t term_id, int number, void *data);
     //! Observe string theory terms.
     //!
-    //! @param[in] term_id the id of the term
-    //! @param[in] name the value of the term
-    //! @param[in] data user data for the callback
+    //! @param term_id the id of the term
+    //! @param name the value of the term
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*theory_term_string)(clingo_id_t term_id, char const *name, void *data);
     //! Observe compound theory terms.
@@ -3243,11 +3216,11 @@ public class BaseClingo {
     //! - if it is -3, then it is a list
     //! - otherwise, it is a function and name_id_or_type refers to the id of the name (in form of a string term)
     //!
-    //! @param[in] term_id the id of the term
-    //! @param[in] name_id_or_type the name or type of the term
-    //! @param[in] arguments the arguments of the term
-    //! @param[in] size the number of arguments
-    //! @param[in] data user data for the callback
+    //! @param term_id the id of the term
+    //! @param name_id_or_type the name or type of the term
+    //! @param arguments the arguments of the term
+    //! @param size the number of arguments
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*theory_term_compound)(clingo_id_t term_id, int name_id_or_type, clingo_id_t const *arguments, size_t size, void *data);
     //! Observe theory elements.
@@ -3257,27 +3230,27 @@ public class BaseClingo {
     //! @param terms_size the number of terms in the tuple
     //! @param condition the condition of the elemnt
     //! @param condition_size the number of literals in the condition
-    //! @param[in] data user data for the callback
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*theory_element)(clingo_id_t element_id, clingo_id_t const *terms, size_t terms_size, clingo_literal_t const *condition, size_t condition_size, void *data);
     //! Observe theory atoms without guard.
     //!
-    //! @param[in] atom_id_or_zero the id of the atom or zero for directives
-    //! @param[in] term_id the term associated with the atom
-    //! @param[in] elements the elements of the atom
-    //! @param[in] size the number of elements
-    //! @param[in] data user data for the callback
+    //! @param atom_id_or_zero the id of the atom or zero for directives
+    //! @param term_id the term associated with the atom
+    //! @param elements the elements of the atom
+    //! @param size the number of elements
+    //! @param data user data for the callback
     //! @return whether the call was successful
 // bool (*theory_atom)(clingo_id_t atom_id_or_zero, clingo_id_t term_id, clingo_id_t const *elements, size_t size, void *data);
     //! Observe theory atoms with guard.
     //!
-    //! @param[in] atom_id_or_zero the id of the atom or zero for directives
-    //! @param[in] term_id the term associated with the atom
-    //! @param[in] elements the elements of the atom
-    //! @param[in] size the number of elements
-    //! @param[in] operator_id the id of the operator (a string term)
-    //! @param[in] right_hand_side_id the id of the term on the right hand side of the atom
-    //! @param[in] data user data for the callback
+    //! @param atom_id_or_zero the id of the atom or zero for directives
+    //! @param term_id the term associated with the atom
+    //! @param elements the elements of the atom
+    //! @param size the number of elements
+    //! @param operator_id the id of the operator (a string term)
+    //! @param right_hand_side_id the id of the term on the right hand side of the atom
+    //! @param data user data for the callback
     //! @return whether the call was successful
     /*    bool (*theory_atom_with_guard)(clingo_id_t atom_id_or_zero, clingo_id_t term_id, clingo_id_t const *elements, size_t size, clingo_id_t operator_id, clingo_id_t right_hand_side_id, void *data);
     } clingo_ground_program_observer_t; */ public static final typedef<struct> clingo_ground_program_observer_t = null;
@@ -3787,11 +3760,11 @@ public class BaseClingo {
 	 * Run clingo with a customized main function (similar to python and lua
 	 * embedding).
 	 *
-	 * @param[in] application struct with callbacks to override default clingo
+	 * @param application struct with callbacks to override default clingo
 	 *            functionality
-	 * @param[in] arguments command line arguments
-	 * @param[in] size number of arguments
-	 * @param[in] data user data to pass to callbacks in application
+	 * @param arguments command line arguments
+	 * @param size number of arguments
+	 * @param data user data to pass to callbacks in application
 	 * @return exit code to return from main function
 	 */
 	public static int main(Pointer application, String arguments, SizeT size, Pointer data) {

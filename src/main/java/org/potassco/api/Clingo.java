@@ -354,7 +354,7 @@ public class Clingo {
 	 * @param atom  id of the atom
 	 * @return whether the theory atom has a guard
 	 */
-	public byte theoryAtomsAtomHasGuard(Pointer atoms, int atom) {
+	public boolean theoryAtomsAtomHasGuard(Pointer atoms, int atom) {
 		return BaseClingo.theoryAtomsAtomHasGuard(atoms, atom);
 	}
 
@@ -547,7 +547,7 @@ public class Clingo {
 	 * @param key           the key
 	 * @return whether the entry has a value
 	 */
-	public byte configurationValueIsAssigned(Pointer configuration, int key) {
+	public boolean configurationValueIsAssigned(Pointer configuration, int key) {
 		return BaseClingo.configurationValueIsAssigned(configuration, key);
 	}
 
@@ -647,23 +647,20 @@ public class Clingo {
 	 * @return whether the call was success
 	 */
 
-	public int statisticsArrayAt(Pointer statistics, long key, SizeT offset) {
+	public long statisticsArrayAt(Pointer statistics, long key, SizeT offset) {
 		return BaseClingo.statisticsArrayAt(statistics, key, offset);
 	}
 
 	/**
 	 * Create the subkey at the end of an array entry.
-	 * <p>
-	 * 
 	 * @pre The @link clingo_statistics_type() type@endlink of the entry must
 	 *      be @ref ::clingo_statistics_type_array.
-	 * @param[in] statistics the target statistics
-	 * @param[in] key the key
-	 * @param[in] type the type of the new subkey
-	 * @param[out] subkey the resulting subkey
-	 * @return whether the call was success
+	 * @param statistics the target statistics
+	 * @param key the key
+	 * @param type the type of the new subkey
+	 * @return the resulting subkey
 	 */
-	public int statisticsArrayPush(Pointer statistics, long key, int type) {
+	public long statisticsArrayPush(Pointer statistics, long key, StatisticsType type) {
 		return BaseClingo.statisticsArrayPush(statistics, key, type);
 	}
 
@@ -696,7 +693,7 @@ public class Clingo {
 	 * @param[out] result true if the map has a subkey with the given name
 	 * @return whether the call was success
 	 */
-	public byte statisticsMapHasSubkey(Pointer statistics, long key, String name) {
+	public boolean statisticsMapHasSubkey(Pointer statistics, long key, String name) {
 		return BaseClingo.statisticsMapHasSubkey(statistics, key, name);
 	}
 
@@ -729,24 +726,21 @@ public class Clingo {
 	 * @param[out] subkey the resulting subkey
 	 * @return whether the call was success
 	 */
-	public int statisticsMapAt(Pointer statistics, long key, String name) {
+	public long statisticsMapAt(Pointer statistics, long key, String name) {
 		return BaseClingo.statisticsMapAt(statistics, key, name);
 	}
 
 	/**
 	 * Add a subkey with the given name.
-	 * <p>
-	 * 
 	 * @pre The @link clingo_statistics_type() type@endlink of the entry must
 	 *      be @ref ::clingo_statistics_type_map.
-	 * @param[in] statistics the target statistics
-	 * @param[in] key the key
-	 * @param[in] name the name of the new subkey
-	 * @param[in] type the type of the new subkey
-	 * @param[out] subkey the index of the resulting subkey
-	 * @return whether the call was success
+	 * @param statistics the target statistics
+	 * @param key the key
+	 * @param name the name of the new subkey
+	 * @param type the type of the new subkey
+	 * @return the index of the resulting subkey
 	 */
-	public int statisticsMapAddSubkey(Pointer statistics, long key, String name, int type) {
+	public long statisticsMapAddSubkey(Pointer statistics, long key, String name, StatisticsType type) {
 		return BaseClingo.statisticsMapAddSubkey(statistics, key, name, type);
 	}
 

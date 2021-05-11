@@ -46,7 +46,7 @@ package org.potassco.jna;
  * <li>clingo_location_t - struct: LocationSt
  * <li>clingo_symbolic_atoms_t - struct
  * <li>clingo_weighted_literal_t - struct
- * <li>
+ * <li>clingo_statistics_t - struct
  * <li>
  * <li>
  * </ul>

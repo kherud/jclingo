@@ -581,9 +581,8 @@ public interface ClingoLibrary extends Library {
     
     // statistics
 
-
     /** {@link clingo_h#clingo_statistics_root} */
-    public byte clingo_statistics_root(Pointer statistics, IntByReference p_key);
+    public byte clingo_statistics_root(Pointer statistics, LongByReference p_key);
 
     /** {@link clingo_h#clingo_statistics_type} */
     public byte clingo_statistics_type(Pointer statistics, long key, IntByReference type);
@@ -594,10 +593,10 @@ public interface ClingoLibrary extends Library {
     public byte clingo_statistics_array_size(Pointer statistics, long key, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_statistics_array_at} */
-    public byte clingo_statistics_array_at(Pointer statistics, long key, SizeT offset, IntByReference p_subkey);
+    public byte clingo_statistics_array_at(Pointer statistics, long key, SizeT offset, LongByReference p_subkey);
 
     /** {@link clingo_h#clingo_statistics_array_push} */
-    public byte clingo_statistics_array_push(Pointer p_statistics, long key, int type, IntByReference p_subkey);
+    public byte clingo_statistics_array_push(Pointer p_statistics, long key, int type, LongByReference p_subkey);
     
     // Functions to access maps
 
@@ -611,10 +610,10 @@ public interface ClingoLibrary extends Library {
     public byte clingo_statistics_map_subkey_name(Pointer statistics, long key, SizeT offset, String[] p_p_name);
 
     /** {@link clingo_h#clingo_statistics_map_at} */
-    public byte clingo_statistics_map_at(Pointer statistics, long key, String p_name, IntByReference p_subkey);
+    public byte clingo_statistics_map_at(Pointer statistics, long key, String p_name, LongByReference p_subkey);
 
     /** {@link clingo_h#clingo_statistics_map_add_subkey} */
-    public byte clingo_statistics_map_add_subkey(Pointer p_statistics, long key, String p_name, int type, IntByReference p_subkey);
+    public byte clingo_statistics_map_add_subkey(Pointer p_statistics, long key, String p_name, int type, LongByReference p_subkey);
 
     // Functions to inspect and change values
 

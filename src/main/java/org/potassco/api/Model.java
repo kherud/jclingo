@@ -60,9 +60,9 @@ public class Model {
 	 * @note CSP assignments are represented using functions with name "$" where the
 	 *       first argument is the name of the CSP variable and the second one its
 	 *       value.
-	 * @param model [in] model the target
-	 * @param show  [in] show which symbols to select. Of {@link ShowType}
-	 * @param size  [in] size the number of selected symbols
+	 * @param model  model the target
+	 * @param show   show which symbols to select. Of {@link ShowType}
+	 * @param size   size the number of selected symbols
 	 * @return the resulting symbols as an array[size] of symbol references
 	 * @see clingo_model_symbols_size()
 	 */
@@ -73,31 +73,29 @@ public class Model {
 	/**
 	 * Constant time lookup to test whether an atom is in a model.
 	 *
-	 * @param[in] model the target
-	 * @param[in] atom the atom to lookup
-	 * @param[out] contained whether the atom is contained
-	 * @return whether the call was successful
+	 * @param model the target
+	 * @param atom the atom to lookup
+	 * @return whether the atom is contained
 	 */
-	public byte contains(long atom) {
+	public boolean contains(long atom) {
 		return BaseClingo.modelContains(this.pointer, atom);
 	}
 
 	/**
 	 * Check if a program literal is true in a model.
 	 *
-	 * @param[in] model the target
-	 * @param[in] literal the literal to lookup
-	 * @param[out] result whether the literal is true
-	 * @return whether the call was successful
+	 * @param model the target
+	 * @param literal the literal to lookup
+	 * @return whether the literal is true
 	 */
-	public byte isTrue(int literal) {
+	public boolean isTrue(int literal) {
 		return BaseClingo.modelIsTrue(this.pointer, literal);
 	}
 
 	/**
 	 * Get the number of cost values of a model.
 	 *
-	 * @param[in] model the target
+	 * @param model the target
 	 * @param[out] size the number of costs
 	 * @return whether the call was successful
 	 */
@@ -108,9 +106,9 @@ public class Model {
 	/**
 	 * Get the cost vector of a model.
 	 *
-	 * @param[in] model the target
+	 * @param model the target
 	 * @param[out] costs the resulting costs
-	 * @param[in] size the number of costs
+	 * @param size the number of costs
 	 * @return whether the call was successful; might set one of the following error
 	 *         codes: - ::clingo_error_bad_alloc - ::clingo_error_runtime if the
 	 *         size is too small
@@ -125,20 +123,19 @@ public class Model {
 	/**
 	 * Whether the optimality of a model has been proven.
 	 *
-	 * @param[in] model the target
-	 * @param[out] proven whether the optimality has been proven
-	 * @return whether the call was successful
+	 * @param model the target
+	 * @return whether the optimality has been proven
 	 *
 	 * @see clingo_model_cost()
 	 */
-	public byte optimalityProven() {
+	public boolean optimalityProven() {
 		return BaseClingo.modelOptimalityProven(this.pointer);
 	}
 
 	/**
 	 * Get the id of the solver thread that found the model.
 	 *
-	 * @param[in] model the target
+	 * @param model the target
 	 * @param[out] id the resulting thread id
 	 * @return whether the call was successful
 	 */
@@ -153,9 +150,9 @@ public class Model {
 	 * is only meaningful if there is an underlying clingo application. Only models
 	 * passed to the ::clingo_solve_event_callback_t are extendable.
 	 *
-	 * @param[in] model the target
-	 * @param[in] symbols the symbols to add
-	 * @param[in] size the number of symbols to add
+	 * @param model the target
+	 * @param symbols the symbols to add
+	 * @param size the number of symbols to add
 	 * @return whether the call was successful
 	 */
 	public void extend(long symbols, SizeT size) {
@@ -170,7 +167,7 @@ public class Model {
 	 *
 	 * This object allows for adding clauses during model enumeration.
 	 * 
-	 * @param[in] model the target
+	 * @param model the target
 	 * @param[out] control the resulting solve control object
 	 * @return whether the call was successful
 	 */

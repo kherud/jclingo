@@ -101,6 +101,9 @@ public class StatisticsTest {
 		assertEquals(3.0, tree.queryXpath("//lp/eqs/text()"), 0.0001);
 		assertEquals(2.0, tree.queryXpath("//solving//models/text()"), 0.0001);
 		assertEquals(2.0, tree.queryXpath("//summary//enumerated/text()"), 0.0001);
+		
+        // clean up
+        BaseClingo.controlFree(control);
 	}
 	
 /*
@@ -418,8 +421,6 @@ public class StatisticsTest {
 			}
 		}
         BaseClingo.solveHandleClose(handle);
-        // clean up
-        BaseClingo.controlFree(control);
 	}
 
 	private void checkModel(Pointer model) {

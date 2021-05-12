@@ -2203,7 +2203,7 @@ public class BaseClingo {
 		byte success = clingoLibrary.clingo_model_number(model, number);
 		return number.getValue();
 	}
-zusammenfassen und weiter
+
 	/**
 	 * Get the number of symbols of the selected types in the model.
 	 * 
@@ -2211,7 +2211,7 @@ zusammenfassen und weiter
 	 * @param show  which symbols to select - {@link ShowType}
 	 * @return the number symbols
 	 */
-	public static SizeT modelSymbolsSize(Pointer model, ShowType show) {
+	private static SizeT modelSymbolsSize(Pointer model, ShowType show) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_symbols_size(model, show.getValue(), size);
@@ -2230,10 +2230,13 @@ zusammenfassen und weiter
 	 * @return the resulting symbols as an array[size] of symbol references
 	 * @see clingo_model_symbols_size()
 	 */
-	public static long[] modelSymbols(Pointer model, ShowType show, SizeT size) {
-		long[] symbols = new long[Math.toIntExact(size.intValue())];
+	public static long[] modelSymbols(Pointer model, ShowType show) {
+		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_model_symbols(model, show.getValue(), symbols, size);
+		byte success1 = clingoLibrary.clingo_model_symbols_size(model, show.getValue(), size);
+		long[] symbols = new long[Math.toIntExact(size.getValue().intValue())];
+		@SuppressWarnings("unused")
+		byte success2 = clingoLibrary.clingo_model_symbols(model, show.getValue(), symbols, size.getValue());
 		return symbols;
 	}
 

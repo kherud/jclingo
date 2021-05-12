@@ -43,17 +43,6 @@ public class Model {
 	}
 
 	/**
-	 * Get the number of symbols of the selected types in the model.
-	 * 
-	 * @param model the target
-	 * @param show  which symbols to select - {@link ShowType}
-	 * @return the number symbols
-	 */
-	private SizeT modelSymbolsSize(ShowType show) {
-		return BaseClingo.modelSymbolsSize(this.pointer, show);
-	}
-
-	/**
 	 * Get the symbols of the selected types in the model.
 	 * <p>
 	 * 
@@ -66,8 +55,8 @@ public class Model {
 	 * @return the resulting symbols as an array[size] of symbol references
 	 * @see clingo_model_symbols_size()
 	 */
-	public long[] symbols(ShowType show, SizeT size) {
-		return BaseClingo.modelSymbols(this.pointer, show, size);
+	public long[] symbols(ShowType show) {
+		return BaseClingo.modelSymbols(this.pointer, show);
 	}
 
 	/**

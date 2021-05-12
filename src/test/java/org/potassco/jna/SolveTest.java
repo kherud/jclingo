@@ -102,8 +102,7 @@ public class SolveTest {
 
 	private Set<String> checkModel(Pointer model, ShowType shownType) {
 		Set<String> result = new HashSet<String>();
-		SizeT size = BaseClingo.modelSymbolsSize(model, shownType);
-		long[] symbols = BaseClingo.modelSymbols(model, shownType, size);
+		long[] symbols = BaseClingo.modelSymbols(model, shownType);
 		for (long s : symbols) {
 			result.add(BaseClingo.symbolName(s));
 		}

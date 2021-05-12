@@ -461,10 +461,8 @@ public class Control implements AutoCloseable {
 				SolveEventType t = SolveEventType.fromValue(type);
 				switch (t) {
 				case MODEL:
-			        SizeT size = BaseClingo.modelSymbolsSize(event, ShowType.SHOWN);
-					solution.setSize(size.intValue());
-					long[] symbols = BaseClingo.modelSymbols(event, ShowType.SHOWN, size);
-					for (int i = 0; i < size.intValue(); ++i) {
+					long[] symbols = BaseClingo.modelSymbols(event, ShowType.SHOWN);
+					for (int i = 0; i < symbols.length; ++i) {
 						String symbol = BaseClingo.symbolToString(symbols[i]);
 						solution.addSymbol(symbol);
 					}

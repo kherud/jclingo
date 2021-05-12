@@ -55,8 +55,7 @@ public class StatisticsTest {
 			if (model != null) {
 				// print_model
 //				System.out.println("ModelSt:");
-				SizeT numAtoms = BaseClingo.modelSymbolsSize(model, ShowType.SHOWN);
-				long[] atoms = BaseClingo.modelSymbols(model, ShowType.SHOWN, numAtoms);
+				long[] atoms = BaseClingo.modelSymbols(model, ShowType.SHOWN);
 				for (int i = 0; i < atoms.length; i++) {
 					String str = BaseClingo.symbolToString(atoms[i]);
 //					System.out.println(str);

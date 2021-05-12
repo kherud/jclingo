@@ -114,8 +114,7 @@ public class Control implements AutoCloseable {
 	 */
 	public void ground(PartSt[] parts, GroundCallback groundCallback,
 			Pointer groundCallbackData) {
-		SizeT partsSize = new SizeT(parts == null ? 0 : parts.length);
-		BaseClingo.controlGround(this.control, parts, partsSize, groundCallback, groundCallbackData);
+		BaseClingo.controlGround(this.control, parts, groundCallback, groundCallbackData);
 	}
 
 	/*
@@ -426,8 +425,7 @@ public class Control implements AutoCloseable {
 	public void ground() {
         PartSt[] parts = new PartSt[1];
         parts[0] = new PartSt(name, null, 0L);
-        SizeT size = new SizeT(1L);
-        BaseClingo.controlGround(this.control, parts, size, null, null);
+        BaseClingo.controlGround(this.control, parts, null, null);
 	}
 
 	public void ground(GroundCallback groundCallbackT) {

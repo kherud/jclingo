@@ -25,7 +25,7 @@ public class SolveTest {
 		BaseClingo.controlAdd(control, name, null, "1 {a; b} 1. #show c : b. #show a/0.");
         PartSt[] parts = new PartSt[1];
         parts[0] = new PartSt(name, null, 0L);
-		BaseClingo.controlGround(control, parts, new SizeT(1L), null, null);
+		BaseClingo.controlGround(control, parts, null, null);
 		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, new SizeT(), null, null);
 		boolean modelExits = true;
 		while (modelExits) {
@@ -68,7 +68,7 @@ public class SolveTest {
 		BaseClingo.controlAdd(control, name, null, program);
         PartSt[] parts = new PartSt[1];
         parts[0] = new PartSt(name, null, 0L);
-        BaseClingo.controlGround(control, parts, new SizeT(1L), null, null);
+        BaseClingo.controlGround(control, parts, null, null);
 		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, new SizeT(), null, null);
 		boolean modelExits = true;
 		while (modelExits) {

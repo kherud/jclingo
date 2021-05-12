@@ -45,7 +45,7 @@ public class StatisticsTest {
 		BaseClingo.controlAdd(control, name, null, program);
 		PartSt[] parts = new PartSt[1];
 		parts[0] = new PartSt(name, null, 0L);
-		BaseClingo.controlGround(control, parts, new SizeT(1L), null, null);
+		BaseClingo.controlGround(control, parts, null, null);
 		SolveEventCallback eventHandler = null;
 		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, new SizeT(), eventHandler, null);
 		boolean modelExists = true;
@@ -86,7 +86,7 @@ public class StatisticsTest {
 		BaseClingo.controlAdd(control, name, null, "a :- not b. b :- not a.");
 		PartSt[] parts = new PartSt[1];
 		parts[0] = new PartSt(name, null, 0L);
-		BaseClingo.controlGround(control, parts, new SizeT(1L), null, null);
+		BaseClingo.controlGround(control, parts, null, null);
 		solve(control);
 		// get the statistics object, get the root key, then print the statistics recursively
 		Pointer stats = BaseClingo.controlStatistics(control);

@@ -3340,12 +3340,15 @@ public class BaseClingo {
 	 *       specification are by default put into a program called `base` without
 	 *       arguments.
 	 * @param parts                array of parts to ground
-	 * @param partsSize           size of the parts array
 	 * @param groundCallback      callback to implement external functions
 	 * @param groundCallbackData user data for ground_callback
 	 */
-	public static void controlGround(Pointer control, PartSt[] parts, SizeT partsSize, GroundCallback groundCallback,
+	public static void controlGround(Pointer control, PartSt[] parts, GroundCallback groundCallback,
 			Pointer groundCallbackData) {
+		SizeT partsSize = new SizeT();
+		if (parts != null) {
+			partsSize = new SizeT(parts.length);
+		}
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_ground(control, parts, partsSize, groundCallback,
 				groundCallbackData);

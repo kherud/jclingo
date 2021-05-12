@@ -19,8 +19,7 @@ public class AtomsTest {
 		BaseClingo.controlAdd(control, name, null, "a. b. c. d. e.");
         PartSt[] parts = new PartSt[1];
         parts[0] = new PartSt(name, null, 0L);
-		SizeT size = new SizeT(1L);
-		BaseClingo.controlGround(control, parts, size, null, null);
+		BaseClingo.controlGround(control, parts, null, null);
 		Pointer atoms = BaseClingo.controlSymbolicAtoms(control);
 		assertEquals(5, BaseClingo.symbolicAtomsSize(atoms).intValue());
 //		Pointer signature = BaseClingo.signatureCreate(c, 0, true);
@@ -61,8 +60,7 @@ public class AtomsTest {
 		BaseClingo.controlAdd(control, name, null, "p(1). p(2). p(3). #external q(X) : p(X). q(1). r(X) :- q(X).");
         PartSt[] parts = new PartSt[1];
         parts[0] = new PartSt(name, null, 0L);
-		SizeT size = new SizeT(1L);
-		BaseClingo.controlGround(control, parts, size, null, null);
+		BaseClingo.controlGround(control, parts, null, null);
 		Pointer atoms = BaseClingo.controlSymbolicAtoms(control);
 
 		List<Pointer> ourAtoms = new ArrayList<Pointer>(); 
@@ -103,8 +101,7 @@ public class AtomsTest {
 				+ "dislike(2,3; 1,3).");
         PartSt[] parts = new PartSt[1];
         parts[0] = new PartSt(name, null, 0L);
-		SizeT size = new SizeT(1L);
-		BaseClingo.controlGround(control, parts, size, null, null);
+		BaseClingo.controlGround(control, parts, null, null);
 		String constName = "n";
 		assertTrue(BaseClingo.controlHasConst(control, constName));
 		int symbol = BaseClingo.controlGetConst(control, constName);

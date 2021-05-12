@@ -61,6 +61,7 @@ public class StatisticsTest {
 					String str = BaseClingo.symbolToString(atoms[i]);
 //					System.out.println(str);
 					assertTrue(expected.contains(str));
+					assertTrue(BaseClingo.modelContains(model, atoms[i]));
 				}
 				m++;
 			} else {

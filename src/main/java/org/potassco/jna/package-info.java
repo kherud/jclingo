@@ -47,6 +47,10 @@ package org.potassco.jna;
  * <li>clingo_symbolic_atoms_t - struct
  * <li>clingo_weighted_literal_t - struct
  * <li>clingo_statistics_t - struct
+ * <li>clingo_propagate_init_t - struct
+ * <li>clingo_propagate_control_t - struct
+ * <li>clingo_propagator_t - struct
+ * <li>
  * <li>
  * <li>
  * </ul>

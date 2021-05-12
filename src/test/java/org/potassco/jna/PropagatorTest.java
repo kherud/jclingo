@@ -6,6 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.potassco.enums.SolveMode;
+import org.potassco.jna.PropagatorSt.PropagatorInitCallback;
+import org.potassco.jna.PropagatorSt.PropagatorPropagateCallback;
+import org.potassco.jna.PropagatorSt.PropagatorUndoCallback;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Callback;
@@ -54,21 +58,49 @@ class State extends Structure {
 		String program = "1 { place(P,H) : H = 1..h } 1 :- P = 1..p.";
 		long holes = BaseClingo.symbolCreateNumber(8);
 		long pigeons = BaseClingo.symbolCreateNumber(9);
-		Pointer control = BaseClingo.control(null, null, null, 0);
+		// Part with arguments
+		PartSt[] parts = new PartSt[1];
+		long[] args = new long[2];
+		args[0] = holes;
+		args[1] = pigeons;
+		parts[0] = new PartSt(name, args, 2L);
 		
-
-		PropagatorSt prop = new PropagatorSt(null, null, null, null, null);
+		// create a propagator 
+		// using the default implementation for the model check
+		PropagatorInitCallback init = new PropagatorInitCallback() {	
+			@Override
+			public byte callback(Pointer init, Pointer data) {
+				// TODO Auto-generated method stub
+				return 1;
+			}
+		};
+		PropagatorPropagateCallback propagate = new PropagatorPropagateCallback() {
+			@Override
+			public byte callback(Pointer control, Pointer changes, SizeT size, Pointer data) {
+				// TODO Auto-generated method stub
+				return 1;
+			}
+		};
+		PropagatorUndoCallback undo = new PropagatorUndoCallback() {
+			@Override
+			public void callback(Pointer control, Pointer changes, SizeT size, Pointer data) {
+				// TODO Auto-generated method stub
+				int i = 0;
+			}
+		};
+		PropagatorSt prop = new PropagatorSt(init, propagate , undo , null, null);
 //		PropagatorData propData = new PropagatorData(null, new SizeT(), null, 0L);
-		  
-//		BaseClingo.controlRegisterPropagator(control, prop, propData, false);
-//		
-//		
-//		
-//		BaseClingo.controlAdd(control, name, params , "a. b.");
-//        PartSt[] parts = new PartSt[1];
-//        parts[0] = new PartSt(name, null, 0L);
-//		BaseClingo.controlGround(control, parts, 1L, null, null);
-		
+
+		Pointer control = BaseClingo.control(null, null, null, 0);
+		BaseClingo.controlRegisterPropagator(control, prop, /* propData */ null, false);
+		BaseClingo.controlAdd(control, name, params, program);
+		BaseClingo.controlGround(control, parts, null, null);
+		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, new SizeT(), null, null);
+		boolean modelExists = true;
+		while (modelExists) {
+			BaseClingo.solveHandleResume(handle);
+			Pointer model = BaseClingo.solveHandleModel(handle);
+		}
 	}
 
 }

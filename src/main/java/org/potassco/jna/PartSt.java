@@ -25,14 +25,24 @@ import com.sun.jna.Structure;
  * {@link clingo_h#clingo_part_t}
  */
 public class PartSt extends Structure {
+//	public static class ByReference extends PartSt implements Structure.ByReference {
+//
+//		public ByReference(String name, Pointer params, long size) {
+//			super(name, params, size);
+//		} }
+	
 	public String name;
-	public Pointer params;
+	public long[] params;
 	public long size;
 
-	public PartSt(String name, Pointer params, long size) {
+	public PartSt(String name, long[] params, long size) {
 		super();
 		this.name = name;
-		this.params = params;
+		if (params == null) {
+			this.params = new long[1];
+		} else {
+			this.params = params;
+		}
 		this.size = size;
 	}
 

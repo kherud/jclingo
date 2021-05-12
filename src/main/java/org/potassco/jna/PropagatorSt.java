@@ -119,31 +119,31 @@ public class PropagatorSt extends Structure {
 	 *
 	 * @param[in] thread_id the solver's thread id
 	 * @param[in] assignment the assignment of the solver
-	 * @param[in] fallback the literal choosen by the solver's heuristic
+	 * @param[in] fallback the literal chosen by the solver's heuristic
 	 * @param[out] decision the literal to make true
 	 * @return whether the call was successful
 	 */
 	/*    bool (*decide) (clingo_id_t thread_id, clingo_assignment_t const *assignment, clingo_literal_t fallback, void *data, clingo_literal_t *decision);
 	} clingo_propagator_t; */
 
-	interface PropagatorDecideCallback extends Callback {
-		boolean callback(int init, int data);
+	public interface PropagatorInitCallback extends Callback {
+		byte callback(Pointer init, Pointer data);
 	}
 
-	interface PropagatorCheckCallback extends Callback {
-
+	public interface PropagatorPropagateCallback extends Callback {
+		byte callback(Pointer control, Pointer changes, SizeT size, Pointer data);
 	}
 
-	interface PropagatorUndoCallback extends Callback {
-
+	public interface PropagatorUndoCallback extends Callback {
+		void callback(Pointer control, Pointer changes, SizeT size, Pointer data);
 	}
 
-	interface PropagatorPropagateCallback extends Callback {
-
+	public interface PropagatorCheckCallback extends Callback {
+		byte check(Pointer control, Pointer data);
 	}
 
-	interface PropagatorInitCallback extends Callback {
-
+	public interface PropagatorDecideCallback extends Callback {
+		boolean callback(int threadId, Pointer assignment, int fallback, Pointer data, int decision);
 	}
 
 	public PropagatorInitCallback init;

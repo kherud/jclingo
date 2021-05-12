@@ -3446,7 +3446,7 @@ public class BaseClingo {
 	 * @param data       user data passed to the propagator functions
 	 * @param sequential whether the propagator should be called sequentially
 	 */
-	public static void controlRegisterPropagator(Pointer control, Pointer propagator, Pointer data, boolean sequential) {
+	public static void controlRegisterPropagator(Pointer control, PropagatorSt propagator, Pointer data, boolean sequential) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_register_propagator(control, propagator, data,
 				(byte) (sequential ? 1 : 0));

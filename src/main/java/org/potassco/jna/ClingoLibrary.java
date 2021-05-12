@@ -1404,7 +1404,7 @@ public interface ClingoLibrary extends Library {
 	public byte clingo_control_release_external(Pointer p_control, int literal);
 
     /** {@link clingo_h#clingo_control_release_external} */
-	public byte clingo_control_register_propagator(Pointer p_control, Pointer p_propagator, Pointer p_data, byte sequential);
+	public byte clingo_control_register_propagator(Pointer p_control, PropagatorSt p_propagator, Pointer p_data, byte sequential);
 
     /** {@link clingo_h#clingo_control_release_external} */
 	public byte clingo_control_is_conflicting(Pointer p_control);

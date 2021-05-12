@@ -8,6 +8,7 @@ import org.potassco.enums.TruthValue;
 import org.potassco.jna.BaseClingo;
 import org.potassco.jna.GroundCallback;
 import org.potassco.jna.PartSt;
+import org.potassco.jna.PropagatorSt;
 import org.potassco.jna.SizeT;
 import org.potassco.jna.SolveEventCallback;
 
@@ -201,7 +202,7 @@ public class Control implements AutoCloseable {
 	 * @param data       user data passed to the propagator functions
 	 * @param sequential whether the propagator should be called sequentially
 	 */
-	public void registerPropagator(Pointer propagator, Pointer data, boolean sequential) {
+	public void registerPropagator(PropagatorSt propagator, Pointer data, boolean sequential) {
 		BaseClingo.controlRegisterPropagator(this.control, propagator, data, sequential);
 	}
 

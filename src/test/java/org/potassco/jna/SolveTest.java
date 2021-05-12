@@ -3,7 +3,9 @@ package org.potassco.jna;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
@@ -14,121 +16,75 @@ import org.potassco.enums.SolveMode;
 import com.sun.jna.Pointer;
 
 public class SolveTest {
-
+	private static final Map<Integer, String[]> EXPECTED;
+	static {
+		String[] sol1 = { "c", "b", "c", "a" }; 
+		String[] sol2 = { "a", "a", "", "b" };
+		EXPECTED = new HashMap<Integer, String[]>();
+		EXPECTED.put(1, sol1);
+		EXPECTED.put(2, sol2);
+	}
+	
 	/**
 	 * https://potassco.org/clingo/c-api/5.5/model_8c-example.html
 	 */
 	@Test
 	public void testAb1() {
 		String name = "base";
-		Pointer control = BaseClingo.control(null, null, null, 0);
-		BaseClingo.controlAdd(control, name, null, "1 {a; b} 1. #show c : b. #show a/0.");
-        PartSt[] parts = new PartSt[1];
-        parts[0] = new PartSt(name, null, 0L);
-		BaseClingo.controlGround(control, parts, null, null);
-		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, new SizeT(), null, null);
-		boolean modelExits = true;
-		while (modelExits) {
-			BaseClingo.solveHandleResume(handle);
-			Pointer model = BaseClingo.solveHandleModel(handle);
-			if (model == null) {
-				modelExits = false;
-			} else {
-				assertEquals(ModelType.STABLE_MODEL, BaseClingo.modelType(model));
-				long modelNumber = BaseClingo.modelNumber(model);
-				System.out.println("Stable model: " + modelNumber);
-				assertEquals(1, modelNumber);
-				Set<String> s1 = new HashSet<String>();
-				s1.add("c");
-				assertEquals(s1, checkModel(model, ShowType.SHOWN));
-				Set<String> s2 = new HashSet<String>();
-				s2.add("b");
-				assertEquals(s2, checkModel(model, ShowType.ATOMS));
-				Set<String> s3 = new HashSet<String>();
-				s3.add("c");
-				assertEquals(s3, checkModel(model, ShowType.TERMS));
-				Set<String> s4 = new HashSet<String>();
-				assertEquals(s4, checkModel(model, ShowType.COMPLEMENT));
-			}
-		}
-        BaseClingo.solveHandleClose(handle);
-        // clean up
-        BaseClingo.controlFree(control);
-        fail("Result differs from origin.");
-	}
-
-	/**
-	 * https://potassco.org/clingo/c-api/5.5/model_8c-example.html
-	 */
-	@Test
-	public void testAb2() {
-		String name = "base";
 		String program = "1 {a; b} 1. #show c : b. #show a/0.";
-		Pointer control = BaseClingo.control(null, null, null, 0);
+		String[] arguments = { "0" };
+		Pointer control = BaseClingo.control(arguments, null, null, 0);
 		BaseClingo.controlAdd(control, name, null, program);
         PartSt[] parts = new PartSt[1];
         parts[0] = new PartSt(name, null, 0L);
-        BaseClingo.controlGround(control, parts, null, null);
+		BaseClingo.controlGround(control, parts, null, null);
+		solve(control);
+        fail("Result differs from origin.");
+	}
+
+	private void solve(Pointer control) {
 		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, new SizeT(), null, null);
 		boolean modelExits = true;
+		int i = 0;
 		while (modelExits) {
-			BaseClingo.solveHandleResume(handle);
 			Pointer model = BaseClingo.solveHandleModel(handle);
-			if (model == null) {
-				modelExits = false;
+			if (model != null) {
+				i = i + 1;
+				checkModel1(model, i);
+				BaseClingo.solveHandleResume(handle);
 			} else {
-				assertEquals(ModelType.STABLE_MODEL, BaseClingo.modelType(model));
-				long modelNumber = BaseClingo.modelNumber(model);
-				System.out.println("Stable model: " + modelNumber);
-				assertEquals(1, modelNumber);
-				Set<String> s1 = new HashSet<String>();
-				s1.add("c");
-				assertEquals(s1, checkModel(model, ShowType.SHOWN));
-				Set<String> s2 = new HashSet<String>();
-				s2.add("b");
-				assertEquals(s2, checkModel(model, ShowType.ATOMS));
-				Set<String> s3 = new HashSet<String>();
-				s3.add("c");
-				assertEquals(s3, checkModel(model, ShowType.TERMS));
-				Set<String> s4 = new HashSet<String>();
-				assertEquals(s4, checkModel(model, ShowType.COMPLEMENT));
+				modelExits = false;
 			}
 		}
         BaseClingo.solveHandleClose(handle);
         // clean up
         BaseClingo.controlFree(control);
-        fail("Result differs from origin.");
 	}
 
-	private Set<String> checkModel(Pointer model, ShowType shownType) {
-		Set<String> result = new HashSet<String>();
-		long[] symbols = BaseClingo.modelSymbols(model, shownType);
-		for (long s : symbols) {
-			result.add(BaseClingo.symbolName(s));
+	private void checkModel1(Pointer model, int modelCount) {
+		assertEquals(ModelType.STABLE_MODEL, BaseClingo.modelType(model));
+		checkModel2(model, modelCount, 0, ShowType.SHOWN);
+		checkModel2(model, modelCount, 1, ShowType.ATOMS);
+		checkModel2(model, modelCount, 2, ShowType.TERMS);
+		checkModel2(model, modelCount, 3, ShowType.COMPLEMENT, ShowType.ATOMS);
+	}
+
+	private void checkModel2(Pointer model, int modelCount, int expectedIndex, ShowType... shownType) {
+		long modelNumber = BaseClingo.modelNumber(model);
+		assertEquals(modelNumber, modelCount);
+		Set<String> atomsAsString = new HashSet<String>();
+		for (ShowType st : shownType) {
+			for (long symbol : BaseClingo.modelSymbols(model, st)) {
+				atomsAsString.add(BaseClingo.symbolName(symbol));
+			}
 		}
-		System.out.println(Arrays.toString(result.toArray()));
-		return result;
+		// there is at most one atom in the shown model 
+		if (atomsAsString.size() == 1) {
+			String a = atomsAsString.iterator().next();
+			assertEquals(EXPECTED.get((int) modelNumber)[expectedIndex], a);
+		} else if (atomsAsString.size() == 0) {
+			assertEquals(EXPECTED.get((int) modelNumber)[expectedIndex], "");
+		}
 	}
 
-// in callback
-//	@Override
-//	public boolean callback(Pointer model, Pointer data, Pointer goon) {
-//    	long size = BaseClingo.modelSymbolsSize(event, ShowType.SHOWN);
-//    	solution .setSize(size);
-//        long[] symbols = BaseClingo.modelSymbols(event, ShowType.SHOWN, size);
-//        for (int i = 0; i < size; ++i) {
-//            long len = BaseClingo.symbolToStringSize(symbols[i]);
-//            String symbol = BaseClingo.symbolToString(symbols[i], len);
-//            solution.addSymbol(symbol);
-//        }
-//		return true;
-//	}
-	
-	/**
-	 * https://github.com/potassco/clingo/blob/master/libpyclingo/clingo/tests/test_solving.py
-	 */
-//	@Test
-//	public void testSolveAsync() {
-//		fail("Not yet implemented.");
-//	}
 }

@@ -32,6 +32,9 @@ public class MultipleModelsTest {
 				modelExits = false;
 			}
 		}
+        BaseClingo.solveHandleClose(handle);
+        // clean up
+        BaseClingo.controlFree(control);
 		assertEquals(6, i);
 	}
 

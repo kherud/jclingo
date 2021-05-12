@@ -366,7 +366,7 @@ public class StatisticsTest {
 		}
 	}
 
-	private int solve(Pointer control) {
+	private void solve(Pointer control) {
 		SolveEventCallback eventHandler = new SolveEventCallback() {
 			@Override
 			public boolean call(int type, Pointer event, Pointer data, Pointer goon) {
@@ -416,7 +416,9 @@ public class StatisticsTest {
 				modelExists = false;
 			}
 		}
-		return BaseClingo.solveHandleGet(handle);
+        BaseClingo.solveHandleClose(handle);
+        // clean up
+        BaseClingo.controlFree(control);
 	}
 
 	private void checkModel(Pointer model) {

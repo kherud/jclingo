@@ -15,7 +15,7 @@ import org.potassco.enums.SolveMode;
 
 import com.sun.jna.Pointer;
 
-public class SolveTest {
+public class SolveShowTest {
 	private static final Map<Integer, String[]> EXPECTED;
 	static {
 		String[] sol1 = { "c", "b", "c", "a" }; 

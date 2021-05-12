@@ -26,6 +26,7 @@ public class MultipleModelsTest {
 			Pointer model = BaseClingo.solveHandleModel(handle);
 			if (model != null) {
 				long mn = BaseClingo.modelNumber(model);
+				checkModel(model);
 				BaseClingo.solveHandleResume(handle);
 				i++;
 			} else {
@@ -36,6 +37,10 @@ public class MultipleModelsTest {
         // clean up
         BaseClingo.controlFree(control);
 		assertEquals(6, i);
+	}
+
+	private void checkModel(Pointer model) {
+		BaseClingo.modelContains(model, 0);
 	}
 
 }

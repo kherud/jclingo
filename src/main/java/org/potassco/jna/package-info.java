@@ -34,22 +34,22 @@ package org.potassco.jna;
  * <li>clingo_id_t (uint32_t): int
  * <li>clingo_literal_t (int32_t): int
  * <li>clingo_propagator_check_mode_t (int): int
+ * <li>clingo_signature_t (uint64_t): long
  * <li>clingo_symbol_t (uint64_t): long
  * <li>clingo_truth_value_t (int): int
  * <li>clingo_weight_constraint_type_t (int): int
  * <li>clingo_weight_t (int32_t): int
- * <li>clingo_signature_t (uint64_t): long
  * <li>
  * <li>
  * <li>clingo_assignment_t - struct
  * <li>clingo_ast_t - struct
  * <li>clingo_location_t - struct: LocationSt
+ * <li>clingo_propagate_control_t - struct
+ * <li>clingo_propagate_init_t - struct
+ * <li>clingo_propagator_t - struct
+ * <li>clingo_statistics_t - struct
  * <li>clingo_symbolic_atoms_t - struct
  * <li>clingo_weighted_literal_t - struct
- * <li>clingo_statistics_t - struct
- * <li>clingo_propagate_init_t - struct
- * <li>clingo_propagate_control_t - struct
- * <li>clingo_propagator_t - struct
  * <li>
  * <li>
  * <li>

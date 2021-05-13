@@ -403,7 +403,8 @@ public interface ClingoLibrary extends Library {
 
     /** {@link clingo_h#clingo_propagate_control_propagate} */
 	public byte clingo_propagate_control_propagate(Pointer p_control, ByteByReference p_result);
-    
+
+    /** {@link clingo_h#clingo_propagator_init_callback_t} */
     // clingo_propagator_init_callback_t
     // clingo_propagator_propagate_callback_t    
     // clingo_propagator_undo_callback_t    

@@ -13,6 +13,7 @@ import org.potassco.jna.PropagatorSt.PropagatorUndoCallback;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Callback;
+import com.sun.jna.Memory;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.IntByReference;
 
@@ -24,30 +25,45 @@ import com.sun.jna.ptr.IntByReference;
  */
 public class PropagatorTest {
 	
-	class PropagatorData extends Structure {
-		public IntByReference pigeons;
+	public class PropagatorData extends Structure {
+		public int[] pigeons;
 		public SizeT pigeonsSize;
-		public State state;
+		public long[] states;
 		public long stateSize;
 	
-		public PropagatorData(IntByReference pigeons, SizeT pigeonsSize, State state, long stateSize) {
+		public PropagatorData(Pointer p) {
+			super(p);
+		}
+
+		public PropagatorData(int[] pigeons, SizeT pigeonsSize, long[] states, long stateSize) {
 			super();
 			this.pigeons = pigeons;
 			this.pigeonsSize = pigeonsSize;
-			this.state = state;
+			this.states = states;
 			this.stateSize = stateSize;
 		}
 	
 		protected List<String> getFieldOrder() {
-			return Arrays.asList("pigeons", "pigeonsSize", "state", "stateSize");
+			return Arrays.asList("pigeons", "pigeonsSize", "states", "stateSize");
 		}
 	
 	}
 	
 	class State extends Structure {
-		public int holes;
+		public int[] holes;
 		public SizeT size;
-	
+
+		public State(Pointer p) {
+			super(p);
+		}
+
+		public State(int size) {
+			super();
+			this.size = new SizeT(size);
+			this.holes = new int[size];
+			allocateMemory();
+		}
+
 		protected List<String> getFieldOrder() {
 			return Arrays.asList("holes", "size");
 		}
@@ -74,7 +90,7 @@ public class PropagatorTest {
 		PropagatorInitCallback init = new PropagatorInitCallback() {	
 			@Override
 			public byte callback(Pointer init, Pointer data) {
-				PropagatorData pData = data.
+				PropagatorData pData = new PropagatorData(data);
 				// the total number of holes pigeons can be assigned too
 				int holes = 0;
 				int threads = BaseClingo.propagateInitNumberOfThreads(init);
@@ -82,80 +98,90 @@ public class PropagatorTest {
 				// note that the code below assumes that this literal is not negative
 				// which holds for the pigeon problem but not in general
 				int max = 0;
-				//  clingo_symbolic_atoms_t const *atoms;
-				//  clingo_signature_t sig;
-				//  clingo_symbolic_atom_iterator_t atoms_it, atoms_ie;
+					//  clingo_symbolic_atoms_t const *atoms;
+					//  clingo_signature_t sig;
+					//  clingo_symbolic_atom_iterator_t atoms_it, atoms_ie;
 				// ensure that solve can be called multiple times
 				// for simplicity, the case that additional holes or pigeons to assign are grounded is not handled here
-//  if (data->states != NULL) {
-    // in principle the number of threads can increase between solve calls by changing the configuration
-// this case is not handled (elegantly) here
-//if (threads > data->states_size) {
-//  clingo_set_error(clingo_error_runtime, "more threads than states");
-//    }
-//    return true;
-//  }
-  // allocate memory for exactly one state per thread
-//  if (!(data->states = (state_t*)malloc(sizeof(*data->states) * threads))) {
-//    clingo_set_error(clingo_error_bad_alloc, "allocation failed");
-//    return false;
-//  }
-//  memset(data->states, 0, sizeof(*data->states) * threads);
-//  data->states_size = threads;
-  // the propagator monitors place/2 atoms and dectects conflicting assignments
-  // first get the symbolic atoms handle
-//  if (!clingo_propagate_init_symbolic_atoms(init, &atoms)) { return false; }
-  // create place/2 signature to filter symbolic atoms with
-//  if (!clingo_signature_create("place", 2, true, &sig)) { return false; }
-  // get an iterator after the last place/2 atom
-  // (atom order corresponds to grounding order (and is unpredictable))
-//  if (!clingo_symbolic_atoms_end(atoms, &atoms_ie)) { return false; }
-  // loop over the place/2 atoms in two passes
-  // the first pass determines the maximum placement literal
-  // the second pass allocates memory for data structures based on the first pass
-//  for (int pass = 0; pass < 2; ++pass) {
-    // get an iterator to the first place/2 atom
-//if (!clingo_symbolic_atoms_begin(atoms, &sig, &atoms_it)) { return false; }
-//if (pass == 1) {
-  // allocate memory for the assignemnt literal -> hole mapping
-//  if (!(data->pigeons = (int*)malloc(sizeof(*data->pigeons) * (max + 1)))) {
-//    clingo_set_error(clingo_error_bad_alloc, "allocation failed");
-//    return false;
-//  }
-//  data->pigeons_size = max + 1;
-//}
-//while (true) {
-//  int h;
-//  bool equal;
-//  clingo_literal_t lit;
-//  clingo_symbol_t sym;
-  // stop iteration if the end is reached
-//  if (!clingo_symbolic_atoms_iterator_is_equal_to(atoms, atoms_it, atoms_ie, &equal)) { return false; }
-//  if (equal) { break; }
-  // get the solver literal for the placement atom
-//  if (!clingo_symbolic_atoms_literal(atoms, atoms_it, &lit)) { return false; }
-//  if (!clingo_propagate_init_solver_literal(init, lit, &lit)) { return false; }
-//  if (pass == 0) {
-    // determine the maximum literal
-//    assert(lit > 0);
-//    if (lit > max) { max = lit; }
-//  }
-//  else {
-    // extract the hole number from the atom
-//    if (!clingo_symbolic_atoms_symbol(atoms, atoms_it, &sym)) { return false; }
-//    if (!get_arg(sym, 1, &h)) { return false; }
-    // initialize the assignemnt literal -> hole mapping
-//    data->pigeons[lit] = h;
-    // watch the assignment literal
-//    if (!clingo_propagate_init_add_watch(init, lit)) { return false; }
-    // update the total number of holes
-//    if (h + 1 > holes)   { holes = h + 1; }
-//  }
-  // advance to the next placement atom
-//  if (!clingo_symbolic_atoms_next(atoms, atoms_it, &atoms_it)) { return false; }
-//}
-				
+				if (pData.states != null) {
+				    // in principle the number of threads can increase between solve calls by changing the configuration
+					// this case is not handled (elegantly) here
+					if (threads > pData.stateSize) {
+						// generate exception
+					}
+					return 1;
+				} else {
+					// allocate memory for exactly one state per thread
+					pData.states = new long[threads];
+					pData.stateSize = threads;
+				}
+				// the propagator monitors place/2 atoms and dectects conflicting assignments
+				// first get the symbolic atoms handle
+				Pointer atoms = BaseClingo.propagateInitSymbolicAtoms(init);
+				// create place/2 signature to filter symbolic atoms with
+				Pointer sig = BaseClingo.signatureCreate("place", 2, true);
+				// get an iterator after the last place/2 atom
+				// (atom order corresponds to grounding order (and is unpredictable))
+				Pointer atomsItEnd = BaseClingo.symbolicAtomsEnd(atoms);
+				// loop over the place/2 atoms in two passes
+				// the first pass determines the maximum placement literal
+				// the second pass allocates memory for data structures based on the first pass
+				for (int pass = 0; pass < 2; ++pass) {
+					// get an iterator to the first place/2 atom
+Invalid memory access:					Pointer atomsItBegin = BaseClingo.symbolicAtomsBegin(atoms, sig);
+					if (pass == 1) {
+						// allocate memory for the assignment literal -> hole mapping
+//						Memory mem = new Memory(max + 1);
+						pData.pigeonsSize = new SizeT(max + 1);
+					}
+					while (true) {
+							//  int h;
+							//  bool equal;
+							//  clingo_literal_t lit;
+							//  clingo_symbol_t sym;
+						// stop iteration if the end is reached
+						boolean equal = BaseClingo.symbolicAtomsIteratorIsEqualTo(atoms, atomsItBegin, atomsItEnd);
+						if (equal) { break; }
+						// get the solver literal for the placement atom
+						int lit = BaseClingo.symbolicAtomsLiteral(atoms, atomsItBegin);
+						lit = BaseClingo.propagateInitSolverLiteral(init, lit);
+						if (pass == 0) {
+							// determine the maximum literal
+							//    assert(lit > 0); - writes error to log
+							if (lit > max) { max = lit; }
+						} else {
+							// extract the hole number from the atom
+							long sym = BaseClingo.symbolicAtomsSymbol(atoms, atomsItBegin);
+							int h = getArg(sym, 1);
+							// initialize the assignemnt literal -> hole mapping
+							pData.pigeons[lit] = h;
+							// watch the assignment literal
+							BaseClingo.propagateInitAddWatch(init, lit);
+							// update the total number of holes
+							if (h + 1 > holes) { holes = h + 1; }
+						}
+						// advance to the next placement atom
+						BaseClingo.symbolicAtomsNext(atoms, atomsItBegin);
+					}
+				}
+				// initialize the per solver thread state information
+				for (int i = 0; i < threads; ++i) {
+					// initially no pigeons are assigned to any holes
+					// so the hole -> literal mapping is initialized with zero
+					// which is not a valid literal
+					State s = new State(new Pointer(pData.states[i]));
+//					Memory mem = new Memory(s.holes.length * holes);
+					s.holes = new int[s.holes.length * holes];
+					s.size = new SizeT(holes);
+				}
 				return 1;
+			}
+
+			private int getArg(long sym, int offset) {
+				// get the arguments of the function symbol
+				long[] args = BaseClingo.symbolArguments(sym);
+				// get the requested numeric argument
+				return BaseClingo.symbolNumber(args[offset]);
 			}
 		};
 		PropagatorPropagateCallback propagate = new PropagatorPropagateCallback() {

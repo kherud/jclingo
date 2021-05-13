@@ -15,23 +15,18 @@ public class InfrastructureTest {
 
 	@Test
 	public void testSignature() {
-		try {
-			String name = "test";
-			int arity = 2;
-			boolean positive = true;
-			Pointer signature = BaseClingo.signatureCreate(name, arity, positive);
-			assertEquals(name, BaseClingo.signatureName(signature));
-			assertEquals(arity, BaseClingo.signatureArity(signature));
-			assertEquals(positive, BaseClingo.signatureIsPositive(signature));
-			assertEquals(!positive, BaseClingo.signatureIsNegative(signature));
-			assertTrue(BaseClingo.signatureIsEqualTo(signature, BaseClingo.signatureCreate("test", 2, true)));
-			assertTrue(BaseClingo.signatureIsLessThan(signature, BaseClingo.signatureCreate("test", 3, true)));
-			SizeT hash = BaseClingo.signatureHash(signature);
-			assertEquals(hash , BaseClingo.signatureHash(signature)); // returns the same hash
-		} catch (ClingoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		String name = "test";
+		int arity = 2;
+		boolean positive = true;
+		Pointer signature = BaseClingo.signatureCreate(name, arity, positive);
+		assertEquals(name, BaseClingo.signatureName(signature));
+		assertEquals(arity, BaseClingo.signatureArity(signature));
+		assertEquals(positive, BaseClingo.signatureIsPositive(signature));
+		assertEquals(!positive, BaseClingo.signatureIsNegative(signature));
+		assertTrue(BaseClingo.signatureIsEqualTo(signature, BaseClingo.signatureCreate("test", 2, true)));
+		assertTrue(BaseClingo.signatureIsLessThan(signature, BaseClingo.signatureCreate("test", 3, true)));
+		SizeT hash = BaseClingo.signatureHash(signature);
+		assertEquals(hash , BaseClingo.signatureHash(signature)); // returns the same hash
 	}
 
 	@Test

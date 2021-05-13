@@ -145,12 +145,12 @@ public class BaseClingo {
 	 * @return the resulting signature
 	 * @throws ClingoException
 	 */
-	public static Pointer signatureCreate(String name, int arity, boolean positive) throws ClingoException {
+	public static Pointer signatureCreate(String name, int arity, boolean positive) {
 		PointerByReference sigPointer = new PointerByReference();
 		int pos = positive ? 1 : 0;
 		int success = clingoLibrary.clingo_signature_create(name, arity, pos, sigPointer);
 		if (ErrorCode.fromValue(success) == ErrorCode.BAD_ALLOC) {
-			throw new ClingoException();
+//			throw new ClingoException();
 		}
 		return sigPointer.getValue();
 	}
@@ -1308,7 +1308,7 @@ public class BaseClingo {
 	 * @param aspifLiteral the aspif literal to map
 	 * @return the resulting solver literal
 	 */
-	public static long propagateInitSolverLiteral(Pointer propagateInit, int aspifLiteral) {
+	public static int propagateInitSolverLiteral(Pointer propagateInit, int aspifLiteral) {
 		IntByReference solverLiteral = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_propagate_init_solver_literal(propagateInit, aspifLiteral, solverLiteral);
@@ -2211,9 +2211,9 @@ public class BaseClingo {
 	 * @param show  which symbols to select - {@link ShowType}
 	 * @return the number symbols
 	 */
+	@SuppressWarnings("unused")
 	private static SizeT modelSymbolsSize(Pointer model, ShowType show) {
 		SizeByReference size = new SizeByReference();
-		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_model_symbols_size(model, show.getValue(), size);
 		return size.getValue();
 	}

@@ -89,10 +89,10 @@ public interface ClingoLibrary extends Library {
     public byte clingo_signature_is_negative(Pointer signature); // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_is_negative(clingo_signature_t signature);
 
     /** {@link clingo_h#clingo_signature_is_equal_to} */
-    public byte clingo_signature_is_equal_to(Pointer a, Pointer b); // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_is_equal_to(clingo_signature_t a, clingo_signature_t b);
+    public byte clingo_signature_is_equal_to(Pointer signature_a, Pointer signature_b); // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_is_equal_to(clingo_signature_t a, clingo_signature_t b);
 
     /** {@link clingo_h#clingo_signature_is_less_than} */
-    public byte clingo_signature_is_less_than(Pointer a, Pointer b); // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_is_less_than(clingo_signature_t a, clingo_signature_t b);
+    public byte clingo_signature_is_less_than(Pointer signature_a, Pointer signature_b); // CLINGO_VISIBILITY_DEFAULT bool clingo_signature_is_less_than(clingo_signature_t a, clingo_signature_t b);
 
     /** {@link clingo_h#clingo_signature_hash} */
     public SizeT clingo_signature_hash(Pointer signature); // CLINGO_VISIBILITY_DEFAULT size_t clingo_signature_hash(clingo_signature_t signature);
@@ -196,7 +196,7 @@ public interface ClingoLibrary extends Library {
     /** {@link clingo_h#clingo_symbolic_atoms_signatures} */
     public byte clingo_symbolic_atoms_signatures(Pointer p_atoms, Pointer[] p_signatures, SizeT size);
 
-    /** {@link clingo_h#clingo_symbolic_atoms_signatures} */
+    /** {@link clingo_h#clingo_symbolic_atoms_next} */
     public byte clingo_symbolic_atoms_next(Pointer p_atoms, Pointer iterator, PointerByReference p_next);
 
     /** {@link clingo_h#clingo_symbolic_atoms_is_valid} */

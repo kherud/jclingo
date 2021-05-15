@@ -115,7 +115,7 @@ public class PropagatorTest {
 					pData.states = new long[threads];
 					pData.stateSize = threads;
 				}
-				// the propagator monitors place/2 atoms and dectects conflicting assignments
+				// the propagator monitors place/2 atoms and detects conflicting assignments
 				// first get the symbolic atoms handle
 				Pointer atoms = BaseClingo.propagateInitSymbolicAtoms(init);
 				// create place/2 signature to filter symbolic atoms with
@@ -128,7 +128,7 @@ public class PropagatorTest {
 				// the second pass allocates memory for data structures based on the first pass
 				for (int pass = 0; pass < 2; ++pass) {
 					// get an iterator to the first place/2 atom
-Invalid memory access:					Pointer atomsItBegin = BaseClingo.symbolicAtomsBegin(atoms, sig);
+					Pointer atomsItBegin = BaseClingo.symbolicAtomsBegin(atoms, sig);
 					if (pass == 1) {
 						// allocate memory for the assignment literal -> hole mapping
 //						Memory mem = new Memory(max + 1);

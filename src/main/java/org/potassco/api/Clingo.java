@@ -414,14 +414,13 @@ public class Clingo {
 
 	/**
 	 * Get the type of a key.
-	 * <p>
 	 * 
 	 * @note The type is bitset, an entry can have multiple (but at least one) type.
 	 * @param configuration the target configuration
 	 * @param key           the key
 	 * @return the resulting type
 	 */
-	public ConfigurationType configurationType(Pointer configuration, int key) {
+	public int configurationType(Pointer configuration, int key) {
 		return BaseClingo.configurationType(configuration, key);
 	}
 
@@ -551,20 +550,6 @@ public class Clingo {
 	}
 
 	/**
-	 * Get the size of the string value of the given entry.
-	 * <p>
-	 * 
-	 * @pre The @link clingo_configuration_type() type@endlink of the entry must
-	 *      be @ref ::clingo_configuration_type_value.
-	 * @param configuration the target configuration
-	 * @param key           the key
-	 * @return the resulting size
-	 */
-	public SizeT configurationValueGetSize(Pointer configuration, int key) {
-		return BaseClingo.configurationValueGetSize(configuration, key);
-	}
-
-	/**
 	 * Get the string value of the given entry.
 	 * <p>
 	 * 
@@ -576,8 +561,8 @@ public class Clingo {
 	 * @param size          the size of the given char array
 	 * @return the resulting string value
 	 */
-	public String configurationValueGet(Pointer configuration, int key, SizeT size) {
-		return BaseClingo.configurationValueGet(configuration, key, size);
+	public String configurationValueGet(Pointer configuration, int key) {
+		return BaseClingo.configurationValueGet(configuration, key);
 	}
 
 	/**

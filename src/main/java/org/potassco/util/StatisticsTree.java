@@ -67,6 +67,10 @@ public class StatisticsTree {
 		current.get(depth).appendChild(document.createTextNode("" + value));
 	}
 
+	public void addValue(String value, int depth) {
+		current.get(depth).appendChild(document.createTextNode(value));
+	}
+	
 	public void showXml() {
 		try {
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -105,5 +109,5 @@ public class StatisticsTree {
 		}
 		return result;
 	}
-	
+
 }

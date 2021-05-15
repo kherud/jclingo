@@ -1762,11 +1762,12 @@ public class BaseClingo {
 	 * @param key           the key
 	 * @return the resulting type
 	 */
-	public static ConfigurationType configurationType(Pointer configuration, int key) {
+	public static int configurationType(Pointer configuration, int key) {
 		IntByReference type = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_type(configuration, key, type);
-		return ConfigurationType.fromValue(type.getValue());
+//		return ConfigurationType.fromValue(type.getValue());
+		return type.getValue();
 	}
 
 	/**
@@ -1816,7 +1817,7 @@ public class BaseClingo {
 	 * @param offset        the offset in the array
 	 * @return the resulting subkey
 	 */
-	public static long configurationArrayAt(Pointer configuration, int key, SizeT offset) {
+	public static int configurationArrayAt(Pointer configuration, int key, SizeT offset) {
 		IntByReference subkey = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_array_at(configuration, key, offset, subkey);
@@ -1882,7 +1883,6 @@ public class BaseClingo {
 
 	/**
 	 * Lookup a subkey under the given name.
-	 * <p>
 	 * 
 	 * @pre The @link clingo_configuration_type() type@endlink of the entry must
 	 *      be @ref ::clingo_configuration_type_map.
@@ -1928,9 +1928,9 @@ public class BaseClingo {
 	 * @param key           the key
 	 * @return the resulting size
 	 */
-	public static SizeT configurationValueGetSize(Pointer configuration, int key) {
+	@SuppressWarnings("unused")
+	private static SizeT configurationValueGetSize(Pointer configuration, int key) {
 		SizeByReference size = new SizeByReference();
-		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_configuration_value_get_size(configuration, key, size);
 		return size.getValue();
 	}
@@ -1947,10 +1947,13 @@ public class BaseClingo {
 	 * @param size          the size of the given char array
 	 * @return the resulting string value
 	 */
-	public static String configurationValueGet(Pointer configuration, int key, SizeT size) {
-		Memory value = new Memory(size.intValue());
+	public static String configurationValueGet(Pointer configuration, int key) {
+		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_configuration_value_get(configuration, key, value, size);
+		byte success1 = clingoLibrary.clingo_configuration_value_get_size(configuration, key, size);
+		Memory value = new Memory(size.getValue().longValue());
+		@SuppressWarnings("unused")
+		byte success2 = clingoLibrary.clingo_configuration_value_get(configuration, key, value, size.getValue());
 		return value.getString(0);
 	}
 

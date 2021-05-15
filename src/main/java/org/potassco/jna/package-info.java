@@ -45,15 +45,15 @@ package org.potassco.jna;
  * <li>
  * <li>clingo_assignment_t - struct
  * <li>clingo_ast_t - struct
- * <li>clingo_location_t - struct: LocationSt
+ * <li>clingo_location_t (struct): LocationSt
  * <li>clingo_propagate_control_t - struct
  * <li>clingo_propagate_init_t - struct
  * <li>clingo_propagator_t - struct
  * <li>clingo_statistics_t - struct
  * <li>clingo_symbolic_atoms_t - struct
  * <li>clingo_weighted_literal_t - struct
- * <li>
- * <li>
+ * <li>clingo_configuration_t - struct
+ * <li>clingo_solve_handle_t (struct): SolveHandleSt
  * <li>
  * </ul>
  */

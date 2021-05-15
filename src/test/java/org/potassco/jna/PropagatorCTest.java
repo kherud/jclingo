@@ -20,7 +20,7 @@ import com.sun.jna.Structure;
  * @author Josef Schneeberger
  *
  */
-public class PropagatorTest {
+public class PropagatorCTest {
 	
 	public class PropagatorData extends Structure {
 		public int[] pigeons;

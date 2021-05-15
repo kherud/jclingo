@@ -15,7 +15,7 @@ import org.potassco.util.StatisticsTree;
 
 import com.sun.jna.Pointer;
 
-public class StatisticsTest {
+public class StatisticsCTest {
 
 	/**
 	 * https://potassco.org/clingo/c-api/5.5/statistics_8c-example.html

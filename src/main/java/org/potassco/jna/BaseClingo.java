@@ -1068,7 +1068,6 @@ public class BaseClingo {
 	 */
 	
 	/* 
-	 * https://potassco.org/clingo/c-api/5.5/propagator_8c-example.html
 	 * The example shows how to write a simple propagator for the pigeon hole problem. For
 	 * a detailed description of what is implemented here and some background, take a look at the following paper:
 	 * https://www.cs.uni-potsdam.de/wv/publications/#DBLP:conf/iclp/GebserKKOSW16x

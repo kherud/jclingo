@@ -7,7 +7,7 @@ import org.potassco.ast.enums.Type;
 
 import com.sun.jna.Pointer;
 
-public class AstTest {
+public class AstCTest {
 
 	/**
 	 * https://potassco.org/clingo/c-api/5.5/ast_8c-example.html

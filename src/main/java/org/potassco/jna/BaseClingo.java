@@ -145,14 +145,11 @@ public class BaseClingo {
 	 * @return the resulting signature
 	 * @throws ClingoException
 	 */
-	public static Pointer signatureCreate(String name, int arity, boolean positive) {
-		PointerByReference sigPointer = new PointerByReference();
+	public static long signatureCreate(String name, int arity, boolean positive) {
+		LongByReference signature = new LongByReference();
 		int pos = positive ? 1 : 0;
-		int success = clingoLibrary.clingo_signature_create(name, arity, pos, sigPointer);
-		if (ErrorCode.fromValue(success) == ErrorCode.BAD_ALLOC) {
-//			throw new ClingoException();
-		}
-		return sigPointer.getValue();
+		byte success = clingoLibrary.clingo_signature_create(name, arity, pos, signature);
+		return signature.getValue();
 	}
 
 	/**
@@ -164,7 +161,7 @@ public class BaseClingo {
 	 * @param signature  signature the target signature
 	 * @return the name of the signature
 	 */
-	public static String signatureName(Pointer signature) {
+	public static String signatureName(long signature) {
 		return clingoLibrary.clingo_signature_name(signature);
 	}
 
@@ -174,7 +171,7 @@ public class BaseClingo {
 	 * @param signature  signature the target signature
 	 * @return the arity of the signature
 	 */
-	public static int signatureArity(Pointer signature) {
+	public static int signatureArity(long signature) {
 		return clingoLibrary.clingo_signature_arity(signature);
 	}
 
@@ -184,7 +181,7 @@ public class BaseClingo {
 	 * @param signature the target signature
 	 * @return
 	 */
-	public static boolean signatureIsPositive(Pointer signature) {
+	public static boolean signatureIsPositive(long signature) {
 		return clingoLibrary.clingo_signature_is_positive(signature) == 1;
 	}
 
@@ -194,19 +191,19 @@ public class BaseClingo {
 	 * @param signature the target signature
 	 * @return
 	 */
-	public static boolean signatureIsNegative(Pointer signature) {
+	public static boolean signatureIsNegative(long signature) {
 		return clingoLibrary.clingo_signature_is_negative(signature) == 1;
 	}
 
 	/**
 	 * Check if two signatures are equal.
 	 * 
-	 * @param a first signature
-	 * @param b second signature
+	 * @param signatureA first signature
+	 * @param signatureB second signature
 	 * @return
 	 */
-	public static boolean signatureIsEqualTo(Pointer a, Pointer b) {
-		return clingoLibrary.clingo_signature_is_equal_to(a, b) == 1;
+	public static boolean signatureIsEqualTo(long signatureA, long signatureB) {
+		return clingoLibrary.clingo_signature_is_equal_to(signatureA, signatureB) == 1;
 	}
 
 	/**
@@ -219,8 +216,8 @@ public class BaseClingo {
 	 * @param b second signature
 	 * @return
 	 */
-	public static boolean signatureIsLessThan(Pointer a, Pointer b) {
-		return clingoLibrary.clingo_signature_is_less_than(a, b) == 1;
+	public static boolean signatureIsLessThan(long signatureA, long signatureB) {
+		return clingoLibrary.clingo_signature_is_less_than(signatureA, signatureB) == 1;
 	}
 
 	/**
@@ -229,7 +226,7 @@ public class BaseClingo {
 	 * @param signature the target signature
 	 * @return
 	 */
-	public static SizeT signatureHash(Pointer signature) {
+	public static SizeT signatureHash(long signature) {
 		return clingoLibrary.clingo_signature_hash(signature);
 	}
 
@@ -552,7 +549,7 @@ public class BaseClingo {
 	 * @param signature optional signature
 	 * @return the resulting iterator
 	 */
-	public static Pointer symbolicAtomsBegin(Pointer atoms, Pointer signature) {
+	public static Pointer symbolicAtomsBegin(Pointer atoms, long signature) {
 		PointerByReference iterator = new PointerByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_begin(atoms, signature, iterator);
@@ -688,7 +685,7 @@ public class BaseClingo {
 	 * @param size  the number of signatures
 	 * @return the resulting signatures
 	 */
-	public static Pointer[] symbolicAtomsSignatures(Pointer atoms) {
+	public static long[] symbolicAtomsSignatures(Pointer atoms) {
 		SizeByReference size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success1 = clingoLibrary.clingo_symbolic_atoms_signatures_size(atoms, size);
@@ -696,7 +693,7 @@ public class BaseClingo {
 //		@SuppressWarnings("unused")
 //		byte success2 = clingoLibrary.clingo_symbolic_atoms_signatures(atoms, signatures, size.getValue());
 //		return signatures;
-		Pointer[] signatures = new Pointer[size.getValue().intValue()]; 
+		long[] signatures = new long[size.getValue().intValue()]; 
 		@SuppressWarnings("unused")
 		byte success2 = clingoLibrary.clingo_symbolic_atoms_signatures(atoms, signatures, size.getValue());
 		return signatures;

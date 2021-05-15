@@ -119,7 +119,7 @@ public class PropagatorTest {
 				// first get the symbolic atoms handle
 				Pointer atoms = BaseClingo.propagateInitSymbolicAtoms(init);
 				// create place/2 signature to filter symbolic atoms with
-				Pointer sig = BaseClingo.signatureCreate("place", 2, true);
+				long sig = BaseClingo.signatureCreate("place", 2, true);
 				// get an iterator after the last place/2 atom
 				// (atom order corresponds to grounding order (and is unpredictable))
 				Pointer atomsItEnd = BaseClingo.symbolicAtomsEnd(atoms);

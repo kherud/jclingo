@@ -167,28 +167,28 @@ public interface ClingoLibrary extends Library {
     public byte clingo_symbolic_atoms_size(Pointer p_atoms, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_symbolic_atoms_begin} */
-    public byte clingo_symbolic_atoms_begin(Pointer p_atoms, long p_signature, PointerByReference p_iterator);
+    public byte clingo_symbolic_atoms_begin(Pointer p_atoms, long p_signature, LongByReference p_iterator);
 
     /** {@link clingo_h#clingo_symbolic_atoms_end} */
-    public byte clingo_symbolic_atoms_end(Pointer p_atoms, PointerByReference p_iterator);
+    public byte clingo_symbolic_atoms_end(Pointer p_atoms, LongByReference p_iterator);
 
     /** {@link clingo_h#clingo_symbolic_atoms_find} */
-    public byte clingo_symbolic_atoms_find(Pointer p_atoms, long symbol, PointerByReference p_iterator);
+    public byte clingo_symbolic_atoms_find(Pointer p_atoms, long symbol, LongByReference p_iterator);
 
     /** {@link clingo_h#clingo_symbolic_atoms_iterator_is_equal_to} */
-    public byte clingo_symbolic_atoms_iterator_is_equal_to(Pointer p_atoms, Pointer a, Pointer b, ByteByReference p_equal);
+    public byte clingo_symbolic_atoms_iterator_is_equal_to(Pointer p_atoms, long iterator_a, long iterator_b, ByteByReference p_equal);
 
     /** {@link clingo_h#clingo_symbolic_atoms_symbol} */
-    public byte clingo_symbolic_atoms_symbol(Pointer p_atoms, Pointer iterator, LongByReference p_symbol);
+    public byte clingo_symbolic_atoms_symbol(Pointer p_atoms, long iterator, LongByReference p_symbol);
 
     /** {@link clingo_h#clingo_symbolic_atoms_is_fact} */
-    public byte clingo_symbolic_atoms_is_fact(Pointer p_atoms, Pointer iterator, ByteByReference p_fact);
+    public byte clingo_symbolic_atoms_is_fact(Pointer p_atoms, long iterator, ByteByReference p_fact);
 
     /** {@link clingo_h#clingo_symbolic_atoms_is_external} */
-    public byte clingo_symbolic_atoms_is_external(Pointer p_atoms, Pointer iterator, ByteByReference p_external);
+    public byte clingo_symbolic_atoms_is_external(Pointer p_atoms, long iterator, ByteByReference p_external);
 
     /** {@link clingo_h#clingo_symbolic_atoms_literal} */
-    public byte clingo_symbolic_atoms_literal(Pointer p_atoms, Pointer iterator, IntByReference p_literal);
+    public byte clingo_symbolic_atoms_literal(Pointer p_atoms, long iterator, IntByReference p_literal);
 
     /** {@link clingo_h#clingo_symbolic_atoms_signatures_size} */
     public byte clingo_symbolic_atoms_signatures_size(Pointer p_atoms, SizeByReference p_size);
@@ -197,10 +197,10 @@ public interface ClingoLibrary extends Library {
     public byte clingo_symbolic_atoms_signatures(Pointer p_atoms, long[] p_signatures, SizeT size);
 
     /** {@link clingo_h#clingo_symbolic_atoms_next} */
-    public byte clingo_symbolic_atoms_next(Pointer p_atoms, Pointer iterator, PointerByReference p_next);
+    public byte clingo_symbolic_atoms_next(Pointer p_atoms, long iterator, LongByReference p_next);
 
     /** {@link clingo_h#clingo_symbolic_atoms_is_valid} */
-    public byte clingo_symbolic_atoms_is_valid(Pointer p_atoms, Pointer iterator, ByteByReference p_valid);
+    public byte clingo_symbolic_atoms_is_valid(Pointer p_atoms, long iterator, ByteByReference p_valid);
 
     // theory atoms
 

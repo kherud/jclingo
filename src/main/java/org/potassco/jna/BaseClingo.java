@@ -5,7 +5,6 @@ import org.potassco.cpp.clingo_h;
 import org.potassco.cpp.struct;
 import org.potassco.cpp.typedef;
 import org.potassco.enums.ConfigurationType;
-import org.potassco.enums.ErrorCode;
 import org.potassco.enums.ExternalType;
 import org.potassco.enums.HeuristicType;
 import org.potassco.enums.ModelType;
@@ -148,6 +147,7 @@ public class BaseClingo {
 	public static long signatureCreate(String name, int arity, boolean positive) {
 		LongByReference signature = new LongByReference();
 		int pos = positive ? 1 : 0;
+		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_signature_create(name, arity, pos, signature);
 		return signature.getValue();
 	}
@@ -549,8 +549,8 @@ public class BaseClingo {
 	 * @param signature optional signature
 	 * @return the resulting iterator
 	 */
-	public static Pointer symbolicAtomsBegin(Pointer atoms, long signature) {
-		PointerByReference iterator = new PointerByReference();
+	public static long symbolicAtomsBegin(Pointer atoms, long signature) {
+		LongByReference iterator = new LongByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_begin(atoms, signature, iterator);
 		return iterator.getValue();
@@ -562,8 +562,8 @@ public class BaseClingo {
 	 * @param atoms the target
 	 * @return the resulting iterator
 	 */
-	public static Pointer symbolicAtomsEnd(Pointer atoms) {
-		PointerByReference iterator = new PointerByReference();
+	public static long symbolicAtomsEnd(Pointer atoms) {
+		LongByReference iterator = new LongByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_end(atoms, iterator);
 		return iterator.getValue();
@@ -576,8 +576,8 @@ public class BaseClingo {
 	 * @param symbol the symbol to lookup
 	 * @return iterator pointing to the symbolic atom or to the end
 	 */
-	public static Pointer symbolicAtomsFind(Pointer atoms, long symbol) {
-		PointerByReference iterator = new PointerByReference();
+	public static long symbolicAtomsFind(Pointer atoms, long symbol) {
+		LongByReference iterator = new LongByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_find(atoms, symbol, iterator);
 		return iterator.getValue();
@@ -591,7 +591,7 @@ public class BaseClingo {
 	 * @param iteratorB the second iterator
 	 * @return whether the two iterators are equal
 	 */
-	public static boolean symbolicAtomsIteratorIsEqualTo(Pointer atoms, Pointer iteratorA, Pointer iteratorB) {
+	public static boolean symbolicAtomsIteratorIsEqualTo(Pointer atoms, long iteratorA, long iteratorB) {
 		ByteByReference equal = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_iterator_is_equal_to(atoms, iteratorA, iteratorB, equal);
@@ -605,11 +605,11 @@ public class BaseClingo {
 	 * @param iterator iterator to the atom
 	 * @return the resulting symbol
 	 */
-	public static long symbolicAtomsSymbol(Pointer atoms, Pointer iterator) {
-		LongByReference p_symbol = new LongByReference();
+	public static long symbolicAtomsSymbol(Pointer atoms, long iterator) {
+		LongByReference symbol = new LongByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_symbolic_atoms_symbol(atoms, iterator, p_symbol);
-		return p_symbol.getValue();
+		byte success = clingoLibrary.clingo_symbolic_atoms_symbol(atoms, iterator, symbol);
+		return symbol.getValue();
 	}
 
 	/**
@@ -622,11 +622,11 @@ public class BaseClingo {
 	 * @param iterator iterator to the atom
 	 * @return fact whether the atom is a fact
 	 */
-	public static boolean symbolicAtomsIsFact(Pointer atoms, Pointer iterator) {
-		ByteByReference p_fact = new ByteByReference();
+	public static boolean symbolicAtomsIsFact(Pointer atoms, long iterator) {
+		ByteByReference fact = new ByteByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_symbolic_atoms_is_fact(atoms, iterator, p_fact);
-		return p_fact.getValue() == 1;
+		byte success = clingoLibrary.clingo_symbolic_atoms_is_fact(atoms, iterator, fact);
+		return fact.getValue() == 1;
 	}
 
 	/**
@@ -639,7 +639,7 @@ public class BaseClingo {
 	 * @param iterator iterator to the atom
 	 * @return whether the atom is a external
 	 */
-	public static boolean symbolicAtomsIsExternal(Pointer atoms, Pointer iterator) {
+	public static boolean symbolicAtomsIsExternal(Pointer atoms, long iterator) {
 		ByteByReference p_external = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_is_external(atoms, iterator, p_external);
@@ -658,7 +658,7 @@ public class BaseClingo {
 	 * @param iterator iterator to the atom
 	 * @return the associated literal
 	 */
-	public static int symbolicAtomsLiteral(Pointer atoms, Pointer iterator) {
+	public static int symbolicAtomsLiteral(Pointer atoms, long iterator) {
 		IntByReference literal = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_literal(atoms, iterator, literal);
@@ -706,11 +706,11 @@ public class BaseClingo {
 	 * @param iterator the current iterator
 	 * @return the succeeding iterator
 	 */
-	public static Pointer symbolicAtomsNext(Pointer atoms, Pointer iterator) {
-		PointerByReference p_next = new PointerByReference();
+	public static long symbolicAtomsNext(Pointer atoms, long iterator) {
+		LongByReference iteratorNext = new LongByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_symbolic_atoms_next(atoms, iterator, p_next);
-		return p_next.getValue();
+		byte success = clingoLibrary.clingo_symbolic_atoms_next(atoms, iterator, iteratorNext);
+		return iteratorNext.getValue();
 	}
 
 	/**
@@ -721,11 +721,11 @@ public class BaseClingo {
 	 * @param iterator the iterator
 	 * @return whether the iterator points to some element within the sequence
 	 */
-	public static boolean symbolicAtomsIsValid(Pointer atoms, Pointer iterator) {
-		ByteByReference p_valid = new ByteByReference();
+	public static boolean symbolicAtomsIsValid(Pointer atoms, long iterator) {
+		ByteByReference valid = new ByteByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_symbolic_atoms_is_valid(atoms, iterator, p_valid);
-		return p_valid.getValue() == 1;
+		byte success = clingoLibrary.clingo_symbolic_atoms_is_valid(atoms, iterator, valid);
+		return valid.getValue() == 1;
 	}
 
 	/*

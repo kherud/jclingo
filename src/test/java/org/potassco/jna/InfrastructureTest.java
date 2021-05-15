@@ -3,10 +3,7 @@ package org.potassco.jna;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.potassco.api.ClingoException;
 import org.potassco.enums.ConfigurationType;
-import org.potassco.enums.SolveMode;
-import org.potassco.enums.StatisticsType;
 import org.potassco.enums.SymbolType;
 
 import com.sun.jna.Pointer;
@@ -64,6 +61,7 @@ public class InfrastructureTest {
 		args[1] = sc;
 		long f = BaseClingo.symbolCreateFunction(p, args, true);
 		assertTrue("potassco(42,\"clingo\")".equals(BaseClingo.symbolToString(f)));
+		@SuppressWarnings("unused")
 		String s5 = BaseClingo.symbolString(f);
 		assertEquals(p, BaseClingo.symbolName(f));
 		assertEquals(true, BaseClingo.symbolIsPositive(f));

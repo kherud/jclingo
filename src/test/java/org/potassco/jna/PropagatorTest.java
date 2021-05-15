@@ -12,10 +12,7 @@ import org.potassco.jna.PropagatorSt.PropagatorPropagateCallback;
 import org.potassco.jna.PropagatorSt.PropagatorUndoCallback;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.Callback;
-import com.sun.jna.Memory;
 import com.sun.jna.Structure;
-import com.sun.jna.ptr.IntByReference;
 
 /**
  * @see <a href="https://potassco.org/clingo/c-api/5.5/propagator_8c-example.html">propagator.c</a>
@@ -73,17 +70,20 @@ public class PropagatorTest {
 	@Test
 	public void test() {
 		String name = "pigeon";
-		String[] params = {"h", "p"};
-		String program = "1 { place(P,H) : H = 1..h } 1 :- P = 1..p.";
+//		String[] params = {"h", "p"};
+		String[] params = null;
+		String program = "1 { place(P,H) : H = 1..h } 1 :- P = 1..p. #const h=8. #const p=9. ";
 		
 		// Part with arguments
-		long holes = BaseClingo.symbolCreateNumber(8);
-		long pigeons = BaseClingo.symbolCreateNumber(9);
-		PartSt[] parts = new PartSt[1];
-		long[] args = new long[2];
-		args[0] = holes;
-		args[1] = pigeons;
-		parts[0] = new PartSt(name, args, args.length);
+//		long holes = BaseClingo.symbolCreateNumber(8);
+//		long pigeons = BaseClingo.symbolCreateNumber(9);
+//		PartSt[] parts = new PartSt[1];
+//		long[] args = new long[2];
+//		args[0] = holes;
+//		args[1] = pigeons;
+//		parts[0] = new PartSt(name, args, args.length);
+        PartSt[] parts = new PartSt[1];
+        parts[0] = new PartSt(name, null, 0L);
 		
 		// create a propagator 
 		// using the default implementation for the model check
@@ -122,13 +122,13 @@ public class PropagatorTest {
 				long sig = BaseClingo.signatureCreate("place", 2, true);
 				// get an iterator after the last place/2 atom
 				// (atom order corresponds to grounding order (and is unpredictable))
-				Pointer atomsItEnd = BaseClingo.symbolicAtomsEnd(atoms);
+				long atomsItEnd = BaseClingo.symbolicAtomsEnd(atoms);
 				// loop over the place/2 atoms in two passes
 				// the first pass determines the maximum placement literal
 				// the second pass allocates memory for data structures based on the first pass
 				for (int pass = 0; pass < 2; ++pass) {
 					// get an iterator to the first place/2 atom
-					Pointer atomsItBegin = BaseClingo.symbolicAtomsBegin(atoms, sig);
+					long atomsItBegin = BaseClingo.symbolicAtomsBegin(atoms, sig);
 					if (pass == 1) {
 						// allocate memory for the assignment literal -> hole mapping
 //						Memory mem = new Memory(max + 1);

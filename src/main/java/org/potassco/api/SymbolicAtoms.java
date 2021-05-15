@@ -30,7 +30,7 @@ public class SymbolicAtoms {
 	 * @param signature optional signature
 	 * @return the resulting iterator
 	 */
-	public Pointer symbolicAtomsBegin(Pointer atoms, long signature) {
+	public long symbolicAtomsBegin(Pointer atoms, long signature) {
 		return BaseClingo.symbolicAtomsBegin(atoms, signature);
 	}
 
@@ -40,7 +40,7 @@ public class SymbolicAtoms {
 	 * @param atoms the target
 	 * @return the resulting iterator
 	 */
-	public Pointer symbolicAtomsEnd(Pointer atoms) {
+	public long symbolicAtomsEnd(Pointer atoms) {
 		return BaseClingo.symbolicAtomsEnd(atoms);
 	}
 
@@ -51,7 +51,7 @@ public class SymbolicAtoms {
 	 * @param symbol the symbol to lookup
 	 * @return iterator pointing to the symbolic atom or to the end
 	 */
-	public Pointer symbolicAtomsFind(Pointer atoms, long symbol) {
+	public long symbolicAtomsFind(Pointer atoms, long symbol) {
 		return BaseClingo.symbolicAtomsFind(atoms, symbol);
 	}
 
@@ -63,7 +63,7 @@ public class SymbolicAtoms {
 	 * @param iteratorB the second iterator
 	 * @return whether the two iterators are equal
 	 */
-	public boolean symbolicAtomsIteratorIsEqualTo(Pointer atoms, Pointer iteratorA, Pointer iteratorB) {
+	public boolean symbolicAtomsIteratorIsEqualTo(Pointer atoms, long iteratorA, long iteratorB) {
 		return BaseClingo.symbolicAtomsIteratorIsEqualTo(atoms, iteratorA, iteratorB);
 	}
 
@@ -74,7 +74,7 @@ public class SymbolicAtoms {
 	 * @param iterator iterator to the atom
 	 * @return the resulting symbol
 	 */
-	public long symbolicAtomsSymbol(Pointer atoms, Pointer iterator) {
+	public long symbolicAtomsSymbol(Pointer atoms, long iterator) {
 		return BaseClingo.symbolicAtomsSymbol(atoms, iterator);
 	}
 
@@ -88,7 +88,7 @@ public class SymbolicAtoms {
 	 * @param iterator iterator to the atom
 	 * @return fact whether the atom is a fact
 	 */
-	public boolean symbolicAtomsIsFact(Pointer atoms, Pointer iterator) {
+	public boolean symbolicAtomsIsFact(Pointer atoms, long iterator) {
 		return BaseClingo.symbolicAtomsIsFact(atoms, iterator);
 	}
 
@@ -102,7 +102,7 @@ public class SymbolicAtoms {
 	 * @param iterator iterator to the atom
 	 * @return whether the atom is a external
 	 */
-	public boolean symbolicAtomsIsExternal(Pointer atoms, Pointer iterator) {
+	public boolean symbolicAtomsIsExternal(Pointer atoms, long iterator) {
 		return BaseClingo.symbolicAtomsIsExternal(atoms, iterator);
 	}
 
@@ -117,7 +117,7 @@ public class SymbolicAtoms {
 	 * @param iterator iterator to the atom
 	 * @return the associated literal
 	 */
-	public int symbolicAtomsLiteral(Pointer atoms, Pointer iterator) {
+	public int symbolicAtomsLiteral(Pointer atoms, long iterator) {
 		return BaseClingo.symbolicAtomsLiteral(atoms, iterator);
 	}
 
@@ -148,7 +148,7 @@ public class SymbolicAtoms {
 	 * @param iterator the current iterator
 	 * @return the succeeding iterator
 	 */
-	public Pointer symbolicAtomsNext(Pointer atoms, Pointer iterator) {
+	public long symbolicAtomsNext(Pointer atoms, long iterator) {
 		return BaseClingo.symbolicAtomsNext(atoms, iterator);
 	}
 
@@ -160,7 +160,7 @@ public class SymbolicAtoms {
 	 * @param iterator the iterator
 	 * @return whether the iterator points to some element within the sequence
 	 */
-	public boolean symbolicAtomsIsValid(Pointer atoms, Pointer iterator) {
+	public boolean symbolicAtomsIsValid(Pointer atoms, long iterator) {
 		return BaseClingo.symbolicAtomsIsValid(atoms, iterator);
 	}
 

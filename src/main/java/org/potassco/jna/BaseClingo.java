@@ -3773,6 +3773,7 @@ public class BaseClingo {
 	 * @return exit code to return from main function
 	 */
 	public static int main(Pointer application, String arguments, SizeT size, Pointer data) {
+	    IntByReference ir = new IntByReference(1);
 		return clingoLibrary.clingo_main(application, arguments, size, data);
 	}
 

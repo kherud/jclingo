@@ -40,6 +40,7 @@ package org.potassco.jna;
  * <li>clingo_truth_value_t (int): int
  * <li>clingo_weight_constraint_type_t (int): int
  * <li>clingo_weight_t (int32_t): int
+ * <li>clingo_logger_t (void)
  * <li>
  * <li>
  * <li>
@@ -53,7 +54,9 @@ package org.potassco.jna;
  * <li>clingo_symbolic_atoms_t - struct
  * <li>clingo_weighted_literal_t - struct
  * <li>clingo_configuration_t - struct
- * <li>clingo_solve_handle_t (struct): SolveHandleSt
+ * <li>clingo_solve_handle_t (struct):
+ * <li>
+ * <li>
  * <li>
  * </ul>
  */

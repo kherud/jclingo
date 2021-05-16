@@ -1755,7 +1755,6 @@ public class BaseClingo {
 
 	/**
 	 * Get the type of a key.
-	 * <p>
 	 * 
 	 * @note The type is bitset, an entry can have multiple (but at least one) type.
 	 * @param configuration the target configuration

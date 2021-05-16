@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveMode;
-import org.potassco.util.StatisticsTree;
+import org.potassco.util.PropertyTree;
 
 import com.sun.jna.Pointer;
 
@@ -45,18 +45,13 @@ public class ConfigurationCTest {
 		BaseClingo.controlGround(control, parts, null, null);
         // solve
 		int result = solve(control);
-		StatisticsTree tree = new StatisticsTree();
+		PropertyTree tree = new PropertyTree("ClingoConfiguration");
 		checkConfiguration(conf, Math.toIntExact(rootKey), 0, tree);
-		tree.showXml(); // insert to output statistics
-		assertEquals(2.0, tree.queryXpath("//lp/atoms/text()"), 0.0001);
-		assertEquals(2.0, tree.queryXpath("//lp/bodies/text()"), 0.0001);
-		assertEquals(0.0, tree.queryXpath("//lp/atoms_aux/text()"), 0.0001);
-		assertEquals(3.0, tree.queryXpath("//lp/eqs/text()"), 0.0001);
-		assertEquals(2.0, tree.queryXpath("//solving//models/text()"), 0.0001);
-		assertEquals(2.0, tree.queryXpath("//summary//enumerated/text()"), 0.0001);
+		tree.showXml(); // insert to output configuration
+		assertEquals("berkmin,0", tree.queryXpathAsString("/ClingoConfiguration/solver/heuristic/text()"));
 	}
 
-	private void checkConfiguration(Pointer conf, int key, int depth, StatisticsTree tree) {
+	private void checkConfiguration(Pointer conf, int key, int depth, PropertyTree tree) {
 		int type = BaseClingo.configurationType(conf, key);
 		switch (type) {
 		case 1: {
@@ -68,7 +63,8 @@ public class ConfigurationCTest {
 			SizeT size = BaseClingo.configurationArraySize(conf, key);
 			for (int j = 0; j < size.intValue(); j++) {
 				long subkey = BaseClingo.configurationArrayAt(conf, key, new SizeT(j));
-				tree.addIndex(j, depth);
+				String desc = BaseClingo.configurationDescription(conf, key);
+				tree.addIndex(j, desc, depth);
 		        // recursively print subentry
 				checkConfiguration(conf, Math.toIntExact(subkey), depth + 1, tree);
 			}
@@ -80,7 +76,45 @@ public class ConfigurationCTest {
 		        // get and print map name (with prefix for readability)
 				String name = BaseClingo.configurationMapSubkeyName(conf, key, new SizeT(j));
 				long subkey = BaseClingo.configurationMapAt(conf, key, name);
-				tree.addNode(name, depth);
+				String desc = BaseClingo.configurationDescription(conf, key);
+				tree.addNode(name, desc, depth);
+		        // recursively print subentry
+				checkConfiguration(conf, Math.toIntExact(subkey), depth + 1, tree);
+			}
+			break;
+		}
+		case 5: {
+			SizeT size = BaseClingo.configurationMapSize(conf, key);
+			String v1 = BaseClingo.configurationValueGet(conf, key);
+			for (int j = 0; j < size.intValue(); j++) {
+		        // get and print map name (with prefix for readability)
+				String name = BaseClingo.configurationMapSubkeyName(conf, key, new SizeT(j));
+				long subkey = BaseClingo.configurationMapAt(conf, key, name);
+				String desc = BaseClingo.configurationDescription(conf, key);
+				String v2 = BaseClingo.configurationValueGet(conf, Math.toIntExact(subkey));
+				tree.addNode(name, desc, depth);
+		        // recursively print subentry
+				checkConfiguration(conf, Math.toIntExact(subkey), depth + 1, tree);
+			}
+			break;
+		}
+		case 6: {
+//			SizeT as = BaseClingo.configurationArraySize(conf, key);
+			SizeT size = BaseClingo.configurationMapSize(conf, key);
+			for (int j = 0; j < size.intValue(); j++) {
+		        // get and print map name (with prefix for readability)
+				String name = BaseClingo.configurationMapSubkeyName(conf, key, new SizeT(j));
+				int arraySubkey = BaseClingo.configurationArrayAt(conf, key, new SizeT(j));
+				long subkey = BaseClingo.configurationMapAt(conf, key, name);
+				String desc = BaseClingo.configurationDescription(conf, key);
+				String value = BaseClingo.configurationValueGet(conf, Math.toIntExact(subkey));
+				
+				int arraySkCt = BaseClingo.configurationType(conf, arraySubkey);
+//				checkConfiguration(conf, arraySubkey, depth + 1, tree);
+				
+				int mapSkCt = BaseClingo.configurationType(conf, Math.toIntExact(subkey));
+				
+				tree.addNodeValue(name, desc, value, depth);
 		        // recursively print subentry
 				checkConfiguration(conf, Math.toIntExact(subkey), depth + 1, tree);
 			}

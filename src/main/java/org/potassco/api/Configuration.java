@@ -19,18 +19,23 @@ public class Configuration {
 		this.key = key;
 	}
 
+//	private ConfigurationType type() {
+//		return BaseClingo.configurationType(this.reference, this.key);
+//	}
+
 	private int type() {
 		return BaseClingo.configurationType(this.reference, this.key);
 	}
 	
-//	public List<String> getKeys() {
-//		List<String> result = new LinkedList<String>();
+	@Deprecated
+	public List<String> getKeys() {
+		List<String> result = new LinkedList<String>();
 //		ConfigurationType t = type();
-//		for (long j = 0L; j < BaseClingo.configurationMapSize(this.reference, this.key).longValue(); j++) {
-//			String name = BaseClingo.configurationMapSubkeyName(this.reference, this.key, new SizeT(j));
-//			result.add(name);
-//		}
-//		return result;
-//	}
+		for (long j = 0L; j < BaseClingo.configurationMapSize(this.reference, this.key).longValue(); j++) {
+			String name = BaseClingo.configurationMapSubkeyName(this.reference, this.key, new SizeT(j));
+			result.add(name);
+		}
+		return result;
+	}
 	
 }

@@ -29,18 +29,18 @@ import org.w3c.dom.Node;
  * @author Josef Schneeberger
  *
  */
-public class StatisticsTree {
+public class PropertyTree {
 
 	private Document document;
 	private Map<Integer,Node> current = new HashMap<Integer, Node>();
 	
-	public StatisticsTree() {
+	public PropertyTree(String rootElementName) {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			document = dBuilder.newDocument();
 			// root element
-			Element rootElement = document.createElement("ClingoStatistics");
+			Element rootElement = document.createElement(rootElementName);
 			current.put(0, document.appendChild(rootElement));
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
@@ -48,17 +48,41 @@ public class StatisticsTree {
 		}
 	}
 
-	public void addNode(String name, int depth) {
+	public void addNodeValue(String name, String desc, String value, int depth) {
 		Element e = document.createElement(name);
+        if (desc != null) {
+			Attr descAttr = document.createAttribute("desc");
+			descAttr.setValue(desc);
+			e.setAttributeNode(descAttr);
+		}
+        if (value != null) {
+			e.appendChild(document.createTextNode(value));
+		}
 		current.get(depth).appendChild(e);
         current.put(depth + 1, e);
 	}
 
-	public void addIndex(int j, int depth) {
+	public void addNode(String name, String desc, int depth) {
+		Element e = document.createElement(name);
+        if (desc != null) {
+			Attr descAttr = document.createAttribute("desc");
+			descAttr.setValue(desc);
+			e.setAttributeNode(descAttr);
+		}
+		current.get(depth).appendChild(e);
+        current.put(depth + 1, e);
+	}
+
+	public void addIndex(int j, String desc, int depth) {
         Element e = document.createElement("index");
-        Attr attr = document.createAttribute("id");
-        attr.setValue("" + j);
-        e.setAttributeNode(attr);
+        Attr idAttr = document.createAttribute("id");
+        idAttr.setValue("" + j);
+        e.setAttributeNode(idAttr);
+        if (desc != null) {
+			Attr descAttr = document.createAttribute("desc");
+			descAttr.setValue(desc);
+			e.setAttributeNode(descAttr);
+		}
 		current.get(depth).appendChild(e);
         current.put(depth + 1, e);
 	}
@@ -98,11 +122,25 @@ public class StatisticsTree {
 			e.printStackTrace();
 		}
 	}
-	public double queryXpath(String xPathExpression ) {
+	
+	// TODO make generic!
+	public double queryXpathAsDouble(String xPathExpression) {
         XPath xpath = XPathFactory.newInstance().newXPath();
         double result = 0.0;
 		try {
 			result = (double) xpath.evaluate(xPathExpression, document, XPathConstants.NUMBER);
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public String queryXpathAsString(String xPathExpression) {
+        XPath xpath = XPathFactory.newInstance().newXPath();
+		String result = null;
+		try {
+			result = (String) xpath.evaluate(xPathExpression, document, XPathConstants.STRING);
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

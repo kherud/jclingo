@@ -11,7 +11,7 @@ import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
 import org.potassco.enums.StatisticsType;
-import org.potassco.util.StatisticsTree;
+import org.potassco.util.PropertyTree;
 
 import com.sun.jna.Pointer;
 
@@ -92,20 +92,20 @@ public class StatisticsCTest {
 		// get the statistics object, get the root key, then print the statistics recursively
 		Pointer stats = BaseClingo.controlStatistics(control);
 		long statsKey = BaseClingo.statisticsRoot(stats);
-		StatisticsTree tree = new StatisticsTree();
+		PropertyTree tree = new PropertyTree("ClingoStatistics");
 		checkStatistics(stats, statsKey, 0, tree);
 //		tree.showXml(); insert to output statistics
-		assertEquals(2.0, tree.queryXpath("//lp/atoms/text()"), 0.0001);
-		assertEquals(2.0, tree.queryXpath("//lp/bodies/text()"), 0.0001);
-		assertEquals(0.0, tree.queryXpath("//lp/atoms_aux/text()"), 0.0001);
-		assertEquals(3.0, tree.queryXpath("//lp/eqs/text()"), 0.0001);
-		assertEquals(2.0, tree.queryXpath("//solving//models/text()"), 0.0001);
-		assertEquals(2.0, tree.queryXpath("//summary//enumerated/text()"), 0.0001);
+		assertEquals(2.0, tree.queryXpathAsDouble("//lp/atoms/text()"), 0.0001);
+		assertEquals(2.0, tree.queryXpathAsDouble("//lp/bodies/text()"), 0.0001);
+		assertEquals(0.0, tree.queryXpathAsDouble("//lp/atoms_aux/text()"), 0.0001);
+		assertEquals(3.0, tree.queryXpathAsDouble("//lp/eqs/text()"), 0.0001);
+		assertEquals(2.0, tree.queryXpathAsDouble("//solving//models/text()"), 0.0001);
+		assertEquals(2.0, tree.queryXpathAsDouble("//summary//enumerated/text()"), 0.0001);
         // clean up
         BaseClingo.controlFree(control);
 	}
 	
-	private void checkStatistics(Pointer stats, long key, int depth, StatisticsTree tree) {
+	private void checkStatistics(Pointer stats, long key, int depth, PropertyTree tree) {
 		StatisticsType type = BaseClingo.statisticsType(stats, key);
 		switch (type) {
 		case VALUE: {
@@ -117,7 +117,7 @@ public class StatisticsCTest {
 			SizeT size = BaseClingo.statisticsArraySize(stats, key);
 			for (int j = 0; j < size.intValue(); j++) {
 				long subkey = BaseClingo.statisticsArrayAt(stats, key, new SizeT(j));
-				tree.addIndex(j, depth);
+				tree.addIndex(j, null, depth);
 		        // recursively print subentry
 				checkStatistics(stats, subkey, depth + 1, tree);
 			}
@@ -129,7 +129,7 @@ public class StatisticsCTest {
 		        // get and print map name (with prefix for readability)
 				String name = BaseClingo.statisticsMapSubkeyName(stats, key, new SizeT(j));
 				long subkey = BaseClingo.statisticsMapAt(stats, key, name);
-				tree.addNode(name, depth);
+				tree.addNode(name, null, depth);
 		        // recursively print subentry
 				checkStatistics(stats, subkey, depth + 1, tree);
 			}

@@ -1,7 +1,6 @@
 package org.potassco.api;
 
 import org.potassco.cpp.clingo_h;
-import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.StatisticsType;
 import org.potassco.enums.TermType;
 import org.potassco.jna.BaseClingo;

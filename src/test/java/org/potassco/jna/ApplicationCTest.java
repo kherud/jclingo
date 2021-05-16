@@ -11,10 +11,10 @@ import org.junit.Test;
  */
 public class ApplicationCTest {
 
-	@Test
-	public void test() {
-		ApplicationSt app = new ApplicationSt("example", "1.0.0", null, mainLoop, null, null, registerOptions, null);
-		BaseClingo.main(app, null, null, options);
-	}
+//	@Test
+//	public void test() {
+//		ApplicationSt app = new ApplicationSt("example", "1.0.0", null, mainLoop, null, null, registerOptions, null);
+//		BaseClingo.main(app, null, null, options);
+//	}
 
 }

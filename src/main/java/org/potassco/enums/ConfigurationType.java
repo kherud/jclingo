@@ -10,13 +10,18 @@ import org.potassco.cpp.clingo_h;
  * @author Josef Schneeberger
  * {@link clingo_h#clingo_configuration_type_e}
  */
+@Deprecated
 public enum ConfigurationType {
     /** the entry is a (string) value */
     VALUE(1),
     /** the entry is an array */
     ARRAY(2),
     /** the entry is a map */
-    MAP(4);
+    MAP(4),
+    /** the entry is a map */
+    VALUE_MAP(5),
+    /** the entry is a map as well as an array */
+	ARRAY_MAP(6);
 
     private static Map<Integer, ConfigurationType> mapping = new HashMap<>();
     
@@ -30,7 +35,11 @@ public enum ConfigurationType {
 	}
 	
 	public static ConfigurationType fromValue(int type) {
-		return mapping.get(type);
+		ConfigurationType ct = mapping.get(type);
+		if (ct == null) {
+			System.out.println("Unknown ConfigurationType: " + 5);
+		}
+		return ct;
 	}
 
     private final int type;

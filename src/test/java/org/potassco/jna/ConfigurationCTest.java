@@ -47,10 +47,17 @@ public class ConfigurationCTest {
 		int result = solve(control);
 		PropertyTree tree = new PropertyTree("ClingoConfiguration");
 		checkConfiguration(conf, Math.toIntExact(rootKey), 0, tree);
-		tree.showXml(); // insert to output configuration
+//		tree.showXml(); // insert to output configuration
 		assertEquals("berkmin,0", tree.queryXpathAsString("/ClingoConfiguration/solver/heuristic/text()"));
+		assertEquals("0", tree.queryXpathAsString("/ClingoConfiguration/solve/models/text()"));
+		// check solve.models
         int smKey = BaseClingo.configurationMapAt(conf, rootKey, "solve.models");
         assertEquals("0", BaseClingo.configurationValueGet(conf, smKey));
+        // search for more information
+//        SizeT rootSize = BaseClingo.configurationMapSize(conf, rootKey);
+//        for (int j = 0; j <= rootSize.intValue(); j++) {
+//			System.out.println(BaseClingo.configurationMapSubkeyName(conf, rootKey, new SizeT(j)));
+//		}
 	}
 
 	// TODO: solve.models not contained in conf tree
@@ -86,19 +93,9 @@ public class ConfigurationCTest {
 			}
 			break;
 		}
-		case 5: {
-			SizeT size = BaseClingo.configurationMapSize(conf, key);
-			String v1 = BaseClingo.configurationValueGet(conf, key);
-			for (int j = 0; j < size.intValue(); j++) {
-		        // get and print map name (with prefix for readability)
-				String name = BaseClingo.configurationMapSubkeyName(conf, key, new SizeT(j));
-				long subkey = BaseClingo.configurationMapAt(conf, key, name);
-				String desc = BaseClingo.configurationDescription(conf, key);
-				String v2 = BaseClingo.configurationValueGet(conf, Math.toIntExact(subkey));
-				tree.addNode(name, desc, depth);
-		        // recursively print subentry
-				checkConfiguration(conf, Math.toIntExact(subkey), depth + 1, tree);
-			}
+		case 5: { // like 1
+			String value = BaseClingo.configurationValueGet(conf, key);
+			tree.addValue(value, depth);
 			break;
 		}
 		case 6: {
@@ -116,8 +113,8 @@ public class ConfigurationCTest {
 //				checkConfiguration(conf, arraySubkey, depth + 1, tree);
 				
 				int mapSkCt = BaseClingo.configurationType(conf, Math.toIntExact(subkey));
-				
-				tree.addNodeValue(name, desc, value, depth);
+
+				tree.addNode(name, desc, depth);
 		        // recursively print subentry
 				checkConfiguration(conf, Math.toIntExact(subkey), depth + 1, tree);
 			}

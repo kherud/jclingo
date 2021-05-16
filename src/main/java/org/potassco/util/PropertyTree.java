@@ -48,20 +48,6 @@ public class PropertyTree {
 		}
 	}
 
-	public void addNodeValue(String name, String desc, String value, int depth) {
-		Element e = document.createElement(name);
-        if (desc != null) {
-			Attr descAttr = document.createAttribute("desc");
-			descAttr.setValue(desc);
-			e.setAttributeNode(descAttr);
-		}
-        if (value != null) {
-			e.appendChild(document.createTextNode(value));
-		}
-		current.get(depth).appendChild(e);
-        current.put(depth + 1, e);
-	}
-
 	public void addNode(String name, String desc, int depth) {
 		Element e = document.createElement(name);
         if (desc != null) {

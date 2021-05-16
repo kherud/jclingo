@@ -49,8 +49,11 @@ public class ConfigurationCTest {
 		checkConfiguration(conf, Math.toIntExact(rootKey), 0, tree);
 		tree.showXml(); // insert to output configuration
 		assertEquals("berkmin,0", tree.queryXpathAsString("/ClingoConfiguration/solver/heuristic/text()"));
+        int smKey = BaseClingo.configurationMapAt(conf, rootKey, "solve.models");
+        assertEquals("0", BaseClingo.configurationValueGet(conf, smKey));
 	}
 
+	// TODO: solve.models not contained in conf tree
 	private void checkConfiguration(Pointer conf, int key, int depth, PropertyTree tree) {
 		int type = BaseClingo.configurationType(conf, key);
 		switch (type) {

@@ -209,7 +209,7 @@ public class BaseClingo {
 	/**
 	 * Check if a signature is less than another signature.
 	 * <p>
-	 * Signatures are compared first by sign (unsigned < signed), then by aritthen
+	 * Signatures are compared first by sign (unsigned < signed), then by arity, then
 	 * by name.
 	 * 
 	 * @param a first signature
@@ -347,7 +347,6 @@ public class BaseClingo {
 
 	/**
 	 * Get the string of a symbol.
-	 * <p>
 	 * 
 	 * @note The string is internalized and valid for the duration of the process.
 	 * @param symbol reference to a symbol
@@ -418,8 +417,8 @@ public class BaseClingo {
 	}
 
 	/**
-	 * We provide just on function: {@link #symbolToString(long)}
-	 * Keep for futer releases of the clingo API!
+	 * We provide just one function: {@link #symbolToString(long)}
+	 * Keep for further releases of the clingo API!
 	 * @param symbol
 	 * @return
 	 */
@@ -671,7 +670,7 @@ public class BaseClingo {
 	 * @param atoms the target
 	 * @return the number of signatures
 	 */
-	public static SizeT symbolicAtomsSignaturesSize(Pointer atoms) {
+	private static SizeT symbolicAtomsSignaturesSize(Pointer atoms) {
 		SizeByReference p_size = new SizeByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_signatures_size(atoms, p_size);

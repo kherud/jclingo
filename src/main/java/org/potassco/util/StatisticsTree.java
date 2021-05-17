@@ -6,6 +6,11 @@ import org.potassco.jna.SizeT;
 
 import com.sun.jna.Pointer;
 
+/**
+ * Typically used after solving.
+ * @author Josef Schneeberger
+ *
+ */
 public class StatisticsTree extends PropertyTree {
 
 	public StatisticsTree() {

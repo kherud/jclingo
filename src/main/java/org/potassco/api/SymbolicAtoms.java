@@ -122,16 +122,6 @@ public class SymbolicAtoms {
 	}
 
 	/**
-	 * Get the number of different predicate signatures used in the program.
-	 * 
-	 * @param atoms the target
-	 * @return the number of signatures
-	 */
-	public SizeT symbolicAtomsSignaturesSize(Pointer atoms) {
-		return BaseClingo.symbolicAtomsSignaturesSize(atoms);
-	}
-
-	/**
 	 * Get the predicate signatures occurring in a logic program.
 	 * 
 	 * @param atoms the target

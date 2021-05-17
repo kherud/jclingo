@@ -12,6 +12,7 @@ import org.potassco.enums.SolveEventType;
 import org.potassco.enums.SolveMode;
 import org.potassco.enums.StatisticsType;
 import org.potassco.util.PropertyTree;
+import org.potassco.util.StatisticsTree;
 
 import com.sun.jna.Pointer;
 
@@ -92,8 +93,8 @@ public class StatisticsCTest {
 		// get the statistics object, get the root key, then print the statistics recursively
 		Pointer stats = BaseClingo.controlStatistics(control);
 		long statsKey = BaseClingo.statisticsRoot(stats);
-		PropertyTree tree = new PropertyTree("ClingoStatistics");
-		checkStatistics(stats, statsKey, 0, tree);
+		StatisticsTree tree = new StatisticsTree(stats, statsKey);
+		
 //		tree.showXml(); insert to output statistics
 		assertEquals(2.0, tree.queryXpathAsDouble("//lp/atoms/text()"), 0.0001);
 		assertEquals(2.0, tree.queryXpathAsDouble("//lp/bodies/text()"), 0.0001);
@@ -105,45 +106,6 @@ public class StatisticsCTest {
         BaseClingo.controlFree(control);
 	}
 	
-	private void checkStatistics(Pointer stats, long key, int depth, PropertyTree tree) {
-		StatisticsType type = BaseClingo.statisticsType(stats, key);
-		switch (type) {
-		case VALUE: {
-			double value = BaseClingo.statisticsValueGet(stats, key);
-			tree.addValue(value, depth);
-			break;
-		}
-		case ARRAY: {
-			SizeT size = BaseClingo.statisticsArraySize(stats, key);
-			for (int j = 0; j < size.intValue(); j++) {
-				long subkey = BaseClingo.statisticsArrayAt(stats, key, new SizeT(j));
-				tree.addIndex(j, null, depth);
-		        // recursively print subentry
-				checkStatistics(stats, subkey, depth + 1, tree);
-			}
-			break;
-		}
-		case MAP: {
-			SizeT size = BaseClingo.statisticsMapSize(stats, key);
-			for (int j = 0; j < size.intValue(); j++) {
-		        // get and print map name (with prefix for readability)
-				String name = BaseClingo.statisticsMapSubkeyName(stats, key, new SizeT(j));
-				long subkey = BaseClingo.statisticsMapAt(stats, key, name);
-				tree.addNode(name, null, depth);
-		        // recursively print subentry
-				checkStatistics(stats, subkey, depth + 1, tree);
-			}
-			break;
-		}
-		case EMPTY: {
-			// this case won't occur if the statistics are traversed like this
-			break;
-		}
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + type);
-		}
-	}
-
 	private void solve(Pointer control) {
 		SolveEventCallback eventHandler = new SolveEventCallback() {
 			@Override

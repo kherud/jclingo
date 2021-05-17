@@ -30,7 +30,6 @@ import org.w3c.dom.Node;
  *
  */
 public class PropertyTree {
-
 	private Document document;
 	private Map<Integer,Node> current = new HashMap<Integer, Node>();
 	
@@ -48,7 +47,7 @@ public class PropertyTree {
 		}
 	}
 
-	public void addNode(String name, String desc, int depth) {
+	protected void addNode(String name, String desc, int depth) {
 		Element e = document.createElement(name);
         if (desc != null) {
 			Attr descAttr = document.createAttribute("desc");
@@ -59,7 +58,7 @@ public class PropertyTree {
         current.put(depth + 1, e);
 	}
 
-	public void addIndex(int j, String desc, int depth) {
+	protected void addIndex(int j, String desc, int depth) {
         Element e = document.createElement("index");
         Attr idAttr = document.createAttribute("id");
         idAttr.setValue("" + j);
@@ -73,11 +72,11 @@ public class PropertyTree {
         current.put(depth + 1, e);
 	}
 
-	public void addValue(double value, int depth) {
+	protected void addValue(double value, int depth) {
 		current.get(depth).appendChild(document.createTextNode("" + value));
 	}
 
-	public void addValue(String value, int depth) {
+	protected void addValue(String value, int depth) {
 		current.get(depth).appendChild(document.createTextNode(value));
 	}
 	

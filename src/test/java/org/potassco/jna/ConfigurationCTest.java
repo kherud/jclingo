@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveMode;
+import org.potassco.util.ConfigurationTree;
 import org.potassco.util.PropertyTree;
 
 import com.sun.jna.Pointer;
@@ -45,8 +46,7 @@ public class ConfigurationCTest {
 		BaseClingo.controlGround(control, parts, null, null);
         // solve
 		int result = solve(control);
-		PropertyTree tree = new PropertyTree("ClingoConfiguration");
-		checkConfiguration(conf, Math.toIntExact(rootKey), 0, tree);
+		ConfigurationTree tree = new ConfigurationTree(conf, Math.toIntExact(rootKey));
 //		tree.showXml(); // insert to output configuration
 		assertEquals("berkmin,0", tree.queryXpathAsString("/ClingoConfiguration/solver/heuristic/text()"));
 		assertEquals("0", tree.queryXpathAsString("/ClingoConfiguration/solve/models/text()"));
@@ -58,71 +58,6 @@ public class ConfigurationCTest {
 //        for (int j = 0; j <= rootSize.intValue(); j++) {
 //			System.out.println(BaseClingo.configurationMapSubkeyName(conf, rootKey, new SizeT(j)));
 //		}
-	}
-
-	// TODO: solve.models not contained in conf tree
-	private void checkConfiguration(Pointer conf, int key, int depth, PropertyTree tree) {
-		int type = BaseClingo.configurationType(conf, key);
-		switch (type) {
-		case 1: {
-			String value = BaseClingo.configurationValueGet(conf, key);
-			tree.addValue(value, depth);
-			break;
-		}
-		case 2: {
-			SizeT size = BaseClingo.configurationArraySize(conf, key);
-			for (int j = 0; j < size.intValue(); j++) {
-				long subkey = BaseClingo.configurationArrayAt(conf, key, new SizeT(j));
-				String desc = BaseClingo.configurationDescription(conf, key);
-				tree.addIndex(j, desc, depth);
-		        // recursively print subentry
-				checkConfiguration(conf, Math.toIntExact(subkey), depth + 1, tree);
-			}
-			break;
-		}
-		case 4: {
-			SizeT size = BaseClingo.configurationMapSize(conf, key);
-			for (int j = 0; j < size.intValue(); j++) {
-		        // get and print map name (with prefix for readability)
-				String name = BaseClingo.configurationMapSubkeyName(conf, key, new SizeT(j));
-				long subkey = BaseClingo.configurationMapAt(conf, key, name);
-				String desc = BaseClingo.configurationDescription(conf, key);
-				tree.addNode(name, desc, depth);
-		        // recursively print subentry
-				checkConfiguration(conf, Math.toIntExact(subkey), depth + 1, tree);
-			}
-			break;
-		}
-		case 5: { // like 1
-			String value = BaseClingo.configurationValueGet(conf, key);
-			tree.addValue(value, depth);
-			break;
-		}
-		case 6: {
-//			SizeT as = BaseClingo.configurationArraySize(conf, key);
-			SizeT size = BaseClingo.configurationMapSize(conf, key);
-			for (int j = 0; j < size.intValue(); j++) {
-		        // get and print map name (with prefix for readability)
-				String name = BaseClingo.configurationMapSubkeyName(conf, key, new SizeT(j));
-				int arraySubkey = BaseClingo.configurationArrayAt(conf, key, new SizeT(j));
-				long subkey = BaseClingo.configurationMapAt(conf, key, name);
-				String desc = BaseClingo.configurationDescription(conf, key);
-				String value = BaseClingo.configurationValueGet(conf, Math.toIntExact(subkey));
-				
-				int arraySkCt = BaseClingo.configurationType(conf, arraySubkey);
-//				checkConfiguration(conf, arraySubkey, depth + 1, tree);
-				
-				int mapSkCt = BaseClingo.configurationType(conf, Math.toIntExact(subkey));
-
-				tree.addNode(name, desc, depth);
-		        // recursively print subentry
-				checkConfiguration(conf, Math.toIntExact(subkey), depth + 1, tree);
-			}
-			break;
-		}
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + type);
-		}
 	}
 
 	private int solve(Pointer control) {

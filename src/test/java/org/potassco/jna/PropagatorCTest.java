@@ -58,7 +58,11 @@ public class PropagatorCTest {
 			super();
 			this.size = new SizeT(size);
 			this.holes = new int[size];
-			allocateMemory();
+//			allocateMemory();
+		}
+
+		public State() {
+			// TODO Auto-generated constructor stub
 		}
 
 		protected List<String> getFieldOrder() {
@@ -126,13 +130,27 @@ public class PropagatorCTest {
 				// loop over the place/2 atoms in two passes
 				// the first pass determines the maximum placement literal
 				// the second pass allocates memory for data structures based on the first pass
+
+//				for (long i = BaseClingo.symbolicAtomsBegin(atoms, 0);
+//						!BaseClingo.symbolicAtomsIteratorIsEqualTo(atoms, i, atomsItEnd);
+//						i = BaseClingo.symbolicAtomsNext(atoms, i)) {
+//					long s = BaseClingo.symbolicAtomsSymbol(atoms, i);
+//					System.out.println(BaseClingo.symbolToString(s));
+//				}
+//				long[] sigs = BaseClingo.symbolicAtomsSignatures(atoms);
+//				boolean isEqual = BaseClingo.signatureIsEqualTo(sigs[0], sig);
+				
+				
 				for (int pass = 0; pass < 2; ++pass) {
 					// get an iterator to the first place/2 atom
-					long atomsItBegin = BaseClingo.symbolicAtomsBegin(atoms, sig);
+//					long atomsItBegin = BaseClingo.symbolicAtomsBegin(atoms, sig);
+					long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, 0);
 					if (pass == 1) {
 						// allocate memory for the assignment literal -> hole mapping
 //						Memory mem = new Memory(max + 1);
-						pData.pigeonsSize = new SizeT(max + 1);
+						int s = max + 1;
+						pData.pigeonsSize = new SizeT(s);
+						pData.pigeons = new int[s];
 					}
 					while (true) {
 							//  int h;
@@ -140,10 +158,10 @@ public class PropagatorCTest {
 							//  clingo_literal_t lit;
 							//  clingo_symbol_t sym;
 						// stop iteration if the end is reached
-						boolean equal = BaseClingo.symbolicAtomsIteratorIsEqualTo(atoms, atomsItBegin, atomsItEnd);
+						boolean equal = BaseClingo.symbolicAtomsIteratorIsEqualTo(atoms, atomsIterator, atomsItEnd);
 						if (equal) { break; }
 						// get the solver literal for the placement atom
-						int lit = BaseClingo.symbolicAtomsLiteral(atoms, atomsItBegin);
+						int lit = BaseClingo.symbolicAtomsLiteral(atoms, atomsIterator);
 						lit = BaseClingo.propagateInitSolverLiteral(init, lit);
 						if (pass == 0) {
 							// determine the maximum literal
@@ -151,7 +169,7 @@ public class PropagatorCTest {
 							if (lit > max) { max = lit; }
 						} else {
 							// extract the hole number from the atom
-							long sym = BaseClingo.symbolicAtomsSymbol(atoms, atomsItBegin);
+							long sym = BaseClingo.symbolicAtomsSymbol(atoms, atomsIterator);
 							int h = getArg(sym, 1);
 							// initialize the assignemnt literal -> hole mapping
 							pData.pigeons[lit] = h;
@@ -161,7 +179,7 @@ public class PropagatorCTest {
 							if (h + 1 > holes) { holes = h + 1; }
 						}
 						// advance to the next placement atom
-						BaseClingo.symbolicAtomsNext(atoms, atomsItBegin);
+						atomsIterator = BaseClingo.symbolicAtomsNext(atoms, atomsIterator);
 					}
 				}
 				// initialize the per solver thread state information
@@ -169,7 +187,8 @@ public class PropagatorCTest {
 					// initially no pigeons are assigned to any holes
 					// so the hole -> literal mapping is initialized with zero
 					// which is not a valid literal
-					State s = new State(new Pointer(pData.states[i]));
+					State s = new State();
+//					pData.states[i] = new State();
 //					Memory mem = new Memory(s.holes.length * holes);
 					s.holes = new int[s.holes.length * holes];
 					s.size = new SizeT(holes);
@@ -206,6 +225,7 @@ public class PropagatorCTest {
 		BaseClingo.controlAdd(control, name, params, program);
 		BaseClingo.controlGround(control, parts, null, null);
 		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, new SizeT(), null, null);
+		// TODO: use ConfigurationTree to check configuration variants (Parts, etc.)
 		boolean modelExists = true;
 		while (modelExists) {
 			BaseClingo.solveHandleResume(handle);

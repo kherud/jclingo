@@ -50,6 +50,28 @@ public class AtomsTest {
 		assertFalse(BaseClingo.symbolicAtomsIsExternal(atoms, iteratorFind));
 	}
 
+	@Test
+	public void testAtomsIterator() {
+		String name = "base";
+		Pointer control = BaseClingo.control(null, null, null, 0);
+		BaseClingo.controlAdd(control, name, null, "a. b. c. d. e.");
+        PartSt[] parts = new PartSt[1];
+        parts[0] = new PartSt(name, null, 0L);
+		BaseClingo.controlGround(control, parts, null, null);
+		Pointer atoms = BaseClingo.controlSymbolicAtoms(control);
+		Pointer sig = BaseClingo.signatureCreate("c", 0, true);
+//		long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, sig);
+		long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, new Pointer(0));
+		long iteratorNext = BaseClingo.symbolicAtomsNext(atoms, atomsIterator);
+		long s1 = BaseClingo.symbolicAtomsSymbol(atoms, iteratorNext);
+		assertEquals("b", BaseClingo.symbolName(s1));
+		Pointer[] sigs = BaseClingo.symbolicAtomsSignatures(atoms);
+		long i = BaseClingo.symbolicAtomsBegin(atoms, sigs[3]);
+		long s2 = BaseClingo.symbolicAtomsSymbol(atoms, i);
+		assertEquals("d", BaseClingo.symbolName(s2));
+		boolean isEqual = BaseClingo.signatureIsEqualTo(sigs[0], sig);
+	}
+	
 	/**
 	 * See guide p. 45
 	 */

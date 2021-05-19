@@ -133,6 +133,7 @@ public class PropagatorCTest {
 				for (int pass = 0; pass < 2; ++pass) {
 					// get an iterator to the first place/2 atom
 					long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, sig);
+//					long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, new Signature());
 					if (pass == 1) {
 						// allocate memory for the assignment literal -> hole mapping
 //						Memory mem = new Memory(max + 1);

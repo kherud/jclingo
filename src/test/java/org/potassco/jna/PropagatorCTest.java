@@ -123,7 +123,7 @@ public class PropagatorCTest {
 				// first get the symbolic atoms handle
 				Pointer atoms = BaseClingo.propagateInitSymbolicAtoms(init);
 				// create place/2 signature to filter symbolic atoms with
-				long sig = BaseClingo.signatureCreate("place", 2, true);
+				Pointer sig = BaseClingo.signatureCreate("place", 2, true);
 				// get an iterator after the last place/2 atom
 				// (atom order corresponds to grounding order (and is unpredictable))
 				long atomsItEnd = BaseClingo.symbolicAtomsEnd(atoms);
@@ -143,8 +143,8 @@ public class PropagatorCTest {
 				
 				for (int pass = 0; pass < 2; ++pass) {
 					// get an iterator to the first place/2 atom
-//					long atomsItBegin = BaseClingo.symbolicAtomsBegin(atoms, sig);
-					long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, 0);
+					long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, sig);
+//					long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, new Signature());
 					if (pass == 1) {
 						// allocate memory for the assignment literal -> hole mapping
 //						Memory mem = new Memory(max + 1);

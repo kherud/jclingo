@@ -144,12 +144,12 @@ public class BaseClingo {
 	 * @return the resulting signature
 	 * @throws ClingoException
 	 */
-	public static long signatureCreate(String name, int arity, boolean positive) {
-		LongByReference signature = new LongByReference();
+	public static Pointer signatureCreate(String name, int arity, boolean positive) {
+		PointerByReference signature = new PointerByReference();
 		int pos = positive ? 1 : 0;
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_signature_create(name, arity, pos, signature);
-		return signature.getValue();
+		return signature.getPointer();
 	}
 
 	/**
@@ -161,7 +161,7 @@ public class BaseClingo {
 	 * @param signature  signature the target signature
 	 * @return the name of the signature
 	 */
-	public static String signatureName(long signature) {
+	public static String signatureName(Pointer signature) {
 		return clingoLibrary.clingo_signature_name(signature);
 	}
 
@@ -171,7 +171,7 @@ public class BaseClingo {
 	 * @param signature  signature the target signature
 	 * @return the arity of the signature
 	 */
-	public static int signatureArity(long signature) {
+	public static int signatureArity(Pointer signature) {
 		return clingoLibrary.clingo_signature_arity(signature);
 	}
 
@@ -181,7 +181,7 @@ public class BaseClingo {
 	 * @param signature the target signature
 	 * @return
 	 */
-	public static boolean signatureIsPositive(long signature) {
+	public static boolean signatureIsPositive(Pointer signature) {
 		return clingoLibrary.clingo_signature_is_positive(signature) == 1;
 	}
 
@@ -191,7 +191,7 @@ public class BaseClingo {
 	 * @param signature the target signature
 	 * @return
 	 */
-	public static boolean signatureIsNegative(long signature) {
+	public static boolean signatureIsNegative(Pointer signature) {
 		return clingoLibrary.clingo_signature_is_negative(signature) == 1;
 	}
 
@@ -202,7 +202,7 @@ public class BaseClingo {
 	 * @param signatureB second signature
 	 * @return
 	 */
-	public static boolean signatureIsEqualTo(long signatureA, long signatureB) {
+	public static boolean signatureIsEqualTo(Pointer signatureA, Pointer signatureB) {
 		return clingoLibrary.clingo_signature_is_equal_to(signatureA, signatureB) == 1;
 	}
 
@@ -216,7 +216,7 @@ public class BaseClingo {
 	 * @param b second signature
 	 * @return
 	 */
-	public static boolean signatureIsLessThan(long signatureA, long signatureB) {
+	public static boolean signatureIsLessThan(Pointer signatureA, Pointer signatureB) {
 		return clingoLibrary.clingo_signature_is_less_than(signatureA, signatureB) == 1;
 	}
 
@@ -226,7 +226,7 @@ public class BaseClingo {
 	 * @param signature the target signature
 	 * @return
 	 */
-	public static SizeT signatureHash(long signature) {
+	public static SizeT signatureHash(Pointer signature) {
 		return clingoLibrary.clingo_signature_hash(signature);
 	}
 
@@ -548,7 +548,7 @@ public class BaseClingo {
 	 * @param signature optional signature
 	 * @return the resulting iterator
 	 */
-	public static long symbolicAtomsBegin(Pointer atoms, long signature) {
+	public static long symbolicAtomsBegin(Pointer atoms, Pointer signature) {
 		LongByReference iterator = new LongByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_begin(atoms, signature, iterator);
@@ -670,9 +670,9 @@ public class BaseClingo {
 	 * @param atoms the target
 	 * @return the number of signatures
 	 */
+	@SuppressWarnings("unused")
 	private static SizeT symbolicAtomsSignaturesSize(Pointer atoms) {
 		SizeByReference p_size = new SizeByReference();
-		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_signatures_size(atoms, p_size);
 		return p_size.getValue();
 	}
@@ -3771,7 +3771,8 @@ public class BaseClingo {
 	 * @return exit code to return from main function
 	 */
 	public static int main(Pointer application, String arguments, SizeT size, Pointer data) {
-	    IntByReference ir = new IntByReference(1);
+	    @SuppressWarnings("unused")
+		IntByReference ir = new IntByReference(1);
 		return clingoLibrary.clingo_main(application, arguments, size, data);
 	}
 

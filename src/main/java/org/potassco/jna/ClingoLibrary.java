@@ -77,7 +77,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_signature_create(String p_name, int arity, int positive, PointerByReference p_signature);
 
     /** {@link clingo_h#clingo_signature_name} */
-    public String clingo_signature_name(Pointer signature); // CLINGO_VISIBILITY_DEFAULT char const *clingo_signature_name(clingo_signature_t signature);
+    public String clingo_signature_name(long signature); // CLINGO_VISIBILITY_DEFAULT char const *clingo_signature_name(clingo_signature_t signature);
 
     /** {@link clingo_h#clingo_signature_arity} */
     public int clingo_signature_arity(Pointer signature); // CLINGO_VISIBILITY_DEFAULT uint32_t clingo_signature_arity(clingo_signature_t signature);
@@ -194,7 +194,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_symbolic_atoms_signatures_size(Pointer p_atoms, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_symbolic_atoms_signatures} */
-    public byte clingo_symbolic_atoms_signatures(Pointer p_atoms, long[] p_signatures, SizeT size);
+    public byte clingo_symbolic_atoms_signatures(Pointer p_atoms, Pointer[] p_signatures, SizeT size);
 
     /** {@link clingo_h#clingo_symbolic_atoms_next} */
     public byte clingo_symbolic_atoms_next(Pointer p_atoms, long iterator, LongByReference p_next);

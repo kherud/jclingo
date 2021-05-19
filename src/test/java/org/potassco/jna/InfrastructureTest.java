@@ -15,7 +15,7 @@ public class InfrastructureTest {
 		String name = "test";
 		int arity = 2;
 		boolean positive = true;
-		long signature = BaseClingo.signatureCreate(name, arity, positive);
+		Pointer signature = BaseClingo.signatureCreate(name, arity, positive);
 		assertEquals(name, BaseClingo.signatureName(signature));
 		assertEquals(arity, BaseClingo.signatureArity(signature));
 		assertEquals(positive, BaseClingo.signatureIsPositive(signature));
@@ -107,7 +107,7 @@ public class InfrastructureTest {
 		Pointer conf = BaseClingo.controlConfiguration(control);
 		int root = BaseClingo.configurationRoot(conf);
 		assertEquals(root, BaseClingo.configurationRoot(conf));
-		assertEquals(ConfigurationType.MAP, BaseClingo.configurationType(conf, root));
+		assertEquals(4, BaseClingo.configurationType(conf, root));
 		assertEquals("Options", BaseClingo.configurationDescription(conf, root));
 	}
 

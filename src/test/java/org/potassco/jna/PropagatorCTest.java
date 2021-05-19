@@ -130,21 +130,9 @@ public class PropagatorCTest {
 				// loop over the place/2 atoms in two passes
 				// the first pass determines the maximum placement literal
 				// the second pass allocates memory for data structures based on the first pass
-
-//				for (long i = BaseClingo.symbolicAtomsBegin(atoms, 0);
-//						!BaseClingo.symbolicAtomsIteratorIsEqualTo(atoms, i, atomsItEnd);
-//						i = BaseClingo.symbolicAtomsNext(atoms, i)) {
-//					long s = BaseClingo.symbolicAtomsSymbol(atoms, i);
-//					System.out.println(BaseClingo.symbolToString(s));
-//				}
-//				long[] sigs = BaseClingo.symbolicAtomsSignatures(atoms);
-//				boolean isEqual = BaseClingo.signatureIsEqualTo(sigs[0], sig);
-				
-				
 				for (int pass = 0; pass < 2; ++pass) {
 					// get an iterator to the first place/2 atom
 					long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, sig);
-//					long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, new Signature());
 					if (pass == 1) {
 						// allocate memory for the assignment literal -> hole mapping
 //						Memory mem = new Memory(max + 1);

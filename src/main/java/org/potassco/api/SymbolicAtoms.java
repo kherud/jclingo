@@ -30,7 +30,7 @@ public class SymbolicAtoms {
 	 * @param signature optional signature
 	 * @return the resulting iterator
 	 */
-	public long symbolicAtomsBegin(Pointer atoms, long signature) {
+	public long symbolicAtomsBegin(Pointer atoms, Pointer signature) {
 		return BaseClingo.symbolicAtomsBegin(atoms, signature);
 	}
 
@@ -127,7 +127,7 @@ public class SymbolicAtoms {
 	 * @param atoms the target
 	 * @return the resulting signatures
 	 */
-	public long[] symbolicAtomsSignatures(Pointer atoms) {
+	public Pointer[] symbolicAtomsSignatures(Pointer atoms) {
 		return BaseClingo.symbolicAtomsSignatures(atoms);
 	}
 

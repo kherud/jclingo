@@ -27,19 +27,15 @@ public class PropagatorCTest {
 		public SizeT pigeonsSize;
 		public long[] states;
 		public long stateSize;
-	
+
+		public PropagatorData() {
+			super();
+		}
+
 		public PropagatorData(Pointer p) {
 			super(p);
 		}
 
-		public PropagatorData(int[] pigeons, SizeT pigeonsSize, long[] states, long stateSize) {
-			super();
-			this.pigeons = pigeons;
-			this.pigeonsSize = pigeonsSize;
-			this.states = states;
-			this.stateSize = stateSize;
-		}
-	
 		protected List<String> getFieldOrder() {
 			return Arrays.asList("pigeons", "pigeonsSize", "states", "stateSize");
 		}
@@ -50,6 +46,10 @@ public class PropagatorCTest {
 		public int[] holes;
 		public SizeT size;
 
+		public State() {
+			super();
+		}
+
 		public State(Pointer p) {
 			super(p);
 		}
@@ -59,10 +59,6 @@ public class PropagatorCTest {
 			this.size = new SizeT(size);
 			this.holes = new int[size];
 //			allocateMemory();
-		}
-
-		public State() {
-			// TODO Auto-generated constructor stub
 		}
 
 		protected List<String> getFieldOrder() {
@@ -123,7 +119,7 @@ public class PropagatorCTest {
 				// first get the symbolic atoms handle
 				Pointer atoms = BaseClingo.propagateInitSymbolicAtoms(init);
 				// create place/2 signature to filter symbolic atoms with
-				Pointer sig = BaseClingo.signatureCreate("place", 2, true);
+				long sig = BaseClingo.signatureCreate("place", 2, true);
 				// get an iterator after the last place/2 atom
 				// (atom order corresponds to grounding order (and is unpredictable))
 				long atomsItEnd = BaseClingo.symbolicAtomsEnd(atoms);

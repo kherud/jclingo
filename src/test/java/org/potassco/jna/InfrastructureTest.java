@@ -3,7 +3,6 @@ package org.potassco.jna;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.SymbolType;
 
 import com.sun.jna.Pointer;
@@ -15,7 +14,7 @@ public class InfrastructureTest {
 		String name = "test";
 		int arity = 2;
 		boolean positive = true;
-		Pointer signature = BaseClingo.signatureCreate(name, arity, positive);
+		long signature = BaseClingo.signatureCreate(name, arity, positive);
 		assertEquals(name, BaseClingo.signatureName(signature));
 		assertEquals(arity, BaseClingo.signatureArity(signature));
 		assertEquals(positive, BaseClingo.signatureIsPositive(signature));

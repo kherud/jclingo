@@ -23,7 +23,7 @@ public class AtomsTest {
 		Pointer atoms = BaseClingo.controlSymbolicAtoms(control);
 		assertEquals(5, BaseClingo.symbolicAtomsSize(atoms).intValue());
 //		Pointer signature = BaseClingo.signatureCreate(c, 0, true);
-		long iteratorBegin = BaseClingo.symbolicAtomsBegin(atoms, new Pointer(0));
+		long iteratorBegin = BaseClingo.symbolicAtomsBegin(atoms, 0L);
 		long symbol1 = BaseClingo.symbolicAtomsSymbol(atoms, iteratorBegin);
 		assertEquals("a", BaseClingo.symbolName(symbol1));
 		assertTrue(BaseClingo.symbolicAtomsIsFact(atoms, iteratorBegin));
@@ -34,7 +34,7 @@ public class AtomsTest {
 		long iteratorEnd = BaseClingo.symbolicAtomsEnd(atoms);
 		String[] strArray = { "a", "b", "c", "d", "e" };
 		int j = 0;
-		for (long i = BaseClingo.symbolicAtomsBegin(atoms, new Pointer(0));
+		for (long i = BaseClingo.symbolicAtomsBegin(atoms, 0L);
 				!BaseClingo.symbolicAtomsIteratorIsEqualTo(atoms, i, iteratorEnd);
 				i = BaseClingo.symbolicAtomsNext(atoms, i)) {
 			long s = BaseClingo.symbolicAtomsSymbol(atoms, i);
@@ -59,13 +59,13 @@ public class AtomsTest {
         parts[0] = new PartSt(name, null, 0L);
 		BaseClingo.controlGround(control, parts, null, null);
 		Pointer atoms = BaseClingo.controlSymbolicAtoms(control);
-		Pointer sig = BaseClingo.signatureCreate("c", 0, true);
+		long sig = BaseClingo.signatureCreate("c", 0, true);
 //		long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, sig);
-		long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, new Pointer(0));
+		long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, 0L);
 		long iteratorNext = BaseClingo.symbolicAtomsNext(atoms, atomsIterator);
 		long s1 = BaseClingo.symbolicAtomsSymbol(atoms, iteratorNext);
 		assertEquals("b", BaseClingo.symbolName(s1));
-		Pointer[] sigs = BaseClingo.symbolicAtomsSignatures(atoms);
+		long[] sigs = BaseClingo.symbolicAtomsSignatures(atoms);
 		long i = BaseClingo.symbolicAtomsBegin(atoms, sigs[3]);
 		long s2 = BaseClingo.symbolicAtomsSymbol(atoms, i);
 		assertEquals("d", BaseClingo.symbolName(s2));
@@ -88,7 +88,7 @@ public class AtomsTest {
 		List<Long> ourAtoms = new ArrayList<>(); 
 		long iteratorEnd = BaseClingo.symbolicAtomsEnd(atoms);
 		int j = 1;
-		for (long i = BaseClingo.symbolicAtomsBegin(atoms, new Pointer(0));
+		for (long i = BaseClingo.symbolicAtomsBegin(atoms, 0L);
 				!BaseClingo.symbolicAtomsIteratorIsEqualTo(atoms, i, iteratorEnd);
 				i = BaseClingo.symbolicAtomsNext(atoms, i)) {
 			ourAtoms.add(i);
@@ -103,7 +103,7 @@ public class AtomsTest {
 		BaseClingo.controlAssignExternal(control, a4literal, TruthValue.FREE);
 		// TODO: test if successful
 		//  {@link BaseClingo#controlReleaseExternal(Pointer, int)} 
-		Pointer[] s = BaseClingo.symbolicAtomsSignatures(atoms);
+		long[] s = BaseClingo.symbolicAtomsSignatures(atoms);
 		String[] strArray = { "p", "q", "r" };
 		for (int i = 0; i < s.length; i++) {
 			assertEquals(strArray[i], BaseClingo.signatureName(s[i]));

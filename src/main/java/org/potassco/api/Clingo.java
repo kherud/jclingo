@@ -97,20 +97,20 @@ public class Clingo {
 	 * @return
 	 * @throws ClingoException
 	 */
-	public Pointer signatureCreate(String name, int arity, boolean positive) throws ClingoException {
+	public long signatureCreate(String name, int arity, boolean positive) throws ClingoException {
 		return BaseClingo.signatureCreate(name, arity, positive);
 	}
 
 	/**
 	 * Get the name of a signature.
-	 * 
+//	 * 
 	 * @note The string is internalized and valid for the duration of the process.
 	 * 
 	 *       {@link clingo_h#clingo_signature_name}
 	 * @param signature [in] signature the target signature
 	 * @return the name of the signature
 	 */
-	public String signatureName(Pointer signature) {
+	public String signatureName(long signature) {
 		return BaseClingo.signatureName(signature);
 	}
 
@@ -120,7 +120,7 @@ public class Clingo {
 	 * @param signature [in] signature the target signature
 	 * @return the arity of the signature
 	 */
-	public int signatureArity(Pointer signature) {
+	public int signatureArity(long signature) {
 		return BaseClingo.signatureArity(signature);
 	}
 
@@ -130,7 +130,7 @@ public class Clingo {
 	 * @param signature the target signature
 	 * @return
 	 */
-	public boolean signatureIsPositive(Pointer signature) {
+	public boolean signatureIsPositive(long signature) {
 		return BaseClingo.signatureIsPositive(signature);
 	}
 
@@ -140,7 +140,7 @@ public class Clingo {
 	 * @param signature the target signature
 	 * @return
 	 */
-	public boolean signatureIsNegative(Pointer signature) {
+	public boolean signatureIsNegative(long signature) {
 		return BaseClingo.signatureIsNegative(signature);
 	}
 
@@ -151,7 +151,7 @@ public class Clingo {
 	 * @param b second signature
 	 * @return
 	 */
-	public boolean signatureIsEqualTo(Pointer signatureA, Pointer signatureB) {
+	public boolean signatureIsEqualTo(long signatureA, long signatureB) {
 		return BaseClingo.signatureIsEqualTo(signatureA, signatureB);
 	}
 
@@ -165,7 +165,7 @@ public class Clingo {
 	 * @param b second signature
 	 * @return
 	 */
-	public boolean signatureIsLessThan(Pointer signatureA, Pointer signatureB) {
+	public boolean signatureIsLessThan(long signatureA, long signatureB) {
 		return BaseClingo.signatureIsLessThan(signatureA, signatureB);
 	}
 
@@ -175,7 +175,7 @@ public class Clingo {
 	 * @param signature the target signature
 	 * @return
 	 */
-	public SizeT signatureHash(Pointer signature) {
+	public SizeT signatureHash(long signature) {
 		return BaseClingo.signatureHash(signature);
 	}
 

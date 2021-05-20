@@ -11,7 +11,7 @@ public class ObserverBackendTest {
 		Clingo clingo = new Clingo(); 
 		Control control = clingo.control(null);
 		Backend backend = control.backend();
-		backend.addAtom(0);
+		backend.addAtom(null);
 		
 	}
 

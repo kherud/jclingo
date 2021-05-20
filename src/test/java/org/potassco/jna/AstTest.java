@@ -21,7 +21,7 @@ public class AstTest {
 				int in = data.getInt(0);
 				assertEquals(VALUE, in);
 				String s = BaseClingo.astToString(ast);
-				assertEquals("#program base.", s);
+				assertEquals("a", s);
 				int t = BaseClingo.astGetType(ast);
 				Type type = Type.fromOrdinal(t);
 				assertEquals(Type.PROGRAM, type);

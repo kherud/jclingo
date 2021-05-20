@@ -170,7 +170,7 @@ public interface ClingoLibrary extends Library {
     public byte clingo_symbolic_atoms_size(Pointer p_atoms, SizeByReference p_size);
 
     /** {@link clingo_h#clingo_symbolic_atoms_begin} */
-    public byte clingo_symbolic_atoms_begin(Pointer p_atoms, long p_signature, LongByReference p_iterator);
+    public byte clingo_symbolic_atoms_begin(Pointer p_atoms, LongByReference p_signature, LongByReference p_iterator);
 
     /** {@link clingo_h#clingo_symbolic_atoms_end} */
     public byte clingo_symbolic_atoms_end(Pointer p_atoms, LongByReference p_iterator);
@@ -402,7 +402,7 @@ public interface ClingoLibrary extends Library {
 	public void clingo_propagate_control_remove_watch(Pointer p_control, int literal);
 
     /** {@link clingo_h#clingo_propagate_control_add_clause} */
-	public byte clingo_propagate_control_add_clause(Pointer p_control, int p_clause, SizeT size, int type, ByteByReference p_result);
+	public byte clingo_propagate_control_add_clause(Pointer p_control, IntByReference p_clause, SizeT size, int type, ByteByReference p_result);
 
     /** {@link clingo_h#clingo_propagate_control_propagate} */
 	public byte clingo_propagate_control_propagate(Pointer p_control, ByteByReference p_result);
@@ -510,31 +510,31 @@ public interface ClingoLibrary extends Library {
   	public byte clingo_backend_end(Pointer p_backend);
 
 	/** {@link clingo_h#clingo_backend_rule} */
-  	public byte clingo_backend_rule(Pointer p_backend, byte choice, int p_head, SizeT head_size, int p_body, SizeT body_size);
+  	public byte clingo_backend_rule(Pointer p_backend, byte choice, IntByReference p_head, SizeT head_size, IntByReference p_body, SizeT body_size);
 
 	/** {@link clingo_h#clingo_backend_weight_rule} */
-  	public byte clingo_backend_weight_rule(Pointer p_backend, byte choice, int p_head, SizeT head_size, int lower_bound, int p_body, SizeT body_size);
+  	public byte clingo_backend_weight_rule(Pointer p_backend, byte choice, IntByReference p_head, SizeT head_size, int lower_bound, IntByReference p_body, SizeT body_size);
 
 	/** {@link clingo_h#clingo_backend_minimize} */
-  	public byte clingo_backend_minimize(Pointer p_backend, int priority, int p_literals, SizeT size);
+  	public byte clingo_backend_minimize(Pointer p_backend, int priority, int[] p_literals, SizeT size);
 
 	/** {@link clingo_h#clingo_backend_project} */
-  	public byte clingo_backend_project(Pointer p_backend, int p_atoms, SizeT size);
+  	public byte clingo_backend_project(Pointer p_backend, int[] p_atoms, SizeT size);
 
 	/** {@link clingo_h#clingo_backend_external} */
   	public byte clingo_backend_external(Pointer p_backend, int atom, int type);
 
 	/** {@link clingo_h#clingo_backend_assume} */
-  	public byte clingo_backend_assume(Pointer p_backend, int p_literals, SizeT size);
+  	public byte clingo_backend_assume(Pointer p_backend, int[] p_literals, SizeT size);
 
 	/** {@link clingo_h#clingo_backend_heuristic} */
-  	public byte clingo_backend_heuristic(Pointer p_backend, int atom, int type, int bias, int priority, int p_condition, SizeT size);
+  	public byte clingo_backend_heuristic(Pointer p_backend, int atom, int type, int bias, int priority, IntByReference p_condition, SizeT size);
 
 	/** {@link clingo_h#clingo_backend_acyc_edge} */
-  	public byte clingo_backend_acyc_edge(Pointer p_backend, int node_u, int node_v, int p_condition, SizeT size);
+  	public byte clingo_backend_acyc_edge(Pointer p_backend, int node_u, int node_v, IntByReference p_condition, SizeT size);
 
   	/** {@link clingo_h#clingo_backend_add_atom} */
-	public byte clingo_backend_add_atom(Pointer p_backend, int p_symbol, IntByReference p_atom);
+	public byte clingo_backend_add_atom(Pointer p_backend, IntByReference p_symbol, IntByReference p_atom);
 
     // ConfigurationSt
 
@@ -1085,7 +1085,7 @@ public interface ClingoLibrary extends Library {
 	public byte clingo_ast_attribute_get_ast(Pointer p_ast, Pointer attribute, IntByReference p_p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_set_ast} */
-	public byte clingo_ast_attribute_set_ast(Pointer p_ast, Pointer attribute, int p_value);
+	public byte clingo_ast_attribute_set_ast(Pointer p_ast, Pointer attribute, IntByReference p_value);
     
     // Functions to get/set optional AST attributes of ASTs
 
@@ -1093,7 +1093,7 @@ public interface ClingoLibrary extends Library {
 	public byte clingo_ast_attribute_get_optional_ast(Pointer p_ast, Pointer attribute, IntByReference p_p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_set_optional_ast} */
-	public byte clingo_ast_attribute_set_optional_ast(Pointer p_ast, Pointer attribute, int p_value);
+	public byte clingo_ast_attribute_set_optional_ast(Pointer p_ast, Pointer attribute, IntByReference p_value);
     
     // Functions to get/set string array attributes of ASTs
 
@@ -1118,7 +1118,7 @@ public interface ClingoLibrary extends Library {
 	public byte clingo_ast_attribute_get_ast_at(Pointer p_ast, Pointer attribute, SizeT index, IntByReference p_p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_set_ast_at} */
-	public byte clingo_ast_attribute_set_ast_at(Pointer p_ast, Pointer attribute, SizeT index, int p_value);
+	public byte clingo_ast_attribute_set_ast_at(Pointer p_ast, Pointer attribute, SizeT index, IntByReference p_value);
 
   	/** {@link clingo_h#clingo_ast_attribute_delete_ast_at} */
 	public byte clingo_ast_attribute_delete_ast_at(Pointer p_ast, Pointer attribute, SizeT index);
@@ -1127,7 +1127,7 @@ public interface ClingoLibrary extends Library {
 	public byte clingo_ast_attribute_size_ast_array(Pointer p_ast, Pointer attribute, SizeByReference p_size);
 
   	/** {@link clingo_h#clingo_ast_attribute_insert_ast_at} */
-	public byte clingo_ast_attribute_insert_ast_at(Pointer p_ast, Pointer attribute, SizeT index, int p_value);
+	public byte clingo_ast_attribute_insert_ast_at(Pointer p_ast, Pointer attribute, SizeT index, IntByReference p_value);
     
     // Functions to construct ASTs from strings
     

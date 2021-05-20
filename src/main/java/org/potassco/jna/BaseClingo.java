@@ -547,7 +547,7 @@ public class BaseClingo {
 	 * @param signature optional signature
 	 * @return the resulting iterator
 	 */
-	public static long symbolicAtomsBegin(Pointer atoms, long signature) {
+	public static long symbolicAtomsBegin(Pointer atoms, LongByReference signature) {
 		LongByReference iterator = new LongByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_symbolic_atoms_begin(atoms, signature, iterator);
@@ -1555,7 +1555,7 @@ public class BaseClingo {
 	 * @param type the clause type determining its lifetime
 	 * @return indicating whether propagation has to be stopped
 	 */
-	public static boolean propagateControlAddClause(Pointer control, int clause, SizeT size, int type) {
+	public static boolean propagateControlAddClause(Pointer control, IntByReference clause, SizeT size, int type) {
 		ByteByReference result = new ByteByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_propagate_control_add_clause(control, clause, size, type, result);
@@ -1612,7 +1612,7 @@ public class BaseClingo {
 	 * @param bodySize the number of literals in the body
 	 */
 	// TODO: Remove size parameters
-	public static void backendRule(Pointer backend, byte choice, int head, SizeT headSize, int body, SizeT bodySize) {
+	public static void backendRule(Pointer backend, byte choice, IntByReference head, SizeT headSize, IntByReference body, SizeT bodySize) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_rule(backend, choice, head, headSize, body, bodySize);
 	}
@@ -1630,7 +1630,7 @@ public class BaseClingo {
 	 * @param body       the weighted body literals
 	 * @param bodySize   the number of weighted literals in the body
 	 */
-	public static void backendWeightRule(Pointer backend, byte choice, int head, SizeT headSize, int lowerBound, int body,
+	public static void backendWeightRule(Pointer backend, byte choice, IntByReference head, SizeT headSize, int lowerBound, IntByReference body,
 			SizeT bodySize) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_weight_rule(backend, choice, head, headSize, lowerBound, body,
@@ -1645,7 +1645,7 @@ public class BaseClingo {
 	 * @param literals the weighted literals whose sum to minimize
 	 * @param size     the number of weighted literals
 	 */
-	public static void backendWeightMinimize(Pointer backend, int priority, int literals, SizeT size) {
+	public static void backendWeightMinimize(Pointer backend, int priority, int[] literals, SizeT size) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_minimize(backend, priority, literals, size);
 	}
@@ -1657,7 +1657,7 @@ public class BaseClingo {
 	 * @param atoms   the atoms to project on
 	 * @param size    the number of atoms
 	 */
-	public static void backendWeightProject(Pointer backend, int atoms, SizeT size) {
+	public static void backendWeightProject(Pointer backend, int[] atoms, SizeT size) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_project(backend, atoms, size);
 	}
@@ -1682,7 +1682,7 @@ public class BaseClingo {
 	 *                 negative literals false for the next solve call)
 	 * @param size     the number of atoms
 	 */
-	public static void backendWeightAssume(Pointer backend, int literals, SizeT size) {
+	public static void backendWeightAssume(Pointer backend, int[] literals, SizeT size) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_assume(backend, literals, size);
 	}
@@ -1700,7 +1700,7 @@ public class BaseClingo {
 	 * @param size      the number of atoms in the condition
 	 */
 	public static void backendWeightHeuristic(Pointer backend, int atom, HeuristicType type, int bias, int priority,
-			int condition, SizeT size) {
+			IntByReference condition, SizeT size) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_heuristic(backend, atom, type.getValue(), bias, priority, condition,
 				size);
@@ -1715,7 +1715,7 @@ public class BaseClingo {
 	 * @param condition the condition under which the edge is part of the graph
 	 * @param size      the number of atoms in the condition
 	 */
-	public static void backendWeightAcycEdge(Pointer backend, int nodeU, int nodeV, int condition, SizeT size) {
+	public static void backendWeightAcycEdge(Pointer backend, int nodeU, int nodeV, IntByReference condition, SizeT size) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_acyc_edge(backend, nodeU, nodeV, condition, size);
 	}
@@ -1727,7 +1727,7 @@ public class BaseClingo {
 	 * @param symbol  optional symbol to associate the atom with
 	 * @return the resulting atom
 	 */
-	public static int backendAddAtom(Pointer backend, int symbol) {
+	public static int backendAddAtom(Pointer backend, IntByReference symbol) {
 		IntByReference atom = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_backend_add_atom(backend, symbol, atom);
@@ -2797,7 +2797,7 @@ public class BaseClingo {
 	 * @param attribute the target attribute
 	 * @param value the value
 	 */
-	public static void astAttributeSetAst(Pointer ast, Pointer attribute, int value) {
+	public static void astAttributeSetAst(Pointer ast, Pointer attribute, IntByReference value) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_ast_attribute_set_ast(ast, attribute, value);
 	}
@@ -2827,7 +2827,7 @@ public class BaseClingo {
 	 * @param attribute the target attribute
 	 * @param value the value
 	 */
-	public static void astAttributeSetOptionalAst(Pointer ast, Pointer attribute, int value) {
+	public static void astAttributeSetOptionalAst(Pointer ast, Pointer attribute, IntByReference value) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_ast_attribute_set_optional_ast(ast, attribute, value);
 	}
@@ -2919,7 +2919,7 @@ public class BaseClingo {
 	 * @param index the target index
 	 * @param value the value
 	 */
-	public static void astAttributeSetAstAt(Pointer ast, Pointer attribute, SizeT index, int value) {
+	public static void astAttributeSetAstAt(Pointer ast, Pointer attribute, SizeT index, IntByReference value) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_ast_attribute_set_ast_at(ast, attribute, index, value);
 	}
@@ -2955,7 +2955,7 @@ public class BaseClingo {
 	 * @param index the target index
 	 * @param value the value
 	 */
-	public static void astAttributeInsertAstAt(Pointer ast, Pointer attribute, SizeT index, int value) {
+	public static void astAttributeInsertAstAt(Pointer ast, Pointer attribute, SizeT index, IntByReference value) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_ast_attribute_insert_ast_at(ast, attribute, index, value);
 	}

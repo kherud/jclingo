@@ -13,6 +13,7 @@ import org.potassco.jna.PropagatorSt.PropagatorUndoCallback;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.ptr.LongByReference;
 
 /**
  * @see <a href="https://potassco.org/clingo/c-api/5.5/propagator_8c-example.html">propagator.c</a>
@@ -127,8 +128,9 @@ public class PropagatorCTest {
 				// the first pass determines the maximum placement literal
 				// the second pass allocates memory for data structures based on the first pass
 				for (int pass = 0; pass < 2; ++pass) {
+					LongByReference sigLbr = new LongByReference(sig);
 					// get an iterator to the first place/2 atom
-					long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, sig);
+					long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, sigLbr );
 //					long atomsIterator = BaseClingo.symbolicAtomsBegin(atoms, new Signature());
 					if (pass == 1) {
 						// allocate memory for the assignment literal -> hole mapping

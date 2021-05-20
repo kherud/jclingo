@@ -4,6 +4,7 @@ import org.potassco.jna.BaseClingo;
 import org.potassco.jna.SizeT;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.LongByReference;
 
 public class SymbolicAtoms {
 
@@ -30,7 +31,7 @@ public class SymbolicAtoms {
 	 * @param signature optional signature
 	 * @return the resulting iterator
 	 */
-	public long symbolicAtomsBegin(Pointer atoms, long signature) {
+	public long symbolicAtomsBegin(Pointer atoms, LongByReference signature) {
 		return BaseClingo.symbolicAtomsBegin(atoms, signature);
 	}
 

@@ -6,6 +6,7 @@ import org.potassco.jna.BaseClingo;
 import org.potassco.jna.SizeT;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.IntByReference;
 
 public class Backend {
 
@@ -44,7 +45,7 @@ public class Backend {
 	 * @param bodySize the number of literals in the body
 	 */
 	// TODO: Remove size parameters
-	public void rule(byte choice, int head, SizeT headSize, int body, SizeT bodySize) {
+	public void rule(byte choice, IntByReference head, SizeT headSize, IntByReference body, SizeT bodySize) {
 		BaseClingo.backendRule(this.pointer, choice, head, headSize, body, bodySize);
 	}
 
@@ -61,7 +62,7 @@ public class Backend {
 	 * @param body       the weighted body literals
 	 * @param bodySize   the number of weighted literals in the body
 	 */
-	public void weightRule(byte choice, int head, SizeT headSize, int lowerBound, int body,
+	public void weightRule(byte choice, IntByReference head, SizeT headSize, int lowerBound, IntByReference body,
 			SizeT bodySize) {
 		BaseClingo.backendWeightRule(this.pointer, choice, head, headSize, lowerBound, body, bodySize);
 	}
@@ -74,7 +75,7 @@ public class Backend {
 	 * @param literals the weighted literals whose sum to minimize
 	 * @param size     the number of weighted literals
 	 */
-	public void weightMinimize(int priority, int literals, SizeT size) {
+	public void weightMinimize(int priority, int literals[], SizeT size) {
 		BaseClingo.backendWeightMinimize(this.pointer, priority, literals, size);
 	}
 
@@ -85,7 +86,7 @@ public class Backend {
 	 * @param atoms   the atoms to project on
 	 * @param size    the number of atoms
 	 */
-	public void weightProject(int atoms, SizeT size) {
+	public void weightProject(int atoms[], SizeT size) {
 		BaseClingo.backendWeightProject(this.pointer, atoms, size);
 	}
 
@@ -108,7 +109,7 @@ public class Backend {
 	 *                 negative literals false for the next solve call)
 	 * @param size     the number of atoms
 	 */
-	public void weightAssume(int literals, SizeT size) {
+	public void weightAssume(int literals[], SizeT size) {
 		BaseClingo.backendWeightAssume(this.pointer, literals, size);
 	}
 
@@ -125,7 +126,7 @@ public class Backend {
 	 * @param size      the number of atoms in the condition
 	 */
 	public void weightHeuristic(int atom, HeuristicType type, int bias, int priority,
-			int condition, SizeT size) {
+			IntByReference condition, SizeT size) {
 		BaseClingo.backendWeightHeuristic(this.pointer, atom, type, bias, priority, condition, size);
 	}
 
@@ -138,7 +139,7 @@ public class Backend {
 	 * @param condition the condition under which the edge is part of the graph
 	 * @param size      the number of atoms in the condition
 	 */
-	public void weightAcycEdge(int nodeU, int nodeV, int condition, SizeT size) {
+	public void weightAcycEdge(int nodeU, int nodeV, IntByReference condition, SizeT size) {
 		BaseClingo.backendWeightAcycEdge(this.pointer, nodeU, nodeV, condition, size);
 	}
 
@@ -149,7 +150,7 @@ public class Backend {
 	 * @param symbol  optional symbol to associate the atom with
 	 * @return the resulting atom
 	 */
-	public int addAtom(int symbol) {
+	public int addAtom(IntByReference symbol) {
 		return BaseClingo.backendAddAtom(this.pointer, symbol);
 	}
 

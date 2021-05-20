@@ -28,7 +28,7 @@ public class AstCTest {
         // begin building a program
         BaseClingo.programBuilderBegin(builder);
         // get the AST of the program
-        AstCallback onStatement;
+//        AstCallback onStatement;
 //        OnStatementDataSt onStatementData = new OnStatementDataSt(null, null, null);
 //		BaseClingo.astParseString("a :- not b. b :- not a.", onStatement, onStatementData, null, null, 20);
         // finish building a program

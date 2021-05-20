@@ -44,7 +44,7 @@ public class SolveAsyncCTest {
 				return true;
 			}
 		};
-		IntByReference running = new IntByReference(1);
+		IntByReference running = new IntByReference(42);
 		// create a solve handle with an attached vent handler
 		Pointer handle = BaseClingo.controlSolve(control, SolveMode.ASYNC, null, new SizeT(), onEvent, running.getPointer());
 		// TODO clingo_solve_mode_async | clingo_solve_mode_yield

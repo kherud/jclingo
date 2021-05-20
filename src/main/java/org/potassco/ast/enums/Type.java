@@ -1,6 +1,10 @@
 package org.potassco.ast.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
+import org.potassco.enums.TheoryTermType;
 
 /**
  * Enumeration of signs.
@@ -67,5 +71,20 @@ public enum Type {
     PROJECT_SIGNATURE,
     DEFINED,
     THEORY_DEFINITION;
+
+    private static Map<Integer, Type> mapping = new HashMap<>();
+    
+	static {
+	    for (Type type : Type.values()) {
+	    	mapping.put(
+	          type.ordinal(),
+	          type
+	        );
+	    }
+	}
+	
+	public static Type fromOrdinal(int type) {
+		return mapping.get(type);
+	}
 
 }

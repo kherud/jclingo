@@ -4,7 +4,6 @@ import org.potassco.api.ClingoException;
 import org.potassco.cpp.clingo_h;
 import org.potassco.cpp.struct;
 import org.potassco.cpp.typedef;
-import org.potassco.enums.ConfigurationType;
 import org.potassco.enums.ExternalType;
 import org.potassco.enums.HeuristicType;
 import org.potassco.enums.ModelType;
@@ -16,14 +15,12 @@ import org.potassco.enums.TermType;
 import org.potassco.enums.TruthValue;
 
 import com.sun.jna.Memory;
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.StringArray;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
-import com.sun.jna.ptr.NativeLongByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 //MIT License
@@ -2618,9 +2615,9 @@ public class BaseClingo {
 	 * @param ast the target AST
 	 * @return the size of the string representation
 	 */
-	public static SizeT astToStringSize(Pointer ast) {
+	@SuppressWarnings("unused")
+	private static SizeT astToStringSize(Pointer ast) {
 		SizeByReference size = new SizeByReference();
-		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_ast_to_string_size(ast, size);
 		return size.getValue();
 	}
@@ -2974,8 +2971,8 @@ public class BaseClingo {
 	 * @param loggerData user data for the logger
 	 * @param messageLimit the maximum number of times the logger is called
 	 */
-	public static void astParseString(String program, AstCallback callback, OnStatementDataSt callbackData, Pointer logger,
-			String loggerData, int messageLimit) {
+	public static void astParseString(String program, ClingoLibrary.AstCallback callback, Pointer callbackData, Pointer logger,
+			Pointer loggerData, int messageLimit) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_ast_parse_string(program, callback, callbackData, logger, loggerData,
 				messageLimit);
@@ -2994,7 +2991,7 @@ public class BaseClingo {
 	 * @param loggerData user data for the logger
 	 * @param messageLimit the maximum number of times the logger is called
 	 */
-	public static void astParseFiles(String files, SizeT size, AstCallback callback, String callbackData, Pointer logger,
+	public static void astParseFiles(String files, SizeT size, ClingoLibrary.AstCallback callback, String callbackData, Pointer logger,
 			String loggerData, int messageLimit) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_ast_parse_files(files, size, callback, callbackData, logger, loggerData,
@@ -3044,7 +3041,7 @@ public class BaseClingo {
 	 * @param callback the callback to report ASTs
 	 * @param callbackData user data for the callback
 	 */
-	public static void astUnpool(Pointer ast, int unpoolType, AstCallback callback, String callbackData) {
+	public static void astUnpool(Pointer ast, int unpoolType, ClingoLibrary.AstCallback callback, String callbackData) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_ast_unpool(ast, unpoolType, callback, callbackData);
 	}

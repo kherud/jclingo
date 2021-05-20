@@ -4,6 +4,7 @@ import org.potassco.cpp.clingo_h;
 import org.potassco.cpp.struct;
 import org.potassco.cpp.typedef;
 
+import com.sun.jna.Callback;
 import com.sun.jna.Library;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
@@ -1132,8 +1133,13 @@ public interface ClingoLibrary extends Library {
     
     // clingo_ast_callback_t
 
+  	/** {@link clingo_h#clingo_ast_callback_t} */
+	public interface AstCallback extends Callback {
+		byte callback(Pointer ast, Pointer data);
+	}
+
   	/** {@link clingo_h#clingo_ast_parse_string} */
-	public byte clingo_ast_parse_string(String p_program, AstCallback callback, OnStatementDataSt p_callback_data, Pointer logger, String p_logger_data, int message_limit);
+	public byte clingo_ast_parse_string(String p_program, AstCallback callback, Pointer p_callback_data, Pointer logger, Pointer p_logger_data, int message_limit);
 
   	/** {@link clingo_h#clingo_ast_parse_files} */
 	public byte clingo_ast_parse_files(String const_p_const_p_files, SizeT size, AstCallback callback, String p_callback_data, Pointer logger, String p_logger_data, int message_limit);

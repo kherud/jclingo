@@ -2,6 +2,7 @@ package org.potassco.jna;
 
 import org.potassco.cpp.clingo_h;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
 /**
@@ -31,6 +32,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*init_program)(bool incremental, void *data);
+
+	public interface ObserverInitProgramCallback {
+		byte callback(byte incremental, Pointer data);
+	}
+
+	public ObserverInitProgramCallback initProgram;
+	
 	/**
 	 * Marks the beginning of a block of directives passed to the solver.
 	 *
@@ -40,6 +48,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*begin_step)(void *data);
+
+	public interface ObserverBeginStepCallback {
+		byte callback(Pointer data);
+	}
+
+	public ObserverBeginStepCallback beginStep;
+	
 	/**
 	 * Marks the end of a block of directives passed to the solver.
 	 *
@@ -51,6 +66,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*end_step)(void *data);
+
+	public interface ObserverEndStepCallback {
+		byte callback(Pointer data);
+	}
+
+	public ObserverEndStepCallback endStep;
+	
 	/**
 	 * Observe rules passed to the solver.
 	 *
@@ -63,6 +85,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*rule)(bool choice, clingo_atom_t const *head, size_t head_size, clingo_literal_t const *body, size_t body_size, void *data);
+
+	public interface ObserverRuleCallback {
+		byte callback(byte choice, Pointer head, SizeT headSize, Pointer body, SizeT bodySize, Pointer data);
+	}
+
+	public ObserverRuleCallback rule;
+	
 	/**
 	 * Observe weight rules passed to the solver.
 	 *
@@ -76,6 +105,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*weight_rule)(bool choice, clingo_atom_t const *head, size_t head_size, clingo_weight_t lower_bound, clingo_weighted_literal_t const *body, size_t body_size, void *data);
+
+	public interface ObserverWeightRuleCallback {
+		byte callback(byte choice, Pointer head, SizeT headSize, int lowerBound, Pointer body, SizeT bodySize, Pointer data);
+	}
+
+	public ObserverWeightRuleCallback weightRule;
+	
 	/**
 	 * Observe minimize constraints (or weak constraints) passed to the solver.
 	 *
@@ -86,6 +122,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*minimize)(clingo_weight_t priority, clingo_weighted_literal_t const* literals, size_t size, void *data);
+
+	public interface ObserverMinimizeCallback {
+		byte callback(int priority, Pointer literals, SizeT size, Pointer data);
+	}
+
+	public ObserverMinimizeCallback minimize;
+	
 	/**
 	 * Observe projection directives passed to the solver.
 	 *
@@ -95,6 +138,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*project)(clingo_atom_t const *atoms, size_t size, void *data);
+
+	public interface ObserverProjectCallback {
+		byte callback(Pointer atoms, SizeT size, Pointer data);
+	}
+
+	public ObserverProjectCallback project;
+	
 	/**
 	 * Observe shown atoms passed to the solver.
 	 * \note Facts do not have an associated aspif atom.
@@ -106,6 +156,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*output_atom)(clingo_symbol_t symbol, clingo_atom_t atom, void *data);
+
+	public interface ObserverOutputAtomCallback {
+		byte callback(Pointer symbol, Pointer atoms, Pointer data);
+	}
+
+	public ObserverOutputAtomCallback outputAtom;
+	
 	/**
 	 * Observe shown terms passed to the solver.
 	 *
@@ -116,6 +173,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*output_term)(clingo_symbol_t symbol, clingo_literal_t const *condition, size_t size, void *data);
+
+	public interface ObserverOutputTermCallback {
+		byte callback(Pointer symbol, Pointer condition, SizeT size, Pointer data);
+	}
+
+	public ObserverOutputTermCallback outputTerm;
+	
 	/**
 	 * Observe shown csp variables passed to the solver.
 	 *
@@ -127,6 +191,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*output_csp)(clingo_symbol_t symbol, int value, clingo_literal_t const *condition, size_t size, void *data);
+
+	public interface ObserverOutputCspCallback {
+		byte callback(Pointer symbol, int value, Pointer condition, SizeT size, Pointer data);
+	}
+
+	public ObserverOutputCspCallback outputCsp;
+	
 	/**
 	 * Observe external statements passed to the solver.
 	 *
@@ -136,6 +207,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*external)(clingo_atom_t atom, clingo_external_type_t type, void *data);
+
+	public interface ObserverExternalCallback {
+		byte callback(Pointer atom, int type, Pointer data);
+	}
+
+	public ObserverExternalCallback external;
+	
 	/**
 	 * Observe assumption directives passed to the solver.
 	 *
@@ -145,6 +223,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*assume)(clingo_literal_t const *literals, size_t size, void *data);
+
+	public interface ObserverAssumeCallback {
+		byte callback(Pointer literals, SizeT size, Pointer data);
+	}
+
+	public ObserverAssumeCallback assume;
+	
 	/**
 	 * Observe heuristic directives passed to the solver.
 	 *
@@ -158,6 +243,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*heuristic)(clingo_atom_t atom, clingo_heuristic_type_t type, int bias, unsigned priority, clingo_literal_t const *condition, size_t size, void *data);
+
+	public interface ObserverHeuristicCallback {
+		byte callback(Pointer atom, int type, int bias, int priority, Pointer condition, SizeT size, Pointer data);
+	}
+
+	public ObserverHeuristicCallback heuristic;
+	
 	/**
 	 * Observe edge directives passed to the solver.
 	 *
@@ -169,6 +261,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*acyc_edge)(int node_u, int node_v, clingo_literal_t const *condition, size_t size, void *data);
+
+	public interface ObserverAcycEdgeCallback {
+		byte callback(int nodeU, int nodeV, Pointer condition, SizeT size, Pointer data);
+	}
+
+	public ObserverAcycEdgeCallback acycEdge;
+	
 	/**
 	 * Observe numeric theory terms.
 	 *
@@ -178,6 +277,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*theory_term_number)(clingo_id_t term_id, int number, void *data);
+
+	public interface ObserverTheoryTermNumberCallback {
+		byte callback(int termId, int number, Pointer data);
+	}
+
+	public ObserverTheoryTermNumberCallback theoryTermNumber;
+	
 	/**
 	 * Observe string theory terms.
 	 *
@@ -187,6 +293,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*theory_term_string)(clingo_id_t term_id, char const *name, void *data);
+
+	public interface ObserverTheoryTermStringCallback {
+		byte callback(int termId, String name, Pointer data);
+	}
+
+	public ObserverTheoryTermStringCallback theoryTermString;
+	
 	/**
 	 * Observe compound theory terms.
 	 *
@@ -204,6 +317,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*theory_term_compound)(clingo_id_t term_id, int name_id_or_type, clingo_id_t const *arguments, size_t size, void *data);
+
+	public interface ObserverTheoryTermCompoundCallback {
+		byte callback(int termId, int nameIdOrType, Pointer arguments, SizeT size, Pointer data);
+	}
+
+	public ObserverTheoryTermCompoundCallback theoryTermCompound;
+	
 	/**
 	 * Observe theory elements.
 	 *
@@ -216,6 +336,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*theory_element)(clingo_id_t element_id, clingo_id_t const *terms, size_t terms_size, clingo_literal_t const *condition, size_t condition_size, void *data);
+
+	public interface ObserverTheoryElementCallback {
+		byte callback(int elementId, Pointer terms, SizeT termsSize, Pointer condition, SizeT conditionSize, Pointer data);
+	}
+
+	public ObserverTheoryElementCallback theoryElement;
+	
 	/**
 	 * Observe theory atoms without guard.
 	 *
@@ -227,6 +354,13 @@ public class GroundProgramObserverSt extends Structure {
 	 * @return whether the call was successful
 	 */
 //	    bool (*theory_atom)(clingo_id_t atom_id_or_zero, clingo_id_t term_id, clingo_id_t const *elements, size_t size, void *data);
+
+	public interface ObserverTheoryAtomCallback {
+		byte callback(int atomIdOrZero, int termId, Pointer elements, SizeT size, Pointer data);
+	}
+
+	public ObserverTheoryAtomCallback theoryAtom;
+	
 	/**
 	 * Observe theory atoms with guard.
 	 *
@@ -241,4 +375,11 @@ public class GroundProgramObserverSt extends Structure {
 	 */
 	/*    bool (*theory_atom_with_guard)(clingo_id_t atom_id_or_zero, clingo_id_t term_id, clingo_id_t const *elements, size_t size, clingo_id_t operator_id, clingo_id_t right_hand_side_id, void *data);
 	} clingo_ground_program_observer_t; */
+
+	public interface ObserverTheoryAtomWithGuardCallback {
+		byte callback(int atomIdOrZero, int termId, Pointer elements, SizeT size, int operatorId, int rightHandSideId, Pointer data);
+	}
+
+	public ObserverTheoryAtomWithGuardCallback theoryAtomWithGuard;
+	
 }

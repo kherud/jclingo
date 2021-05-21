@@ -38,6 +38,13 @@ public class PropagatorSt extends Structure {
 	 */
 	//  bool (*init) (clingo_propagate_init_t *init, void *data);
 //	public boolean init(PropagateInitSt init, Object data) {}
+	
+	public interface PropagatorInitCallback extends Callback {
+		byte callback(Pointer init, Pointer data);
+	}
+
+	public PropagatorInitCallback init;
+	
 	/**
 	 * Can be used to propagate solver literals given a @link clingo_assignment_t partial assignment@endlink.
 	 *
@@ -80,6 +87,13 @@ public class PropagatorSt extends Structure {
 	 * @see ::clingo_propagator_propagate_callback_t
 	 */
 	//  bool (*propagate) (clingo_propagate_control_t *control, clingo_literal_t const *changes, size_t size, void *data);
+
+	public interface PropagatorPropagateCallback extends Callback {
+		byte callback(Pointer control, Pointer changes, SizeT size, Pointer data);
+	}
+
+	public PropagatorPropagateCallback propagate;
+	
 	/**
 	 * Called whenever a solver undoes assignments to watched solver literals.
 	 *
@@ -95,6 +109,13 @@ public class PropagatorSt extends Structure {
 	 * @see ::clingo_propagator_undo_callback_t
 	 */
 	//  void (*undo) (clingo_propagate_control_t const *control, clingo_literal_t const *changes, size_t size, void *data);
+
+	public interface PropagatorUndoCallback extends Callback {
+		void callback(Pointer control, Pointer changes, SizeT size, Pointer data);
+	}
+
+	public PropagatorUndoCallback undo;
+	
 	/**
 	 * This function is similar to @ref clingo_propagate_control_propagate() but is called without a change set on propagation fixpoints.
 	 *
@@ -108,6 +129,13 @@ public class PropagatorSt extends Structure {
 	 * @see ::clingo_propagator_check_callback_t
 	 */
 	//  bool (*check) (clingo_propagate_control_t *control, void *data);
+
+	public interface PropagatorCheckCallback extends Callback {
+		byte check(Pointer control, Pointer data);
+	}
+
+	public PropagatorCheckCallback check;
+	
 	/**
 	 * This function allows a propagator to implement domain-specific heuristics.
 	 *
@@ -126,30 +154,10 @@ public class PropagatorSt extends Structure {
 	/*    bool (*decide) (clingo_id_t thread_id, clingo_assignment_t const *assignment, clingo_literal_t fallback, void *data, clingo_literal_t *decision);
 	} clingo_propagator_t; */
 
-	public interface PropagatorInitCallback extends Callback {
-		byte callback(Pointer init, Pointer data);
-	}
-
-	public interface PropagatorPropagateCallback extends Callback {
-		byte callback(Pointer control, Pointer changes, SizeT size, Pointer data);
-	}
-
-	public interface PropagatorUndoCallback extends Callback {
-		void callback(Pointer control, Pointer changes, SizeT size, Pointer data);
-	}
-
-	public interface PropagatorCheckCallback extends Callback {
-		byte check(Pointer control, Pointer data);
-	}
-
 	public interface PropagatorDecideCallback extends Callback {
 		boolean callback(int threadId, Pointer assignment, int fallback, Pointer data, int decision);
 	}
 
-	public PropagatorInitCallback init;
-	public PropagatorPropagateCallback propagate;
-	public PropagatorUndoCallback undo;
-	public PropagatorCheckCallback check;
 	public PropagatorDecideCallback decide;
 	
 	public PropagatorSt(PropagatorInitCallback init, PropagatorPropagateCallback propagate, PropagatorUndoCallback undo,

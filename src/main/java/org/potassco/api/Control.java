@@ -7,6 +7,7 @@ import org.potassco.enums.SolveMode;
 import org.potassco.enums.TruthValue;
 import org.potassco.jna.BaseClingo;
 import org.potassco.jna.GroundCallback;
+import org.potassco.jna.GroundProgramObserverSt;
 import org.potassco.jna.PartSt;
 import org.potassco.jna.PropagatorSt;
 import org.potassco.jna.SizeT;
@@ -395,7 +396,7 @@ public class Control implements AutoCloseable {
 	 * @param data     user data passed to the observer functions
 	 * @return
 	 */
-	public void registerObserver(Pointer observer, boolean replace, Pointer data) {
+	public void registerObserver(GroundProgramObserverSt observer, boolean replace, Pointer data) {
 		BaseClingo.controlRegisterObserver(this.control, observer, replace, data);
 	}
 

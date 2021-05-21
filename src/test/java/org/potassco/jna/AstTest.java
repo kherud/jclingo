@@ -7,13 +7,12 @@ import java.util.Arrays;
 import org.junit.Test;
 import org.potassco.jna.ClingoLibrary.AstCallback;
 import org.potassco.ast.enums.Type;
-import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveMode;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 
-public class AstTest {
+public class AstTest extends CheckModels {
 
 	private static final int VALUE = 42;
 
@@ -75,31 +74,6 @@ public class AstTest {
 		BaseClingo.programBuilderAdd(builder, ast);
 		
 		BaseClingo.programBuilderEnd(builder);
-	}
-
-	private void checkModels(Pointer control, Pointer handle, String[] expectedStrings, int modelsCount) {
-		boolean modelExits = true;
-		int i = 0;
-		while (modelExits) {
-			Pointer model = BaseClingo.solveHandleModel(handle);
-			if (model != null) {
-				long mn = BaseClingo.modelNumber(model);
-				long[] atoms = BaseClingo.modelSymbols(model, ShowType.SHOWN);
-				for (int j = 0; j < atoms.length; j++) {
-					String str = BaseClingo.symbolToString(atoms[j]);
-					assertTrue(Arrays.stream(expectedStrings).anyMatch(str::equals));
-					assertTrue(BaseClingo.modelContains(model, atoms[j]));
-				}
-				BaseClingo.solveHandleResume(handle);
-				i++;
-			} else {
-				modelExits = false;
-			}
-		}
-        BaseClingo.solveHandleClose(handle);
-        // clean up
-        BaseClingo.controlFree(control);
-		assertEquals(modelsCount, i);
 	}
 
 }

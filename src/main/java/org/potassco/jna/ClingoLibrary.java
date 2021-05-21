@@ -1458,8 +1458,8 @@ public interface ClingoLibrary extends Library {
     /** {@link clingo_h#clingo_control_theory_atoms} */
     public byte clingo_control_theory_atoms(Pointer p_control, PointerByReference p_p_atoms);
 
-    /** {@link clingo_h#clingo_control_theory_atoms} */
-    public byte clingo_control_register_observer(Pointer p_control, Pointer p_observer, byte replace, Pointer p_data);
+    /** {@link clingo_h#clingo_control_register_observer} */
+    public byte clingo_control_register_observer(Pointer p_control, GroundProgramObserverSt p_observer, byte replace, Pointer p_data);
 
     /** {@link clingo_h#clingo_control_backend} */
     public byte clingo_control_backend(Pointer p_control, PointerByReference p_p_backend);

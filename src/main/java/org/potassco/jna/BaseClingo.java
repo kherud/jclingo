@@ -3687,7 +3687,7 @@ public class BaseClingo {
 	 * @param data     user data passed to the observer functions
 	 * @return
 	 */
-	public static void controlRegisterObserver(Pointer control, Pointer observer, boolean replace, Pointer data) {
+	public static void controlRegisterObserver(Pointer control, GroundProgramObserverSt observer, boolean replace, Pointer data) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_control_register_observer(control, observer, (byte) (replace ? 1 : 0),
 				data);

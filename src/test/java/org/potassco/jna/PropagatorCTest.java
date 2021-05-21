@@ -204,7 +204,7 @@ public class PropagatorCTest {
 				int i = 0;
 			}
 		};
-		PropagatorSt prop = new PropagatorSt(init, propagate , undo , null, null);
+		PropagatorSt prop = new PropagatorSt(init, propagate, undo , null, null);
 //		PropagatorData propData = new PropagatorData(null, new SizeT(), null, 0L);
 
 		Pointer control = BaseClingo.control(null, null, null, 0);

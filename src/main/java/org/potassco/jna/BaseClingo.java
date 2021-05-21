@@ -2694,6 +2694,13 @@ public class BaseClingo {
 		return value.getValue();
 	}
 
+	/**
+	 * Set the value of an attribute of type "clingo_ast_attribute_type_number".
+	 * 
+	 * @param ast the target AST
+	 * @param attribute the target attribute
+	 * @param value the value
+	 */
 	public static void astAttributeSetNumber(Pointer ast, Pointer attribute, int value) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_ast_attribute_set_number(ast, attribute, value);

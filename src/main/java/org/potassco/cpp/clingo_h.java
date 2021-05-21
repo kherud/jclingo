@@ -2578,7 +2578,7 @@ public static final typedef<struct> clingo_ast_t = null;
 //! @return whether the call was successful; might set one of the following error codes:
 //! - ::clingo_error_bad_alloc
 //! - ::clingo_error_runtime if one of the arguments is incompatible with the type
-public bool clingo_ast_build(clingo_ast_type_t type, clingo_ast_t p_p_ast, Object... object); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_build(clingo_ast_type_t type, clingo_ast_t **ast, ...);
+public bool clingo_ast_build(clingo_ast_type_t type, clingo_ast_t... p_p_ast); // CLINGO_VISIBILITY_DEFAULT bool clingo_ast_build(clingo_ast_type_t type, clingo_ast_t **ast, ...);
 
 //! @}
 

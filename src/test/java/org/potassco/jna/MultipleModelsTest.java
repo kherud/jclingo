@@ -2,7 +2,10 @@ package org.potassco.jna;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+
 import org.junit.Test;
+import org.potassco.enums.ShowType;
 import org.potassco.enums.SolveMode;
 
 import com.sun.jna.Pointer;
@@ -11,6 +14,7 @@ public class MultipleModelsTest {
 
 	@Test
 	public void test() {
+		String[] expectedStrings = {"p(1)", "p(2)", "p(3)"};
 		String name = "base";
 		String program = "1 {p(1..3)} 2.";
 		String[] arguments = { "0" }; // enumerate all models
@@ -26,7 +30,12 @@ public class MultipleModelsTest {
 			Pointer model = BaseClingo.solveHandleModel(handle);
 			if (model != null) {
 				long mn = BaseClingo.modelNumber(model);
-				checkModel(model);
+				long[] atoms = BaseClingo.modelSymbols(model, ShowType.SHOWN);
+				for (int j = 0; j < atoms.length; j++) {
+					String str = BaseClingo.symbolToString(atoms[j]);
+					assertTrue(Arrays.stream(expectedStrings).anyMatch(str::equals));
+					assertTrue(BaseClingo.modelContains(model, atoms[j]));
+				}
 				BaseClingo.solveHandleResume(handle);
 				i++;
 			} else {
@@ -37,10 +46,6 @@ public class MultipleModelsTest {
         // clean up
         BaseClingo.controlFree(control);
 		assertEquals(6, i);
-	}
-
-	private void checkModel(Pointer model) {
-		BaseClingo.modelContains(model, 0);
 	}
 
 }

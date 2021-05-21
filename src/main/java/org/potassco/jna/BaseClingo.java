@@ -1,6 +1,7 @@
 package org.potassco.jna;
 
 import org.potassco.api.ClingoException;
+import org.potassco.ast.enums.Type;
 import org.potassco.cpp.clingo_h;
 import org.potassco.cpp.struct;
 import org.potassco.cpp.typedef;
@@ -2522,10 +2523,10 @@ public class BaseClingo {
 	 * @param type the type of AST to construct
 	 * @return the resulting AST
 	 */
-	public static Pointer astBuild(int type, Object... object) {
+	public static Pointer astBuild(Type type) {
 		PointerByReference ast = new PointerByReference();
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_ast_build(type, ast, object);
+		byte success = clingoLibrary.clingo_ast_build(type.ordinal(), ast);
 		return ast.getValue();
 	}
 	
@@ -2645,11 +2646,11 @@ public class BaseClingo {
 	 * @param ast the target AST
 	 * @return the resulting type
 	 */
-	public static int astGetType(Pointer ast) {
+	public static Type astGetType(Pointer ast) {
 		IntByReference type = new IntByReference();
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_ast_get_type(ast, type);
-		return type.getValue();
+		return Type.fromOrdinal(type.getValue());
 	}
 
 	/**
@@ -2965,14 +2966,14 @@ public class BaseClingo {
 	/**
 	 * Parse the given program and return an abstract syntax tree for each statement via a callback.
 	 * @param program the program in gringo syntax
-	 * @param callback the callback reporting statements
+	 * @param callback the callback reporting statements. May not be null.
 	 * @param callbackData user data for the callback
 	 * @param logger callback to report messages during parsing
 	 * @param loggerData user data for the logger
 	 * @param messageLimit the maximum number of times the logger is called
 	 */
-	public static void astParseString(String program, ClingoLibrary.AstCallback callback, Pointer callbackData, Pointer logger,
-			Pointer loggerData, int messageLimit) {
+	public static void astParseString(String program, ClingoLibrary.AstCallback callback, Pointer callbackData,
+			Pointer logger, Pointer loggerData, int messageLimit) {
 		@SuppressWarnings("unused")
 		byte success = clingoLibrary.clingo_ast_parse_string(program, callback, callbackData, logger, loggerData,
 				messageLimit);
@@ -3266,6 +3267,24 @@ public class BaseClingo {
 	// clingo_ground_callback_t
 	// clingo_control_t
 
+	/**
+	 * Create a new control object.
+	 * <p>
+	 * A control object has to be freed using clingo_control_free().
+	 * 
+	 * @note Only gringo options (without <code>\-\-output</code>) and clasp's options are supported as arguments,
+	 * except basic options such as <code>\-\-help</code>.
+	 * Furthermore, a control object is blocked while a search call is active;
+	 * you must not call any member function during search.
+	 * <p>
+	 * If the logger is NULL, messages are printed to stderr.
+	 * 
+	 * @param arguments string array of command line arguments
+	 * @param logger callback functions for warnings and info messages
+	 * @param loggerData user data for the logger callback
+	 * @param messageLimit maximum number of times the logger callback is called
+	 * @return resulting control object
+	 */
 	public static Pointer control(String[] arguments, Pointer logger, Pointer loggerData, int messageLimit) {
 		int argumentsLength;
 		StringArray args;

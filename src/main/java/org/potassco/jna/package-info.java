@@ -55,6 +55,7 @@ package org.potassco.jna;
  * <li>clingo_weighted_literal_t - struct
  * <li>clingo_configuration_t - struct
  * <li>clingo_solve_handle_t (struct):
+ * <li>clingo_program_builder_t (struct):
  * <li>
  * <li>
  * <li>

@@ -22,7 +22,7 @@ public class AstCTest {
         LocationSt dataLoc = new LocationSt("<rewrite>", "<rewrite>", 0, 0, 0, 0);
         // initilize atom to add
         long symbol = BaseClingo.symbolCreateId("enable", true);
-        Pointer term = BaseClingo.astBuild(Type.SYMBOLIC_TERM.ordinal(), dataLoc, symbol);
+//        Pointer term = BaseClingo.astBuild(Type.SYMBOLIC_TERM.ordinal(), dataLoc, symbol);
 //        Pointer atom = BaseClingo.astBuild(Type.SYMBOLIC_TERM.ordinal(), term);
 
         // begin building a program

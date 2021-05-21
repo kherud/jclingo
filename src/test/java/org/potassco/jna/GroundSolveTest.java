@@ -58,8 +58,9 @@ public class GroundSolveTest extends CheckModels {
 		BaseClingo.controlAdd(control, name, null, program);
 		PartSt[] parts = new PartSt[1];
 		parts[0] = new PartSt(name, null, 0L);
-		GroundProgramObserverSt observer = new GroundProgramObserverSt();
-		BaseClingo.controlRegisterObserver(control, observer , true, null);
+		GroundProgramObserverSt observer = new GroundProgramObserverSt(null, null, null, null, null, null, null, null,
+				null, null, null, null, null, null, null, null, null, null, null, null);
+		BaseClingo.controlRegisterObserver(control, observer, true, null);
 		BaseClingo.controlGround(control, parts, null, null);
 		Pointer handle = BaseClingo.controlSolve(control, SolveMode.YIELD, null, new SizeT(), null, null);
 		checkModels(control, handle, expectedStrings, 6);

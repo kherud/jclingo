@@ -1,5 +1,8 @@
 package org.potassco.jna;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.potassco.cpp.clingo_h;
 
 import com.sun.jna.Pointer;
@@ -381,5 +384,44 @@ public class GroundProgramObserverSt extends Structure {
 	}
 
 	public ObserverTheoryAtomWithGuardCallback theoryAtomWithGuard;
-	
+
+	public GroundProgramObserverSt(ObserverInitProgramCallback initProgram, ObserverBeginStepCallback beginStep,
+			ObserverEndStepCallback endStep, ObserverRuleCallback rule, ObserverWeightRuleCallback weightRule,
+			ObserverMinimizeCallback minimize, ObserverProjectCallback project, ObserverOutputAtomCallback outputAtom,
+			ObserverOutputTermCallback outputTerm, ObserverOutputCspCallback outputCsp,
+			ObserverExternalCallback external, ObserverAssumeCallback assume, ObserverHeuristicCallback heuristic,
+			ObserverAcycEdgeCallback acycEdge, ObserverTheoryTermNumberCallback theoryTermNumber,
+			ObserverTheoryTermStringCallback theoryTermString, ObserverTheoryTermCompoundCallback theoryTermCompound,
+			ObserverTheoryElementCallback theoryElement, ObserverTheoryAtomCallback theoryAtom,
+			ObserverTheoryAtomWithGuardCallback theoryAtomWithGuard) {
+		super();
+		this.initProgram = initProgram;
+		this.beginStep = beginStep;
+		this.endStep = endStep;
+		this.rule = rule;
+		this.weightRule = weightRule;
+		this.minimize = minimize;
+		this.project = project;
+		this.outputAtom = outputAtom;
+		this.outputTerm = outputTerm;
+		this.outputCsp = outputCsp;
+		this.external = external;
+		this.assume = assume;
+		this.heuristic = heuristic;
+		this.acycEdge = acycEdge;
+		this.theoryTermNumber = theoryTermNumber;
+		this.theoryTermString = theoryTermString;
+		this.theoryTermCompound = theoryTermCompound;
+		this.theoryElement = theoryElement;
+		this.theoryAtom = theoryAtom;
+		this.theoryAtomWithGuard = theoryAtomWithGuard;
+	}
+
+	protected List<String> getFieldOrder() {
+		return Arrays.asList("initProgram", "beginStep", "endStep", "rule", "weightRule", "minimize", "project",
+				"outputAtom", "outputTerm", "outputCsp", "external", "assume", "heuristic", "acycEdge",
+				"theoryTermNumber", "theoryTermString", "theoryTermCompound", "theoryElement", "theoryAtom",
+				"theoryAtomWithGuard");
+	}
+
 }

@@ -3,17 +3,19 @@ package org.potassco.jna;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 import org.potassco.jna.ClingoLibrary.AstCallback;
 import org.potassco.ast.enums.Type;
 import org.potassco.enums.SolveMode;
 
+import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 import com.sun.jna.ptr.IntByReference;
 
 public class AstTest extends CheckModels {
-
 	private static final int VALUE = 42;
 
 	/**

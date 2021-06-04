@@ -339,10 +339,10 @@ public class BaseClingo {
 	 * @return the resulting name
 	 */
 	public static String symbolName(long symbol) {
-		String[] pointer = new String[1];
+		String[] name = new String[1];
 		@SuppressWarnings("unused")
-		byte success = clingoLibrary.clingo_symbol_name(symbol, pointer);
-		return pointer[0];
+		byte success = clingoLibrary.clingo_symbol_name(symbol, name);
+		return name[0];
 	}
 
 	/**

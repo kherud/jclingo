@@ -991,7 +991,7 @@ public interface ClingoLibrary extends Library {
     //! A map from AST types to their constructors.
     //!
     //! @note The idea of this variable is to provide enough information to auto-generate code for language bindings.
-// public static final clingo_ast_constructors_t g_clingo_ast_constructors = null; // CLINGO_VISIBILITY_DEFAULT extern clingo_ast_constructors_t g_clingo_ast_constructors;
+public static final Object g_clingo_ast_constructors = null; // CLINGO_VISIBILITY_DEFAULT extern clingo_ast_constructors_t g_clingo_ast_constructors;
     
     //! This struct provides a view to nodes in the AST.
 // public static final typedef<struct> clingo_ast_t = null;

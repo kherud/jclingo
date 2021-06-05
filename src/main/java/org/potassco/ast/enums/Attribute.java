@@ -1,5 +1,8 @@
 package org.potassco.ast.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.potassco.cpp.clingo_h;
 
 /**
@@ -53,5 +56,20 @@ public enum Attribute {ARGUMENT,
 	  VALUE,
 	  VARIABLE,
 	  WEIGHT;
+
+    private static Map<Integer, Attribute> mapping = new HashMap<>();
+    
+	static {
+	    for (Attribute type : Attribute.values()) {
+	    	mapping.put(
+	          type.ordinal(),
+	          type
+	        );
+	    }
+	}
+	
+	public static Attribute fromOrdinal(int attribute) {
+		return mapping.get(attribute);
+	}
 
 }

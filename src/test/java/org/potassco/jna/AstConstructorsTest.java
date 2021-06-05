@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.potassco.jna.ClingoLibrary.AstCallback;
 import org.potassco.ast.enums.Type;
+import org.potassco.cpp.clingo_h;
 import org.potassco.enums.SolveMode;
 
 import com.sun.jna.NativeLibrary;
@@ -14,17 +15,28 @@ import com.sun.jna.Structure;
 import com.sun.jna.ptr.IntByReference;
 
 public class AstConstructorsTest extends CheckModels {
+
+	/** {@link clingo_h#g_clingo_ast_constructors} */
 	@Test
 	public void testAstTypes() {
 		NativeLibrary lib = NativeLibrary.getInstance("d:\\js\\projects\\clingo4j\\windows\\x64\\clingo.dll");
 		Pointer paddr = lib.getGlobalVariableAddress("g_clingo_ast_constructors");
 //		int tl = Type.values().length;
 //		int o = Type.THEORY_DEFINITION.ordinal();
-		AstConstructors ac = new AstConstructors(paddr);
-		Pointer p1 = ac.constructors;
-		int s = ac.size.intValue();
+		AstConstructors astContstructors = new AstConstructors(paddr);
+		Pointer p1 = astContstructors.constructors;
+		int s = astContstructors.size.intValue();
 		AstConstructor ac1 = new AstConstructor(p1);
 		AstConstructor[] array = (AstConstructor[]) ac1.toArray(s);
+		for (AstConstructor ac : array) {
+			AstArgument aa = new AstArgument(ac.arguments);
+			Pointer attr = aa.attribute;
+			int atint = attr.getInt(0);
+//			org.potassco.ast.enums.Attribute aaa = org.potassco.ast.enums.Attribute.fromOrdinal(attr);
+			Pointer atype = aa.type;
+//			org.potassco.ast.enums.AttributeType aat = org.potassco.ast.enums.AttributeType.fromValue(atype);
+			System.out.println("");
+		}
 	}
 
 /*

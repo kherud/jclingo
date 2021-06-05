@@ -8,6 +8,7 @@ import org.potassco.ast.enums.Type;
 import org.potassco.enums.SolveMode;
 
 import com.sun.jna.NativeLibrary;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.IntByReference;
@@ -21,31 +22,9 @@ public class AstConstructorsTest extends CheckModels {
 //		int o = Type.THEORY_DEFINITION.ordinal();
 		AstConstructors ac = new AstConstructors(paddr);
 		Pointer p1 = ac.constructors;
-		int s1 = ac.size.intValue();
-		Pointer[] p2 = p1.getPointerArray(0, s1*3);
-		AstConstructor[] a = new AstConstructor[s1];
-		int j = 0;
-		for (int i = 0; i < s1; i++) {
-			a[i] = new AstConstructor(p2[j], p2[j++], p2[j++]);
-			j++;
-		}
-//		Pointer[] a = paddr.getPointerArray(0, o+1);
-		for (int i = 0; i < a.length; i++) {
-			Pointer ap = a[i].arguments;
-//			int as = a[i].size;
-//			SizeByReference sbr = new SizeByReference(as);
-//			SizeT s = sbr.getValue();
-//			long ai1 = as.getInt(0);
-//			long ai2 = as.getNativeLong(0).intValue();
-			Pointer[] aaa = ap.getPointerArray(0, 1);
-//			Pointer cp = ac.constructors[i];
-//			AstConstructor c = new AstConstructor(cp); 
-//			a[i].get
-//			int j = a[i].getInt(0);
-//			byte b = a[i].getByte(0);
-//			long l = a[i].getLong(0);
-			System.out.println("");
-		}
+		int s = ac.size.intValue();
+		AstConstructor ac1 = new AstConstructor(p1);
+		AstConstructor[] array = (AstConstructor[]) ac1.toArray(s);
 	}
 
 /*

@@ -7,9 +7,10 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
 public class AstConstructor extends Structure {
+    public static class ByReference extends AstConstructor implements Structure.ByReference { }
 	public String name;
 	public Pointer arguments;
-	public Pointer size;
+	public short size;
 
 	public AstConstructor() {
 		super();
@@ -18,18 +19,6 @@ public class AstConstructor extends Structure {
 	public AstConstructor(Pointer p) {
 		super(p);
 		read();
-	}
-
-	public AstConstructor(Pointer[] pArray) {
-		this.name = pArray[0].getString(0);
-		this.arguments = pArray[1];
-		this.size = pArray[2];
-	}
-
-	public AstConstructor(Pointer p1, Pointer p2, Pointer p3) {
-		this.name = p1.getString(0);
-		this.arguments = p2;
-		this.size = p3;
 	}
 
 	protected List<String> getFieldOrder() {

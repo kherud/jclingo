@@ -32,6 +32,7 @@ import org.w3c.dom.Node;
 public class PropertyTree {
 	private Document document;
 	private Map<Integer,Node> current = new HashMap<Integer, Node>();
+	private Element currentElement;
 	
 	public PropertyTree(String rootElementName) {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -39,37 +40,43 @@ public class PropertyTree {
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			document = dBuilder.newDocument();
 			// root element
-			Element rootElement = document.createElement(rootElementName);
-			current.put(0, document.appendChild(rootElement));
+			currentElement = document.createElement(rootElementName);
+			current.put(0, document.appendChild(currentElement));
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	protected void addNode(String name, String desc, int depth) {
-		Element e = document.createElement(name);
-        if (desc != null) {
-			Attr descAttr = document.createAttribute("desc");
-			descAttr.setValue(desc);
-			e.setAttributeNode(descAttr);
+	protected void addNode(String name, String description, int depth) {
+		currentElement = document.createElement(name);
+        if (description != null) {
+			Attr descAttr = document.createAttribute("description");
+			descAttr.setValue(description);
+			currentElement.setAttributeNode(descAttr);
 		}
-		current.get(depth).appendChild(e);
-        current.put(depth + 1, e);
+		current.get(depth).appendChild(currentElement);
+        current.put(depth + 1, currentElement);
 	}
 
-	protected void addIndex(int j, String desc, int depth) {
-        Element e = document.createElement("index");
+	protected void addAttribute(String attributeName, String value) {
+		Attr attr = document.createAttribute(attributeName);
+		attr.setValue(value);
+		currentElement.setAttributeNode(attr);
+	}
+
+	protected void addIndex(int j, String description, int depth) {
+		currentElement = document.createElement("index");
         Attr idAttr = document.createAttribute("id");
         idAttr.setValue("" + j);
-        e.setAttributeNode(idAttr);
-        if (desc != null) {
-			Attr descAttr = document.createAttribute("desc");
-			descAttr.setValue(desc);
-			e.setAttributeNode(descAttr);
+        currentElement.setAttributeNode(idAttr);
+        if (description != null) {
+			Attr descAttr = document.createAttribute("description");
+			descAttr.setValue(description);
+			currentElement.setAttributeNode(descAttr);
 		}
-		current.get(depth).appendChild(e);
-        current.put(depth + 1, e);
+		current.get(depth).appendChild(currentElement);
+        current.put(depth + 1, currentElement);
 	}
 
 	protected void addValue(double value, int depth) {

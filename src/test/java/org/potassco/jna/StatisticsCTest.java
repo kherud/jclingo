@@ -95,7 +95,7 @@ public class StatisticsCTest {
 		long statsKey = BaseClingo.statisticsRoot(stats);
 		StatisticsTree tree = new StatisticsTree(stats, statsKey);
 		
-//		tree.showXml(); insert to output statistics
+//		tree.showXml(); // insert to output statistics
 		assertEquals(2.0, tree.queryXpathAsDouble("//lp/atoms/text()"), 0.0001);
 		assertEquals(2.0, tree.queryXpathAsDouble("//lp/bodies/text()"), 0.0001);
 		assertEquals(0.0, tree.queryXpathAsDouble("//lp/atoms_aux/text()"), 0.0001);

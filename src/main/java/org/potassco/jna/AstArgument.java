@@ -10,6 +10,7 @@ import com.sun.jna.Structure;
 
 /** {@link clingo_h#clingo_ast_argument_t} */
 public class AstArgument extends Structure {
+    public static class ByReference extends AstArgument implements Structure.ByReference { }
 	public int attribute;
 	public int type;
 

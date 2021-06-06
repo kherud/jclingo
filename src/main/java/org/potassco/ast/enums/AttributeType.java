@@ -20,9 +20,9 @@ public enum AttributeType {
 	/** For an attribute of type "char const *". */
 	STRING(3),
 	/** For an attribute of type "clingo_ast_t *". */
-	AST(5),
+	AST(4),
 	/** For an attribute of type "clingo_ast_t *" that can be NULL. */
-	OPTIONAL_AST(0),
+	OPTIONAL_AST(5),
 	/** For an attribute of type "char const **". */
 	STRING_ARRAY(6),
 	/** For an attribute of type "clingo_ast_t **". */

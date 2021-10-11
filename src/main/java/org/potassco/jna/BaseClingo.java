@@ -46,6 +46,10 @@ import com.sun.jna.ptr.PointerByReference;
 //SOFTWARE.
 
 /**
+ * BaseClingo resembles the C API and provides static methods
+ * with Java naming. This is class is intended to be changed when
+ * new versions of the C API are issued.
+ *  
  * @author Josef Schneeberger
  *
  */

@@ -7,8 +7,20 @@ import org.potassco.enums.SymbolType;
 
 import com.sun.jna.Pointer;
 
+/**
+ * Tests of {@link BaseClingo} - signature, symbol, and configuration methods.
+ * Also {@link BaseClingo#symbolHash(long)},
+ * {@link BaseClingo#addString(String)},
+ * {@link BaseClingo#parseTerm(String)}.
+ * 
+ * @author Josef Schneeberger
+ *
+ */
 public class InfrastructureTest {
 
+	/**
+	 * Tests {@link BaseClingo} and the signature methods.
+	 */
 	@Test
 	public void testSignature() {
 		String name = "test";
@@ -25,6 +37,9 @@ public class InfrastructureTest {
 		assertEquals(hash , BaseClingo.signatureHash(signature)); // returns the same hash
 	}
 
+	/**
+	 * Tests {@link BaseClingo} and the symbol handling methods.
+	 */
 	@Test
 	public void testSymbolHandling() {
 		int number = 42;
@@ -96,8 +111,11 @@ public class InfrastructureTest {
 		assertEquals(SymbolType.FUNCTION, BaseClingo.symbolType(symbol));
 	}
 
+	/**
+	 * Tests {@link BaseClingo} and the configuration methods.
+	 */
 	@Test
-	public void testConfiguration1() {
+	public void testConfiguration() {
 		String name = "base";
 		String program = "a. b.";
 		Pointer control = BaseClingo.control(null, null, null, 0);

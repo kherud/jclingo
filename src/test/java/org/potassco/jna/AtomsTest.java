@@ -11,6 +11,13 @@ import org.potassco.enums.TruthValue;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.LongByReference;
 
+/**
+ * Tests of {@link BaseClingo}.
+ * Tests methods for symbolic atoms.
+ * 
+ * @author Josef Schneeberger
+ *
+ */
 public class AtomsTest {
 
 	@Test

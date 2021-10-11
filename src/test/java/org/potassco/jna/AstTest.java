@@ -66,16 +66,4 @@ public class AstTest extends CheckModels {
 		checkModels(control, handle, expectedStrings, 1);
 	}
 
-	@Test
-	public void test2() {
-		String name = "plain";
-		Pointer control = BaseClingo.control(null, null, null, 0);
-		Pointer builder = BaseClingo.controlProgramBuilder(control);
-		BaseClingo.programBuilderBegin(builder);
-		Pointer ast = BaseClingo.astBuild(Type.SYMBOLIC_ATOM);
-		BaseClingo.programBuilderAdd(builder, ast);
-		
-		BaseClingo.programBuilderEnd(builder);
-	}
-
 }

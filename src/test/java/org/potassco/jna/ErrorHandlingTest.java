@@ -5,8 +5,23 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.potassco.jna.BaseClingo;
 
+/**
+ * Tests of {@link BaseClingo}
+ * 
+ * @author Josef Schneeberger
+ *
+ */
 public class ErrorHandlingTest {
 
+	/**
+	 * Tests {@link BaseClingo} and the methods
+	 * {@link BaseClingo#errorString(int)},
+	 * {@link BaseClingo#errorCode()},
+	 * {@link BaseClingo#errorMessage()},
+	 * {@link BaseClingo#setError(int, String)},
+	 * {@link BaseClingo#getError()},
+	 * {@link BaseClingo#warningString(int)}
+	 */
 	@Test
 	public void testErrorMessage() {
 		assertEquals("success", BaseClingo.errorString(0));

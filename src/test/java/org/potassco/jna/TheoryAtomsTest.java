@@ -7,6 +7,12 @@ import org.potassco.enums.TermType;
 
 import com.sun.jna.Pointer;
 
+/**
+ * Tests of {@link BaseClingo} - theory atoms
+ * 
+ * @author Josef Schneeberger
+ *
+ */
 public class TheoryAtomsTest {
 
 	/**

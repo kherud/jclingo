@@ -2,6 +2,8 @@ package org.potassco.jna;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 import org.potassco.jna.ClingoLibrary.AstCallback;
 import org.potassco.util.AstConstructorsTree;
@@ -17,6 +19,7 @@ import com.sun.jna.Structure;
 import com.sun.jna.ptr.IntByReference;
 
 public class AstConstructorsTest extends CheckModels {
+	private static final int VALUE = 42;
 
 	/** {@link clingo_h#g_clingo_ast_constructors} */
 	@Test
@@ -37,12 +40,47 @@ public class AstConstructorsTest extends CheckModels {
 //						+ org.potassco.ast.enums.Attribute.fromOrdinal(aarg.attribute)
 //						+ " " + aarg.type + "="
 //						+ org.potassco.ast.enums.AttributeType.fromValue(aarg.type));
+				
+//				BaseClingo.
 			}
 		}
 		tree.showXml();
 		assertEquals("2", tree.queryXpathAsString("/AstConstructors/id/@size"));
-		assertEquals("2", tree.queryXpathAsString("/AstConstructors[40]/name()"));
+//		assertEquals("2", tree.queryXpathAsString("/AstConstructors[40]/name()"));
 	}
+
+	/**
+	 * https://potassco.org/clingo/c-api/5.5/ast_8c-example.html
+	 */
+	@Test
+	public void test2() {
+		String name = "plain";
+		Pointer control = BaseClingo.control(null, null, null, 0);
+		Pointer builder = BaseClingo.controlProgramBuilder(control);
+		BaseClingo.programBuilderBegin(builder);
+		Pointer ast = BaseClingo.astBuild(Type.SYMBOLIC_ATOM);
+		BaseClingo.programBuilderAdd(builder, ast);
+		AstCallback callback = new AstCallback() {
+			/**
+			 * The callback is invoked for every part of the program
+			 */
+			@Override
+			public byte callback(Pointer ast, Pointer data) {
+				int in = data.getInt(0);
+				assertEquals(VALUE, in); // test passing data 
+				String s = BaseClingo.astToString(ast);
+//				assertTrue(Arrays.stream(expectedStrings).anyMatch(s::equals));
+				Type t = BaseClingo.astGetType(ast);
+//				assertTrue(Arrays.stream(expectedTypes).anyMatch(t::equals));
+				return 1;
+			}
+		};
+		IntByReference data = new IntByReference(VALUE);
+		BaseClingo.astParseString("a :- not b. b :- not a.",
+				callback, data.getPointer(), null, null, 20);
+		BaseClingo.programBuilderEnd(builder);
+	}
+
 /*
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <AstConstructors>

@@ -8,7 +8,7 @@ import org.potassco.jna.BaseClingo;
 import com.sun.jna.Pointer;
 
 /**
- * Tests of {@link BaseClingo} - theory atoms
+ * Tests of {@link BaseClingo} - propagator
  * 
  * @author Josef Schneeberger
  *

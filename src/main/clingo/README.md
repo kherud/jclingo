@@ -1,2 +1,0 @@
- - Currently c/clingo.h and cling.dll are version 5.5.0
- - libclingo.dylib and lincling.so are version 5.2.2

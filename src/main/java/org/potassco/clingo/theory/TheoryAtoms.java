@@ -1,10 +1,9 @@
 package org.potassco.clingo.theory;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
-import org.potassco.clingo.api.Clingo;
-import org.potassco.clingo.api.ErrorChecking;
-import org.potassco.clingo.api.types.NativeSizeByReference;
+import org.potassco.clingo.Clingo;
+import org.potassco.clingo.ErrorChecking;
+import org.potassco.clingo.dtype.NativeSizeByReference;
 
 import java.util.Iterator;
 

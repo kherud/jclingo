@@ -2,9 +2,9 @@ package org.potassco.clingo.solving;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
-import org.potassco.clingo.api.Clingo;
-import org.potassco.clingo.api.ErrorChecking;
-import org.potassco.clingo.api.types.TruthValue;
+import org.potassco.clingo.Clingo;
+import org.potassco.clingo.ErrorChecking;
+import org.potassco.clingo.TruthValue;
 import org.potassco.clingo.control.SymbolicAtom;
 import org.potassco.clingo.control.SymbolicAtoms;
 

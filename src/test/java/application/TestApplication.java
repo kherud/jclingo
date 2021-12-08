@@ -1,6 +1,6 @@
 package application;
 
-import org.potassco.clingo.api.struct.Application;
+import org.potassco.clingo.control.Application;
 
 /**
  * Test application covering most of the Application related API.

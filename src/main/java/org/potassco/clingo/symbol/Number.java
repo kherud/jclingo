@@ -2,7 +2,7 @@ package org.potassco.clingo.symbol;
 
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
-import org.potassco.clingo.api.Clingo;
+import org.potassco.clingo.Clingo;
 
 public class Number extends Symbol {
 

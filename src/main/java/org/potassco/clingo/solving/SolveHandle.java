@@ -4,9 +4,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-import org.potassco.clingo.api.Clingo;
-import org.potassco.clingo.api.ErrorChecking;
-import org.potassco.clingo.api.types.*;
+import org.potassco.clingo.Clingo;
+import org.potassco.clingo.ErrorChecking;
 
 import java.util.Iterator;
 

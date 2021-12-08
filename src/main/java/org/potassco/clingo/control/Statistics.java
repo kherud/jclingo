@@ -5,11 +5,10 @@ import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
-import org.potassco.clingo.api.Clingo;
-import org.potassco.clingo.api.ErrorChecking;
-import org.potassco.clingo.api.types.NativeSize;
-import org.potassco.clingo.api.types.NativeSizeByReference;
-import org.potassco.clingo.api.types.StatisticsType;
+import org.potassco.clingo.Clingo;
+import org.potassco.clingo.ErrorChecking;
+import org.potassco.clingo.dtype.NativeSize;
+import org.potassco.clingo.dtype.NativeSizeByReference;
 
 /**
  * This class maps clingo's native statistics structure

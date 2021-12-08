@@ -1,8 +1,7 @@
 package org.potassco.clingo.control;
 
 import com.sun.jna.Pointer;
-import org.potassco.clingo.api.Clingo;
-import org.potassco.clingo.api.ErrorChecking;
+import org.potassco.clingo.ErrorChecking;
 import org.potassco.clingo.symbol.Symbol;
 
 public class SymbolicAtom implements ErrorChecking {

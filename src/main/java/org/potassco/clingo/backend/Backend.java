@@ -3,12 +3,9 @@ package org.potassco.clingo.backend;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
-import org.potassco.clingo.api.Clingo;
-import org.potassco.clingo.api.ErrorChecking;
-import org.potassco.clingo.api.struct.WeightedLiteral;
-import org.potassco.clingo.api.types.ExternalType;
-import org.potassco.clingo.api.types.HeuristicType;
-import org.potassco.clingo.api.types.NativeSize;
+import org.potassco.clingo.Clingo;
+import org.potassco.clingo.ErrorChecking;
+import org.potassco.clingo.dtype.NativeSize;
 import org.potassco.clingo.symbol.Symbol;
 
 /**
@@ -29,9 +26,9 @@ public class Backend implements ErrorChecking, AutoCloseable {
     /**
      * Add an edge directive to the program.
      */
-    public void addAcycEdge() {
+    public void addAcycEdge(int nodeU, int nodeV, int[] conditions) {
         // TODO: what are acyc edges?!
-//        checkError(Clingo.INSTANCE.clingo_backend_acyc_edge());
+        checkError(Clingo.INSTANCE.clingo_backend_acyc_edge(backend, nodeU, nodeV, conditions, new NativeSize(conditions.length)));
     }
 
     /**

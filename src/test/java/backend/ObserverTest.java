@@ -3,12 +3,11 @@ package backend;
 import com.sun.jna.Pointer;
 import org.junit.Assert;
 import org.junit.Test;
-import org.potassco.clingo.api.struct.Observer;
-import org.potassco.clingo.api.types.NativeSize;
+import org.potassco.clingo.grounding.Observer;
+import org.potassco.clingo.dtype.NativeSize;
 import org.potassco.clingo.backend.Backend;
 import org.potassco.clingo.control.Control;
 import org.potassco.clingo.symbol.Function;
-import org.potassco.clingo.symbol.Number;
 import org.potassco.clingo.symbol.Symbol;
 
 import java.util.HashSet;

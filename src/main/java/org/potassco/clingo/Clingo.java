@@ -3,18 +3,21 @@ package org.potassco.clingo;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 import com.sun.jna.ptr.*;
 import org.potassco.clingo.ast.Location;
 import org.potassco.clingo.backend.WeightedLiteral;
 import org.potassco.clingo.control.*;
 import org.potassco.clingo.grounding.Observer;
 import org.potassco.clingo.propagator.Propagator;
-import org.potassco.clingo.dtype.NativeSize;
-import org.potassco.clingo.dtype.NativeSizeByReference;
+import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.internal.NativeSizeByReference;
 import org.potassco.clingo.ast.AstCallback;
 import org.potassco.clingo.grounding.GroundCallback;
 import org.potassco.clingo.grounding.ParseCallback;
 import org.potassco.clingo.solving.SolveEventCallback;
+
+import java.util.Map;
 
 public interface Clingo extends Library {
 
@@ -496,7 +499,7 @@ public interface Clingo extends Library {
      * - ::clingo_error_bad_alloc
      * - ::clingo_error_runtime if the size is too small
      */
-    boolean clingo_symbolic_atoms_signatures(Pointer atoms, LongByReference signatures, NativeSize size);
+    boolean clingo_symbolic_atoms_signatures(Pointer atoms, long[] signatures, NativeSize size);
 
     /**
      * Get an iterator to the next element in the sequence of symbolic atoms.
@@ -1718,7 +1721,7 @@ public interface Clingo extends Library {
      * - ::clingo_error_bad_alloc
      * - ::clingo_error_runtime if the size is too small
      */
-    boolean clingo_model_symbols(Pointer model, int show, PointerByReference symbols, NativeSize size);
+    boolean clingo_model_symbols(Pointer model, int show, long[] symbols, NativeSize size);
 
     /**
      * Constant time lookup to test whether an atom is in a model.
@@ -2510,7 +2513,8 @@ public interface Clingo extends Library {
      * - ::clingo_error_bad_alloc
      * - error code of ground callback
      */
-    boolean clingo_control_ground(Pointer control, ProgramPart[] parts, NativeSize parts_size, GroundCallback ground_callback, Pointer ground_callback_data);
+    // clingo_control_add(char const * const * parameters, size_t parameters_size, char const *program);
+    boolean clingo_control_ground(Pointer control, Structure[] parts, NativeSize parts_size, GroundCallback ground_callback, Pointer ground_callback_data);
 
     // Solving Functions
 

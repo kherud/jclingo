@@ -7,8 +7,8 @@ import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.Clingo;
 import org.potassco.clingo.ErrorChecking;
-import org.potassco.clingo.dtype.NativeSize;
-import org.potassco.clingo.dtype.NativeSizeByReference;
+import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.internal.NativeSizeByReference;
 import org.potassco.clingo.control.ShowType;
 import org.potassco.clingo.control.SymbolicAtom;
 import org.potassco.clingo.symbol.Symbol;
@@ -82,27 +82,39 @@ public class Model implements ErrorChecking {
      * first argument is the name of the CSP variable and the second its
      * value.
      *
+     * @return All projected symbols.
+     */
+    public Symbol[] getSymbols() {
+        return getSymbols(ShowType.shown());
+    }
+
+    /**
+     * Return the list of atoms, terms, or CSP assignments in the model.
+     *
+     * Atoms are represented using functions (`Symbol` objects), and CSP
+     * assignments are represented using functions with name `"$"` where the
+     * first argument is the name of the CSP variable and the second its
+     * value.
+     *
      * @return The selected symbols.
      */
     public Symbol[] getSymbols(ShowType showType) {
-        PointerByReference pointerByReference = new PointerByReference();
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
         checkError(Clingo.INSTANCE.clingo_model_symbols_size(model, showType.getBitset(), nativeSizeByReference));
         int modelSize = (int) nativeSizeByReference.getValue();
+        long[] modelSymbols = new long[modelSize];
 
         checkError(Clingo.INSTANCE.clingo_model_symbols(
                 model,
                 showType.getBitset(),
-                pointerByReference,
+                modelSymbols,
                 new NativeSize(modelSize))
         );
 
         Symbol[] symbols = new Symbol[modelSize];
-        if (modelSize > 0) {
-            long[] symbolLongs = pointerByReference.getValue().getLongArray(0, modelSize);
-            for (int i = 0; i < modelSize; i++) {
-                symbols[i] = Symbol.fromLong(symbolLongs[i]);
-            }
+
+        for (int i = 0; i < modelSize; i++) {
+            symbols[i] = Symbol.fromLong(modelSymbols[i]);
         }
 
         return symbols;

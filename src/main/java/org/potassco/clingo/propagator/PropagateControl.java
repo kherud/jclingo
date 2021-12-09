@@ -5,7 +5,7 @@ import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import org.potassco.clingo.Clingo;
 import org.potassco.clingo.ErrorChecking;
-import org.potassco.clingo.dtype.NativeSize;
+import org.potassco.clingo.internal.NativeSize;
 
 /**
  * This object can be used to add clauses and to propagate them.

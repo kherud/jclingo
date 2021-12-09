@@ -5,7 +5,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import org.potassco.clingo.Clingo;
 import org.potassco.clingo.ErrorChecking;
-import org.potassco.clingo.dtype.NativeSize;
+import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.symbol.Symbol;
 
 /**

@@ -7,7 +7,7 @@ import org.potassco.clingo.grounding.Observer;
 import org.potassco.clingo.backend.WeightedLiteral;
 import org.potassco.clingo.backend.ExternalType;
 import org.potassco.clingo.backend.HeuristicType;
-import org.potassco.clingo.dtype.NativeSize;
+import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.backend.Backend;
 import org.potassco.clingo.control.Control;
 import org.potassco.clingo.symbol.Function;
@@ -21,7 +21,8 @@ public class TestObserver extends Observer {
 
     @Test
     public void testBackendObserver() throws Exception {
-        Control control = new Control("{a}.");
+        Control control = new Control();
+        control.add("{a}.");
         control.registerObserver(new TestObserver(), false);
 
         try (Backend backend = control.getBackend()) {

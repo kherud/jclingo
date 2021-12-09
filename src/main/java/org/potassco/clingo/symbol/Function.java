@@ -5,8 +5,12 @@ import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.Clingo;
 import org.potassco.clingo.ErrorChecking;
-import org.potassco.clingo.dtype.NativeSize;
-import org.potassco.clingo.dtype.NativeSizeByReference;
+import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.internal.NativeSizeByReference;
+
+import javax.swing.*;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class Function extends Symbol {
 
@@ -64,6 +68,17 @@ public class Function extends Symbol {
 
     public int getArity() {
         return arguments.length;
+    }
+
+    public String toString() {
+        String argumentsString = arguments.length == 0 ? "" : "(" + Arrays.stream(arguments).map(Symbol::toString).collect(Collectors.joining(",")) + ")";
+        return (positive ? "" : "-") + name + argumentsString;
+    }
+
+    private static long create(String name, boolean positive) {
+        LongByReference longByReference = new LongByReference();
+        ErrorChecking.staticCheckError(Clingo.INSTANCE.clingo_symbol_create_id(name, positive, longByReference));
+        return longByReference.getValue();
     }
 
     private static long create(String name, boolean positive, Symbol... arguments) {

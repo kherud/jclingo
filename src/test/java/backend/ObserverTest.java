@@ -4,7 +4,7 @@ import com.sun.jna.Pointer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.potassco.clingo.grounding.Observer;
-import org.potassco.clingo.dtype.NativeSize;
+import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.backend.Backend;
 import org.potassco.clingo.control.Control;
 import org.potassco.clingo.symbol.Function;
@@ -21,7 +21,8 @@ public class ObserverTest extends Observer {
     public void testRegisterObserver() throws Exception {
         called = new HashSet<>();
 
-        Control control = new Control("{a}.");
+        Control control = new Control();
+        control.add("{a}.");
         control.registerObserver(new TestObserver(), false);
 
         try (Backend backend = control.getBackend()) {

@@ -6,7 +6,7 @@ import com.sun.jna.Structure;
 import com.sun.jna.ptr.ByteByReference;
 import org.potassco.clingo.ast.Location;
 import org.potassco.clingo.grounding.SymbolCallback;
-import org.potassco.clingo.dtype.NativeSize;
+import org.potassco.clingo.internal.NativeSize;
 
 import java.util.Arrays;
 import java.util.List;

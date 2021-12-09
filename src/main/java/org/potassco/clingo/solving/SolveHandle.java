@@ -8,6 +8,7 @@ import org.potassco.clingo.Clingo;
 import org.potassco.clingo.ErrorChecking;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Handle for solve calls.
@@ -81,13 +82,20 @@ public class SolveHandle implements ErrorChecking, AutoCloseable, Iterator<Model
     public Model getModel() {
         PointerByReference pointerByReference = new PointerByReference();
         checkError(Clingo.INSTANCE.clingo_solve_handle_model(solveHandle, pointerByReference));
+        if (pointerByReference.getValue() == null)
+            throw new NoSuchElementException();
         return new Model(pointerByReference.getValue());
     }
 
     @Override
     public boolean hasNext() {
-        currentModel = getModel();
-        return currentModel != null;
+        try {
+            currentModel = getModel();
+            resume();
+            return true;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
     }
 
     @Override

@@ -6,92 +6,147 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import org.potassco.clingo.Clingo;
 import org.potassco.clingo.ErrorChecking;
-import org.potassco.clingo.dtype.NativeSizeByReference;
+import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.internal.NativeSizeByReference;
+import org.potassco.clingo.symbol.Signature;
 import org.potassco.clingo.symbol.Symbol;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
- * This class holds a reference to the native symbolic atoms of a clingo program
+ * This class provides read-only access to the atom base of the grounder.
  */
 public class SymbolicAtoms implements Iterable<SymbolicAtom>, ErrorChecking {
 
     private final Pointer symbolicAtoms;
-    private final LoggerCallback logger;
-    private final int messageLimit;
-
-    // allocate these only once for performance
-    private final LongByReference longByRef = new LongByReference();
-    private final IntByReference intByRef = new IntByReference();
-    private final ByteByReference byteByRef = new ByteByReference();
-    private final NativeSizeByReference nativeSizeByRef = new NativeSizeByReference();
 
     public SymbolicAtoms(Pointer symbolicAtoms) {
-        this(symbolicAtoms, null, 0);
-    }
-
-    public SymbolicAtoms(Pointer symbolicAtoms, LoggerCallback logger, int messageLimit) {
         this.symbolicAtoms = symbolicAtoms;
-        this.logger = logger;
-        this.messageLimit = messageLimit;
     }
 
     /**
-     * This method parses a string to clingo's native literal id
-     * @param term the string to parse
-     * @return the long id of a valid literal
+     * @param symbol the symbol to return the symbolic atom for
+     * @return the symbolic atom of the symbol
      */
-    public int stringToLiteral(String term) {
-        long symbol = stringToSymbol(term);
-        long iterator = iteratorFind(symbol);
+    public SymbolicAtom getSymbolicAtom(Symbol symbol) {
+        LongByReference longByReference = new LongByReference();
+        ByteByReference byteByReference = new ByteByReference();
 
-        if (!isValid(iterator))
-            throw new IllegalStateException("symbolic atom '" + term + "' not found");
+        checkError(Clingo.INSTANCE.clingo_symbolic_atoms_find(symbolicAtoms, symbol.getLong(), longByReference));
+        Clingo.INSTANCE.clingo_symbolic_atoms_is_valid(symbolicAtoms, longByReference.getValue(), byteByReference);
 
-        return iteratorToLiteral(iterator);
+        if (byteByReference.getValue() == 0)
+            throw new NoSuchElementException("Symbol '" + symbol + "' has no symbolic atom");
+
+        return new SymbolicAtom(symbolicAtoms, longByReference.getValue());
     }
 
-    public long stringToSymbol(String term) {
-        // parse a string term to a clingo symbol id
-        checkError(Clingo.INSTANCE.clingo_parse_term(term, logger, null, 1000, longByRef));
-
-        return longByRef.getValue();
+    /**
+     * @return all symbolic atoms in the program
+     */
+    public List<SymbolicAtom> getAll() {
+        List<SymbolicAtom> symbolicAtoms = new ArrayList<>();
+        iterator().forEachRemaining(symbolicAtoms::add);
+        return symbolicAtoms;
     }
 
-    public int symbolToLiteral(Symbol symbol) {
-        return symbolToLiteral(symbol.getLong());
+    /**
+     * @param symbol the symbol to check for if a symbolic atom exists
+     * @return a boolean indicating whether the symbolic atom exists
+     */
+    public boolean contains(Symbol symbol) {
+        LongByReference longByReference = new LongByReference();
+        ByteByReference byteByReference = new ByteByReference();
+
+        checkError(Clingo.INSTANCE.clingo_symbolic_atoms_find(symbolicAtoms, symbol.getLong(), longByReference));
+        Clingo.INSTANCE.clingo_symbolic_atoms_is_valid(symbolicAtoms, longByReference.getValue(), byteByReference);
+
+        return byteByReference.getValue() > 0;
     }
 
-    public int symbolToLiteral(long symbol) {
-        long iterator = iteratorFind(symbol);
-        return iteratorToLiteral(iterator);
+    /**
+     * @return The amount of symbolic atoms in the program.
+     */
+    public int size() {
+        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
+        checkError(Clingo.INSTANCE.clingo_symbolic_atoms_size(symbolicAtoms, nativeSizeByReference));
+        return (int) nativeSizeByReference.getValue();
     }
 
-    public int iteratorToLiteral(long iterator) {
-        // finally, get the corresponding literal id to the symbol
-        checkError(Clingo.INSTANCE.clingo_symbolic_atoms_literal(symbolicAtoms, iterator, intByRef));
-        return intByRef.getValue();
+    /**
+     * @return The number of different predicate signatures used in the program.
+     */
+    public int amountSignatures() {
+        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
+        checkError(Clingo.INSTANCE.clingo_symbolic_atoms_signatures_size(symbolicAtoms, nativeSizeByReference));
+        return (int) nativeSizeByReference.getValue();
     }
 
-    public long size() {
-        Clingo.INSTANCE.clingo_symbolic_atoms_size(symbolicAtoms, nativeSizeByRef);
-        return nativeSizeByRef.getValue();
+    /**
+     * @return The list of predicate signatures occurring in the program.
+     */
+    public List<Signature> getSignatures() {
+        int amountSignatures = amountSignatures();
+        long[] signaturesLongs = new long[amountSignatures];
+        Clingo.INSTANCE.clingo_symbolic_atoms_signatures(symbolicAtoms, signaturesLongs, new NativeSize(amountSignatures));
+        List<Signature> signatures = new ArrayList<>();
+        for (long signature : signaturesLongs) {
+            signatures.add(new Signature(signature));
+        }
+        return signatures;
     }
 
-    private boolean isValid(long iterator) {
-        // using the iterator, check if the symbol is valid in the context of the program
-        checkError(Clingo.INSTANCE.clingo_symbolic_atoms_is_valid(symbolicAtoms, iterator, byteByRef));
-        return byteByRef.getValue() == 1;
-    }
-
-    private long iteratorFind(long symbol) {
-        // get an iterator reference to the symbol in the programs symbol set
-        checkError(Clingo.INSTANCE.clingo_symbolic_atoms_find(symbolicAtoms, symbol, longByRef));
-        return longByRef.getValue();
-    }
-
+    /**
+     * @return an iterator over all symbolic atoms in the program
+     */
     @Override
     public Iterator<SymbolicAtom> iterator() {
-        return null;
+        return iterator(nativeIterator());
+    }
+
+    /**
+     * @return an iterator over all symbolic atoms in the program matching the signature
+     */
+    public Iterator<SymbolicAtom> iterator(Signature signature) {
+        long nativeIterator = nativeIteratorBySignature(signature.getLong());
+        return iterator(nativeIterator);
+    }
+
+    private long nativeIteratorBySignature(long signature) {
+        LongByReference iteratorReference = new LongByReference();
+        LongByReference signatureReference = new LongByReference(signature);
+        checkError(Clingo.INSTANCE.clingo_symbolic_atoms_begin(symbolicAtoms, signatureReference, iteratorReference));
+        return iteratorReference.getValue();
+    }
+
+    private long nativeIterator() {
+        LongByReference iteratorReference = new LongByReference();
+        checkError(Clingo.INSTANCE.clingo_symbolic_atoms_begin(symbolicAtoms, null, iteratorReference));
+        return iteratorReference.getValue();
+    }
+
+    private Iterator<SymbolicAtom> iterator(long nativeIterator) {
+        return new Iterator<>() {
+
+            // allocate these again instead of calling class methods to save allocations
+            private final LongByReference longByReference = new LongByReference(nativeIterator);
+            private final ByteByReference byteByReference = new ByteByReference();
+
+            @Override
+            public boolean hasNext() {
+                Clingo.INSTANCE.clingo_symbolic_atoms_is_valid(symbolicAtoms, longByReference.getValue(), byteByReference);
+                return byteByReference.getValue() > 0;
+            }
+
+            @Override
+            public SymbolicAtom next() {
+                SymbolicAtom symbolicAtom = new SymbolicAtom(symbolicAtoms, longByReference.getValue());
+                Clingo.INSTANCE.clingo_symbolic_atoms_next(symbolicAtoms, longByReference.getValue(), longByReference);
+                return symbolicAtom;
+            }
+        };
     }
 }

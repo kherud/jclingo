@@ -1,13 +1,7 @@
 package org.potassco.clingo.solving;
 
-
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Enumeration of solve result types.
- * @note documented in ControlSt Module
- * @author Josef Schneeberger
  */
 public class SolveResult {
 	public enum Type {
@@ -36,6 +30,22 @@ public class SolveResult {
 
 	public boolean isType(Type type) {
 		return (bitset & type.code) > 0;
+	}
+
+	public boolean satisfiable() {
+		return (bitset & Type.SATISFIABLE.code) > 0;
+	}
+
+	public boolean unsatisfiable() {
+		return (bitset & Type.UNSATISFIABLE.code) > 0;
+	}
+
+	public boolean exhausted() {
+		return (bitset & Type.EXHAUSTED.code) > 0;
+	}
+
+	public boolean interrupted() {
+		return (bitset & Type.INTERRUPTED.code) > 0;
 	}
 
 }

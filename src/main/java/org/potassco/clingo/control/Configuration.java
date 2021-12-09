@@ -3,11 +3,11 @@ package org.potassco.clingo.control;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.Clingo;
 import org.potassco.clingo.ErrorChecking;
-import org.potassco.clingo.dtype.NativeSize;
+import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.args.Option;
+import org.potassco.clingo.statistics.Statistics;
 
 import java.nio.charset.StandardCharsets;
 
@@ -21,12 +21,8 @@ public class Configuration extends JSONLike implements ErrorChecking {
 
     private final ByteByReference byteByRef = new ByteByReference();
 
-    public Configuration(Control controlObject) {
-        // obtain pointer to the configuration object
-        PointerByReference configurationRef = new PointerByReference();
-
-        checkError(Clingo.INSTANCE.clingo_control_configuration(controlObject.getPointer(), configurationRef));
-        this.configuration = configurationRef.getValue();
+    public Configuration(Pointer configuration) {
+        this.configuration = configuration;
 
         // get root of the configuration tree map
         checkError(Clingo.INSTANCE.clingo_configuration_root(configuration, this.intByRef));

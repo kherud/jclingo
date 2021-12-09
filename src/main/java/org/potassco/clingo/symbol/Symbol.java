@@ -4,8 +4,8 @@ import com.sun.jna.Native;
 import com.sun.jna.ptr.LongByReference;
 import org.potassco.clingo.Clingo;
 import org.potassco.clingo.ErrorChecking;
-import org.potassco.clingo.dtype.NativeSize;
-import org.potassco.clingo.dtype.NativeSizeByReference;
+import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.internal.NativeSizeByReference;
 
 public abstract class Symbol implements ErrorChecking, Comparable<Symbol> {
 
@@ -15,11 +15,13 @@ public abstract class Symbol implements ErrorChecking, Comparable<Symbol> {
         this.symbol = symbol;
     }
 
-    public boolean match(String name, int arity, boolean positive) {
+    public boolean match(Signature signature) {
         if (!(this instanceof Function))
             return false;
         Function symbol = (Function) this;
-        return (symbol.isPositive() == positive) && (symbol.getName().equals(name)) && (symbol.getArity() == arity);
+        return (symbol.isPositive() == signature.isPositive())
+                && (symbol.getName().equals(signature.getName()))
+                && (symbol.getArity() == signature.getArity());
     }
 
     // TODO: can ints be used here?

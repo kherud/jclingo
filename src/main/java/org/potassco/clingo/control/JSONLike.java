@@ -3,7 +3,7 @@ package org.potassco.clingo.control;
 import com.sun.jna.ptr.IntByReference;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.potassco.clingo.dtype.NativeSizeByReference;
+import org.potassco.clingo.internal.NativeSizeByReference;
 
 /**
  * This class abstracts the json like structure of clingo's configuration and statistics,

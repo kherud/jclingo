@@ -1,4 +1,4 @@
-package org.potassco.clingo.dtype;
+package org.potassco.clingo.internal;
 
 import com.sun.jna.IntegerType;
 import com.sun.jna.Native;

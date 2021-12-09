@@ -1,7 +1,7 @@
 package org.potassco.clingo.ast;
 
 import com.sun.jna.Structure;
-import org.potassco.clingo.dtype.NativeSize;
+import org.potassco.clingo.internal.NativeSize;
 
 /**
  * A lists of required attributes to construct an AST.

@@ -3,7 +3,7 @@ package org.potassco.clingo.propagator;
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import org.potassco.clingo.dtype.NativeSize;
+import org.potassco.clingo.internal.NativeSize;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
  * Not all callbacks have to be implemented and can be set to NULL if not needed.
  * @author Josef Schneeberger
  */
-public class Propagator extends Structure {
+public abstract class Propagator extends Structure {
 
 	/**
 	 * This function is called once before each solving step.

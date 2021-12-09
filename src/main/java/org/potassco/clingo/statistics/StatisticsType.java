@@ -1,4 +1,4 @@
-package org.potassco.clingo.control;
+package org.potassco.clingo.statistics;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -12,8 +12,8 @@ public abstract class LoggerCallback implements Callback {
      * @param message warning message
      * @param data user data for callback
      */
-    public void callback(WarningCode code, Pointer message, Pointer data) {
-        call(code, message, data);
+    public void callback(int code, Pointer message, Pointer data) {
+        call(WarningCode.fromValue(code), message, data);
     }
 
     public abstract boolean call(WarningCode code, Pointer message, Pointer data);

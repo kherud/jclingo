@@ -3,7 +3,7 @@ package org.potassco.clingo.theory;
 import com.sun.jna.Pointer;
 import org.potassco.clingo.Clingo;
 import org.potassco.clingo.ErrorChecking;
-import org.potassco.clingo.dtype.NativeSizeByReference;
+import org.potassco.clingo.internal.NativeSizeByReference;
 
 import java.util.Iterator;
 

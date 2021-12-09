@@ -1,6 +1,7 @@
 package org.potassco.clingo.control;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -9,47 +10,92 @@ import org.potassco.clingo.ErrorChecking;
 import org.potassco.clingo.grounding.Observer;
 import org.potassco.clingo.grounding.GroundCallback;
 import org.potassco.clingo.propagator.Propagator;
-import org.potassco.clingo.dtype.NativeSize;
+import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.solving.SolveEventCallback;
+import org.potassco.clingo.solving.SolveEventType;
 import org.potassco.clingo.solving.SolveMode;
 import org.potassco.clingo.TruthValue;
 import org.potassco.clingo.backend.Backend;
 import org.potassco.clingo.solving.SolveHandle;
+import org.potassco.clingo.statistics.Statistics;
 import org.potassco.clingo.symbol.Symbol;
 import org.potassco.clingo.theory.TheoryAtoms;
 
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-public class Control implements ErrorChecking {
+/**
+ * Control object for the grounding/solving process.
+ * <p>
+ * Note that only gringo options (without `--text`) and clasp's search options
+ * are supported. Furthermore, you must not call any functions of a `Control`
+ * object while a solve call is active.
+ */
+public class Control implements ErrorChecking, AutoCloseable {
     private final Pointer control;
-    private final Configuration configuration;
-    private final Statistics statistics;
     private final LoggerCallback logger;
+    private final int messageLimit;
 
-    public Control(String program) {
-        this(program, null, 0);
+    public Control() {
+        this(null, 0);
     }
 
-    public Control(String program, LoggerCallback logger) {
-        this(program, logger, 20);
+    /**
+     * @param arguments Arguments to the grounder and solver like in the CLI, e.g. {"--models", "0"}
+     */
+    public Control(String... arguments) {
+        this(null, 0, arguments);
     }
 
-    public Control(String program, LoggerCallback logger, int messageLimit) {
-        this.logger = logger;
+    /**
+     * @param arguments    Arguments to the grounder and solver like in the CLI, e.g. {"--models", "0"}
+     * @param logger       Callback to intercept messages normally printed to standard error.
+     * @param messageLimit The maximum number of messages passed to the logger.
+     */
+    public Control(LoggerCallback logger, int messageLimit, String... arguments) {
         PointerByReference controlObjectRef = new PointerByReference();
-        // create control object, do not set any arguments, since we want to set them when calling `solve`
-        checkError(Clingo.INSTANCE.clingo_control_new(null, null, logger, null, messageLimit, controlObjectRef));
+        checkError(Clingo.INSTANCE.clingo_control_new(
+                arguments,
+                new NativeSize(arguments == null ? 0 : arguments.length),
+                logger,
+                null,
+                messageLimit,
+                controlObjectRef)
+        );
         this.control = controlObjectRef.getValue();
+        this.logger = logger;
+        this.messageLimit = messageLimit;
+    }
 
-        // add program
-//        this.add("base", program);
+    /**
+     * You probably do not want to call this constructor.
+     * @param pointer pointer to a native control object.
+     */
+    public Control(Pointer pointer) {
+        this.control = pointer;
+        this.logger = null;
+        this.messageLimit = 0;
+    }
 
-        // ground it, we only have a single program (so far)
-        ProgramPart programPart = new ProgramPart("base");
-        this.ground(programPart);
+    /**
+     * Extend the logic program with the given non-ground logic program in string form.
+     *
+     * @param program The non-ground program in string form.
+     */
+    public void add(String program) {
+        add("base", program, new String[0]);
+    }
 
-        this.configuration = new Configuration(this);
-        this.statistics = new Statistics(this);
+    /**
+     * Extend the logic program with the given non-ground logic program in string form.
+     *
+     * @param name    The name of program block to add.
+     * @param program The non-ground program in string form.
+     */
+    public void add(String name, String program) {
+        add(name, program, new String[0]);
     }
 
     /**
@@ -59,12 +105,24 @@ public class Control implements ErrorChecking {
      * @param parameters The parameters of the program block to add.
      * @param program    The non-ground program in string form.
      */
-    public void add(String name, String[] parameters, String program) {
+    public void add(String name, String program, String... parameters) {
         checkError(Clingo.INSTANCE.clingo_control_add(
                 control,
                 name,
                 parameters, new NativeSize(parameters.length),
                 program));
+    }
+
+    /**
+     * Ground the base program.
+     */
+    public void ground() {
+        ProgramPart[] programParts = (ProgramPart[]) new ProgramPart("base").toArray(1);
+        checkError(Clingo.INSTANCE.clingo_control_ground(
+                this.control,
+                programParts, new NativeSize(1),
+                null, null)
+        );
     }
 
     /**
@@ -75,10 +133,13 @@ public class Control implements ErrorChecking {
      *
      * @param programParts Objects of program names and program arguments to ground.
      */
-    public void ground(ProgramPart... programParts) {
+    public void ground(ProgramPart programPart, ProgramPart... programParts) {
+        ProgramPart[] parts = (ProgramPart[]) programPart.toArray(1 + programParts.length);
+        System.arraycopy(programParts, 0, parts, 1, programParts.length);
+
         checkError(Clingo.INSTANCE.clingo_control_ground(
                 this.control,
-                programParts, new NativeSize(programParts.length),
+                parts, new NativeSize(parts.length),
                 null, null)
         );
     }
@@ -95,21 +156,82 @@ public class Control implements ErrorChecking {
     /**
      * Starts a search.
      *
-     * @param assumptions Collection of symbols
-     * @param solveMode whether the search is blocking / non-blocking
      * @return a solve-handle to interact with
      */
-    public SolveHandle solve(Collection<Symbol> assumptions, SolveMode solveMode) {
-        SymbolicAtoms symbolicAtoms = getSymbolicAtoms();
-        int[] assumptionLiterals = assumptions.stream().mapToInt(symbolicAtoms::symbolToLiteral).toArray();
+    public SolveHandle solve() {
+        return solve(Collections.emptyList(), null, SolveMode.YIELD);
+    }
+
+    /**
+     * Starts a search.
+     *
+     * @param assumptions Collection of symbols
+     * @return a solve-handle to interact with
+     */
+    public SolveHandle solve(Collection<Symbol> assumptions) {
+        return solve(assumptions, null, SolveMode.YIELD);
+    }
+
+    /**
+     * Starts an asynchronous search.
+     *
+     * @param callback Optional callbacks for intercepting models, lower bounds during optimization,
+     *                 statistics updates, or the end of the search (implement {@link SolveEventCallback}.
+     * @return a solve-handle to interact with
+     */
+    public SolveHandle solve(SolveEventCallback callback) {
+        return solve(Collections.emptyList(), callback, SolveMode.ASYNC);
+    }
+
+    /**
+     * Starts an asynchronous search.
+     *
+     * @param assumptions Collection of symbols
+     * @param callback Optional callbacks for intercepting models, lower bounds during optimization,
+     *                 statistics updates, or the end of the search (implement {@link SolveEventCallback}.
+     * @return a solve-handle to interact with
+     */
+    public SolveHandle solve(Collection<Symbol> assumptions, SolveEventCallback callback) {
+        return solve(assumptions, callback, SolveMode.ASYNC);
+    }
+
+    /**
+     * Starts a search.
+     *
+     * @param assumptions Collection of symbols
+     * @param callback    Optional callbacks for intercepting models, lower bounds during optimization,
+     *                    statistics updates, or the end of the search (implement {@link SolveEventCallback}.
+     * @param solveMode   whether the search is blocking / non-blocking
+     * @return a solve-handle to interact with
+     */
+    public SolveHandle solve(Collection<Symbol> assumptions, SolveEventCallback callback, SolveMode solveMode) {
+        // TODO: implement call back data?
+        int[] assumptionLiterals = assumptions.stream()
+                .map(getSymbolicAtoms()::getSymbolicAtom)
+                .mapToInt(SymbolicAtom::getLiteral).toArray();
         PointerByReference pointerByReference = new PointerByReference();
         checkError(Clingo.INSTANCE.clingo_control_solve(
                 control,
                 solveMode.getValue(),
                 assumptionLiterals,
                 new NativeSize(assumptionLiterals.length),
-                null,
-                null,
+                callback,
+                control,
+                pointerByReference
+        ));
+        return new SolveHandle(pointerByReference.getValue());
+    }
+
+    public SolveHandle solve(int[] assumptions, SolveEventCallback callback, SolveMode solveMode) {
+        // TODO: remove this method
+        PointerByReference pointerByReference = new PointerByReference();
+        checkError(Clingo.INSTANCE.clingo_control_solve(
+                control,
+                solveMode.getValue(),
+                assumptions,
+                new NativeSize(assumptions.length),
+                callback,
+                control,
                 pointerByReference
         ));
         return new SolveHandle(pointerByReference.getValue());
@@ -170,6 +292,7 @@ public class Control implements ErrorChecking {
      * @param external The symbolic atom or program atom to release.
      */
     public void releaseExternal(SymbolicAtom external) {
+        // TODO: own class for literal?
 //        checkError(Clingo.INSTANCE.clingo_control_release_external(control, external.getLiteral()));
     }
 
@@ -352,10 +475,6 @@ public class Control implements ErrorChecking {
         return Symbol.fromLong(longByReference.getValue());
     }
 
-    public Pointer getPointer() {
-        return control;
-    }
-
     /**
      * @return a `Backend` object providing a low level interface to extend a logic program.
      */
@@ -365,12 +484,18 @@ public class Control implements ErrorChecking {
         return new Backend(backendRef.getValue());
     }
 
+    /**
+     * @return An object to inspect the symbolic atoms.
+     */
     public SymbolicAtoms getSymbolicAtoms() {
         PointerByReference symbolicAtomsRef = new PointerByReference();
         checkError(Clingo.INSTANCE.clingo_control_symbolic_atoms(control, symbolicAtomsRef));
         return new SymbolicAtoms(symbolicAtomsRef.getValue());
     }
 
+    /**
+     * @return The theory atoms in a program.
+     */
     public TheoryAtoms getTheoryAtoms() {
         PointerByReference pointerByReference = new PointerByReference();
         checkError(Clingo.INSTANCE.clingo_control_theory_atoms(control, pointerByReference));
@@ -381,17 +506,38 @@ public class Control implements ErrorChecking {
      * @return Object to change the configuration.
      */
     public Configuration getConfiguration() {
-        return this.configuration;
-    }
-
-    public Statistics getStatistics() {
-        return this.statistics;
+        PointerByReference configurationRef = new PointerByReference();
+        checkError(Clingo.INSTANCE.clingo_control_configuration(control, configurationRef));
+        return new Configuration(configurationRef.getValue());
     }
 
     /**
-     * Frees the native control object
+     * The statistics correspond to the `--stats` output of clingo. The detail of the
+     * statistics depends on what level is requested on the command line. Furthermore,
+     * there are some functions like `Control.release_external` that start a new
+     * solving step resetting the current step statistics. It is best to access the
+     * statistics right after solving.
+     * <p>
+     * This property is only available in clingo.
+     *
+     * @return An object containing solve statistics of the last solve call.
      */
+    public Statistics getStatistics() {
+        PointerByReference statisticsRef = new PointerByReference();
+        checkError(Clingo.INSTANCE.clingo_control_statistics(control, statisticsRef));
+        return new Statistics(statisticsRef.getValue());
+    }
+
+    /**
+     * Frees the native control object.
+     * This java object must not be used after calling this method.
+     */
+    @Override
     public void close() {
         Clingo.INSTANCE.clingo_control_free(control);
+    }
+
+    public Pointer getPointer() {
+        return control;
     }
 }

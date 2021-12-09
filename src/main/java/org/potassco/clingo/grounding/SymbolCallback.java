@@ -2,7 +2,7 @@ package org.potassco.clingo.grounding;
 
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
-import org.potassco.clingo.dtype.NativeSize;
+import org.potassco.clingo.internal.NativeSize;
 
 /**
  *  Callback function to inject symbols.

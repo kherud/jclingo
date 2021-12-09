@@ -7,7 +7,7 @@ import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.Clingo;
 import org.potassco.clingo.ErrorChecking;
 import org.potassco.clingo.backend.WeightedLiteral;
-import org.potassco.clingo.dtype.NativeSize;
+import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.control.SymbolicAtoms;
 import org.potassco.clingo.theory.TheoryAtoms;
 

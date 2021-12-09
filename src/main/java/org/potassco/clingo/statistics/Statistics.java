@@ -1,14 +1,13 @@
-package org.potassco.clingo.control;
+package org.potassco.clingo.statistics;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
-import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.Clingo;
 import org.potassco.clingo.ErrorChecking;
-import org.potassco.clingo.dtype.NativeSize;
-import org.potassco.clingo.dtype.NativeSizeByReference;
+import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.internal.NativeSizeByReference;
 
 /**
  * This class maps clingo's native statistics structure
@@ -24,11 +23,8 @@ public class Statistics implements ErrorChecking {
     private final LongByReference longByRef = new LongByReference();
     private final IntByReference intByRef = new IntByReference();
 
-    public Statistics(Control controlObject) {
-        PointerByReference statisticsRef = new PointerByReference();
-
-        checkError(Clingo.INSTANCE.clingo_control_statistics(controlObject.getPointer(), statisticsRef));
-        this.statistics = statisticsRef.getValue();
+    public Statistics(Pointer statistics) {
+        this.statistics = statistics;
 
         // get root of the configuration tree map
         checkError(Clingo.INSTANCE.clingo_statistics_root(statistics, this.longByRef));

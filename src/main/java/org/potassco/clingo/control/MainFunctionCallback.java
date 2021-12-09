@@ -1,7 +1,7 @@
 package org.potassco.clingo.control;
 
 import com.sun.jna.Pointer;
-import org.potassco.clingo.dtype.NativeSize;
+import org.potassco.clingo.internal.NativeSize;
 
 import javax.security.auth.callback.Callback;
 

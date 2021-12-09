@@ -3,7 +3,7 @@ package org.potassco.clingo.grounding;
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import org.potassco.clingo.dtype.NativeSize;
+import org.potassco.clingo.internal.NativeSize;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.List;
  * To implement an own observer, this class has to be inherited.
  * There must not be any public variables.
  */
-public class Observer extends Structure {
+public abstract class Observer extends Structure {
     /**
      * Called once in the beginning.
      * <p>

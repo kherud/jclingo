@@ -21,9 +21,8 @@ public class ControlTest {
     public void testCreate() {
         LoggerCallback logger = new LoggerCallback() {
             @Override
-            public boolean call(WarningCode code, Pointer message, Pointer data) {
+            public void call(WarningCode code, String message) {
                 System.out.printf("[%d] %s\n", code.getValue(), message);
-                return true;
             }
         };
         Control control;

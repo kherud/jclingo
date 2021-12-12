@@ -138,7 +138,7 @@ public abstract class Observer extends Structure {
      * @param data      user data for the callback
      * @return whether the call was successful
      */
-    public boolean outputTerm(Pointer symbol, Pointer condition, NativeSize size, Pointer data) {
+    public boolean outputTerm(long symbol, Pointer condition, NativeSize size, Pointer data) {
         return true;
     }
 
@@ -152,7 +152,7 @@ public abstract class Observer extends Structure {
      * @param data      user data for the callback
      * @return whether the call was successful
      */
-    public boolean outputCSP(Pointer symbol, int value, Pointer condition, NativeSize size, Pointer data) {
+    public boolean outputCSP(long symbol, int value, Pointer condition, NativeSize size, Pointer data) {
         return true;
     }
 
@@ -364,11 +364,11 @@ public abstract class Observer extends Structure {
     }
 
     private interface ObserverOutputTermCallback extends Callback {
-        boolean callback(Pointer symbol, Pointer condition, NativeSize size, Pointer data);
+        boolean callback(long symbol, Pointer condition, NativeSize size, Pointer data);
     }
 
     private interface ObserverOutputCspCallback extends Callback {
-        boolean callback(Pointer symbol, int value, Pointer condition, NativeSize size, Pointer data);
+        boolean callback(long symbol, int value, Pointer condition, NativeSize size, Pointer data);
     }
 
     private interface ObserverExternalCallback extends Callback {

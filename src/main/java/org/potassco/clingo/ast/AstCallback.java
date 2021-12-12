@@ -4,16 +4,17 @@ import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 
 // Callback function to intercept AST nodes.
-public abstract class AstCallback  implements Callback {
+public interface AstCallback  extends Callback {
     /**
      * @param ast the AST
      * @param data a user data pointer
      * @return whether the call was successful
      */
-    public boolean callback(Pointer ast, Pointer data) {
-        return call(ast, data);
+    default boolean callback(Pointer ast, Pointer data) {
+        call(new Ast(ast));
+        return true;
     }
 
-    public abstract boolean call(Pointer ast, Pointer data);
+    void call(Ast ast);
 
 }

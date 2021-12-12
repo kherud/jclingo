@@ -6,16 +6,16 @@ import com.sun.jna.Pointer;
 /**
  * Callback to intercept warning messages.
  */
-public abstract class LoggerCallback implements Callback {
+public interface LoggerCallback extends Callback {
     /**
      * @param code associated warning code
      * @param message warning message
      * @param data user data for callback
      */
-    public void callback(int code, Pointer message, Pointer data) {
-        call(WarningCode.fromValue(code), message, data);
+    default void callback(int code, String message, Pointer data) {
+        call(WarningCode.fromValue(code), message);
     }
 
-    public abstract boolean call(WarningCode code, Pointer message, Pointer data);
+    void call(WarningCode code, String message);
 
 }

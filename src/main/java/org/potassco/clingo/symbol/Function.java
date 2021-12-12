@@ -8,7 +8,7 @@ import org.potassco.clingo.ErrorChecking;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
 
-import javax.swing.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -70,10 +70,10 @@ public class Function extends Symbol {
         return arguments.length;
     }
 
-    public String toString() {
-        String argumentsString = arguments.length == 0 ? "" : "(" + Arrays.stream(arguments).map(Symbol::toString).collect(Collectors.joining(",")) + ")";
-        return (positive ? "" : "-") + name + argumentsString;
-    }
+//    public String toString() {
+//        String argumentsString = arguments.length == 0 ? "" : "(" + Arrays.stream(arguments).map(Symbol::toString).collect(Collectors.joining(",")) + ")";
+//        return (positive ? "" : "-") + name + argumentsString;
+//    }
 
     private static long create(String name, boolean positive) {
         LongByReference longByReference = new LongByReference();

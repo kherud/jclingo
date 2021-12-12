@@ -187,4 +187,8 @@ public class Model implements ErrorChecking {
         return ModelType.fromValue(intByReference.getValue());
     }
 
+    public Pointer getPointer() {
+        return model;
+    }
+
 }

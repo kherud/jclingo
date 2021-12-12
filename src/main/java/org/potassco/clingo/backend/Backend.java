@@ -63,8 +63,7 @@ public class Backend implements ErrorChecking, AutoCloseable {
     // TODO: change return value
     public int addAtom(Symbol symbol) {
         IntByReference intByReference = new IntByReference();
-        LongByReference longByReference = new LongByReference();
-        longByReference.setValue(symbol.getLong());
+        LongByReference longByReference = new LongByReference(symbol.getLong());
         checkError(Clingo.INSTANCE.clingo_backend_add_atom(backend, longByReference, intByReference));
         return intByReference.getValue();
     }

@@ -422,8 +422,7 @@ public class Control implements ErrorChecking, AutoCloseable {
      *                 the underlying solver (or any previously registered observers).
      */
     public void registerObserver(Observer observer, boolean replace) {
-        // TODO: fix callback data
-        checkError(Clingo.INSTANCE.clingo_control_register_observer(control, observer, replace, null));
+        checkError(Clingo.INSTANCE.clingo_control_register_observer(control, observer, replace, control));
     }
 
     /**
@@ -436,7 +435,7 @@ public class Control implements ErrorChecking, AutoCloseable {
      * @param sequentially Whether to call the propagator sequentially
      */
     public void registerPropagator(Propagator propagator, boolean sequentially) {
-        checkError(Clingo.INSTANCE.clingo_control_register_propagator(control, propagator, null, sequentially));
+        checkError(Clingo.INSTANCE.clingo_control_register_propagator(control, propagator, control, sequentially));
     }
 
     /**

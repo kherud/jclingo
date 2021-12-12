@@ -6,11 +6,11 @@ import com.sun.jna.Pointer;
 /**
  * Callback to customize model printing.
  */
-public abstract class ModelPrinterCallback implements Callback {
+public interface ModelPrinterCallback extends Callback {
     /**
      * Callback to print a model in default format.
      */
-    public interface DefaultModelPrinter extends Callback {
+    interface DefaultModelPrinter extends Callback {
         /**
          * @param data user data for the callback
          * @return whether the call was successful
@@ -25,9 +25,10 @@ public abstract class ModelPrinterCallback implements Callback {
      * @param data user data for the callback
      * @return whether the call was successful
      */
-    public boolean callback(Pointer model, DefaultModelPrinter printer, Pointer printerData, Pointer data) {
-        return call(model, printer, printerData, data);
+    default boolean callback(Pointer model, DefaultModelPrinter printer, Pointer printerData, Pointer data) {
+        call(new Model(model));
+        return true;
     }
 
-    public abstract boolean call(Pointer model, DefaultModelPrinter printer, Pointer printerData, Pointer data);
+    void call(Model model);
 }

@@ -1,14 +1,12 @@
 package org.potassco.clingo;
 
-import com.sun.jna.Library;
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
+import com.sun.jna.*;
 import com.sun.jna.ptr.*;
 import org.potassco.clingo.ast.Location;
 import org.potassco.clingo.backend.WeightedLiteral;
 import org.potassco.clingo.control.*;
 import org.potassco.clingo.grounding.Observer;
+import org.potassco.clingo.internal.ClingoTypeMapper;
 import org.potassco.clingo.propagator.Propagator;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
@@ -17,6 +15,7 @@ import org.potassco.clingo.grounding.GroundCallback;
 import org.potassco.clingo.grounding.ParseCallback;
 import org.potassco.clingo.solving.SolveEventCallback;
 
+import java.util.Collections;
 import java.util.Map;
 
 public interface Clingo extends Library {

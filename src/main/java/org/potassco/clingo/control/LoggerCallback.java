@@ -16,6 +16,11 @@ public interface LoggerCallback extends Callback {
         call(WarningCode.fromValue(code), message);
     }
 
+    /**
+     * Callback to intercept warning messages.
+     * @param code associated warning code
+     * @param message warning message
+     */
     void call(WarningCode code, String message);
 
 }

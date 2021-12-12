@@ -15,6 +15,10 @@ public interface AstCallback  extends Callback {
         return true;
     }
 
+    /**
+     * Callback function to intercept AST nodes.
+     * @param ast the AST
+     */
     void call(Ast ast);
 
 }

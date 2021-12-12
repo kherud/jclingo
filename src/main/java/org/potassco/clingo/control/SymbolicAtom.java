@@ -4,8 +4,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
-import org.potassco.clingo.Clingo;
-import org.potassco.clingo.ErrorChecking;
+import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.symbol.Signature;
 import org.potassco.clingo.symbol.Symbol;
 

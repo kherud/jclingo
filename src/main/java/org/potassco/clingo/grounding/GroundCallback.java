@@ -2,6 +2,7 @@ package org.potassco.clingo.grounding;
 
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
+import org.potassco.clingo.ast.Location;
 
 /**
  * Callback function to implement external functions.
@@ -13,7 +14,7 @@ import com.sun.jna.Pointer;
  * If a (non-recoverable) clingo API function fails in this callback, for example, the symbol callback, the callback must return false.
  * In case of errors not related to clingo, this function can set error ::clingo_error_unknown and return false to stop grounding with an error.
  */
-public abstract class GroundCallback implements Callback {
+public interface GroundCallback extends Callback {
     /**
      * @param location location from which the external function was called
      * @param name name of the called external function
@@ -24,9 +25,18 @@ public abstract class GroundCallback implements Callback {
      * @param symbolCallbackData user data for the symbol callback (must be passed untouched)
      * @return whether the call was successful
      */
-    public boolean callback(Pointer location, String name, long[] arguments, long argumentsSize, Pointer data, SymbolCallback symbolCallback, Pointer symbolCallbackData) {
-        return call(location, name, arguments, argumentsSize, data, symbolCallback, symbolCallbackData);
+    // TODO: long[] arguments probably is not correct, rather LongByReference?
+    default boolean callback(Pointer location, String name, long[] arguments, long argumentsSize, Pointer data, SymbolCallback symbolCallback, Pointer symbolCallbackData) {
+        call(new Location(location), name, arguments, symbolCallback);
+        return true;
     }
 
-    public abstract boolean call(Pointer location, String name, long[] arguments, long argumentsSize, Pointer data, SymbolCallback symbolCallback, Pointer symbolCallbackData);
+    /**
+     * Callback function to implement external functions.
+     * @param location location from which the external function was called
+     * @param name name of the called external function
+     * @param arguments arguments of the called external function
+     * @param symbolCallback function to inject symbols
+     */
+    void call(Location location, String name, long[] arguments, SymbolCallback symbolCallback);
 }

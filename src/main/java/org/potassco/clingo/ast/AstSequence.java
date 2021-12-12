@@ -1,7 +1,7 @@
 package org.potassco.clingo.ast;
 
 import com.sun.jna.Pointer;
-import org.potassco.clingo.ErrorChecking;
+import org.potassco.clingo.internal.ErrorChecking;
 
 public class AstSequence implements ErrorChecking {
 

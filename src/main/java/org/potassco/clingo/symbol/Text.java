@@ -1,8 +1,8 @@
 package org.potassco.clingo.symbol;
 
 import com.sun.jna.ptr.LongByReference;
-import org.potassco.clingo.Clingo;
-import org.potassco.clingo.ErrorChecking;
+import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.ErrorChecking;
 
 public class Text extends Symbol {
 

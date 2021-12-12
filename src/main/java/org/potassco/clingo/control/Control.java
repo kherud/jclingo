@@ -1,20 +1,18 @@
 package org.potassco.clingo.control;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
-import org.potassco.clingo.Clingo;
-import org.potassco.clingo.ErrorChecking;
+import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.grounding.Observer;
 import org.potassco.clingo.grounding.GroundCallback;
 import org.potassco.clingo.propagator.Propagator;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.solving.SolveEventCallback;
-import org.potassco.clingo.solving.SolveEventType;
 import org.potassco.clingo.solving.SolveMode;
-import org.potassco.clingo.TruthValue;
+import org.potassco.clingo.solving.TruthValue;
 import org.potassco.clingo.backend.Backend;
 import org.potassco.clingo.solving.SolveHandle;
 import org.potassco.clingo.statistics.Statistics;
@@ -24,7 +22,6 @@ import org.potassco.clingo.theory.TheoryAtoms;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * Control object for the grounding/solving process.

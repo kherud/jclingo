@@ -3,14 +3,10 @@ package org.potassco.clingo.symbol;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
-import org.potassco.clingo.Clingo;
-import org.potassco.clingo.ErrorChecking;
+import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class Function extends Symbol {
 

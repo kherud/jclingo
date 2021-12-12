@@ -1,6 +1,6 @@
 package org.potassco.clingo.ast;
 
-import org.potassco.clingo.ErrorChecking;
+import org.potassco.clingo.internal.ErrorChecking;
 
 /**
  * Utility class to transform ASTs.

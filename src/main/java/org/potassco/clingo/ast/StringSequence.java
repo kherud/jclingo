@@ -1,8 +1,8 @@
 package org.potassco.clingo.ast;
 
 import com.sun.jna.Pointer;
-import org.potassco.clingo.Clingo;
-import org.potassco.clingo.ErrorChecking;
+import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
 

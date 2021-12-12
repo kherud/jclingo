@@ -8,7 +8,7 @@ import javax.security.auth.callback.Callback;
 /**
  * Callback to customize clingo main function.
  */
-public abstract class MainFunctionCallback implements Callback {
+public interface MainFunctionCallback extends Callback {
     /**
      * @param control corresponding control object
      * @param files files passed via command line arguments
@@ -16,10 +16,12 @@ public abstract class MainFunctionCallback implements Callback {
      * @param data user data for the callback
      * @return whether the call was successful
      */
-    public boolean callback(Pointer control, String[] files, NativeSize size, Pointer data) {
-        return call(control, files, size, data);
+    // TODO: is String[] correct here?
+    default boolean callback(Pointer control, String[] files, NativeSize size, Pointer data) {
+        call(control, files);
+        return true;
     }
 
-    public abstract boolean call(Pointer control, String[] files, NativeSize size, Pointer data);
+    void call(Pointer control, String[] files);
 
 }

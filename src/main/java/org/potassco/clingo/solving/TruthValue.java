@@ -1,4 +1,4 @@
-package org.potassco.clingo;
+package org.potassco.clingo.solving;
 
 
 import java.util.HashMap;

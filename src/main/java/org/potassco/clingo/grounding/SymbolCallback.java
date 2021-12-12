@@ -5,9 +5,9 @@ import com.sun.jna.Pointer;
 import org.potassco.clingo.internal.NativeSize;
 
 /**
- *  Callback function to inject symbols.
+ * Callback function to inject symbols.
  */
-public abstract class SymbolCallback implements Callback {
+public interface SymbolCallback extends Callback {
     /**
      * @param symbols array of symbols
      * @param symbolsSize size of the symbol array
@@ -15,9 +15,15 @@ public abstract class SymbolCallback implements Callback {
      * @return whether the call was successful; might set one of the following error codes:
      * - ::clingo_error_bad_alloc
      */
-    public boolean callback(long[] symbols, NativeSize symbolsSize, Pointer data) {
-        return call(symbols, symbolsSize, data);
+    // TODO: long[] arguments probably is not correct, rather LongByReference?
+    default boolean callback(long[] symbols, NativeSize symbolsSize, Pointer data) {
+        call(symbols);
+        return true;
     }
 
-    public abstract boolean call(long[] symbols, NativeSize symbolsSize, Pointer data);
+    /**
+     * Callback function to inject symbols.
+     * @param symbols array of symbols
+     */
+    void call(long[] symbols);
 }

@@ -2,10 +2,9 @@ package org.potassco.clingo.control;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
-import org.potassco.clingo.Clingo;
-import org.potassco.clingo.ErrorChecking;
+import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
 import org.potassco.clingo.symbol.Signature;

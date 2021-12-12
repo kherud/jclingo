@@ -2,7 +2,7 @@
  * Copyright (C) 2021 denkbares GmbH. All rights reserved.
  */
 
-package org.potassco.clingo;
+package org.potassco.clingo.internal;
 
 import org.potassco.clingo.control.ErrorCode;
 

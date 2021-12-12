@@ -1,7 +1,7 @@
 package org.potassco.clingo.symbol;
 
 import com.sun.jna.ptr.LongByReference;
-import org.potassco.clingo.Clingo;
+import org.potassco.clingo.internal.Clingo;
 
 public class Supremum extends Symbol {
 

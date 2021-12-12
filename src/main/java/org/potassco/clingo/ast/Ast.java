@@ -7,7 +7,6 @@ import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.Clingo;
 import org.potassco.clingo.ErrorChecking;
-import org.potassco.clingo.args.AttributeType;
 import org.potassco.clingo.control.LoggerCallback;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;

@@ -22,6 +22,16 @@ public class Signature implements ErrorChecking, Comparable<Signature> {
      *
      * @param name name of the signature
      * @param arity arity of the signature
+     */
+    public Signature(String name, int arity) {
+        this(name, arity, true);
+    }
+
+    /**
+     * Create a new signature. Can throw clingo_error_bad_alloc.
+     *
+     * @param name name of the signature
+     * @param arity arity of the signature
      * @param positive false if the signature has a classical negation sign
      */
     public Signature(String name, int arity, boolean positive) {
@@ -85,8 +95,11 @@ public class Signature implements ErrorChecking, Comparable<Signature> {
      * @param other second signature
      * @return whether a == b
      */
-    public boolean equals(Signature other) {
-        return Clingo.INSTANCE.clingo_signature_is_equal_to(signature, other.getLong());
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Signature))
+            return false;
+        return Clingo.INSTANCE.clingo_signature_is_equal_to(signature, ((Signature) other).getLong());
     }
 
     /**

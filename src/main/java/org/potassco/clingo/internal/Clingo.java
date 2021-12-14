@@ -168,7 +168,7 @@ public interface Clingo extends Library {
     void clingo_symbol_create_supremum(LongByReference symbol);
 
     /**
-     * Construct a symbol representing <tt>\#inf</tt>.
+     * Construct a symbol representing <tt>#inf</tt>.
      *
      * @param symbol the resulting symbol
      */
@@ -189,7 +189,7 @@ public interface Clingo extends Library {
     /**
      * Construct a symbol representing an id.
      * <p>
-     * This is just a shortcut for clingo_symbol_create_function() with
+     * This is just a shortcut for {@link Clingo#clingo_symbol_create_function} with
      * empty arguments.
      *
      * @param name     the name
@@ -489,9 +489,8 @@ public interface Clingo extends Library {
     /**
      * Returns the (numeric) aspif literal corresponding to the given symbolic atom.
      * <p>
-     * Such a literal can be mapped to a solver literal (see the \ref Propagator
-     * module) or be used in rules in aspif format (see the \ref ProgramBuilder
-     * module).
+     * Such a literal can be mapped to a solver literal (see the propagator
+     * module) or be used in rules in aspif format (see the asp module).
      *
      * @param atoms    the target
      * @param iterator iterator to the atom
@@ -651,9 +650,9 @@ public interface Clingo extends Library {
     /**
      * Get the id of the condition of the given theory element.
      * <p>
-     * This id can be mapped to a solver literal using clingo_propagate_init_solver_literal().
+     * This id can be mapped to a solver literal using {@link Clingo#clingo_propagate_init_solver_literal}.
      * This id is not (necessarily) an aspif literal;
-     * to get aspif literals use clingo_theory_atoms_element_condition().
+     * to get aspif literals use {@link Clingo#clingo_theory_atoms_element_condition}.
      *
      * @param atoms     container where the element is stored
      * @param element   id of the element
@@ -936,7 +935,7 @@ public interface Clingo extends Library {
     /**
      * Returns the offset following the last literal with the given decision level.
      * <p>
-     * This function is the counter part to clingo_assignment_trail_begin().
+     * This function is the counter part to {@link Clingo#clingo_assignment_trail_begin}.
      *
      * @param assignment the target
      * @param level      the decision level
@@ -1533,7 +1532,7 @@ public interface Clingo extends Library {
     // Functions to access values
 
     /**
-     * Check whether a entry has a value.
+     * Check whether an entry has a value.
      * <p>
      * The {@link ConfigurationType type} of the entry must be {@link ConfigurationType.Type#VALUE}.
      *
@@ -2572,10 +2571,10 @@ public interface Clingo extends Library {
     /**
      * Create a new control object.
      * <p>
-     * A control object has to be freed using clingo_control_free().
+     * A control object has to be freed using {@link Clingo#clingo_control_free}.
      * <p>
-     * Only gringo options (without <code>\-\-output</code>) and clasp's options are supported as arguments,
-     * except basic options such as <code>\-\-help</code>.
+     * Only gringo options (without <code>--output</code>) and clasp's options are supported as arguments,
+     * except basic options such as <code>--help</code>.
      * Furthermore, a control object is blocked while a search call is active;
      * you must not call any member function during search.
      * <p>
@@ -2595,7 +2594,7 @@ public interface Clingo extends Library {
     boolean clingo_control_new(String[] arguments, NativeSize arguments_size, LoggerCallback logger, Pointer logger_data, int message_limit, PointerByReference control);
 
     /**
-     * Free a control object created with clingo_control_new().
+     * Free a control object created with {@link Clingo#clingo_control_new}.
      *
      * @param control the target
      */
@@ -2618,7 +2617,7 @@ public interface Clingo extends Library {
     /**
      * Extend the logic program with the given non-ground logic program in string form.
      * <p>
-     * This function puts the given program into a block of form: <tt>\#program name(parameters).</tt>
+     * This function puts the given program into a block of form: <tt>#program name(parameters).</tt>
      * <p>
      * After extending the logic program, the corresponding program parts are typically grounded with {@link Clingo#clingo_control_ground}.
      *
@@ -2639,7 +2638,7 @@ public interface Clingo extends Library {
      * <p>
      * After grounding, logic programs can be solved with {@link Clingo#clingo_control_solve}.
      * <p>
-     * Parts of a logic program without an explicit <tt>\#program</tt>
+     * Parts of a logic program without an explicit <tt>#program</tt>
      * specification are by default put into a program called `base` without
      * arguments.
      *
@@ -2651,10 +2650,9 @@ public interface Clingo extends Library {
      * @return whether the call was successful; might set one of the following error codes:
      * <ul>
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
+     * <li>error code of ground callback</li>
      * </ul>
-     * - error code of ground callback
      */
-    // clingo_control_add(char const * const * parameters, size_t parameters_size, char const *program);
     boolean clingo_control_ground(Pointer control, Structure[] parts, NativeSize parts_size, GroundCallback ground_callback, Pointer ground_callback_data);
 
     // Solving Functions
@@ -2689,7 +2687,6 @@ public interface Clingo extends Library {
      * <p>
      * It is typically not necessary to call this function manually because
      * automatic cleanups at the right time are enabled by default.
-     * //
      *
      * @param control the target
      * @return whether the call was successful; might set one of the following error codes:
@@ -2833,7 +2830,7 @@ public interface Clingo extends Library {
      * the solver's various enumeration modes is removed after a solve call. This
      * includes enumeration of cautious or brave consequences, enumeration of
      * answer sets with or without projection, or finding optimal models, as well
-     * as clauses added with clingo_solve_control_add_clause().
+     * as clauses added with {@link Clingo#clingo_solve_control_add_clause}.
      * <p>
      * For practical purposes, this option is only interesting for single-shot solving
      * or before the last solve call to squeeze out a tiny bit of performance.
@@ -2878,7 +2875,7 @@ public interface Clingo extends Library {
     //  Program Inspection Functions
 
     /**
-     * Return the symbol for a constant definition of form: <tt>\#const name = symbol</tt>.
+     * Return the symbol for a constant definition of form: <tt>#const name = symbol</tt>.
      *
      * @param control the target
      * @param name    the name of the constant
@@ -2994,7 +2991,7 @@ public interface Clingo extends Library {
      * @param group       options are grouped into sections as given by this string
      * @param option      specifies the command line option
      * @param description the description of the option
-     * @param target      booleanean set to true if the flag is given on the command-line
+     * @param target      boolean set to true if the flag is given on the command-line
      * @return whether the call was successful
      */
     boolean clingo_options_add_flag(Pointer options, String group, String option, String description, ByteByReference target);

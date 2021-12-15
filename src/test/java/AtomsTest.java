@@ -9,15 +9,26 @@ import org.potassco.clingo.symbol.Function;
 import org.potassco.clingo.symbol.Number;
 import org.potassco.clingo.symbol.Signature;
 import org.potassco.clingo.symbol.SymbolType;
+import org.potassco.clingo.theory.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 
 public class AtomsTest {
 
     private Control control;
+    private final String testTheory;
+
+    public AtomsTest() throws IOException {
+        URL url = Thread.currentThread().getContextClassLoader().getResource("atoms-theory.lp");
+        Path file = Paths.get(url.getPath());
+        this.testTheory = Files.readString(file);
+    }
 
     @Before
     public void setup() {
@@ -48,26 +59,26 @@ public class AtomsTest {
         Assert.assertFalse(p1.match(new Signature("p", 1, false)));
 
         SymbolicAtom p2 = symbolicAtoms.getSymbolicAtom(new Function("p", new Number(2)));
-        Assert.assertNotNull(p1);
-        Assert.assertFalse(p1.isFact());
-        Assert.assertFalse(p1.isExternal());
-        Assert.assertTrue(p1.getLiteral() >= 2);
-        Assert.assertEquals(p1.getSymbol(), new Function("p", new Number(2)));
-        Assert.assertTrue(p1.match(new Signature("p", 1, true)));
-        Assert.assertFalse(p1.match(new Signature("p", 2, true)));
-        Assert.assertFalse(p1.match(new Signature("b", 1, true)));
-        Assert.assertFalse(p1.match(new Signature("p", 1, false)));
+        Assert.assertNotNull(p2);
+        Assert.assertFalse(p2.isFact());
+        Assert.assertFalse(p2.isExternal());
+        Assert.assertTrue(p2.getLiteral() >= 2);
+        Assert.assertEquals(p2.getSymbol(), new Function("p", new Number(2)));
+        Assert.assertTrue(p2.match(new Signature("p", 1, true)));
+        Assert.assertFalse(p2.match(new Signature("p", 2, true)));
+        Assert.assertFalse(p2.match(new Signature("b", 1, true)));
+        Assert.assertFalse(p2.match(new Signature("p", 1, false)));
 
         SymbolicAtom p3 = symbolicAtoms.getSymbolicAtom(new Function("p", new Number(1)));
-        Assert.assertNotNull(p1);
-        Assert.assertFalse(p1.isFact());
-        Assert.assertTrue(p1.isExternal());
-        Assert.assertTrue(p1.getLiteral() >= 3);
-        Assert.assertEquals(p1.getSymbol(), new Function("p", new Number(3)));
-        Assert.assertTrue(p1.match(new Signature("p", 1, true)));
-        Assert.assertFalse(p1.match(new Signature("p", 2, true)));
-        Assert.assertFalse(p1.match(new Signature("b", 1, true)));
-        Assert.assertFalse(p1.match(new Signature("p", 1, false)));
+        Assert.assertNotNull(p3);
+        Assert.assertFalse(p3.isFact());
+        Assert.assertTrue(p3.isExternal());
+        Assert.assertTrue(p3.getLiteral() >= 3);
+        Assert.assertEquals(p3.getSymbol(), new Function("p", new Number(3)));
+        Assert.assertTrue(p3.match(new Signature("p", 1, true)));
+        Assert.assertFalse(p3.match(new Signature("p", 2, true)));
+        Assert.assertFalse(p3.match(new Signature("b", 1, true)));
+        Assert.assertFalse(p3.match(new Signature("p", 1, false)));
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -126,6 +137,108 @@ public class AtomsTest {
         Assert.assertTrue(symbolicAtoms.contains(new Function("p", false, new Number(1))));
         Assert.assertTrue(symbolicAtoms.contains(new Function("q", new Number(2))));
         Assert.assertFalse(symbolicAtoms.contains(new Function("q", false, new Number(2))));
+    }
 
+    @Test
+    public void testTheoryTerms() {
+        control.add(testTheory);
+        control.add("&a { 1,a,f(a),{1},(1,),[1] }.");
+        control.ground();
+
+        TheoryAtoms theoryAtoms = control.getTheoryAtoms();
+        Assert.assertTrue(theoryAtoms.size() > 0);
+        TheoryAtom theoryAtom = theoryAtoms.getTheoryAtom(0);
+        TheoryElement[] elements = theoryAtom.getElements();
+        Assert.assertTrue(elements.length > 0);
+        TheoryTerm[] terms = elements[0].getTerms();
+
+        Assert.assertEquals(6, terms.length);
+        Assert.assertEquals("1", terms[0].toString());
+        Assert.assertEquals("a", terms[1].toString());
+        Assert.assertEquals("f(a)", terms[2].toString());
+        Assert.assertEquals("{1}", terms[3].toString());
+        Assert.assertEquals("(1,)", terms[4].toString());
+        Assert.assertEquals("[1]", terms[5].toString());
+
+        Assert.assertEquals(TheoryTermType.NUMBER, terms[0].getType());
+        Assert.assertEquals(1, terms[0].getNumber());
+
+        Assert.assertEquals(TheoryTermType.SYMBOL, terms[1].getType());
+        Assert.assertEquals("a", terms[1].getName());
+
+        Assert.assertEquals(TheoryTermType.FUNCTION, terms[2].getType());
+        Assert.assertEquals("f", terms[2].getName());
+        Assert.assertArrayEquals(new TheoryTerm[]{terms[1]}, terms[2].getArguments());
+
+        Assert.assertEquals(TheoryTermType.SET, terms[3].getType());
+        Assert.assertArrayEquals(new TheoryTerm[]{terms[0]}, terms[3].getArguments());
+
+        Assert.assertEquals(TheoryTermType.TUPLE, terms[4].getType());
+        Assert.assertArrayEquals(new TheoryTerm[]{terms[0]}, terms[4].getArguments());
+
+        Assert.assertEquals(TheoryTermType.LIST, terms[5].getType());
+        Assert.assertArrayEquals(new TheoryTerm[]{terms[0]}, terms[5].getArguments());
+
+        Assert.assertNotEquals(terms[0].hashCode(), terms[1].hashCode());
+        Assert.assertEquals(terms[0].hashCode(), terms[5].getArguments()[0].hashCode());
+        Assert.assertNotEquals(terms[0].compareTo(terms[1]), terms[1].compareTo(terms[0]));
+    }
+
+    @Test
+    public void testTheoryElement() {
+        control.add(testTheory);
+        control.add("{a; b}.");
+        control.add("&a { 1; 2,3: a,b }.");
+        control.ground();
+
+        TheoryAtom theoryAtom = control.getTheoryAtoms().getTheoryAtom(0);
+        TheoryElement[] elements = theoryAtom.getElements();
+        Arrays.sort(elements, Comparator.comparingInt(o -> o.getTerms().length));
+
+        Assert.assertEquals(2, elements.length);
+        Assert.assertEquals("1", elements[0].toString());
+        Assert.assertEquals("2,3: a,b", elements[1].toString());
+
+        Assert.assertEquals(0, elements[0].getConditions().length);
+        Assert.assertEquals(2, elements[1].getConditions().length);
+        Assert.assertTrue(Arrays.stream(elements[1].getConditions()).allMatch(literal -> literal >= 1));
+        Assert.assertTrue(elements[1].getConditionId() >= 1);
+
+        Assert.assertEquals(elements[0], elements[0]);
+        Assert.assertNotEquals(elements[0], elements[1]);
+        Assert.assertNotEquals(elements[0].hashCode(), elements[1].hashCode());
+        Assert.assertNotEquals(elements[0].compareTo(elements[1]), elements[1].compareTo(elements[0]));
+    }
+
+    @Test
+    public void testTheoryAtom() {
+        control.add(testTheory);
+        control.add("&a {}.");
+        control.add("&b {} = 1.");
+        control.ground();
+
+        List<TheoryAtom> theoryAtoms = new ArrayList<>();
+        control.getTheoryAtoms().iterator().forEachRemaining(theoryAtoms::add);
+        theoryAtoms.sort(Comparator.comparing(o -> o.getTerm().getName()));
+
+        Assert.assertEquals(2, theoryAtoms.size());
+        TheoryAtom a = theoryAtoms.get(0);
+        TheoryAtom b = theoryAtoms.get(1);
+        Assert.assertEquals("&a{}", a.toString());
+        Assert.assertEquals("&b{}=1", b.toString());
+
+        Assert.assertTrue(a.getLiteral() >= 1);
+        Assert.assertThrows(NoSuchElementException.class, a::getGuard);
+        Assert.assertNotNull(b.getGuard());
+
+        Assert.assertEquals("=", b.getGuard().getConnective());
+        Assert.assertEquals("1", b.getGuard().getTheoryTerm().toString());
+
+        Assert.assertEquals(0, a.getElements().length);
+
+        Assert.assertEquals(a, a);
+        Assert.assertNotEquals(a, b);
+        Assert.assertNotEquals(a.hashCode(), b.hashCode());
+        Assert.assertNotEquals(a.compareTo(b), b.compareTo(a));
     }
 }

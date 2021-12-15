@@ -71,11 +71,14 @@ public class TheoryTerm implements ErrorChecking {
         return theoryTerms;
     }
 
-    public boolean equals(TheoryAtom other) {
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof TheoryTerm))
+            return false;
         return this.hashCode() == other.hashCode();
     }
 
-    public int compareTo(TheoryAtom other) {
+    public int compareTo(TheoryTerm other) {
         return Integer.compare(this.hashCode(), other.hashCode());
     }
 

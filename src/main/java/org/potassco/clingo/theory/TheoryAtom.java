@@ -10,6 +10,8 @@ import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
 
+import java.util.NoSuchElementException;
+
 /**
  * Class to represent theory atoms.
  *
@@ -57,7 +59,7 @@ public class TheoryAtom implements Comparable<TheoryAtom>, ErrorChecking {
         checkError(Clingo.INSTANCE.clingo_theory_atoms_atom_has_guard(theoryAtoms, id, byteByReference));
 
         if (byteByReference.getValue() == 0)
-            return null;
+            throw new NoSuchElementException("theory atom has no guard");
 
         String[] stringByReference = new String[1];
         IntByReference intByReference = new IntByReference();

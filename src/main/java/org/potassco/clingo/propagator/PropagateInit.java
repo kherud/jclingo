@@ -5,7 +5,6 @@ import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.backend.WeightedLiteral;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.control.SymbolicAtoms;
@@ -14,7 +13,7 @@ import org.potassco.clingo.theory.TheoryAtoms;
 /**
  * Object that is used to initialize a propagator before each solving step.
  */
-public class PropagateInit implements ErrorChecking {
+public class PropagateInit {
 
     private final Pointer propagateInit;
 
@@ -32,7 +31,7 @@ public class PropagateInit implements ErrorChecking {
      */
     public boolean addClause(int[] clause) {
         ByteByReference byteByReference = new ByteByReference();
-        checkError(Clingo.INSTANCE.clingo_propagate_init_add_clause(propagateInit, clause, new NativeSize(clause.length), byteByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_add_clause(propagateInit, clause, new NativeSize(clause.length), byteByReference));
         return byteByReference.getValue() > 0;
     }
 
@@ -51,7 +50,7 @@ public class PropagateInit implements ErrorChecking {
      */
     public int addLiteral(boolean freeze) {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_propagate_init_add_literal(propagateInit, freeze, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_add_literal(propagateInit, freeze, intByReference));
         return intByReference.getValue();
     }
 
@@ -62,7 +61,7 @@ public class PropagateInit implements ErrorChecking {
      * @param priority The priority of the literal.
      */
     public void addMinimize(int literal, int weight, int priority) {
-        checkError(Clingo.INSTANCE.clingo_propagate_init_add_minimize(propagateInit, literal, weight, priority));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_add_minimize(propagateInit, literal, weight, priority));
     }
 
     /**
@@ -72,7 +71,7 @@ public class PropagateInit implements ErrorChecking {
      * @param literal The solver literal to watch.
      */
     public void addWatch(int literal) {
-        checkError(Clingo.INSTANCE.clingo_propagate_init_add_watch(propagateInit, literal));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_add_watch(propagateInit, literal));
     }
 
     /**
@@ -82,7 +81,7 @@ public class PropagateInit implements ErrorChecking {
      * @param threadId The id of the thread to watch the literal.
      */
     public void addWatch(int literal, int threadId) {
-        checkError(Clingo.INSTANCE.clingo_propagate_init_add_watch_to_thread(propagateInit, literal, threadId));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_add_watch_to_thread(propagateInit, literal, threadId));
     }
 
     /**
@@ -92,7 +91,7 @@ public class PropagateInit implements ErrorChecking {
      * @param literal The solver literal to remove the watch from.
      */
     public void removeWatch(int literal) {
-        checkError(Clingo.INSTANCE.clingo_propagate_init_remove_watch(propagateInit, literal));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_remove_watch(propagateInit, literal));
     }
 
     /**
@@ -102,7 +101,7 @@ public class PropagateInit implements ErrorChecking {
      * @param threadId The id of the thread from which to remove the watch.
      */
     public void removeWatch(int literal, int threadId) {
-        checkError(Clingo.INSTANCE.clingo_propagate_init_remove_watch_from_thread(propagateInit, literal, threadId));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_remove_watch_from_thread(propagateInit, literal, threadId));
     }
 
     /**
@@ -118,7 +117,7 @@ public class PropagateInit implements ErrorChecking {
      * @param literal The solver literal to freeze.
      */
     public void freezeLiteral(int literal) {
-        checkError(Clingo.INSTANCE.clingo_propagate_init_freeze_literal(propagateInit, literal));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_freeze_literal(propagateInit, literal));
     }
 
     /**
@@ -144,7 +143,7 @@ public class PropagateInit implements ErrorChecking {
      */
     public boolean addWeightConstraint(int literal, WeightedLiteral[] literals, int bound, WeightConstraintType type, boolean compareEqual) {
         ByteByReference byteByReference = new ByteByReference();
-        checkError(Clingo.INSTANCE.clingo_propagate_init_add_weight_constraint(
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_add_weight_constraint(
                 propagateInit,
                 literal,
                 literals,
@@ -170,7 +169,7 @@ public class PropagateInit implements ErrorChecking {
      */
     public boolean propagate() {
         ByteByReference byteByReference = new ByteByReference();
-        checkError(Clingo.INSTANCE.clingo_propagate_init_propagate(propagateInit, byteByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_propagate(propagateInit, byteByReference));
         return byteByReference.getValue() > 0;
     }
 
@@ -182,7 +181,7 @@ public class PropagateInit implements ErrorChecking {
      */
     public int solverLiteral(int literal) {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_propagate_init_solver_literal(propagateInit, literal, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_solver_literal(propagateInit, literal, intByReference));
         return intByReference.getValue();
     }
 
@@ -197,7 +196,7 @@ public class PropagateInit implements ErrorChecking {
     /**
      * @return `PropagatorCheckMode` controlling when to call `Propagator.check`.
      */
-    public PropagatorCheckMode getPropagatorCheckMode() {
+    public PropagatorCheckMode getCheckMode() {
         int checkMode = Clingo.INSTANCE.clingo_propagate_init_get_check_mode(propagateInit);
         return PropagatorCheckMode.fromValue(checkMode);
     }
@@ -205,7 +204,7 @@ public class PropagateInit implements ErrorChecking {
     /**
      * @param mode `PropagatorCheckMode` controlling when to call `Propagator.check`.
      */
-    public void setPropagatorCheckMode(PropagatorCheckMode mode) {
+    public void setCheckMode(PropagatorCheckMode mode) {
         Clingo.INSTANCE.clingo_propagate_init_set_check_mode(propagateInit, mode.getValue());
     }
 
@@ -221,7 +220,7 @@ public class PropagateInit implements ErrorChecking {
      */
     public SymbolicAtoms getSymbolicAtoms() {
         PointerByReference pointerByReference = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_propagate_init_symbolic_atoms(propagateInit, pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_symbolic_atoms(propagateInit, pointerByReference));
         return new SymbolicAtoms(pointerByReference.getValue());
     }
 
@@ -230,7 +229,7 @@ public class PropagateInit implements ErrorChecking {
      */
     public TheoryAtoms getTheoryAtoms() {
         PointerByReference pointerByReference = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_propagate_init_theory_atoms(propagateInit, pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_theory_atoms(propagateInit, pointerByReference));
         return new TheoryAtoms(pointerByReference.getValue());
     }
 

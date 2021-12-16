@@ -3,7 +3,6 @@ package org.potassco.clingo.ast;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.control.Control;
 
 /**
@@ -12,7 +11,7 @@ import org.potassco.clingo.control.Control;
  * A `ProgramBuilder` is an AutoCloseable and should be used with Java's `try with` statement.
  * Alternatively it must be manually closed.
  */
-public class ProgramBuilder implements ErrorChecking, AutoCloseable {
+public class ProgramBuilder implements AutoCloseable {
 
     private final Pointer builder;
 
@@ -21,9 +20,9 @@ public class ProgramBuilder implements ErrorChecking, AutoCloseable {
      */
     public ProgramBuilder(Control control) {
         PointerByReference pointerByReference = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_control_program_builder(control.getPointer(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_control_program_builder(control.getPointer(), pointerByReference));
         this.builder = pointerByReference.getValue();
-        checkError(Clingo.INSTANCE.clingo_program_builder_begin(builder));
+        Clingo.check(Clingo.INSTANCE.clingo_program_builder_begin(builder));
     }
 
     /**
@@ -31,7 +30,7 @@ public class ProgramBuilder implements ErrorChecking, AutoCloseable {
      */
     @Override
     public void close() {
-        checkError(Clingo.INSTANCE.clingo_program_builder_end(builder));
+        Clingo.check(Clingo.INSTANCE.clingo_program_builder_end(builder));
     }
 
     /**
@@ -39,6 +38,6 @@ public class ProgramBuilder implements ErrorChecking, AutoCloseable {
      * @param ast The statement to add.
      */
     public void add(Ast ast) {
-        checkError(Clingo.INSTANCE.clingo_program_builder_add(builder, ast.getPointer()));
+        Clingo.check(Clingo.INSTANCE.clingo_program_builder_add(builder, ast.getPointer()));
     }
 }

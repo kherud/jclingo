@@ -2,12 +2,11 @@ package org.potassco.clingo.theory;
 
 import com.sun.jna.Pointer;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.internal.NativeSizeByReference;
 
 import java.util.Iterator;
 
-public class TheoryAtoms implements Iterable<TheoryAtom>, ErrorChecking {
+public class TheoryAtoms implements Iterable<TheoryAtom> {
 
     private final Pointer theoryAtoms;
 
@@ -40,7 +39,7 @@ public class TheoryAtoms implements Iterable<TheoryAtom>, ErrorChecking {
 
     public int size() {
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.INSTANCE.clingo_theory_atoms_size(theoryAtoms, nativeSizeByReference);
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_size(theoryAtoms, nativeSizeByReference));
         return (int) nativeSizeByReference.getValue();
     }
 }

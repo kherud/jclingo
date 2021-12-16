@@ -4,6 +4,8 @@ import com.sun.jna.*;
 import com.sun.jna.ptr.*;
 import org.potassco.clingo.ast.Location;
 import org.potassco.clingo.backend.WeightedLiteral;
+import org.potassco.clingo.configuration.Configuration;
+import org.potassco.clingo.configuration.ConfigurationType;
 import org.potassco.clingo.control.*;
 import org.potassco.clingo.grounding.Observer;
 import org.potassco.clingo.propagator.Propagator;
@@ -23,6 +25,16 @@ public interface Clingo extends Library {
         IntByReference revision = new IntByReference();
         INSTANCE.clingo_version(major, minor, revision);
         return String.format("%d.%d.%d", major.getValue(), minor.getValue(), revision.getValue());
+    }
+
+    static ErrorCode check(boolean callSuccess) {
+        if (!callSuccess) {
+            String errorMessage = Clingo.INSTANCE.clingo_error_message();
+            int errorId = Clingo.INSTANCE.clingo_error_code();
+            ErrorCode errorCode = ErrorCode.fromValue(errorId);
+            throw new RuntimeException(String.format("[%s] %s", errorCode.name(), errorMessage));
+        }
+        return ErrorCode.SUCCESS;
     }
 
     /**
@@ -57,6 +69,7 @@ public interface Clingo extends Library {
     /**
      * Convert warning code into string.
      */
+    // TODO: where do the warning codes come from?
     String clingo_warning_string(int code);
 
     /**
@@ -1900,7 +1913,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if adding the clause fails</li>
      * </ul>
      */
-    boolean clingo_solve_control_add_clause(Pointer control, IntByReference[] clause, NativeSize size);
+    boolean clingo_solve_control_add_clause(Pointer control, int[] clause, NativeSize size);
 
 
     // SOLVE RESULT
@@ -1958,7 +1971,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_solve_handle_core(Pointer handle, IntByReference[] core, NativeSizeByReference size);
+    boolean clingo_solve_handle_core(Pointer handle, PointerByReference core, NativeSizeByReference size);
 
     /**
      * Discards the last model and starts the search for the next one.

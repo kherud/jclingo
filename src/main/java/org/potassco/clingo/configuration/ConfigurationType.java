@@ -1,21 +1,26 @@
-package org.potassco.clingo.control;
+package org.potassco.clingo.configuration;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Enumeration of theory term types.
- * @author Josef Schneeberger
+ * Enumeration for entries of the configuration.
  */
 public class ConfigurationType {
 	public enum Type {
 		VALUE(1),
-		/** the entry is an array */
 		ARRAY(2),
-		/** the entry is a map */
 		MAP(4);
 
 		private final int type;
 
 		Type(int type) {
 			this.type = type;
+		}
+
+		public int getInt() {
+			return type;
 		}
 	}
 
@@ -24,6 +29,15 @@ public class ConfigurationType {
     ConfigurationType(int bitset) {
         this.bitset = bitset;
     }
+
+	@Override
+	public String toString() {
+		List<Type> types = new ArrayList<>();
+		for (Type type : Type.values())
+			if (isType(type))
+				types.add(type);
+		return types.stream().map(Type::name).collect(Collectors.joining(" "));
+	}
 
 	public boolean isType(Type type) {
 		return (this.bitset & type.type) > 0;

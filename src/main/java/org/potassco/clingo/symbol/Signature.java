@@ -2,7 +2,6 @@ package org.potassco.clingo.symbol;
 
 import com.sun.jna.ptr.LongByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 
 /**
  * Represents a predicate signature.
@@ -10,7 +9,7 @@ import org.potassco.clingo.internal.ErrorChecking;
  * Signatures have a name and an arity, and can be positive or negative (to
  * represent classical negation).
  */
-public class Signature implements ErrorChecking, Comparable<Signature> {
+public class Signature implements Comparable<Signature> {
 
     private final String name;
     private final int arity;
@@ -40,7 +39,7 @@ public class Signature implements ErrorChecking, Comparable<Signature> {
         this.positive = positive;
 
         LongByReference longByReference = new LongByReference();
-        checkError(Clingo.INSTANCE.clingo_signature_create(name, arity, positive, longByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_signature_create(name, arity, positive, longByReference));
         this.signature = longByReference.getValue();
     }
 

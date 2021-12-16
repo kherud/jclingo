@@ -14,7 +14,6 @@ public class TestFunction {
         Assert.assertEquals(2, function.getArity());
         Assert.assertEquals("0", function.getArguments()[0].toString());
         Assert.assertEquals("\"a\"", function.getArguments()[1].toString());
-        System.out.println(function.toString());
         Assert.assertEquals("b(0, \"a\")", function.toString());
     }
 
@@ -26,24 +25,23 @@ public class TestFunction {
         Assert.assertEquals(2, function2.getArity());
         Assert.assertEquals("0", function.getArguments()[0].toString());
         Assert.assertEquals("\"a\"", function.getArguments()[1].toString());
-        System.out.println(function2);
     }
 
     @Test
     public void testCreateFromString() {
         Symbol symbol = Symbol.fromString("a(1, \"b\")");
-        System.out.println(symbol);
+        Assert.assertEquals("a(1, \"b\")", symbol.toString());
     }
 
     @Test
     public void testCreateFromString2() {
         Symbol symbol = Symbol.fromString("a(1, b)");
-        System.out.println(symbol);
+        Assert.assertEquals("a(1, b)", symbol.toString());
     }
 
     @Test
     public void testCreateArithmeticFunction() {
         Symbol symbol = Symbol.fromString("a(1, 1+1)");
-        System.out.println(symbol);
+        Assert.assertEquals("a(1, 2)", symbol.toString());
     }
 }

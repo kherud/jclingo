@@ -4,7 +4,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.symbol.Symbol;
 
@@ -14,13 +13,13 @@ import org.potassco.clingo.symbol.Symbol;
  * The `Backend` is a context manager and should be used with Java's `try with` statement.
  * Alternatively it must be closed manually.
  */
-public class Backend implements ErrorChecking, AutoCloseable {
+public class Backend implements AutoCloseable {
 
     private final Pointer backend;
 
     public Backend(Pointer backend) {
         this.backend = backend;
-        checkError(Clingo.INSTANCE.clingo_backend_begin(backend));
+        Clingo.check(Clingo.INSTANCE.clingo_backend_begin(backend));
     }
 
     /**
@@ -28,15 +27,14 @@ public class Backend implements ErrorChecking, AutoCloseable {
      */
     public void addAcycEdge(int nodeU, int nodeV, int[] conditions) {
         // TODO: what are acyc edges?!
-        checkError(Clingo.INSTANCE.clingo_backend_acyc_edge(backend, nodeU, nodeV, conditions, new NativeSize(conditions.length)));
+        Clingo.check(Clingo.INSTANCE.clingo_backend_acyc_edge(backend, nodeU, nodeV, conditions, new NativeSize(conditions.length)));
     }
 
     /**
      * Add assumptions to the program.
      */
-    // TODO: change int signature
     public void addAssume(int[] literals) {
-        checkError(Clingo.INSTANCE.clingo_backend_assume(backend, literals, new NativeSize(literals.length)));
+        Clingo.check(Clingo.INSTANCE.clingo_backend_assume(backend, literals, new NativeSize(literals.length)));
     }
 
     /**
@@ -44,10 +42,9 @@ public class Backend implements ErrorChecking, AutoCloseable {
      *
      * @return The program atom representing the atom.
      */
-    // TODO: change return value
     public int addAtom() {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_backend_add_atom(backend, null, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_backend_add_atom(backend, null, intByReference));
         return intByReference.getValue();
     }
 
@@ -60,11 +57,10 @@ public class Backend implements ErrorChecking, AutoCloseable {
      * @param symbol The symbol associated with the atom.
      * @return The program atom representing the atom.
      */
-    // TODO: change return value
     public int addAtom(Symbol symbol) {
         IntByReference intByReference = new IntByReference();
         LongByReference longByReference = new LongByReference(symbol.getLong());
-        checkError(Clingo.INSTANCE.clingo_backend_add_atom(backend, longByReference, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_backend_add_atom(backend, longByReference, intByReference));
         return intByReference.getValue();
     }
 
@@ -74,7 +70,7 @@ public class Backend implements ErrorChecking, AutoCloseable {
      * @param atom The program atom to mark as external.
      */
     public void addExternal(int atom) {
-        checkError(Clingo.INSTANCE.clingo_backend_external(backend, atom, ExternalType.FREE.getValue()));
+        Clingo.check(Clingo.INSTANCE.clingo_backend_external(backend, atom, ExternalType.FREE.getValue()));
     }
 
     /**
@@ -85,7 +81,7 @@ public class Backend implements ErrorChecking, AutoCloseable {
      * @param externalType The truth value.
      */
     public void addExternal(int atom, ExternalType externalType) {
-        checkError(Clingo.INSTANCE.clingo_backend_external(backend, atom, externalType.getValue()));
+        Clingo.check(Clingo.INSTANCE.clingo_backend_external(backend, atom, externalType.getValue()));
     }
 
     /**
@@ -98,7 +94,7 @@ public class Backend implements ErrorChecking, AutoCloseable {
      * @param priority      An unsigned integer.
      */
     public void addHeuristic(int atom, int[] condition, HeuristicType heuristicType, int bias, int priority) {
-        checkError(Clingo.INSTANCE.clingo_backend_heuristic(
+        Clingo.check(Clingo.INSTANCE.clingo_backend_heuristic(
                 backend,
                 atom,
                 heuristicType.getValue(),
@@ -116,7 +112,7 @@ public class Backend implements ErrorChecking, AutoCloseable {
      * @param priority Integer for the priority.
      */
     public void addMinimize(WeightedLiteral[] literals, int priority) {
-        checkError(Clingo.INSTANCE.clingo_backend_minimize(backend, priority, literals, new NativeSize(literals.length)));
+        Clingo.check(Clingo.INSTANCE.clingo_backend_minimize(backend, priority, literals, new NativeSize(literals.length)));
     }
 
     /**
@@ -125,7 +121,7 @@ public class Backend implements ErrorChecking, AutoCloseable {
      * @param atoms List of program atoms to project on.
      */
     public void addProject(int[] atoms) {
-        checkError(Clingo.INSTANCE.clingo_backend_project(backend, atoms, new NativeSize(atoms.length)));
+        Clingo.check(Clingo.INSTANCE.clingo_backend_project(backend, atoms, new NativeSize(atoms.length)));
     }
 
     /**
@@ -138,7 +134,7 @@ public class Backend implements ErrorChecking, AutoCloseable {
      * @param choice Whether to add a disjunctive or choice rule.
      */
     public void addRule(int[] head, int[] body, boolean choice) {
-        checkError(Clingo.INSTANCE.clingo_backend_rule(
+        Clingo.check(Clingo.INSTANCE.clingo_backend_rule(
                 backend,
                 choice,
                 head,
@@ -157,7 +153,7 @@ public class Backend implements ErrorChecking, AutoCloseable {
      * @param choice Whether to add a disjunctive or choice rule.
      */
     public void addWeightRule(int[] head, int lowerBound, WeightedLiteral[] body, boolean choice) {
-        checkError(Clingo.INSTANCE.clingo_backend_weight_rule(
+        Clingo.check(Clingo.INSTANCE.clingo_backend_weight_rule(
                 backend,
                 choice,
                 head,
@@ -170,6 +166,6 @@ public class Backend implements ErrorChecking, AutoCloseable {
 
     @Override
     public void close() throws Exception {
-        checkError(Clingo.INSTANCE.clingo_backend_end(backend));
+        Clingo.check(Clingo.INSTANCE.clingo_backend_end(backend));
     }
 }

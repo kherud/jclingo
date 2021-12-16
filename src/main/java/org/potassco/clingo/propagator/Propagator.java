@@ -3,6 +3,7 @@ package org.potassco.clingo.propagator;
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.ptr.IntByReference;
 import org.potassco.clingo.internal.NativeSize;
 
 import java.util.Arrays;
@@ -11,8 +12,7 @@ import java.util.List;
 /**
  * An instance of this struct has to be registered with a solver to implement a custom propagator.
  *
- * Not all callbacks have to be implemented and can be set to NULL if not needed.
- * @author Josef Schneeberger
+ * Not all callbacks have to be implemented and can be set to NULL or be left with their default implementation.
  */
 public abstract class Propagator extends Structure {
 
@@ -24,35 +24,30 @@ public abstract class Propagator extends Structure {
 	 * Once the search has started, they are no longer accessible.
 	 *
 	 * @param init initizialization object
-	 * @param data user data for the callback
-	 * @return whether the call was successful
 	 */
-	public boolean init(Pointer init, Pointer data) {
-		return true;
+	public void init(PropagateInit init) {
+
 	}
 
 	/**
-	 * Can be used to propagate solver literals given a @link clingo_assignment_t partial assignment@endlink.
+	 * Can be used to propagate solver literals given a {@link Assignment partial assignment}.
 	 *
-	 * Called during propagation with a non-empty array of @link clingo_propagate_init_add_watch() watched solver literals@endlink
+	 * Called during propagation with a non-empty array of {@link PropagateInit#addWatch} watched solver literals}
 	 * that have been assigned to true since the last call to either propagate, undo, (or the start of the search) - the change set.
 	 * Only watched solver literals are contained in the change set.
-	 * Each literal in the change set is true w.r.t. the current @link clingo_assignment_t assignment@endlink.
-	 * clingo_propagate_control_add_clause() can be used to add clauses.
-	 * If a clause is unit resulting, it can be propagated using @ref clingo_propagate_control_propagate().
+	 * Each literal in the change set is true w.r.t. the current {@link Assignment}.
+	 * {@link PropagateControl#addClause} can be used to add clauses.
+	 * If a clause is unit resulting, it can be propagated using {@link PropagateControl#propagate}.
 	 * If the result of either of the two methods is false, the propagate function must return immediately.
 	 *
 	 * This function can be called from different solving threads.
-	 * Each thread has its own assignment and id, which can be obtained using @ref clingo_propagate_control_thread_id().
+	 * Each thread has its own assignment and id, which can be obtained using {@link PropagateControl#getThreadId}.
 	 *
 	 * @param control control object for the target solver
 	 * @param changes the change set
-	 * @param size the size of the change set
-	 * @param data user data for the callback
-	 * @return whether the call was successful
 	 */
-	public boolean propagate(Pointer control, Pointer changes, NativeSize size, Pointer data) {
-		return true;
+	public void propagate(PropagateControl control, int[] changes) {
+
 	}
 
 	/**
@@ -64,26 +59,22 @@ public abstract class Propagator extends Structure {
 	 *
 	 * @param control control object for the target solver
 	 * @param changes the change set
-	 * @param size the size of the change set
-	 * @param data user data for the callback
 	 */
-	public boolean undo(Pointer control, Pointer changes, NativeSize size, Pointer data) {
-		return true;
+	public void undo(PropagateControl control, int[] changes) {
+
 	}
 
 	/**
-	 * This function is similar to @ref clingo_propagate_control_propagate() but is called without a change set on propagation fixpoints.
+	 * This function is similar to {@link Propagator#propagate} but is called without a change set on propagation fixpoints.
 	 *
-	 * When exactly this function is called, can be configured using the @ref clingo_propagate_init_set_check_mode() function.
+	 * When exactly this function is called, can be configured using the {@link PropagateInit#setCheckMode} function.
 	 *
 	 * This function is called even if no watches have been added.
 	 *
 	 * @param control control object for the target solver
-	 * @param data user data for the callback
-	 * @return whether the call was successful
 	 */
-	public boolean check(Pointer control, Pointer data) {
-		return true;
+	public void check(PropagateControl control) {
+
 	}
 
 	/**
@@ -99,10 +90,9 @@ public abstract class Propagator extends Structure {
 	 * @param assignment the assignment of the solver
 	 * @param fallback the literal chosen by the solver's heuristic
 	 * @param decision the literal to make true
-	 * @return whether the call was successful
 	 */
-	public boolean decide(int threadId, Pointer assignment, int fallback, Pointer data, int decision) {
-		return true;
+	public void decide(int threadId, Assignment assignment, int fallback, IntByReference decision) {
+
 	}
 
 	/**
@@ -121,22 +111,50 @@ public abstract class Propagator extends Structure {
 	public PropagatorDecideCallback decide = this::decide;
 
 	private interface PropagatorInitCallback extends Callback {
-		boolean callback(Pointer init, Pointer data);
+		default boolean callback(Pointer init, Pointer data) {
+			call(new PropagateInit(init));
+			return true;
+		}
+
+		void call(PropagateInit init);
 	}
 
 	private interface PropagatorPropagateCallback extends Callback {
-		boolean callback(Pointer control, Pointer changes, NativeSize size, Pointer data);
+		default boolean callback(Pointer control, Pointer changes, NativeSize size, Pointer data) {
+			int intSize = size.intValue();
+			int[] literals = intSize > 0 ? changes.getIntArray(0, intSize) : new int[0];
+			call(new PropagateControl(control), literals);
+			return true;
+		}
+
+		void call(PropagateControl control, int[] literals);
 	}
 
 	private interface PropagatorUndoCallback extends Callback {
-		void callback(Pointer control, Pointer changes, NativeSize size, Pointer data);
+		default void callback(Pointer control, Pointer changes, NativeSize size, Pointer data) {
+			int intSize = size.intValue();
+			int[] literals = intSize > 0 ? changes.getIntArray(0, intSize) : new int[0];
+			call(new PropagateControl(control), literals);
+		}
+
+		void call(PropagateControl control, int[] changes);
 	}
 
 	private interface PropagatorCheckCallback extends Callback {
-		boolean check(Pointer control, Pointer data);
+		default boolean check(Pointer control, Pointer data) {
+			call(new PropagateControl(control));
+			return true;
+		}
+
+		void call(PropagateControl control);
 	}
 
 	private interface PropagatorDecideCallback extends Callback {
-		boolean callback(int threadId, Pointer assignment, int fallback, Pointer data, int decision);
+		default boolean callback(int threadId, Pointer assignment, int fallback, Pointer data, IntByReference decision) {
+			call(threadId, new Assignment(assignment), fallback, decision);
+			return true;
+		}
+
+		void call(int threadId, Assignment assignment, int fallbackLiteral, IntByReference decision);
 	}
 }

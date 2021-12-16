@@ -1,9 +1,8 @@
 package org.potassco.clingo.ast;
 
 import com.sun.jna.Pointer;
-import org.potassco.clingo.internal.ErrorChecking;
 
-public class AstSequence implements ErrorChecking {
+public class AstSequence {
 
     private final Pointer ast;
     private final AttributeType attributeType = AttributeType.AST_ARRAY;

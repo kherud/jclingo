@@ -1,5 +1,9 @@
 package org.potassco.clingo.solving;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Enumeration of solve result types.
  */
@@ -23,6 +27,15 @@ public class SolveResult {
     public SolveResult(int bitset) {
         this.bitset = bitset;
     }
+
+	@Override
+	public String toString() {
+		List<Type> types = new ArrayList<>();
+		for (Type type : Type.values())
+			if (isType(type))
+				types.add(type);
+		return types.stream().map(Type::name).collect(Collectors.joining(" "));
+	}
 
     public int getBitset() {
         return bitset;

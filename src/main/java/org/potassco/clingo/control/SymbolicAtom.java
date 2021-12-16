@@ -5,14 +5,13 @@ import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.symbol.Signature;
 import org.potassco.clingo.symbol.Symbol;
 
 /**
  * Captures a symbolic atom and provides properties to inspect its state.
  */
-public class SymbolicAtom implements ErrorChecking {
+public class SymbolicAtom {
 
     private final Pointer symbolicAtoms;
     private final long iterator;
@@ -36,7 +35,7 @@ public class SymbolicAtom implements ErrorChecking {
      */
     public boolean isExternal() {
         ByteByReference byteByReference = new ByteByReference();
-        checkError(Clingo.INSTANCE.clingo_symbolic_atoms_is_external(symbolicAtoms, iterator, byteByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_symbolic_atoms_is_external(symbolicAtoms, iterator, byteByReference));
         return byteByReference.getValue() > 0;
     }
 
@@ -45,7 +44,7 @@ public class SymbolicAtom implements ErrorChecking {
      */
     public boolean isFact() {
         ByteByReference byteByReference = new ByteByReference();
-        checkError(Clingo.INSTANCE.clingo_symbolic_atoms_is_fact(symbolicAtoms, iterator, byteByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_symbolic_atoms_is_fact(symbolicAtoms, iterator, byteByReference));
         return byteByReference.getValue() > 0;
     }
 
@@ -54,7 +53,7 @@ public class SymbolicAtom implements ErrorChecking {
      */
     public int getLiteral() {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_symbolic_atoms_literal(symbolicAtoms, iterator, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_symbolic_atoms_literal(symbolicAtoms, iterator, intByReference));
         return intByReference.getValue();
     }
 
@@ -63,7 +62,7 @@ public class SymbolicAtom implements ErrorChecking {
      */
     public Symbol getSymbol() {
         LongByReference longByReference = new LongByReference();
-        Clingo.INSTANCE.clingo_symbolic_atoms_symbol(symbolicAtoms, iterator, longByReference);
+        Clingo.check(Clingo.INSTANCE.clingo_symbolic_atoms_symbol(symbolicAtoms, iterator, longByReference));
         return Symbol.fromLong(longByReference.getValue());
     }
 

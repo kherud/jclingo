@@ -15,9 +15,17 @@ import java.util.List;
  */
 public class Application extends Structure {
 
+	/**
+	 * JNA DECLARATIONS IGNORE
+	 */
+
 	// callback to obtain program name
 	public interface ProgramNameCallback extends Callback {
-		String callback(Pointer data);
+		default String callback(Pointer data) {
+			return call();
+		}
+
+		String call();
 	}
 
 	// callback to obtain version information

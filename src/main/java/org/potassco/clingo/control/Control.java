@@ -4,8 +4,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
+import org.potassco.clingo.configuration.Configuration;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.grounding.Observer;
 import org.potassco.clingo.grounding.GroundCallback;
 import org.potassco.clingo.propagator.Propagator;
@@ -22,6 +22,7 @@ import org.potassco.clingo.theory.TheoryAtoms;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.NoSuchElementException;
 
 /**
  * Control object for the grounding/solving process.
@@ -30,7 +31,7 @@ import java.util.Collections;
  * are supported. Furthermore, you must not call any functions of a `Control`
  * object while a solve call is active.
  */
-public class Control implements ErrorChecking, AutoCloseable {
+public class Control implements AutoCloseable {
     private final Pointer control;
     private final LoggerCallback logger;
     private final int messageLimit;
@@ -53,7 +54,7 @@ public class Control implements ErrorChecking, AutoCloseable {
      */
     public Control(LoggerCallback logger, int messageLimit, String... arguments) {
         PointerByReference controlObjectRef = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_control_new(
+        Clingo.check(Clingo.INSTANCE.clingo_control_new(
                 arguments,
                 new NativeSize(arguments == null ? 0 : arguments.length),
                 logger,
@@ -68,6 +69,7 @@ public class Control implements ErrorChecking, AutoCloseable {
 
     /**
      * You probably do not want to call this constructor.
+     *
      * @param pointer pointer to a native control object.
      */
     public Control(Pointer pointer) {
@@ -103,7 +105,7 @@ public class Control implements ErrorChecking, AutoCloseable {
      * @param program    The non-ground program in string form.
      */
     public void add(String name, String program, String... parameters) {
-        checkError(Clingo.INSTANCE.clingo_control_add(
+        Clingo.check(Clingo.INSTANCE.clingo_control_add(
                 control,
                 name,
                 parameters, new NativeSize(parameters.length),
@@ -115,7 +117,7 @@ public class Control implements ErrorChecking, AutoCloseable {
      */
     public void ground() {
         ProgramPart[] programParts = (ProgramPart[]) new ProgramPart("base").toArray(1);
-        checkError(Clingo.INSTANCE.clingo_control_ground(
+        Clingo.check(Clingo.INSTANCE.clingo_control_ground(
                 this.control,
                 programParts, new NativeSize(1),
                 null, null)
@@ -134,19 +136,18 @@ public class Control implements ErrorChecking, AutoCloseable {
         ProgramPart[] parts = (ProgramPart[]) programPart.toArray(1 + programParts.length);
         System.arraycopy(programParts, 0, parts, 1, programParts.length);
 
-        checkError(Clingo.INSTANCE.clingo_control_ground(
+        Clingo.check(Clingo.INSTANCE.clingo_control_ground(
                 this.control,
                 parts, new NativeSize(parts.length),
                 null, null)
         );
     }
 
-    // TODO: implement ground callback
     public void ground(GroundCallback groundCallback, ProgramPart... programParts) {
-        checkError(Clingo.INSTANCE.clingo_control_ground(
+        Clingo.check(Clingo.INSTANCE.clingo_control_ground(
                 this.control,
                 programParts, new NativeSize(programParts.length),
-                groundCallback, null)
+                groundCallback, control)
         );
     }
 
@@ -184,12 +185,24 @@ public class Control implements ErrorChecking, AutoCloseable {
      * Starts an asynchronous search.
      *
      * @param assumptions Collection of symbols
-     * @param callback Optional callbacks for intercepting models, lower bounds during optimization,
-     *                 statistics updates, or the end of the search (implement {@link SolveEventCallback}.
+     * @param callback    Optional callbacks for intercepting models, lower bounds during optimization,
+     *                    statistics updates, or the end of the search (implement {@link SolveEventCallback}.
      * @return a solve-handle to interact with
      */
     public SolveHandle solve(Collection<Symbol> assumptions, SolveEventCallback callback) {
         return solve(assumptions, callback, SolveMode.ASYNC);
+    }
+
+    /**
+     * Starts a search.
+     *
+     * @param callback    Optional callbacks for intercepting models, lower bounds during optimization,
+     *                    statistics updates, or the end of the search (implement {@link SolveEventCallback}.
+     * @param solveMode   whether the search is blocking / non-blocking
+     * @return a solve-handle to interact with
+     */
+    public SolveHandle solve(SolveEventCallback callback, SolveMode solveMode) {
+        return solve(Collections.emptyList(), callback, solveMode);
     }
 
     /**
@@ -202,27 +215,24 @@ public class Control implements ErrorChecking, AutoCloseable {
      * @return a solve-handle to interact with
      */
     public SolveHandle solve(Collection<Symbol> assumptions, SolveEventCallback callback, SolveMode solveMode) {
-        // TODO: implement call back data?
         int[] assumptionLiterals = assumptions.stream()
                 .map(getSymbolicAtoms()::getSymbolicAtom)
                 .mapToInt(SymbolicAtom::getLiteral).toArray();
-        PointerByReference pointerByReference = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_control_solve(
-                control,
-                solveMode.getValue(),
-                assumptionLiterals,
-                new NativeSize(assumptionLiterals.length),
-                callback,
-                control,
-                pointerByReference
-        ));
-        return new SolveHandle(pointerByReference.getValue());
+        return solve(assumptionLiterals, callback, solveMode);
     }
 
+    /**
+     * Starts a search.
+     *
+     * @param assumptions array of solver literals
+     * @param callback    Optional callbacks for intercepting models, lower bounds during optimization,
+     *                    statistics updates, or the end of the search (implement {@link SolveEventCallback}.
+     * @param solveMode   whether the search is blocking / non-blocking
+     * @return a solve-handle to interact with
+     */
     public SolveHandle solve(int[] assumptions, SolveEventCallback callback, SolveMode solveMode) {
-        // TODO: remove this method
         PointerByReference pointerByReference = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_control_solve(
+        Clingo.check(Clingo.INSTANCE.clingo_control_solve(
                 control,
                 solveMode.getValue(),
                 assumptions,
@@ -240,7 +250,7 @@ public class Control implements ErrorChecking, AutoCloseable {
      * @param path The path of the file to load.
      */
     public void load(Path path) {
-        checkError(Clingo.INSTANCE.clingo_control_load(control, path.toString()));
+        Clingo.check(Clingo.INSTANCE.clingo_control_load(control, path.toString()));
     }
 
     /**
@@ -259,48 +269,83 @@ public class Control implements ErrorChecking, AutoCloseable {
      * @param external   A symbol representing the external atom.
      * @param truthValue Fixes the external to the respective truth value.
      */
-    public void assignExternal(SymbolicAtom external, TruthValue truthValue) {
-//        checkError(Clingo.INSTANCE.clingo_control_assign_external(
-//                control,
-//                external.getLiteral(),
-//                truthValue.getValue())
-//        );
+    public void assignExternal(int external, TruthValue truthValue) {
+        Clingo.check(Clingo.INSTANCE.clingo_control_assign_external(
+                control,
+                external,
+                truthValue.getValue())
+        );
     }
 
     /**
      * Assigns truth values to multiple external literals of the program
      *
-     * @param externals  Multiple symbols representing external atoms.
+     * @param literals   Multiple solver literals representing external atoms.
      * @param truthValue Fixes the external to the respective truth value.
      */
-    public void assignExternal(Collection<SymbolicAtom> externals, TruthValue truthValue) {
-        for (SymbolicAtom external : externals) {
-            assignExternal(external, truthValue);
+    public void assignExternal(int[] literals, TruthValue truthValue) {
+        for (int literal : literals) {
+            assignExternal(literal, truthValue);
         }
     }
 
     /**
-     * Release an external atom represented by the given symbol or program literal.
+     * Assigns truth values to multiple external symbols if they exist in the program,
+     * throws {@link NoSuchElementException} otherwise.
+     *
+     * @param symbols    Multiple external atoms.
+     * @param truthValue Fixes the external to the respective truth value.
+     */
+    public void assignExternal(Symbol[] symbols, TruthValue truthValue) {
+        SymbolicAtoms symbolicAtoms = getSymbolicAtoms();
+        for (Symbol symbol : symbols) {
+            int literal = symbolicAtoms.getSymbolicAtom(symbol).getLiteral();
+            assignExternal(literal, truthValue);
+        }
+    }
+
+    /**
+     * Release an external atom represented by the given solver solver literal.
      * <p>
      * This function causes the corresponding atom to become permanently false
      * if there is no definition for the atom in the program. Otherwise, the
      * function has no effect.
      *
-     * @param external The symbolic atom or program atom to release.
+     * @param literal literal to release
      */
-    public void releaseExternal(SymbolicAtom external) {
-        // TODO: own class for literal?
-//        checkError(Clingo.INSTANCE.clingo_control_release_external(control, external.getLiteral()));
+    public void releaseExternal(int literal) {
+        Clingo.check(Clingo.INSTANCE.clingo_control_release_external(control, literal));
     }
 
     /**
-     * Releases the truth values of multiple external symbolic atoms of the program
+     * Releases the truth values of multiple external solver literals of the program
+     * <p>
+     * This function causes the corresponding atom to become permanently false
+     * if there is no definition for the atom in the program. Otherwise, the
+     * function has no effect.
      *
-     * @param externals Mulitple symbols representing external atoms.
+     * @param literals Mulitple literal to release
      */
-    public void releaseExternal(Collection<SymbolicAtom> externals) {
-        for (SymbolicAtom external : externals) {
-            releaseExternal(external);
+    public void releaseExternal(int[] literals) {
+        for (int literal : literals) {
+            releaseExternal(literal);
+        }
+    }
+
+    /**
+     * Releases the truth values of multiple external symbols of the program.
+     * <p>
+     * This function causes the corresponding atom to become permanently false
+     * if there is no definition for the atom in the program. Otherwise, the
+     * function has no effect.
+     *
+     * @param symbols Multiple external atoms to release
+     */
+    public void releaseExternal(Symbol[] symbols) {
+        SymbolicAtoms symbolicAtoms = getSymbolicAtoms();
+        for (Symbol symbol : symbols) {
+            int literal = symbolicAtoms.getSymbolicAtom(symbol).getLiteral();
+            releaseExternal(literal);
         }
     }
 
@@ -337,7 +382,7 @@ public class Control implements ErrorChecking, AutoCloseable {
      * automatic cleanups are enabled by default.
      */
     public void cleanup() {
-        checkError(Clingo.INSTANCE.clingo_control_cleanup(control));
+        Clingo.check(Clingo.INSTANCE.clingo_control_cleanup(control));
     }
 
     /**
@@ -353,7 +398,7 @@ public class Control implements ErrorChecking, AutoCloseable {
      * @param value boolean whether to enable or disable cleanup
      */
     public void setEnableCleanup(boolean value) {
-        checkError(Clingo.INSTANCE.clingo_control_set_enable_cleanup(control, value));
+        Clingo.check(Clingo.INSTANCE.clingo_control_set_enable_cleanup(control, value));
     }
 
     /**
@@ -399,7 +444,7 @@ public class Control implements ErrorChecking, AutoCloseable {
      * @param value a boolean whether to enable or disable the enumeration assumption
      */
     public void setEnableEnumerationAssumption(boolean value) {
-        checkError(Clingo.INSTANCE.clingo_control_set_enable_enumeration_assumption(control, value));
+        Clingo.check(Clingo.INSTANCE.clingo_control_set_enable_enumeration_assumption(control, value));
     }
 
     /**
@@ -419,7 +464,7 @@ public class Control implements ErrorChecking, AutoCloseable {
      *                 the underlying solver (or any previously registered observers).
      */
     public void registerObserver(Observer observer, boolean replace) {
-        checkError(Clingo.INSTANCE.clingo_control_register_observer(control, observer, replace, control));
+        Clingo.check(Clingo.INSTANCE.clingo_control_register_observer(control, observer, replace, control));
     }
 
     /**
@@ -432,7 +477,7 @@ public class Control implements ErrorChecking, AutoCloseable {
      * @param sequentially Whether to call the propagator sequentially
      */
     public void registerPropagator(Propagator propagator, boolean sequentially) {
-        checkError(Clingo.INSTANCE.clingo_control_register_propagator(control, propagator, control, sequentially));
+        Clingo.check(Clingo.INSTANCE.clingo_control_register_propagator(control, propagator, control, sequentially));
     }
 
     /**
@@ -459,14 +504,14 @@ public class Control implements ErrorChecking, AutoCloseable {
      */
     public Symbol getConstant(String name) {
         ByteByReference byteByReference = new ByteByReference();
-        checkError(Clingo.INSTANCE.clingo_control_has_const(control, name, byteByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_control_has_const(control, name, byteByReference));
 
         if (byteByReference.getValue() == 0) {
             throw new IllegalStateException("Constant '" + name + "' not found");
         }
 
         LongByReference longByReference = new LongByReference();
-        Clingo.INSTANCE.clingo_control_get_const(control, name, longByReference);
+        Clingo.check(Clingo.INSTANCE.clingo_control_get_const(control, name, longByReference));
 
         return Symbol.fromLong(longByReference.getValue());
     }
@@ -476,7 +521,7 @@ public class Control implements ErrorChecking, AutoCloseable {
      */
     public Backend getBackend() {
         PointerByReference backendRef = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_control_backend(control, backendRef));
+        Clingo.check(Clingo.INSTANCE.clingo_control_backend(control, backendRef));
         return new Backend(backendRef.getValue());
     }
 
@@ -485,7 +530,7 @@ public class Control implements ErrorChecking, AutoCloseable {
      */
     public SymbolicAtoms getSymbolicAtoms() {
         PointerByReference symbolicAtomsRef = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_control_symbolic_atoms(control, symbolicAtomsRef));
+        Clingo.check(Clingo.INSTANCE.clingo_control_symbolic_atoms(control, symbolicAtomsRef));
         return new SymbolicAtoms(symbolicAtomsRef.getValue());
     }
 
@@ -494,7 +539,7 @@ public class Control implements ErrorChecking, AutoCloseable {
      */
     public TheoryAtoms getTheoryAtoms() {
         PointerByReference pointerByReference = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_control_theory_atoms(control, pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_control_theory_atoms(control, pointerByReference));
         return new TheoryAtoms(pointerByReference.getValue());
     }
 
@@ -502,9 +547,7 @@ public class Control implements ErrorChecking, AutoCloseable {
      * @return Object to change the configuration.
      */
     public Configuration getConfiguration() {
-        PointerByReference configurationRef = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_control_configuration(control, configurationRef));
-        return new Configuration(configurationRef.getValue());
+        return new Configuration(this);
     }
 
     /**
@@ -520,8 +563,8 @@ public class Control implements ErrorChecking, AutoCloseable {
      */
     public Statistics getStatistics() {
         PointerByReference statisticsRef = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_control_statistics(control, statisticsRef));
-        return new Statistics(statisticsRef.getValue());
+        Clingo.check(Clingo.INSTANCE.clingo_control_statistics(control, statisticsRef));
+        return Statistics.fromPointer(statisticsRef.getValue());
     }
 
     /**

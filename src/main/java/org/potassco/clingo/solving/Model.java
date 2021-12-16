@@ -6,7 +6,6 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
 import org.potassco.clingo.control.ShowType;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
  *  the search for the next model is started. They must not be stored for later
  *  use.
  */
-public class Model implements ErrorChecking {
+public class Model {
 
     private final Pointer model;
 
@@ -45,7 +44,7 @@ public class Model implements ErrorChecking {
      */
     public boolean contains(Symbol atom) {
         ByteByReference byteByReference = new ByteByReference();
-        checkError(Clingo.INSTANCE.clingo_model_contains(model, atom.getLong(), byteByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_model_contains(model, atom.getLong(), byteByReference));
         return byteByReference.getValue() > 0;
     }
 
@@ -58,7 +57,7 @@ public class Model implements ErrorChecking {
      */
     public void extend(Collection<Symbol> symbols) {
         long[] symbolLongs = symbols.stream().mapToLong(Symbol::getLong).toArray();
-        checkError(Clingo.INSTANCE.clingo_model_extend(model, symbolLongs, new NativeSize(symbolLongs.length)));
+        Clingo.check(Clingo.INSTANCE.clingo_model_extend(model, symbolLongs, new NativeSize(symbolLongs.length)));
     }
 
     /**
@@ -100,11 +99,11 @@ public class Model implements ErrorChecking {
      */
     public Symbol[] getSymbols(ShowType showType) {
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        checkError(Clingo.INSTANCE.clingo_model_symbols_size(model, showType.getBitset(), nativeSizeByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_model_symbols_size(model, showType.getBitset(), nativeSizeByReference));
         int modelSize = (int) nativeSizeByReference.getValue();
         long[] modelSymbols = new long[modelSize];
 
-        checkError(Clingo.INSTANCE.clingo_model_symbols(
+        Clingo.check(Clingo.INSTANCE.clingo_model_symbols(
                 model,
                 showType.getBitset(),
                 modelSymbols,
@@ -131,7 +130,7 @@ public class Model implements ErrorChecking {
      */
     public SolveControl getContext() {
         PointerByReference pointerByReference = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_model_context(model, pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_model_context(model, pointerByReference));
         return new SolveControl(pointerByReference.getValue());
     }
 
@@ -144,9 +143,9 @@ public class Model implements ErrorChecking {
     public int[] getCost() {
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
         PointerByReference pointerByReference = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_model_cost_size(model, nativeSizeByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_model_cost_size(model, nativeSizeByReference));
         int costSize = (int) nativeSizeByReference.getValue();
-        checkError(Clingo.INSTANCE.clingo_model_cost(model, pointerByReference, new NativeSize(costSize)));
+        Clingo.check(Clingo.INSTANCE.clingo_model_cost(model, pointerByReference, new NativeSize(costSize)));
 
         return costSize > 0 ? new int[0] : pointerByReference.getValue().getIntArray(0, costSize);
     }
@@ -156,7 +155,7 @@ public class Model implements ErrorChecking {
      */
     public long getNumber() {
         LongByReference longByReference = new LongByReference();
-        checkError(Clingo.INSTANCE.clingo_model_number(model, longByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_model_number(model, longByReference));
         return longByReference.getValue();
     }
 
@@ -165,7 +164,7 @@ public class Model implements ErrorChecking {
      */
     public boolean getOptimalityProven() {
         ByteByReference byteByReference = new ByteByReference();
-        checkError(Clingo.INSTANCE.clingo_model_optimality_proven(model, byteByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_model_optimality_proven(model, byteByReference));
         return byteByReference.getValue() > 0;
     }
 
@@ -174,7 +173,7 @@ public class Model implements ErrorChecking {
      */
     public int getThreadId() {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_model_thread_id(model, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_model_thread_id(model, intByReference));
         return intByReference.getValue();
     }
 
@@ -183,7 +182,7 @@ public class Model implements ErrorChecking {
      */
     public ModelType getType() {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_model_type(model, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_model_type(model, intByReference));
         return ModelType.fromValue(intByReference.getValue());
     }
 

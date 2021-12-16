@@ -11,7 +11,7 @@ public class Number extends Symbol {
     protected Number(long symbol) {
         super(symbol);
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_symbol_number(symbol, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_symbol_number(symbol, intByReference));
         this.number = intByReference.getValue();
     }
 

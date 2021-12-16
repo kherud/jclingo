@@ -4,7 +4,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.solving.TruthValue;
 
@@ -12,14 +11,14 @@ import java.util.Iterator;
 
 /**
  * Class to inspect the (parital) assignment of an associated solver.
- *
+ * <p>
  * Assigns truth values to solver literals.  Each solver literal is either
  * true, false, or undefined.
- *
+ * <p>
  * This class implements `Iterable[Integer]` to access the (positive)
  * literals in the assignment.
  */
-public class Assignment implements Iterable<Integer>, ErrorChecking {
+public class Assignment implements Iterable<Integer> {
 
     private final Pointer assignment;
 
@@ -40,20 +39,61 @@ public class Assignment implements Iterable<Integer>, ErrorChecking {
      */
     public int getAssignmentAt(int index) {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_assignment_at(assignment, new NativeSize(index), intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_assignment_at(assignment, new NativeSize(index), intByReference));
         return intByReference.getValue();
     }
 
     /**
+     * Determine the decision literal given a decision level.
+     *
      * @return the decision literal of the given level.
      */
     public int getDecision(int level) {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_assignment_decision(assignment, level, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_assignment_decision(assignment, level, intByReference));
         return intByReference.getValue();
     }
 
     /**
+     * Get the current decision level.
+     *
+     * @return the current decision level.
+     */
+    public int getDecisionLevel() {
+        return Clingo.INSTANCE.clingo_assignment_decision_level(assignment);
+    }
+
+    /**
+     * Get the current root level.
+     * Decisions levels smaller or equal to the root level are not backtracked during solving.
+     *
+     * @return the decision level
+     */
+    public int getRootLevel() {
+        return Clingo.INSTANCE.clingo_assignment_root_level(assignment);
+    }
+
+    /**
+     * Check if the given assignment is conflicting.
+     *
+     * @return whether the assignment is conflicting
+     */
+    public boolean isConflicting() {
+        return Clingo.INSTANCE.clingo_assignment_has_conflict(assignment);
+    }
+
+    /**
+     * Check if the assignment is total, i.e. there are no free literal.
+     *
+     * @return whether the assignment is total
+     */
+    public boolean isTotal() {
+        return Clingo.INSTANCE.clingo_assignment_is_total(assignment);
+    }
+
+    /**
+     * Check if the given literal is part of a (partial) assignment.
+     *
      * @param literal The solver literal.
      * @return a bool determining if the given literal is valid in this solver.
      */
@@ -62,51 +102,77 @@ public class Assignment implements Iterable<Integer>, ErrorChecking {
     }
 
     /**
+     * Check if a literal has a fixed truth value.
+     *
      * @param literal The solver literal.
      * @return a bool determining if the literal is false.
      */
     public boolean isFalse(int literal) {
         ByteByReference byteByReference = new ByteByReference();
-        checkError(Clingo.INSTANCE.clingo_assignment_is_false(assignment, literal, byteByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_assignment_is_false(assignment, literal, byteByReference));
         return byteByReference.getValue() > 0;
     }
 
     /**
+     * Check if a literal has a fixed truth value.
+     *
      * @param literal The solver literal.
      * @return a bool determining if the literal is assigned on the top level.
      */
     public boolean isFixed(int literal) {
         ByteByReference byteByReference = new ByteByReference();
-        checkError(Clingo.INSTANCE.clingo_assignment_is_fixed(assignment, literal, byteByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_assignment_is_fixed(assignment, literal, byteByReference));
         return byteByReference.getValue() > 0;
     }
 
     /**
+     * Check if a literal is true.
+     *
      * @param literal The solver literal.
      * @return a bool determining if the literal is true.
      */
     public boolean isTrue(int literal) {
         ByteByReference byteByReference = new ByteByReference();
-        checkError(Clingo.INSTANCE.clingo_assignment_is_true(assignment, literal, byteByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_assignment_is_true(assignment, literal, byteByReference));
         return byteByReference.getValue() > 0;
     }
 
     /**
+     * Determine the truth value of a given literal.
+     *
      * @param literal The solver literal.
      * @return a bool determining if the literal is assigned on the top level.
      */
     public boolean isFree(int literal) {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_assignment_truth_value(assignment, literal, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_assignment_truth_value(assignment, literal, intByReference));
         return intByReference.getValue() == TruthValue.FREE.getValue();
     }
 
+    /**
+     * Determine the decision level of a given literal.
+     *
+     * @param literal the literal
+     * @return the resulting level
+     */
     public int getLevel(int literal) {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_assignment_level(assignment, literal, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_assignment_level(assignment, literal, intByReference));
         return intByReference.getValue();
     }
 
+    /**
+     * Return a class to access literals assigned by the solver in chronological order.
+     *
+     * @return The trail of assigned literals.
+     */
+    public Trail getTrail() {
+        return new Trail(this);
+    }
+
+    public Pointer getPointer() {
+        return assignment;
+    }
 
 
     @Override

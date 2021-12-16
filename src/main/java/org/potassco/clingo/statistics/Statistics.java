@@ -1,88 +1,108 @@
 package org.potassco.clingo.statistics;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
+import org.potassco.clingo.control.Control;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
-import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.internal.NativeSizeByReference;
+
+import java.util.NoSuchElementException;
+
+import static org.potassco.clingo.statistics.StatisticsType.fromValue;
 
 /**
- * This class maps clingo's native statistics structure
+ * Object to capture clingo's native statistics
  */
-public class Statistics implements ErrorChecking {
+public abstract class Statistics {
 
-    private final Pointer statistics;
-    private final long rootKey;
+    protected final Pointer statistics;
+    protected final long key;
 
-    private final NativeSizeByReference nativeSizeByRef = new NativeSizeByReference();
-    private final DoubleByReference doubleByRef = new DoubleByReference();
-    private final String[] stringByRef = new String[1];
-    private final LongByReference longByRef = new LongByReference();
-    private final IntByReference intByRef = new IntByReference();
-
-    public Statistics(Pointer statistics) {
+    public Statistics(Pointer statistics, long key) {
         this.statistics = statistics;
-
-        // get root of the configuration tree map
-        checkError(Clingo.INSTANCE.clingo_statistics_root(statistics, this.longByRef));
-        this.rootKey = this.longByRef.getValue();
+        this.key = key;
     }
 
-    private long getRootKey() {
-        return rootKey;
+    /**
+     * Get the raw value of an statistics entry.
+     * Throws {@link IllegalStateException} if this entry is not a value.
+     *
+     * @return the raw value
+     */
+    public double get() {
+        throw new IllegalStateException("Statistics entry is not a value");
     }
 
-    private StatisticsType getKeyType(long key) {
-        checkError(Clingo.INSTANCE.clingo_statistics_type(statistics, key, intByRef));
-        return StatisticsType.fromValue(intByRef.getValue());
+    /**
+     * Get the value at the given offset of a map entry.
+     * Multiple levels can be looked up by concatenating keys with a period.
+     * Throws {@link IllegalStateException} if this entry is not a map.
+     *
+     * @param name the key of the entry
+     * @return the value of the key
+     */
+    public Statistics get(String name) {
+        throw new IllegalStateException("Statistics entry is not a map");
     }
 
-    private boolean isMap(StatisticsType type) {
-        return type == StatisticsType.MAP;
+    /**
+     * Get the value at the given index of an array entry.
+     * Throws {@link IllegalStateException} if this entry is not an array.
+     *
+     * @param index the index of the entry
+     * @return the value at the index
+     */
+    public Statistics get(int index) {
+        throw new IllegalStateException("Statistics entry is not an array");
     }
 
-    private boolean isArray(StatisticsType type) {
-        return type == StatisticsType.ARRAY;
+    /**
+     * Returns the statistics root entry given a pointer to an existing native object
+     *
+     * @param statistics the native pointer to the statistics object
+     * @return the java statistics object
+     */
+    public static Statistics fromPointer(Pointer statistics) {
+        LongByReference longByReference = new LongByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_statistics_root(statistics, longByReference));
+        return fromKey(statistics, longByReference.getValue());
     }
 
-    private boolean isValue(StatisticsType type) {
-        return type == StatisticsType.VALUE;
+    /**
+     * Returns a statistics entry corresponding to the key
+     *
+     * @param statistics a native pointer to the statistics object (see {@link Control#getStatistics}
+     * @param key the key of the object
+     * @return the statistics entry
+     */
+    public static Statistics fromKey(Pointer statistics, long key) {
+        IntByReference intByReference = new IntByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_statistics_type(statistics, key, intByReference));
+        StatisticsType type = fromValue(intByReference.getValue());
+        return fromKey(statistics, key, type);
     }
 
-    private long getMapSize(long key) {
-        checkError(Clingo.INSTANCE.clingo_statistics_map_size(statistics, key, nativeSizeByRef));
-        return nativeSizeByRef.getValue();
+    /**
+     * Returns a statistics entry of the specified type corresponding to the key
+     *
+     * @param statistics a native pointer to the statistics object (see {@link Control#getStatistics}
+     * @param key the key of the object
+     * @param type the known type of the statistics entry
+     * @return the statistics entry
+     */
+    public static Statistics fromKey(Pointer statistics, long key, StatisticsType type) {
+        switch (type) {
+            case VALUE: return new StatisticsValue(statistics, key);
+            case ARRAY: return new StatisticsArray(statistics, key);
+            case MAP: return new StatisticsMap(statistics, key);
+            case EMPTY: throw new NoSuchElementException("Unknown statistics entry with key '" + key + "'");
+            default: throw new IllegalStateException("Unknown statistics type ordinal '" + type.name() + "'");
+        }
     }
 
-    private long getArraySize(long key) {
-        checkError(Clingo.INSTANCE.clingo_statistics_array_size(statistics, key, nativeSizeByRef));
-        return nativeSizeByRef.getValue();
-    }
+    /**
+     * @return the type of this statistics object
+     */
+    public abstract StatisticsType getType();
 
-    private String getNameAtMapIndex(long key, int index) {
-        checkError(Clingo.INSTANCE.clingo_statistics_map_subkey_name(statistics, key, new NativeSize(index), stringByRef));
-        return stringByRef[0];
-    }
-
-    private long getIdAtArrayIndex(long key, int index) {
-        checkError(Clingo.INSTANCE.clingo_statistics_array_at(statistics, key, new NativeSize(index), longByRef));
-        return longByRef.getValue();
-    }
-
-    private long getIdOfKeyName(long key, String name) {
-        checkError(Clingo.INSTANCE.clingo_statistics_map_at(statistics, key, name, longByRef));
-        return longByRef.getValue();
-    }
-
-    private boolean checkValueAssigned(long key) {
-        return true;
-    }
-
-    private Object getValueByKey(long key) {
-        checkError(Clingo.INSTANCE.clingo_statistics_value_get(statistics, key, doubleByRef));
-        return doubleByRef.getValue();
-    }
 }

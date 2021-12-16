@@ -11,6 +11,7 @@ import org.potassco.clingo.symbol.Symbol;
 
 import java.nio.LongBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,12 +64,15 @@ public class ControlTest {
 
     @Test
     public void testLowerBounds() {
-        List<Integer> unsatSymbols = new ArrayList<>();
+        List<Long> unsatSymbols = new ArrayList<>();
         SolveEventCallback callback = new SolveEventCallback() {
             @Override
-            public void onUnsat(List<Integer> literals) {
-                unsatSymbols.addAll(literals);
+            public void onUnsat(long[] literals) {
+                Arrays.sort(literals);
+                for (long literal : literals)
+                    unsatSymbols.add(literal);
             }
+
             @Override
             public void onResult(SolveResult solveResult) {
                 Assert.assertTrue(solveResult.isType(SolveResult.Type.SATISFIABLE));

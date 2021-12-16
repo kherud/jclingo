@@ -151,7 +151,7 @@ public class SolvingTest {
 
     private static class TestCallback extends SolveEventCallback {
         public final List<ModelTuple> models = new ArrayList<>();
-        public final List<List<Integer>> cores = new ArrayList<>();
+        public final List<long[]> cores = new ArrayList<>();
         public SolveResult solveResult;
 
         @Override
@@ -167,8 +167,8 @@ public class SolvingTest {
         }
 
         @Override
-        public void onUnsat(List<Integer> literals) {
-            literals.sort(Integer::compareTo);
+        public void onUnsat(long[] literals) {
+            Arrays.sort(literals);
             cores.add(literals);
         }
 

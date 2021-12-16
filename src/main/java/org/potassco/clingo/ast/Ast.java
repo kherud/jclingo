@@ -6,7 +6,6 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.control.LoggerCallback;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
@@ -28,7 +27,7 @@ import java.util.NoSuchElementException;
  * can be parsed again. Note that it is possible to construct ASTs
  * that are not parsable, though.
  */
-public class Ast implements Comparable<Ast>, ErrorChecking {
+public class Ast implements Comparable<Ast> {
 
     private final Pointer ast;
 
@@ -38,54 +37,54 @@ public class Ast implements Comparable<Ast>, ErrorChecking {
 
     public String getString() {
         String[] stringByReference = new String[1];
-        checkError(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, AttributeType.STRING.getValue(), stringByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, AttributeType.STRING.getValue(), stringByReference));
         return stringByReference[0];
     }
 
     public void setString(String string) {
-        checkError(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, AttributeType.STRING.getValue(), string));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, AttributeType.STRING.getValue(), string));
     }
 
     public int getNumber() {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, AttributeType.NUMBER.getValue(), intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, AttributeType.NUMBER.getValue(), intByReference));
         return intByReference.getValue();
     }
 
     public void setNumber(int number) {
-        checkError(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, AttributeType.NUMBER.getValue(), number));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, AttributeType.NUMBER.getValue(), number));
     }
 
     public Symbol getSymbol() {
         LongByReference longByReference = new LongByReference();
-        checkError(Clingo.INSTANCE.clingo_ast_attribute_get_symbol(ast, AttributeType.AST.getValue(), longByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_symbol(ast, AttributeType.AST.getValue(), longByReference));
         return Symbol.fromLong(longByReference.getValue());
     }
 
     public void setSymbol(long symbol) {
-        checkError(Clingo.INSTANCE.clingo_ast_attribute_set_symbol(ast, AttributeType.AST.getValue(), symbol));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_symbol(ast, AttributeType.AST.getValue(), symbol));
     }
 
     public Location getLocation() {
         Location.ByReference locationByReference = new Location.ByReference();
-        checkError(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, AttributeType.LOCATION.getValue(), locationByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, AttributeType.LOCATION.getValue(), locationByReference));
         return locationByReference;
     }
 
     public void setLocation(Location location) {
-        checkError(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, AttributeType.LOCATION.getValue(), location));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, AttributeType.LOCATION.getValue(), location));
     }
 
     public Ast getOptionalAst() {
         PointerByReference pointerByReference = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_ast_attribute_get_optional_ast(ast, AttributeType.OPTIONAL_AST.getValue(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_optional_ast(ast, AttributeType.OPTIONAL_AST.getValue(), pointerByReference));
         if (pointerByReference.getValue() == null)
             throw new NoSuchElementException("there is no optional ast");
         return new Ast(pointerByReference.getValue());
     }
 
     public void setOptionalAst(Ast ast) {
-        checkError(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(this.ast, AttributeType.OPTIONAL_AST.getValue(), ast.getPointer()));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(this.ast, AttributeType.OPTIONAL_AST.getValue(), ast.getPointer()));
     }
 
     // TODO: implement
@@ -95,7 +94,7 @@ public class Ast implements Comparable<Ast>, ErrorChecking {
 
     public Ast getAst() {
         PointerByReference pointerByReference = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, AttributeType.AST.getValue(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, AttributeType.AST.getValue(), pointerByReference));
         return new Ast(pointerByReference.getValue());
     }
 
@@ -107,10 +106,10 @@ public class Ast implements Comparable<Ast>, ErrorChecking {
     @Override
     public String toString() {
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        checkError(Clingo.INSTANCE.clingo_ast_to_string_size(ast, nativeSizeByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_to_string_size(ast, nativeSizeByReference));
         int stringSize = (int) nativeSizeByReference.getValue();
         byte[] stringBytes = new byte[stringSize];
-        checkError(Clingo.INSTANCE.clingo_ast_to_string(ast, stringBytes, new NativeSize(stringSize)));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_to_string(ast, stringBytes, new NativeSize(stringSize)));
         return Native.toString(stringBytes);
     }
 
@@ -119,7 +118,7 @@ public class Ast implements Comparable<Ast>, ErrorChecking {
      */
     public Ast copy() {
         PointerByReference pointerByReference = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_ast_copy(ast, pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_copy(ast, pointerByReference));
         return new Ast(pointerByReference.getValue());
     }
 
@@ -136,7 +135,7 @@ public class Ast implements Comparable<Ast>, ErrorChecking {
      */
     public AstType getType() {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_ast_get_type(ast, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_get_type(ast, intByReference));
         return AstType.fromOrdinal(intByReference.getValue());
     }
 
@@ -152,7 +151,7 @@ public class Ast implements Comparable<Ast>, ErrorChecking {
             Clingo.INSTANCE.clingo_ast_acquire(ast.getPointer());
             returnValues.add(ast);
         };
-        checkError(Clingo.INSTANCE.clingo_ast_unpool(ast, unpoolType.getValue(), callback, null));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_unpool(ast, unpoolType.getValue(), callback, null));
         return returnValues;
     }
 
@@ -161,7 +160,7 @@ public class Ast implements Comparable<Ast>, ErrorChecking {
      */
     public Ast deepCopy() {
         PointerByReference pointerByReference = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_ast_deep_copy(ast, pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_deep_copy(ast, pointerByReference));
         return new Ast(pointerByReference.getValue());
     }
 

@@ -3,17 +3,16 @@ package org.potassco.clingo.solving;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
-import org.potassco.clingo.control.SymbolicAtom;
 import org.potassco.clingo.control.SymbolicAtoms;
+import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.symbol.Symbol;
 
-import java.util.Collection;
+import java.util.NoSuchElementException;
 
 /**
  * Object that allows for controlling a running search.
  */
-// TODO: implement
-public class SolveControl implements ErrorChecking {
+public class SolveControl {
 
     private final Pointer solveControl;
 
@@ -22,15 +21,68 @@ public class SolveControl implements ErrorChecking {
     }
 
     /**
-     * Add a clause that applies to the current solving step during the search.
+     * Add a clause that applies to the current solving step during model
+     * enumeration.
+     * <p>
+     * The {@link org.potassco.clingo.propagator.Propagator} module provides a more sophisticated
+     * interface to add clauses - even on partial assignments.
      *
-     * This function can only be called in a model callback or while iterating when using a `SolveHandle`.
-     *
-     * @param symbols List of symbolic atoms.
-     * @param truthValue the truth value to assign the atoms to.
+     * @param clause array of literals representing the clause
      */
-    public void addClause(Collection<SymbolicAtom> symbols, TruthValue truthValue) {
+    public void addClause(int[] clause) {
+        Clingo.check(Clingo.INSTANCE.clingo_solve_control_add_clause(solveControl, clause, new NativeSize(clause.length)));
+    }
 
+    /**
+     * Add a clause that applies to the current solving step during model
+     * enumeration.
+     * <p>
+     * The {@link org.potassco.clingo.propagator.Propagator} module provides a more sophisticated
+     * interface to add clauses - even on partial assignments.
+     *
+     * @param symbols    array of symbols representing the clause
+     * @param truthValue the truth value
+     */
+    public void addClause(Symbol[] symbols, TruthValue truthValue) {
+        SymbolicAtoms symbolicAtoms = getSymbolicAtoms();
+        int[] literals = new int[symbols.length];
+        for (int i = 0; i < literals.length; i++)
+            try {
+                literals[i] = symbolicAtoms.getSymbolicAtom(symbols[i]).getLiteral();
+                literals[i] = truthValue == TruthValue.TRUE || truthValue == TruthValue.FREE ? literals[i] : -literals[i];
+            } catch (NoSuchElementException e) {
+                literals[i] = -1;
+            }
+
+        addClause(literals);
+    }
+
+    /**
+     * Equivalent to {@link SolveControl#addClause(int[])} with the literals inverted.
+     * <p>
+     * * @param clause array of literals representing the clause
+     */
+    public void addNogood(int[] clause) {
+        int[] negatedClause = new int[clause.length];
+        for (int i = 0; i < clause.length; i++) {
+            negatedClause[i] = -clause[i];
+        }
+        addClause(negatedClause);
+    }
+
+    /**
+     * Equivalent to {@link SolveControl#addClause(Symbol[], TruthValue)} with inverted truth value inverted.
+     *
+     * @param symbols    array of symbols representing the clause
+     * @param truthValue the truth value to invert
+     */
+    public void addNogood(Symbol[] symbols, TruthValue truthValue) {
+        if (truthValue == TruthValue.TRUE)
+            addClause(symbols, TruthValue.FALSE);
+        else if (truthValue == TruthValue.FALSE)
+            addClause(symbols, TruthValue.TRUE);
+        else
+            addNogood(symbols, TruthValue.FREE);
     }
 
     /**
@@ -38,7 +90,7 @@ public class SolveControl implements ErrorChecking {
      */
     public SymbolicAtoms getSymbolicAtoms() {
         PointerByReference pointerByReference = new PointerByReference();
-        checkError(Clingo.INSTANCE.clingo_solve_control_symbolic_atoms(solveControl, pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_solve_control_symbolic_atoms(solveControl, pointerByReference));
         return new SymbolicAtoms(pointerByReference.getValue());
     }
 }

@@ -2,7 +2,7 @@
  * Copyright (C) 2021 denkbares GmbH. All rights reserved.
  */
 
-package org.potassco.clingo.args;
+package org.potassco.clingo.configuration.args;
 
 public enum Heuristic implements Option {
     Berkmin("Berkmin", false),

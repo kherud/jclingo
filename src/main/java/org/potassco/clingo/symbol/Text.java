@@ -2,7 +2,6 @@ package org.potassco.clingo.symbol;
 
 import com.sun.jna.ptr.LongByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 
 public class Text extends Symbol {
 
@@ -11,7 +10,7 @@ public class Text extends Symbol {
     protected Text(long symbol) {
         super(symbol);
         String[] stringByReference = new String[1];
-        checkError(Clingo.INSTANCE.clingo_symbol_string(symbol, stringByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_symbol_string(symbol, stringByReference));
         this.text = stringByReference[0];
     }
 
@@ -26,7 +25,7 @@ public class Text extends Symbol {
 
     private static long create(String text) {
         LongByReference longByReference = new LongByReference();
-        ErrorChecking.staticCheckError(Clingo.INSTANCE.clingo_symbol_create_string(text, longByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_symbol_create_string(text, longByReference));
         return longByReference.getValue();
     }
 }

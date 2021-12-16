@@ -4,13 +4,12 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.internal.NativeSize;
 
 /**
  * This object can be used to add clauses and to propagate them.
  */
-public class PropagateControl implements ErrorChecking {
+public class PropagateControl {
 
     public final Pointer propagateControl;
 
@@ -29,7 +28,7 @@ public class PropagateControl implements ErrorChecking {
     public boolean addClause(int[] clause, boolean tag, boolean lock) {
         ClauseType type = tag ? lock ? ClauseType.VOLATILE_STATIC : ClauseType.VOLATILE : ClauseType.LEARNT;
         ByteByReference byteByReference = new ByteByReference();
-        checkError(Clingo.INSTANCE.clingo_propagate_control_add_clause(
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_control_add_clause(
                 propagateControl,
                 clause,
                 new NativeSize(clause.length),
@@ -50,7 +49,7 @@ public class PropagateControl implements ErrorChecking {
      */
     public int addLiteral() {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_propagate_control_add_literal(propagateControl, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_control_add_literal(propagateControl, intByReference));
         return intByReference.getValue();
     }
 
@@ -79,7 +78,7 @@ public class PropagateControl implements ErrorChecking {
      * @param literal The target solver literal.
      */
     public void addWatch(int literal) {
-        checkError(Clingo.INSTANCE.clingo_propagate_control_add_watch(propagateControl, literal));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_control_add_watch(propagateControl, literal));
     }
 
     /**
@@ -99,7 +98,7 @@ public class PropagateControl implements ErrorChecking {
      */
     public boolean propagate() {
         ByteByReference byteByReference = new ByteByReference();
-        checkError(Clingo.INSTANCE.clingo_propagate_control_propagate(propagateControl, byteByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_control_propagate(propagateControl, byteByReference));
         return byteByReference.getValue() > 0;
     }
 

@@ -1,11 +1,15 @@
 package org.potassco.clingo.ast.nodes;
 
-import org.potassco.clingo.ast.Location;
+import com.sun.jna.Pointer;
+import org.potassco.clingo.ast.Ast;
 
-public class Id {
+public class Id extends Ast {
 
-    public Id(Location location, String name) {
-//        Clingo.INSTANCE.clingo_ast_build()
-
+    public Id(Pointer ast) {
+        super(ast);
     }
+
+//    public Id(String name);
+
+
 }

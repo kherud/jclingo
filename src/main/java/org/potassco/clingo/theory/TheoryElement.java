@@ -5,7 +5,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
 
@@ -15,7 +14,7 @@ import org.potassco.clingo.internal.NativeSizeByReference;
  * Theory elements have a readable string representation, implement Python's rich
  * comparison operators, and can be used as dictionary keys.
  */
-public class TheoryElement implements Comparable<TheoryElement>, ErrorChecking {
+public class TheoryElement implements Comparable<TheoryElement> {
 
     private final Pointer theoryAtoms;
     private final int id;
@@ -41,7 +40,7 @@ public class TheoryElement implements Comparable<TheoryElement>, ErrorChecking {
      */
     public int getConditionId() {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_element_condition_id(theoryAtoms, id, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_element_condition_id(theoryAtoms, id, intByReference));
         return intByReference.getValue();
     }
 
@@ -51,7 +50,7 @@ public class TheoryElement implements Comparable<TheoryElement>, ErrorChecking {
     public TheoryTerm[] getTerms() {
         PointerByReference pointerByReference = new PointerByReference();
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_element_tuple(theoryAtoms, id, pointerByReference, nativeSizeByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_element_tuple(theoryAtoms, id, pointerByReference, nativeSizeByReference));
         int amountElements = (int) nativeSizeByReference.getValue();
         TheoryTerm[] theoryTerms = new TheoryTerm[amountElements];
         if (amountElements > 0) {
@@ -69,7 +68,7 @@ public class TheoryElement implements Comparable<TheoryElement>, ErrorChecking {
     public int[] getConditions() {
         PointerByReference pointerByReference = new PointerByReference();
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_element_condition(theoryAtoms, id, pointerByReference, nativeSizeByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_element_condition(theoryAtoms, id, pointerByReference, nativeSizeByReference));
         int amountElements = (int) nativeSizeByReference.getValue();
         return pointerByReference.getValue().getIntArray(0, amountElements);
         // TODO: return something different than ints?
@@ -89,10 +88,10 @@ public class TheoryElement implements Comparable<TheoryElement>, ErrorChecking {
     @Override
     public String toString() {
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_element_to_string_size(theoryAtoms, id, nativeSizeByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_element_to_string_size(theoryAtoms, id, nativeSizeByReference));
         int stringSize = (int) nativeSizeByReference.getValue();
         byte[] elementBytes = new byte[stringSize];
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_element_to_string(theoryAtoms, id, elementBytes, new NativeSize(stringSize)));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_element_to_string(theoryAtoms, id, elementBytes, new NativeSize(stringSize)));
         return Native.toString(elementBytes);
     }
 }

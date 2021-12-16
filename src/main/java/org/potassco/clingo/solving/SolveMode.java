@@ -7,11 +7,9 @@ import java.util.Map;
  * Enumeration of solve modes.
  */
 public enum SolveMode {
-	/** Enable non-blocking search. */
-    ASYNC(1),
-    /** Yield models in calls to clingo_solve_handle_model. */
-    YIELD(2),
-
+	NONE(0),
+    ASYNC(1), // non-blocking search
+    YIELD(2), // yield models
 	ASYNC_YIELD(3);
 
     private static final Map<Integer, SolveMode> mapping = new HashMap<>();

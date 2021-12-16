@@ -6,7 +6,6 @@ import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
 
@@ -18,7 +17,7 @@ import java.util.NoSuchElementException;
  * Theory atoms have a readable string representation, implement Python's rich
  * comparison operators, and can be used as dictionary keys.
  */
-public class TheoryAtom implements Comparable<TheoryAtom>, ErrorChecking {
+public class TheoryAtom implements Comparable<TheoryAtom> {
 
     private final Pointer theoryAtoms;
     private final int id;
@@ -47,7 +46,7 @@ public class TheoryAtom implements Comparable<TheoryAtom>, ErrorChecking {
      */
     public int getLiteral() {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_atom_literal(theoryAtoms, id, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_atom_literal(theoryAtoms, id, intByReference));
         return intByReference.getValue();
     }
 
@@ -56,7 +55,7 @@ public class TheoryAtom implements Comparable<TheoryAtom>, ErrorChecking {
      */
     public TheoryGuard getGuard() {
         ByteByReference byteByReference = new ByteByReference();
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_atom_has_guard(theoryAtoms, id, byteByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_atom_has_guard(theoryAtoms, id, byteByReference));
 
         if (byteByReference.getValue() == 0)
             throw new NoSuchElementException("theory atom has no guard");
@@ -64,7 +63,7 @@ public class TheoryAtom implements Comparable<TheoryAtom>, ErrorChecking {
         String[] stringByReference = new String[1];
         IntByReference intByReference = new IntByReference();
 
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_atom_guard(theoryAtoms, id, stringByReference, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_atom_guard(theoryAtoms, id, stringByReference, intByReference));
         TheoryTerm theoryTerm = new TheoryTerm(theoryAtoms, intByReference.getValue());
         return new TheoryGuard(stringByReference[0], theoryTerm);
     }
@@ -74,7 +73,7 @@ public class TheoryAtom implements Comparable<TheoryAtom>, ErrorChecking {
      */
     public TheoryTerm getTerm() {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_atom_term(theoryAtoms, id, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_atom_term(theoryAtoms, id, intByReference));
         return new TheoryTerm(theoryAtoms, intByReference.getValue());
     }
 
@@ -84,7 +83,7 @@ public class TheoryAtom implements Comparable<TheoryAtom>, ErrorChecking {
     public TheoryElement[] getElements() {
         PointerByReference pointerByReference = new PointerByReference();
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_atom_elements(theoryAtoms, id, pointerByReference, nativeSizeByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_atom_elements(theoryAtoms, id, pointerByReference, nativeSizeByReference));
         int amountElements = (int) nativeSizeByReference.getValue();
         TheoryElement[] theoryElements = new TheoryElement[amountElements];
 
@@ -100,10 +99,10 @@ public class TheoryAtom implements Comparable<TheoryAtom>, ErrorChecking {
     @Override
     public String toString() {
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_atom_to_string_size(theoryAtoms, id, nativeSizeByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_atom_to_string_size(theoryAtoms, id, nativeSizeByReference));
         int stringSize = (int) nativeSizeByReference.getValue();
         byte[] atomBytes = new byte[stringSize];
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_atom_to_string(theoryAtoms, id, atomBytes, new NativeSize(stringSize)));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_atom_to_string(theoryAtoms, id, atomBytes, new NativeSize(stringSize)));
         return Native.toString(atomBytes);
     }
 }

@@ -2,14 +2,13 @@ package org.potassco.clingo.ast;
 
 import com.sun.jna.Pointer;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
 
 /**
  * A sequence holding strings.
  */
-public class StringSequence implements ErrorChecking {
+public class StringSequence {
 
     private final Pointer ast;
     private final AttributeType attributeType = AttributeType.STRING_ARRAY;
@@ -30,7 +29,7 @@ public class StringSequence implements ErrorChecking {
         if (index < 0 || index >= size)
             throw new IndexOutOfBoundsException();
         String[] stringByReference = new String[1];
-        checkError(Clingo.INSTANCE.clingo_ast_attribute_get_string_at(ast, attributeType.getValue(), new NativeSize(index), stringByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string_at(ast, attributeType.getValue(), new NativeSize(index), stringByReference));
         return stringByReference[0];
     }
 
@@ -40,7 +39,7 @@ public class StringSequence implements ErrorChecking {
      */
     public int size() {
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        checkError(Clingo.INSTANCE.clingo_ast_attribute_size_string_array(ast, attributeType.getValue(), nativeSizeByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_size_string_array(ast, attributeType.getValue(), nativeSizeByReference));
         return (int) nativeSizeByReference.getValue();
     }
 }

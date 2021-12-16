@@ -5,7 +5,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.ErrorChecking;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
 
@@ -15,7 +14,7 @@ import org.potassco.clingo.internal.NativeSizeByReference;
  * Theory terms have a readable string representation, implement Python's rich
  * comparison operators, and can be used as dictionary keys.
  */
-public class TheoryTerm implements ErrorChecking {
+public class TheoryTerm {
 
     private final Pointer theoryAtoms;
     private final int id;
@@ -30,7 +29,7 @@ public class TheoryTerm implements ErrorChecking {
      */
     public String getName() {
         String[] stringByReference = new String[1];
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_term_name(theoryAtoms, id, stringByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_term_name(theoryAtoms, id, stringByReference));
         return stringByReference[0];
     }
 
@@ -39,7 +38,7 @@ public class TheoryTerm implements ErrorChecking {
      */
     public int getNumber() {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_term_number(theoryAtoms, id, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_term_number(theoryAtoms, id, intByReference));
         return intByReference.getValue();
     }
 
@@ -48,7 +47,7 @@ public class TheoryTerm implements ErrorChecking {
      */
     public TheoryTermType getType() {
         IntByReference intByReference = new IntByReference();
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_term_type(theoryAtoms, id, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_term_type(theoryAtoms, id, intByReference));
         return TheoryTermType.fromValue(intByReference.getValue());
    }
 
@@ -58,7 +57,7 @@ public class TheoryTerm implements ErrorChecking {
     public TheoryTerm[] getArguments() {
         PointerByReference pointerByReference = new PointerByReference();
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_term_arguments(theoryAtoms, id, pointerByReference, nativeSizeByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_term_arguments(theoryAtoms, id, pointerByReference, nativeSizeByReference));
         int amountElements = (int) nativeSizeByReference.getValue();
         TheoryTerm[] theoryTerms = new TheoryTerm[amountElements];
 
@@ -90,10 +89,10 @@ public class TheoryTerm implements ErrorChecking {
     @Override
     public String toString() {
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_term_to_string_size(theoryAtoms, id, nativeSizeByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_term_to_string_size(theoryAtoms, id, nativeSizeByReference));
         int stringSize = (int) nativeSizeByReference.getValue();
         byte[] termBytes = new byte[stringSize];
-        checkError(Clingo.INSTANCE.clingo_theory_atoms_term_to_string(theoryAtoms, id, termBytes, new NativeSize(stringSize)));
+        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_term_to_string(theoryAtoms, id, termBytes, new NativeSize(stringSize)));
         return Native.toString(termBytes);
     }
 

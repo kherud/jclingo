@@ -31,33 +31,25 @@ public abstract class SolveEventCallback implements Callback {
      */
     public boolean callback(int code, Pointer event, Pointer data, ByteByReference goon) {
         SolveEventType type = SolveEventType.fromValue(code);
-        if (type == SolveEventType.MODEL) {
-            onModel(new Model(event));
-        } else if (type == SolveEventType.UNSAT) {
-            Pointer symbolsPointer = event.getPointer(0);
-            int symbolsSize = getUnsatAmountSymbols(event);
-            // TODO: solver_literals are int32, why return value of int64?!
-//            List<Symbol> unsatSymbols = Arrays.stream(symbolsPointer.getLongArray(0, symbolsSize))
-//                    .mapToObj(Symbol::fromLong)
-//                    .collect(Collectors.toList());
-//            Control control = new Control(data);
-//            for (SymbolicAtom symbolicAtom : control.getSymbolicAtoms()) {
-//                System.out.println(symbolicAtom.getLiteral());
-//            }
-            List<Integer> unsatSymbols = new ArrayList<>();
-            long[] longs = symbolsSize == 0 ? new long[0] : symbolsPointer.getLongArray(0, symbolsSize);
-            for (int i = 0; i < symbolsSize; i++) {
-                unsatSymbols.add((int) longs[i]);
-            }
-            onUnsat(unsatSymbols);
-        } else if (type == SolveEventType.STATISTICS) {
-            Statistics perStep = new Statistics(event.getPointer(0));
-            Statistics accumulated = new Statistics(event.getPointer(Native.POINTER_SIZE));
-            onStatistics(perStep, accumulated);
-        } else if (type == SolveEventType.FINISH) {
-            onResult(new SolveResult(event.getInt(0)));
-        } else {
-            throw new IllegalStateException("unknown solve event type " + type);
+        switch (type) {
+            case MODEL:
+                onModel(new Model(event));
+                break;
+            case UNSAT:
+                Pointer symbolsPointer = event.getPointer(0);
+                int symbolsSize = getUnsatAmountSymbols(event);
+                long[] unsatSymbols = symbolsSize == 0 ? new long[0] : symbolsPointer.getLongArray(0, symbolsSize);
+                onUnsat(unsatSymbols);
+                break;
+            case STATISTICS:
+                Statistics perStep = Statistics.fromPointer(event.getPointer(0));
+                Statistics accumulated = Statistics.fromPointer(event.getPointer(Native.POINTER_SIZE));
+                onStatistics(perStep, accumulated);
+                break;
+            case FINISH:
+                onResult(new SolveResult(event.getInt(0)));
+            default:
+                throw new IllegalStateException("unknown solve event type " + type);
         }
         return true;
     }
@@ -66,7 +58,7 @@ public abstract class SolveEventCallback implements Callback {
 
     }
 
-    public void onUnsat(List<Integer> literals) {
+    public void onUnsat(long[] literals) {
 
     }
 

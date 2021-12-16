@@ -1,4 +1,4 @@
-package org.potassco.clingo.args;
+package org.potassco.clingo.configuration.args;
 
 public class NumModels implements Option {
 

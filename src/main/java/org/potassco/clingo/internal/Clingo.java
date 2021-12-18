@@ -7,17 +7,22 @@ import org.potassco.clingo.backend.WeightedLiteral;
 import org.potassco.clingo.configuration.Configuration;
 import org.potassco.clingo.configuration.ConfigurationType;
 import org.potassco.clingo.control.*;
-import org.potassco.clingo.grounding.Observer;
+import org.potassco.clingo.solving.Observer;
 import org.potassco.clingo.propagator.Propagator;
 import org.potassco.clingo.ast.AstCallback;
-import org.potassco.clingo.grounding.GroundCallback;
-import org.potassco.clingo.grounding.ParseCallback;
+import org.potassco.clingo.solving.GroundCallback;
+import org.potassco.clingo.control.ParseCallback;
 import org.potassco.clingo.solving.SolveEventCallback;
 
 public interface Clingo extends Library {
 
-    //    Map<String, Object> options = Map.of(Library.OPTION_TYPE_MAPPER, new ClingoTypeMapper());
-    Clingo INSTANCE = Native.load("clingo", Clingo.class); // options
+    Clingo INSTANCE = loadLibrary();
+
+    static Clingo loadLibrary() {
+//        Map<String, Object> options = Map.of(Library.OPTION_TYPE_MAPPER, new ClingoTypeMapper());
+//        Native.setProtected(true);
+        return Native.load("clingo", Clingo.class);  // options
+    }
 
     static String getVersion() {
         IntByReference major = new IntByReference();
@@ -27,8 +32,8 @@ public interface Clingo extends Library {
         return String.format("%d.%d.%d", major.getValue(), minor.getValue(), revision.getValue());
     }
 
-    static ErrorCode check(boolean callSuccess) {
-        if (!callSuccess) {
+    static ErrorCode check(byte callSuccess) {
+        if (callSuccess == 0) {
             String errorMessage = Clingo.INSTANCE.clingo_error_message();
             int errorId = Clingo.INSTANCE.clingo_error_code();
             ErrorCode errorCode = ErrorCode.fromValue(errorId);
@@ -98,7 +103,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_signature_create(String name, int arity, boolean positive, LongByReference signature) throws LastErrorException;
+    byte clingo_signature_create(String name, int arity, byte positive, LongByReference signature) throws LastErrorException;
 
     /**
      * Get the name of a signature.
@@ -124,7 +129,7 @@ public interface Clingo extends Library {
      * @param signature the target signature
      * @return whether the signature has no sign
      */
-    boolean clingo_signature_is_positive(long signature);
+    byte clingo_signature_is_positive(long signature);
 
     /**
      * Whether the signature is negative (is classically negated).
@@ -132,7 +137,7 @@ public interface Clingo extends Library {
      * @param signature the target signature
      * @return whether the signature has a sign
      */
-    boolean clingo_signature_is_negative(long signature);
+    byte clingo_signature_is_negative(long signature);
 
     /**
      * Check if two signatures are equal.
@@ -141,7 +146,7 @@ public interface Clingo extends Library {
      * @param b second signature
      * @return whether a == b
      */
-    boolean clingo_signature_is_equal_to(long a, long b);
+    byte clingo_signature_is_equal_to(long a, long b);
 
     /**
      * Check if a signature is less than another signature.
@@ -153,7 +158,7 @@ public interface Clingo extends Library {
      * @param b second signature
      * @return whether a < b
      */
-    boolean clingo_signature_is_less_than(long a, long b);
+    byte clingo_signature_is_less_than(long a, long b);
 
     /**
      * Calculate a hash code of a signature.
@@ -197,7 +202,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_symbol_create_string(String string, LongByReference symbol);
+    byte clingo_symbol_create_string(String string, LongByReference symbol);
 
     /**
      * Construct a symbol representing an id.
@@ -213,7 +218,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_symbol_create_id(String name, boolean positive, LongByReference symbol);
+    byte clingo_symbol_create_id(String name, byte positive, LongByReference symbol);
 
     /**
      * Construct a symbol representing a function or tuple.
@@ -230,7 +235,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_symbol_create_function(String name, long[] arguments, NativeSize arguments_size, boolean positive, LongByReference symbol);
+    byte clingo_symbol_create_function(String name, long[] arguments, NativeSize arguments_size, byte positive, LongByReference symbol);
 
     // Symbol Inspection Functions
 
@@ -244,7 +249,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if symbol is not of type {@link org.potassco.clingo.symbol.SymbolType#NUMBER}</li>
      * </ul>
      */
-    boolean clingo_symbol_number(long symbol, IntByReference number);
+    byte clingo_symbol_number(long symbol, IntByReference number);
 
     /**
      * Get the name of a symbol.
@@ -258,7 +263,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if symbol is not of type {@link org.potassco.clingo.symbol.SymbolType#FUNCTION}</li>
      * </ul>
      */
-    boolean clingo_symbol_name(long symbol, String[] name);
+    byte clingo_symbol_name(long symbol, String[] name);
 
     /**
      * Get the string of a symbol.
@@ -272,7 +277,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if symbol is not of type {@link org.potassco.clingo.symbol.SymbolType#STRING}</li>
      * </ul>
      */
-    boolean clingo_symbol_string(long symbol, String[] string);
+    byte clingo_symbol_string(long symbol, String[] string);
 
     /**
      * Check if a function is positive (does not have a sign).
@@ -284,7 +289,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if symbol is not of type {@link org.potassco.clingo.symbol.SymbolType#FUNCTION}</li>
      * </ul>
      */
-    boolean clingo_symbol_is_positive(long symbol, ByteByReference positive);
+    byte clingo_symbol_is_positive(long symbol, ByteByReference positive);
 
     /**
      * Check if a function is negative (has a sign).
@@ -296,7 +301,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if symbol is not of type {@link org.potassco.clingo.symbol.SymbolType#FUNCTION}</li>
      * </ul>
      */
-    boolean clingo_symbol_is_negative(long symbol, ByteByReference negative);
+    byte clingo_symbol_is_negative(long symbol, ByteByReference negative);
 
     /**
      * Get the arguments of a symbol.
@@ -309,7 +314,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if symbol is not of type {@link org.potassco.clingo.symbol.SymbolType#FUNCTION}</li>
      * </ul>
      */
-    boolean clingo_symbol_arguments(long symbol, PointerByReference arguments, NativeSizeByReference arguments_size);
+    byte clingo_symbol_arguments(long symbol, PointerByReference arguments, NativeSizeByReference arguments_size);
 
     /**
      * Get the type of a symbol.
@@ -329,7 +334,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_symbol_to_string_size(long symbol, NativeSizeByReference size);
+    byte clingo_symbol_to_string_size(long symbol, NativeSizeByReference size);
 
     /**
      * Get the string representation of a symbol.
@@ -342,7 +347,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_symbol_to_string(long symbol, byte[] string, NativeSize size);
+    byte clingo_symbol_to_string(long symbol, byte[] string, NativeSize size);
 
     /**
      * Symbol Comparison Functions
@@ -353,7 +358,7 @@ public interface Clingo extends Library {
      * @param b second symbol
      * @return whether a == b
      */
-    boolean clingo_symbol_is_equal_to(long a, long b);
+    byte clingo_symbol_is_equal_to(long a, long b);
 
     /**
      * Check if a symbol is less than another symbol.
@@ -366,7 +371,7 @@ public interface Clingo extends Library {
      * @param b second symbol
      * @return whether a < b
      */
-    boolean clingo_symbol_is_less_than(long a, long b);
+    byte clingo_symbol_is_less_than(long a, long b);
 
     /**
      * Calculate a hash code of a symbol.
@@ -389,7 +394,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_add_string(String string, String[] result);
+    byte clingo_add_string(String string, String[] result);
 
     /**
      * Parse a term in string form.
@@ -407,7 +412,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if parsing fails</li>
      * </ul>
      */
-    boolean clingo_parse_term(String string, LoggerCallback logger, Pointer logger_data, int message_limit, LongByReference symbol);
+    byte clingo_parse_term(String string, LoggerCallback logger, Pointer logger_data, int message_limit, LongByReference symbol);
 
     // symbolic atoms
 
@@ -418,7 +423,7 @@ public interface Clingo extends Library {
      * @param size  the number of atoms
      * @return whether the call was successful
      */
-    boolean clingo_symbolic_atoms_size(Pointer atoms, NativeSizeByReference size);
+    byte clingo_symbolic_atoms_size(Pointer atoms, NativeSizeByReference size);
 
     /**
      * Get a forward iterator to the beginning of the sequence of all symbolic
@@ -429,7 +434,7 @@ public interface Clingo extends Library {
      * @param iterator  the resulting iterator
      * @return whether the call was successful
      */
-    boolean clingo_symbolic_atoms_begin(Pointer atoms, LongByReference signature, LongByReference iterator);
+    byte clingo_symbolic_atoms_begin(Pointer atoms, LongByReference signature, LongByReference iterator);
 
     /**
      * Iterator pointing to the end of the sequence of symbolic atoms.
@@ -438,7 +443,7 @@ public interface Clingo extends Library {
      * @param iterator the resulting iterator
      * @return whether the call was successful
      */
-    boolean clingo_symbolic_atoms_end(Pointer atoms, LongByReference iterator);
+    byte clingo_symbolic_atoms_end(Pointer atoms, LongByReference iterator);
 
     /**
      * Find a symbolic atom given its symbolic representation.
@@ -449,7 +454,7 @@ public interface Clingo extends Library {
      *                 of the sequence if no corresponding atom is found
      * @return whether the call was successful
      */
-    boolean clingo_symbolic_atoms_find(Pointer atoms, long symbol, LongByReference iterator);
+    byte clingo_symbolic_atoms_find(Pointer atoms, long symbol, LongByReference iterator);
 
     /**
      * Check if two iterators point to the same element (or end of the sequence).
@@ -460,7 +465,7 @@ public interface Clingo extends Library {
      * @param equal whether the two iterators are equal
      * @return whether the call was successful
      */
-    boolean clingo_symbolic_atoms_iterator_is_equal_to(Pointer atoms, long a, long b, ByteByReference equal);
+    byte clingo_symbolic_atoms_iterator_is_equal_to(Pointer atoms, long a, long b, ByteByReference equal);
 
     /**
      * Get the symbolic representation of an atom.
@@ -470,7 +475,7 @@ public interface Clingo extends Library {
      * @param symbol   the resulting symbol
      * @return whether the call was successful
      */
-    boolean clingo_symbolic_atoms_symbol(Pointer atoms, long iterator, LongByReference symbol);
+    byte clingo_symbolic_atoms_symbol(Pointer atoms, long iterator, LongByReference symbol);
 
     /**
      * Check whether an atom is a fact.
@@ -484,7 +489,7 @@ public interface Clingo extends Library {
      * @param fact     whether the atom is a fact
      * @return whether the call was successful
      */
-    boolean clingo_symbolic_atoms_is_fact(Pointer atoms, long iterator, ByteByReference fact);
+    byte clingo_symbolic_atoms_is_fact(Pointer atoms, long iterator, ByteByReference fact);
 
     /**
      * Check whether an atom is external.
@@ -497,7 +502,7 @@ public interface Clingo extends Library {
      * @param external whether the atom is a external
      * @return whether the call was successful
      */
-    boolean clingo_symbolic_atoms_is_external(Pointer atoms, long iterator, ByteByReference external);
+    byte clingo_symbolic_atoms_is_external(Pointer atoms, long iterator, ByteByReference external);
 
     /**
      * Returns the (numeric) aspif literal corresponding to the given symbolic atom.
@@ -510,7 +515,7 @@ public interface Clingo extends Library {
      * @param literal  the associated literal
      * @return whether the call was successful
      */
-    boolean clingo_symbolic_atoms_literal(Pointer atoms, long iterator, IntByReference literal);
+    byte clingo_symbolic_atoms_literal(Pointer atoms, long iterator, IntByReference literal);
 
     /**
      * Get the number of different predicate signatures used in the program.
@@ -519,7 +524,7 @@ public interface Clingo extends Library {
      * @param size  the number of signatures
      * @return whether the call was successful
      */
-    boolean clingo_symbolic_atoms_signatures_size(Pointer atoms, NativeSizeByReference size);
+    byte clingo_symbolic_atoms_signatures_size(Pointer atoms, NativeSizeByReference size);
 
     /**
      * Get the predicate signatures occurring in a logic program.
@@ -532,7 +537,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if the size is too small</li>
      * </ul>
      */
-    boolean clingo_symbolic_atoms_signatures(Pointer atoms, long[] signatures, NativeSize size);
+    byte clingo_symbolic_atoms_signatures(Pointer atoms, long[] signatures, NativeSize size);
 
     /**
      * Get an iterator to the next element in the sequence of symbolic atoms.
@@ -542,7 +547,7 @@ public interface Clingo extends Library {
      * @param next     the succeeding iterator
      * @return whether the call was successful
      */
-    boolean clingo_symbolic_atoms_next(Pointer atoms, long iterator, LongByReference next);
+    byte clingo_symbolic_atoms_next(Pointer atoms, long iterator, LongByReference next);
 
     /**
      * Check whether the given iterator points to some element with the sequence
@@ -554,7 +559,7 @@ public interface Clingo extends Library {
      *                 sequence
      * @return whether the call was successful
      */
-    boolean clingo_symbolic_atoms_is_valid(Pointer atoms, long iterator, ByteByReference valid);
+    byte clingo_symbolic_atoms_is_valid(Pointer atoms, long iterator, ByteByReference valid);
 
     // THEORY ATOMS
 
@@ -568,7 +573,7 @@ public interface Clingo extends Library {
      * @param type  the resulting type
      * @return whether the call was successful
      */
-    boolean clingo_theory_atoms_term_type(Pointer atoms, int term, IntByReference type);
+    byte clingo_theory_atoms_term_type(Pointer atoms, int term, IntByReference type);
 
     /**
      * Get the number of the given numeric theory term.
@@ -580,7 +585,7 @@ public interface Clingo extends Library {
      * @param number the resulting number
      * @return whether the call was successful
      */
-    boolean clingo_theory_atoms_term_number(Pointer atoms, int term, IntByReference number);
+    byte clingo_theory_atoms_term_number(Pointer atoms, int term, IntByReference number);
 
     /**
      * Get the name of the given constant or function theory term.
@@ -594,7 +599,7 @@ public interface Clingo extends Library {
      * @param name  the resulting name
      * @return whether the call was successful
      */
-    boolean clingo_theory_atoms_term_name(Pointer atoms, int term, String[] name);
+    byte clingo_theory_atoms_term_name(Pointer atoms, int term, String[] name);
 
     /**
      * Get the arguments of the given function theory term.
@@ -607,7 +612,7 @@ public interface Clingo extends Library {
      * @param size      the number of arguments
      * @return whether the call was successful
      */
-    boolean clingo_theory_atoms_term_arguments(Pointer atoms, int term, PointerByReference arguments, NativeSizeByReference size);
+    byte clingo_theory_atoms_term_arguments(Pointer atoms, int term, PointerByReference arguments, NativeSizeByReference size);
 
     /**
      * Get the size of the string representation of the given theory term (including the terminating 0).
@@ -620,7 +625,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_theory_atoms_term_to_string_size(Pointer atoms, int term, NativeSizeByReference size);
+    byte clingo_theory_atoms_term_to_string_size(Pointer atoms, int term, NativeSizeByReference size);
 
     /**
      * Get the string representation of the given theory term.
@@ -634,7 +639,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_theory_atoms_term_to_string(Pointer atoms, int term, byte[] string, NativeSize size);
+    byte clingo_theory_atoms_term_to_string(Pointer atoms, int term, byte[] string, NativeSize size);
 
     // Theory Element Inspection
 
@@ -647,7 +652,7 @@ public interface Clingo extends Library {
      * @param size    the number of term ids
      * @return whether the call was successful
      */
-    boolean clingo_theory_atoms_element_tuple(Pointer atoms, int element, PointerByReference tuple, NativeSizeByReference size);
+    byte clingo_theory_atoms_element_tuple(Pointer atoms, int element, PointerByReference tuple, NativeSizeByReference size);
 
     /**
      * Get the condition (array of aspif literals) of the given theory element.
@@ -658,7 +663,7 @@ public interface Clingo extends Library {
      * @param size      the number of term literals
      * @return whether the call was successful
      */
-    boolean clingo_theory_atoms_element_condition(Pointer atoms, int element, PointerByReference condition, NativeSizeByReference size);
+    byte clingo_theory_atoms_element_condition(Pointer atoms, int element, PointerByReference condition, NativeSizeByReference size);
 
     /**
      * Get the id of the condition of the given theory element.
@@ -672,7 +677,7 @@ public interface Clingo extends Library {
      * @param condition the resulting condition id
      * @return whether the call was successful
      */
-    boolean clingo_theory_atoms_element_condition_id(Pointer atoms, int element, IntByReference condition);
+    byte clingo_theory_atoms_element_condition_id(Pointer atoms, int element, IntByReference condition);
 
     /**
      * Get the size of the string representation of the given theory element (including the terminating 0).
@@ -685,7 +690,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_theory_atoms_element_to_string_size(Pointer atoms, int element, NativeSizeByReference size);
+    byte clingo_theory_atoms_element_to_string_size(Pointer atoms, int element, NativeSizeByReference size);
 
     /**
      * Get the string representation of the given theory element.
@@ -699,7 +704,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_theory_atoms_element_to_string(Pointer atoms, int element, byte[] string, NativeSize size);
+    byte clingo_theory_atoms_element_to_string(Pointer atoms, int element, byte[] string, NativeSize size);
 
     // Theory Atom Inspection
 
@@ -710,7 +715,7 @@ public interface Clingo extends Library {
      * @param size  the resulting number
      * @return whether the call was successful
      */
-    boolean clingo_theory_atoms_size(Pointer atoms, NativeSizeByReference size);
+    byte clingo_theory_atoms_size(Pointer atoms, NativeSizeByReference size);
 
     /**
      * Get the theory term associated with the theory atom.
@@ -720,7 +725,7 @@ public interface Clingo extends Library {
      * @param term  the resulting term id
      * @return whether the call was successful
      */
-    boolean clingo_theory_atoms_atom_term(Pointer atoms, int atom, IntByReference term);
+    byte clingo_theory_atoms_atom_term(Pointer atoms, int atom, IntByReference term);
 
     /**
      * Get the theory elements associated with the theory atom.
@@ -731,7 +736,7 @@ public interface Clingo extends Library {
      * @param size     the number of elements
      * @return whether the call was successful
      */
-    boolean clingo_theory_atoms_atom_elements(Pointer atoms, int atom, PointerByReference elements, NativeSizeByReference size);
+    byte clingo_theory_atoms_atom_elements(Pointer atoms, int atom, PointerByReference elements, NativeSizeByReference size);
 
     /**
      * Whether the theory atom has a guard.
@@ -741,7 +746,7 @@ public interface Clingo extends Library {
      * @param has_guard whether the theory atom has a guard
      * @return whether the call was successful
      */
-    boolean clingo_theory_atoms_atom_has_guard(Pointer atoms, int atom, ByteByReference has_guard);
+    byte clingo_theory_atoms_atom_has_guard(Pointer atoms, int atom, ByteByReference has_guard);
 
     /**
      * Get the guard consisting of a theory operator and a theory term of the given theory atom.
@@ -754,7 +759,7 @@ public interface Clingo extends Library {
      * @param term       the resulting term
      * @return whether the call was successful
      */
-    boolean clingo_theory_atoms_atom_guard(Pointer atoms, int atom, String[] connective, IntByReference term);
+    byte clingo_theory_atoms_atom_guard(Pointer atoms, int atom, String[] connective, IntByReference term);
 
     /**
      * Get the aspif literal associated with the given theory atom.
@@ -764,7 +769,7 @@ public interface Clingo extends Library {
      * @param literal the resulting literal
      * @return whether the call was successful
      */
-    boolean clingo_theory_atoms_atom_literal(Pointer atoms, int atom, IntByReference literal);
+    byte clingo_theory_atoms_atom_literal(Pointer atoms, int atom, IntByReference literal);
 
     /**
      * Get the size of the string representation of the given theory atom (including the terminating 0).
@@ -777,7 +782,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_theory_atoms_atom_to_string_size(Pointer atoms, int atom, NativeSizeByReference size);
+    byte clingo_theory_atoms_atom_to_string_size(Pointer atoms, int atom, NativeSizeByReference size);
 
     /**
      * Get the string representation of the given theory atom.
@@ -791,7 +796,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_theory_atoms_atom_to_string(Pointer atoms, int atom, byte[] string, NativeSize size);
+    byte clingo_theory_atoms_atom_to_string(Pointer atoms, int atom, byte[] string, NativeSize size);
 
 
     // PROPAGATOR
@@ -822,7 +827,7 @@ public interface Clingo extends Library {
      * @param assignment the target assignment
      * @return whether the assignment is conflicting
      */
-    boolean clingo_assignment_has_conflict(Pointer assignment);
+    byte clingo_assignment_has_conflict(Pointer assignment);
 
     /**
      * Check if the given literal is part of a (partial) assignment.
@@ -831,7 +836,7 @@ public interface Clingo extends Library {
      * @param literal    the literal
      * @return whether the literal is valid
      */
-    boolean clingo_assignment_has_literal(Pointer assignment, int literal);
+    byte clingo_assignment_has_literal(Pointer assignment, int literal);
 
     /**
      * Determine the decision level of a given literal.
@@ -841,7 +846,7 @@ public interface Clingo extends Library {
      * @param level      the resulting level
      * @return whether the call was successful
      */
-    boolean clingo_assignment_level(Pointer assignment, int literal, IntByReference level);
+    byte clingo_assignment_level(Pointer assignment, int literal, IntByReference level);
 
     /**
      * Determine the decision literal given a decision level.
@@ -851,7 +856,7 @@ public interface Clingo extends Library {
      * @param literal    the resulting literal
      * @return whether the call was successful
      */
-    boolean clingo_assignment_decision(Pointer assignment, int level, IntByReference literal);
+    byte clingo_assignment_decision(Pointer assignment, int level, IntByReference literal);
 
     /**
      * Check if a literal has a fixed truth value.
@@ -861,7 +866,7 @@ public interface Clingo extends Library {
      * @param is_fixed   whether the literal is fixed
      * @return whether the call was successful
      */
-    boolean clingo_assignment_is_fixed(Pointer assignment, int literal, ByteByReference is_fixed);
+    byte clingo_assignment_is_fixed(Pointer assignment, int literal, ByteByReference is_fixed);
 
     /**
      * Check if a literal is true.
@@ -871,7 +876,7 @@ public interface Clingo extends Library {
      * @param is_true    whether the literal is true
      * @return whether the call was successful
      */
-    boolean clingo_assignment_is_true(Pointer assignment, int literal, ByteByReference is_true);
+    byte clingo_assignment_is_true(Pointer assignment, int literal, ByteByReference is_true);
 
     /**
      * Check if a literal has a fixed truth value.
@@ -881,7 +886,7 @@ public interface Clingo extends Library {
      * @param is_false   whether the literal is false
      * @return whether the call was successful
      */
-    boolean clingo_assignment_is_false(Pointer assignment, int literal, ByteByReference is_false);
+    byte clingo_assignment_is_false(Pointer assignment, int literal, ByteByReference is_false);
 
     /**
      * Determine the truth value of a given literal.
@@ -891,7 +896,7 @@ public interface Clingo extends Library {
      * @param value      the resulting truth value
      * @return whether the call was successful
      */
-    boolean clingo_assignment_truth_value(Pointer assignment, int literal, IntByReference value);
+    byte clingo_assignment_truth_value(Pointer assignment, int literal, IntByReference value);
 
     /**
      * The number of (positive) literals in the assignment.
@@ -909,7 +914,7 @@ public interface Clingo extends Library {
      * @param literal    the literal
      * @return whether the call was successful
      */
-    boolean clingo_assignment_at(Pointer assignment, NativeSize offset, IntByReference literal);
+    byte clingo_assignment_at(Pointer assignment, NativeSize offset, IntByReference literal);
 
     /**
      * Check if the assignment is total, i.e. there are no free literal.
@@ -917,7 +922,7 @@ public interface Clingo extends Library {
      * @param assignment the target
      * @return wheather the assignment is total
      */
-    boolean clingo_assignment_is_total(Pointer assignment);
+    byte clingo_assignment_is_total(Pointer assignment);
 
     /**
      * Returns the number of literals in the trail, i.e., the number of assigned literals.
@@ -926,7 +931,7 @@ public interface Clingo extends Library {
      * @param size       the number of literals in the trail
      * @return whether the call was successful
      */
-    boolean clingo_assignment_trail_size(Pointer assignment, IntByReference size);
+    byte clingo_assignment_trail_size(Pointer assignment, IntByReference size);
 
     /**
      * Returns the offset of the decision literal with the given decision level in
@@ -943,7 +948,7 @@ public interface Clingo extends Library {
      * @param offset     the offset of the decision literal
      * @return whether the call was successful
      */
-    boolean clingo_assignment_trail_begin(Pointer assignment, int level, IntByReference offset);
+    byte clingo_assignment_trail_begin(Pointer assignment, int level, IntByReference offset);
 
     /**
      * Returns the offset following the last literal with the given decision level.
@@ -955,7 +960,7 @@ public interface Clingo extends Library {
      * @param offset     the offset
      * @return whether the call was successful
      */
-    boolean clingo_assignment_trail_end(Pointer assignment, int level, IntByReference offset);
+    byte clingo_assignment_trail_end(Pointer assignment, int level, IntByReference offset);
 
     /**
      * Returns the literal at the given position in the trail.
@@ -965,7 +970,7 @@ public interface Clingo extends Library {
      * @param literal    the literal
      * @return whether the call was successful
      */
-    boolean clingo_assignment_trail_at(Pointer assignment, int offset, IntByReference literal);
+    byte clingo_assignment_trail_at(Pointer assignment, int offset, IntByReference literal);
 
     // Initialization Functions
 
@@ -977,7 +982,7 @@ public interface Clingo extends Library {
      * @param solver_literal the resulting solver literal
      * @return whether the call was successful
      */
-    boolean clingo_propagate_init_solver_literal(Pointer init, int aspif_literal, IntByReference solver_literal);
+    byte clingo_propagate_init_solver_literal(Pointer init, int aspif_literal, IntByReference solver_literal);
 
     /**
      * Add a watch for the solver literal in the given phase.
@@ -986,7 +991,7 @@ public interface Clingo extends Library {
      * @param solver_literal the solver literal
      * @return whether the call was successful
      */
-    boolean clingo_propagate_init_add_watch(Pointer init, int solver_literal);
+    byte clingo_propagate_init_add_watch(Pointer init, int solver_literal);
 
     /**
      * Add a watch for the solver literal in the given phase to the given solver thread.
@@ -996,7 +1001,7 @@ public interface Clingo extends Library {
      * @param thread_id      the id of the solver thread
      * @return whether the call was successful
      */
-    boolean clingo_propagate_init_add_watch_to_thread(Pointer init, int solver_literal, int thread_id);
+    byte clingo_propagate_init_add_watch_to_thread(Pointer init, int solver_literal, int thread_id);
 
     /**
      * Remove the watch for the solver literal in the given phase.
@@ -1005,7 +1010,7 @@ public interface Clingo extends Library {
      * @param solver_literal the solver literal
      * @return whether the call was successful
      */
-    boolean clingo_propagate_init_remove_watch(Pointer init, int solver_literal);
+    byte clingo_propagate_init_remove_watch(Pointer init, int solver_literal);
 
     /**
      * Remove the watch for the solver literal in the given phase from the given solver thread.
@@ -1015,7 +1020,7 @@ public interface Clingo extends Library {
      * @param thread_id      the id of the solver thread
      * @return whether the call was successful
      */
-    boolean clingo_propagate_init_remove_watch_from_thread(Pointer init, int solver_literal, int thread_id);
+    byte clingo_propagate_init_remove_watch_from_thread(Pointer init, int solver_literal, int thread_id);
 
     /**
      * Freeze the given solver literal.
@@ -1028,7 +1033,7 @@ public interface Clingo extends Library {
      * @param solver_literal the solver literal
      * @return whether the call was successful
      */
-    boolean clingo_propagate_init_freeze_literal(Pointer init, int solver_literal);
+    byte clingo_propagate_init_freeze_literal(Pointer init, int solver_literal);
 
     /**
      * Get an object to inspect the symbolic atoms.
@@ -1037,7 +1042,7 @@ public interface Clingo extends Library {
      * @param atoms the resulting object
      * @return whether the call was successful
      */
-    boolean clingo_propagate_init_symbolic_atoms(Pointer init, PointerByReference atoms);
+    byte clingo_propagate_init_symbolic_atoms(Pointer init, PointerByReference atoms);
 
     /**
      * Get an object to inspect the theory atoms.
@@ -1046,7 +1051,7 @@ public interface Clingo extends Library {
      * @param atoms the resulting object
      * @return whether the call was successful
      */
-    boolean clingo_propagate_init_theory_atoms(Pointer init, PointerByReference atoms);
+    byte clingo_propagate_init_theory_atoms(Pointer init, PointerByReference atoms);
 
     /**
      * Get the number of threads used in subsequent solving.
@@ -1097,7 +1102,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_propagate_init_add_literal(Pointer init, boolean freeze, IntByReference result);
+    byte clingo_propagate_init_add_literal(Pointer init, byte freeze, IntByReference result);
 
     /**
      * Add the given clause to the solver.
@@ -1113,7 +1118,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_propagate_init_add_clause(Pointer init, int[] clause, NativeSize size, ByteByReference result);
+    byte clingo_propagate_init_add_clause(Pointer init, int[] clause, NativeSize size, ByteByReference result);
 
     /**
      * Add the given weight constraint to the solver.
@@ -1136,7 +1141,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_propagate_init_add_weight_constraint(Pointer init, int literal, WeightedLiteral[] literals, NativeSize size, int bound, int type, boolean compare_equal, ByteByReference result);
+    byte clingo_propagate_init_add_weight_constraint(Pointer init, int literal, WeightedLiteral[] literals, NativeSize size, int bound, int type, byte compare_equal, ByteByReference result);
 
     /**
      * Add the given literal to minimize to the solver.
@@ -1152,7 +1157,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_propagate_init_add_minimize(Pointer init, int literal, int weight, int priority);
+    byte clingo_propagate_init_add_minimize(Pointer init, int literal, int weight, int priority);
 
     /**
      * Propagates consequences of the underlying problem excluding registered propagators.
@@ -1167,7 +1172,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_propagate_init_propagate(Pointer init, ByteByReference result);
+    byte clingo_propagate_init_propagate(Pointer init, ByteByReference result);
 
     // Propagation Functions
 
@@ -1202,7 +1207,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#LOGIC} if the assignment is conflicting</li>
      * </ul>
      */
-    boolean clingo_propagate_control_add_literal(Pointer control, IntByReference result);
+    byte clingo_propagate_control_add_literal(Pointer control, IntByReference result);
 
     /**
      * Add a watch for the solver literal in the given phase.
@@ -1216,7 +1221,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#LOGIC} if the literal is invalid</li>
      * </ul>
      */
-    boolean clingo_propagate_control_add_watch(Pointer control, int literal);
+    byte clingo_propagate_control_add_watch(Pointer control, int literal);
 
     /**
      * Check whether a literal is watched in the current solver thread.
@@ -1225,7 +1230,7 @@ public interface Clingo extends Library {
      * @param literal the literal to check
      * @return whether the literal is watched
      */
-    boolean clingo_propagate_control_has_watch(Pointer control, int literal);
+    byte clingo_propagate_control_has_watch(Pointer control, int literal);
 
     /**
      * Removes the watch (if any) for the given solver literal.
@@ -1254,7 +1259,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_propagate_control_add_clause(Pointer control, int[] clause, NativeSize size, int type, ByteByReference result);
+    byte clingo_propagate_control_add_clause(Pointer control, int[] clause, NativeSize size, int type, ByteByReference result);
 
     /**
      * Propagate implied literals (resulting from added clauses).
@@ -1270,7 +1275,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_propagate_control_propagate(Pointer control, ByteByReference result);
+    byte clingo_propagate_control_propagate(Pointer control, ByteByReference result);
 
     // backend
 
@@ -1283,7 +1288,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_backend_begin(Pointer backend);
+    byte clingo_backend_begin(Pointer backend);
 
     /**
      * Finalize the backend after using it.
@@ -1294,7 +1299,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_backend_end(Pointer backend);
+    byte clingo_backend_end(Pointer backend);
 
     /**
      * Add a rule to the program.
@@ -1310,7 +1315,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_backend_rule(Pointer backend, boolean choice, int[] head, NativeSize head_size, int[] body, NativeSize body_size);
+    byte clingo_backend_rule(Pointer backend, byte choice, int[] head, NativeSize head_size, int[] body, NativeSize body_size);
 
     /**
      * Add a weight rule to the program.
@@ -1329,7 +1334,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_backend_weight_rule(Pointer backend, boolean choice, int[] head, NativeSize head_size, int lower_bound, WeightedLiteral[] body, NativeSize body_size);
+    byte clingo_backend_weight_rule(Pointer backend, byte choice, int[] head, NativeSize head_size, int lower_bound, WeightedLiteral[] body, NativeSize body_size);
 
     /**
      * Add a minimize constraint (or weak constraint) to the program.
@@ -1343,7 +1348,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_backend_minimize(Pointer backend, int priority, WeightedLiteral[] literals, NativeSize size);
+    byte clingo_backend_minimize(Pointer backend, int priority, WeightedLiteral[] literals, NativeSize size);
 
     /**
      * Add a projection directive.
@@ -1356,7 +1361,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_backend_project(Pointer backend, int[] atoms, NativeSize size);
+    byte clingo_backend_project(Pointer backend, int[] atoms, NativeSize size);
 
     /**
      * Add an external statement.
@@ -1369,7 +1374,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_backend_external(Pointer backend, int atom, int type);
+    byte clingo_backend_external(Pointer backend, int atom, int type);
 
     /**
      * Add an assumption directive.
@@ -1382,7 +1387,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_backend_assume(Pointer backend, int[] literals, NativeSize size);
+    byte clingo_backend_assume(Pointer backend, int[] literals, NativeSize size);
 
     /**
      * Add an heuristic directive.
@@ -1399,7 +1404,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_backend_heuristic(Pointer backend, int atom, int type, int bias, int priority, int[] condition, NativeSize size);
+    byte clingo_backend_heuristic(Pointer backend, int atom, int type, int bias, int priority, int[] condition, NativeSize size);
 
     /**
      * Add an edge directive.
@@ -1414,7 +1419,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_backend_acyc_edge(Pointer backend, int node_u, int node_v, int[] condition, NativeSize size);
+    byte clingo_backend_acyc_edge(Pointer backend, int node_u, int node_v, int[] condition, NativeSize size);
 
     /**
      * Get a fresh atom to be used in aspif directives.
@@ -1424,7 +1429,7 @@ public interface Clingo extends Library {
      * @param atom    the resulting atom
      * @return whether the call was successful
      */
-    boolean clingo_backend_add_atom(Pointer backend, LongByReference symbol, IntByReference atom);
+    byte clingo_backend_add_atom(Pointer backend, LongByReference symbol, IntByReference atom);
 
     // configuration
 
@@ -1435,7 +1440,7 @@ public interface Clingo extends Library {
      * @param key           the root key
      * @return whether the call was successful
      */
-    boolean clingo_configuration_root(Pointer configuration, IntByReference key);
+    byte clingo_configuration_root(Pointer configuration, IntByReference key);
 
     /**
      * Get the type of a key.
@@ -1447,7 +1452,7 @@ public interface Clingo extends Library {
      * @param type          the resulting type
      * @return whether the call was successful
      */
-    boolean clingo_configuration_type(Pointer configuration, int key, IntByReference type);
+    byte clingo_configuration_type(Pointer configuration, int key, IntByReference type);
 
     /**
      * Get the description of an entry.
@@ -1457,7 +1462,7 @@ public interface Clingo extends Library {
      * @param description   the description
      * @return whether the call was successful
      */
-    boolean clingo_configuration_description(Pointer configuration, int key, String[] description);
+    byte clingo_configuration_description(Pointer configuration, int key, String[] description);
 
     // Functions to access arrays
 
@@ -1471,7 +1476,7 @@ public interface Clingo extends Library {
      * @param size          the resulting size
      * @return whether the call was successful
      */
-    boolean clingo_configuration_array_size(Pointer configuration, int key, NativeSizeByReference size);
+    byte clingo_configuration_array_size(Pointer configuration, int key, NativeSizeByReference size);
 
     /**
      * Get the subkey at the given offset of an array entry.
@@ -1485,7 +1490,7 @@ public interface Clingo extends Library {
      * @param subkey        the resulting subkey
      * @return whether the call was successful
      */
-    boolean clingo_configuration_array_at(Pointer configuration, int key, NativeSize offset, IntByReference subkey);
+    byte clingo_configuration_array_at(Pointer configuration, int key, NativeSize offset, IntByReference subkey);
 
     // Functions to access maps
 
@@ -1499,7 +1504,7 @@ public interface Clingo extends Library {
      * @param size          the resulting number
      * @return whether the call was successful
      */
-    boolean clingo_configuration_map_size(Pointer configuration, int key, NativeSizeByReference size);
+    byte clingo_configuration_map_size(Pointer configuration, int key, NativeSizeByReference size);
 
     /**
      * Query whether the map has a key.
@@ -1513,7 +1518,7 @@ public interface Clingo extends Library {
      * @param result        whether the key is in the map
      * @return whether the call was successful
      */
-    boolean clingo_configuration_map_has_subkey(Pointer configuration, int key, String name, ByteByReference result);
+    byte clingo_configuration_map_has_subkey(Pointer configuration, int key, String name, ByteByReference result);
 
     /**
      * Get the name associated with the offset-th subkey.
@@ -1526,7 +1531,7 @@ public interface Clingo extends Library {
      * @param name          the resulting name
      * @return whether the call was successful
      */
-    boolean clingo_configuration_map_subkey_name(Pointer configuration, int key, NativeSize offset, String[] name);
+    byte clingo_configuration_map_subkey_name(Pointer configuration, int key, NativeSize offset, String[] name);
 
     /**
      * Lookup a subkey under the given name.
@@ -1540,7 +1545,7 @@ public interface Clingo extends Library {
      * @param subkey        the resulting subkey
      * @return whether the call was successful
      */
-    boolean clingo_configuration_map_at(Pointer configuration, int key, String name, IntByReference subkey);
+    byte clingo_configuration_map_at(Pointer configuration, int key, String name, IntByReference subkey);
 
     // Functions to access values
 
@@ -1554,7 +1559,7 @@ public interface Clingo extends Library {
      * @param assigned      whether the entry has a value
      * @return whether the call was successful
      */
-    boolean clingo_configuration_value_is_assigned(Pointer configuration, int key, ByteByReference assigned);
+    byte clingo_configuration_value_is_assigned(Pointer configuration, int key, ByteByReference assigned);
 
     /**
      * Get the size of the string value of the given entry.
@@ -1566,7 +1571,7 @@ public interface Clingo extends Library {
      * @param size          the resulting size
      * @return whether the call was successful
      */
-    boolean clingo_configuration_value_get_size(Pointer configuration, int key, NativeSizeByReference size);
+    byte clingo_configuration_value_get_size(Pointer configuration, int key, NativeSizeByReference size);
 
     /**
      * Get the string value of the given entry.
@@ -1580,7 +1585,7 @@ public interface Clingo extends Library {
      * @param size          the size of the given char array
      * @return whether the call was successful
      */
-    boolean clingo_configuration_value_get(Pointer configuration, int key, byte[] value, NativeSize size);
+    byte clingo_configuration_value_get(Pointer configuration, int key, byte[] value, NativeSize size);
 
     /**
      * Set the value of an entry.
@@ -1592,7 +1597,7 @@ public interface Clingo extends Library {
      * @param value         the value to set
      * @return whether the call was successful
      */
-    boolean clingo_configuration_value_set(Pointer configuration, int key, String value);
+    byte clingo_configuration_value_set(Pointer configuration, int key, String value);
 
     // statistics
 
@@ -1603,7 +1608,7 @@ public interface Clingo extends Library {
      * @param key        the root key
      * @return whether the call was successful
      */
-    boolean clingo_statistics_root(Pointer statistics, LongByReference key);
+    byte clingo_statistics_root(Pointer statistics, LongByReference key);
 
     /**
      * Get the type of a key.
@@ -1613,7 +1618,7 @@ public interface Clingo extends Library {
      * @param type       the resulting type
      * @return whether the call was successful
      */
-    boolean clingo_statistics_type(Pointer statistics, long key, IntByReference type);
+    byte clingo_statistics_type(Pointer statistics, long key, IntByReference type);
 
     // Functions to access arrays
 
@@ -1627,7 +1632,7 @@ public interface Clingo extends Library {
      * @param size       the resulting size
      * @return whether the call was successful
      */
-    boolean clingo_statistics_array_size(Pointer statistics, long key, NativeSizeByReference size);
+    byte clingo_statistics_array_size(Pointer statistics, long key, NativeSizeByReference size);
 
     /**
      * Get the subkey at the given offset of an array entry.
@@ -1640,7 +1645,7 @@ public interface Clingo extends Library {
      * @param subkey     the resulting subkey
      * @return whether the call was successful
      */
-    boolean clingo_statistics_array_at(Pointer statistics, long key, NativeSize offset, LongByReference subkey);
+    byte clingo_statistics_array_at(Pointer statistics, long key, NativeSize offset, LongByReference subkey);
 
     /**
      * Create the subkey at the end of an array entry.
@@ -1653,7 +1658,7 @@ public interface Clingo extends Library {
      * @param subkey     the resulting subkey
      * @return whether the call was successful
      */
-    boolean clingo_statistics_array_push(Pointer statistics, long key, int type, LongByReference subkey);
+    byte clingo_statistics_array_push(Pointer statistics, long key, int type, LongByReference subkey);
 
     // Functions to access maps
 
@@ -1667,7 +1672,7 @@ public interface Clingo extends Library {
      * @param size       the resulting number
      * @return whether the call was successful
      */
-    boolean clingo_statistics_map_size(Pointer statistics, long key, NativeSizeByReference size);
+    byte clingo_statistics_map_size(Pointer statistics, long key, NativeSizeByReference size);
 
     /**
      * Test if the given map contains a specific subkey.
@@ -1680,7 +1685,7 @@ public interface Clingo extends Library {
      * @param result     true if the map has a subkey with the given name
      * @return whether the call was successful
      */
-    boolean clingo_statistics_map_has_subkey(Pointer statistics, long key, String name, ByteByReference result);
+    byte clingo_statistics_map_has_subkey(Pointer statistics, long key, String name, ByteByReference result);
 
     /**
      * Get the name associated with the offset-th subkey.
@@ -1693,7 +1698,7 @@ public interface Clingo extends Library {
      * @param name       the resulting name
      * @return whether the call was successful
      */
-    boolean clingo_statistics_map_subkey_name(Pointer statistics, long key, NativeSize offset, String[] name);
+    byte clingo_statistics_map_subkey_name(Pointer statistics, long key, NativeSize offset, String[] name);
 
     /**
      * Lookup a subkey under the given name.
@@ -1707,7 +1712,7 @@ public interface Clingo extends Library {
      * @param subkey     the resulting subkey
      * @return whether the call was successful
      */
-    boolean clingo_statistics_map_at(Pointer statistics, long key, String name, LongByReference subkey);
+    byte clingo_statistics_map_at(Pointer statistics, long key, String name, LongByReference subkey);
 
     /**
      * Add a subkey with the given name.
@@ -1721,7 +1726,7 @@ public interface Clingo extends Library {
      * @param subkey     the index of the resulting subkey
      * @return whether the call was successful
      */
-    boolean clingo_statistics_map_add_subkey(Pointer statistics, long key, String name, int type, LongByReference subkey);
+    byte clingo_statistics_map_add_subkey(Pointer statistics, long key, String name, int type, LongByReference subkey);
 
     // Functions to inspect and change values
 
@@ -1735,7 +1740,7 @@ public interface Clingo extends Library {
      * @param value      the resulting value
      * @return whether the call was successful
      */
-    boolean clingo_statistics_value_get(Pointer statistics, long key, DoubleByReference value);
+    byte clingo_statistics_value_get(Pointer statistics, long key, DoubleByReference value);
 
     /**
      * Set the value of the given entry.
@@ -1747,7 +1752,7 @@ public interface Clingo extends Library {
      * @param value      the new value
      * @return whether the call was successful
      */
-    boolean clingo_statistics_value_set(Pointer statistics, long key, double value);
+    byte clingo_statistics_value_set(Pointer statistics, long key, double value);
 
     // MODEL AND SOLVE CONTROL
 
@@ -1760,7 +1765,7 @@ public interface Clingo extends Library {
      * @param type  the type of the model
      * @return whether the call was successful
      */
-    boolean clingo_model_type(Pointer model, IntByReference type);
+    byte clingo_model_type(Pointer model, IntByReference type);
 
     /**
      * Get the running number of the model.
@@ -1769,7 +1774,7 @@ public interface Clingo extends Library {
      * @param number the number of the model
      * @return whether the call was successful
      */
-    boolean clingo_model_number(Pointer model, LongByReference number);
+    byte clingo_model_number(Pointer model, LongByReference number);
 
     /**
      * Get the number of symbols of the selected types in the model.
@@ -1782,7 +1787,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_model_symbols_size(Pointer model, int show, NativeSizeByReference size);
+    byte clingo_model_symbols_size(Pointer model, int show, NativeSizeByReference size);
 
     /**
      * Get the symbols of the selected types in the model.
@@ -1800,7 +1805,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if the size is too small</li>
      * </ul>
      */
-    boolean clingo_model_symbols(Pointer model, int show, long[] symbols, NativeSize size);
+    byte clingo_model_symbols(Pointer model, int show, long[] symbols, NativeSize size);
 
     /**
      * Constant time lookup to test whether an atom is in a model.
@@ -1810,7 +1815,7 @@ public interface Clingo extends Library {
      * @param contained whether the atom is contained
      * @return whether the call was successful
      */
-    boolean clingo_model_contains(Pointer model, long atom, ByteByReference contained);
+    byte clingo_model_contains(Pointer model, long atom, ByteByReference contained);
 
     /**
      * Check if a program literal is true in a model.
@@ -1820,7 +1825,7 @@ public interface Clingo extends Library {
      * @param result  whether the literal is true
      * @return whether the call was successful
      */
-    boolean clingo_model_is_true(Pointer model, int literal, ByteByReference result);
+    byte clingo_model_is_true(Pointer model, int literal, ByteByReference result);
 
     /**
      * Get the number of cost values of a model.
@@ -1829,7 +1834,7 @@ public interface Clingo extends Library {
      * @param size  the number of costs
      * @return whether the call was successful
      */
-    boolean clingo_model_cost_size(Pointer model, NativeSizeByReference size);
+    byte clingo_model_cost_size(Pointer model, NativeSizeByReference size);
 
     /**
      * Get the cost vector of a model.
@@ -1842,7 +1847,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if the size is too small</li>
      * </ul>
      */
-    boolean clingo_model_cost(Pointer model, PointerByReference costs, NativeSize size);
+    byte clingo_model_cost(Pointer model, PointerByReference costs, NativeSize size);
 
     /**
      * Whether the optimality of a model has been proven.
@@ -1851,7 +1856,7 @@ public interface Clingo extends Library {
      * @param proven whether the optimality has been proven
      * @return whether the call was successful
      */
-    boolean clingo_model_optimality_proven(Pointer model, ByteByReference proven);
+    byte clingo_model_optimality_proven(Pointer model, ByteByReference proven);
 
     /**
      * Get the id of the solver thread that found the model.
@@ -1860,7 +1865,7 @@ public interface Clingo extends Library {
      * @param id    the resulting thread id
      * @return whether the call was successful
      */
-    boolean clingo_model_thread_id(Pointer model, IntByReference id);
+    byte clingo_model_thread_id(Pointer model, IntByReference id);
 
     /**
      * Add symbols to the model.
@@ -1874,7 +1879,7 @@ public interface Clingo extends Library {
      * @param size    the number of symbols to add
      * @return whether the call was successful
      */
-    boolean clingo_model_extend(Pointer model, long[] symbols, NativeSize size);
+    byte clingo_model_extend(Pointer model, long[] symbols, NativeSize size);
 
     // Functions for Adding Clauses
 
@@ -1887,7 +1892,7 @@ public interface Clingo extends Library {
      * @param control the resulting solve control object
      * @return whether the call was successful
      */
-    boolean clingo_model_context(Pointer model, PointerByReference control);
+    byte clingo_model_context(Pointer model, PointerByReference control);
 
     /**
      * Get an object to inspect the symbolic atoms.
@@ -1896,7 +1901,7 @@ public interface Clingo extends Library {
      * @param atoms   the resulting object
      * @return whether the call was successful
      */
-    boolean clingo_solve_control_symbolic_atoms(Pointer control, PointerByReference atoms);
+    byte clingo_solve_control_symbolic_atoms(Pointer control, PointerByReference atoms);
 
     /**
      * Add a clause that applies to the current solving step during model
@@ -1913,7 +1918,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if adding the clause fails</li>
      * </ul>
      */
-    boolean clingo_solve_control_add_clause(Pointer control, int[] clause, NativeSize size);
+    byte clingo_solve_control_add_clause(Pointer control, int[] clause, NativeSize size);
 
 
     // SOLVE RESULT
@@ -1932,7 +1937,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if solving fails</li>
      * </ul>
      */
-    boolean clingo_solve_handle_get(Pointer handle, IntByReference result);
+    byte clingo_solve_handle_get(Pointer handle, IntByReference result);
 
     /**
      * Wait for the specified amount of time to check if the next result is ready.
@@ -1956,7 +1961,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if solving fails</li>
      * </ul>
      */
-    boolean clingo_solve_handle_model(Pointer handle, PointerByReference model);
+    byte clingo_solve_handle_model(Pointer handle, PointerByReference model);
 
     /**
      * When a problem is unsatisfiable, get a subset of the assumptions that made the problem unsatisfiable.
@@ -1971,7 +1976,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_solve_handle_core(Pointer handle, PointerByReference core, NativeSizeByReference size);
+    byte clingo_solve_handle_core(Pointer handle, PointerByReference core, NativeSizeByReference size);
 
     /**
      * Discards the last model and starts the search for the next one.
@@ -1986,7 +1991,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if solving fails</li>
      * </ul>
      */
-    boolean clingo_solve_handle_resume(Pointer handle);
+    byte clingo_solve_handle_resume(Pointer handle);
 
     /**
      * Stop the running search and block until done.
@@ -1997,7 +2002,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if solving fails</li>
      * </ul>
      */
-    boolean clingo_solve_handle_cancel(Pointer handle);
+    byte clingo_solve_handle_cancel(Pointer handle);
 
     /**
      * Stops the running search and releases the handle.
@@ -2010,7 +2015,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if solving fails</li>
      * </ul>
      */
-    boolean clingo_solve_handle_close(Pointer handle);
+    byte clingo_solve_handle_close(Pointer handle);
 
     //  Functions to construct ASTs
 
@@ -2026,7 +2031,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if one of the arguments is incompatible with the type</li>
      * </ul>
      */
-    boolean clingo_ast_build(int type, int... ast);
+    byte clingo_ast_build(int type, int... ast);
 
 
     //  Functions to manage life time of ASTs
@@ -2063,7 +2068,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_ast_copy(Pointer ast, PointerByReference copy);
+    byte clingo_ast_copy(Pointer ast, PointerByReference copy);
 
     /**
      * Create a shallow copy of an AST node.
@@ -2075,7 +2080,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_ast_deep_copy(Pointer ast, PointerByReference copy);
+    byte clingo_ast_deep_copy(Pointer ast, PointerByReference copy);
 
 
     // Functions to compare ASTs
@@ -2087,7 +2092,7 @@ public interface Clingo extends Library {
      * @param b the right-hand-side AST
      * @return the result of the comparison
      */
-    boolean clingo_ast_less_than(Pointer a, Pointer b);
+    byte clingo_ast_less_than(Pointer a, Pointer b);
 
     /**
      * Equality compare two AST nodes.
@@ -2096,7 +2101,7 @@ public interface Clingo extends Library {
      * @param b the right-hand-side AST
      * @return the result of the comparison
      */
-    boolean clingo_ast_equal(Pointer a, Pointer b);
+    byte clingo_ast_equal(Pointer a, Pointer b);
 
     /**
      * Compute a hash for an AST node.
@@ -2119,7 +2124,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_to_string_size(Pointer ast, NativeSizeByReference size);
+    byte clingo_ast_to_string_size(Pointer ast, NativeSizeByReference size);
 
     /**
      * Get the string representation of an AST node.
@@ -2132,7 +2137,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_to_string(Pointer ast, byte[] string, NativeSize size);
+    byte clingo_ast_to_string(Pointer ast, byte[] string, NativeSize size);
 
 
     //  Functions to inspect ASTs
@@ -2147,7 +2152,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_get_type(Pointer ast, IntByReference type);
+    byte clingo_ast_get_type(Pointer ast, IntByReference type);
 
     /**
      * Check if an AST has the given attribute.
@@ -2160,7 +2165,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_has_attribute(Pointer ast, int attribute, ByteByReference has_attribute);
+    byte clingo_ast_has_attribute(Pointer ast, int attribute, ByteByReference has_attribute);
 
     /**
      * Get the type of the given AST.
@@ -2173,7 +2178,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_type(Pointer ast, int attribute, IntByReference type);
+    byte clingo_ast_attribute_type(Pointer ast, int attribute, IntByReference type);
 
 
     //  Functions to get/set numeric attributes of ASTs
@@ -2189,7 +2194,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_get_number(Pointer ast, int attribute, IntByReference value);
+    byte clingo_ast_attribute_get_number(Pointer ast, int attribute, IntByReference value);
 
     /**
      * Set the value of an attribute of type "clingo_ast_attribute_type_number".
@@ -2202,7 +2207,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_set_number(Pointer ast, int attribute, int value);
+    byte clingo_ast_attribute_set_number(Pointer ast, int attribute, int value);
 
 
     // Functions to get/set symbolic attributes of ASTs
@@ -2218,7 +2223,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_get_symbol(Pointer ast, int attribute, LongByReference value);
+    byte clingo_ast_attribute_get_symbol(Pointer ast, int attribute, LongByReference value);
 
     /**
      * Set the value of an attribute of type "clingo_ast_attribute_type_symbol".
@@ -2231,7 +2236,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_set_symbol(Pointer ast, int attribute, long value);
+    byte clingo_ast_attribute_set_symbol(Pointer ast, int attribute, long value);
 
 
     // Functions to get/set location attributes of ASTs
@@ -2247,7 +2252,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_get_location(Pointer ast, int attribute, Location value);
+    byte clingo_ast_attribute_get_location(Pointer ast, int attribute, Location value);
 
     /**
      * Set the value of an attribute of type "clingo_ast_attribute_type_location".
@@ -2260,7 +2265,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_set_location(Pointer ast, int attribute, Location value);
+    byte clingo_ast_attribute_set_location(Pointer ast, int attribute, Location value);
 
 
     // Functions to get/set string attributes of ASTs
@@ -2276,7 +2281,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_get_string(Pointer ast, int attribute, String[] value);
+    byte clingo_ast_attribute_get_string(Pointer ast, int attribute, String[] value);
 
     /**
      * Set the value of an attribute of type "clingo_ast_attribute_type_string".
@@ -2289,7 +2294,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_set_string(Pointer ast, int attribute, String value);
+    byte clingo_ast_attribute_set_string(Pointer ast, int attribute, String value);
 
 
     // Functions to get/set AST attributes of ASTs
@@ -2305,7 +2310,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_get_ast(Pointer ast, int attribute, PointerByReference value);
+    byte clingo_ast_attribute_get_ast(Pointer ast, int attribute, PointerByReference value);
 
     /**
      * Set the value of an attribute of type "clingo_ast_attribute_type_ast".
@@ -2318,7 +2323,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_set_ast(Pointer ast, int attribute, Pointer value);
+    byte clingo_ast_attribute_set_ast(Pointer ast, int attribute, Pointer value);
 
 
     // Functions to get/set optional AST attributes of ASTs
@@ -2336,7 +2341,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_get_optional_ast(Pointer ast, int attribute, PointerByReference value);
+    byte clingo_ast_attribute_get_optional_ast(Pointer ast, int attribute, PointerByReference value);
 
     /**
      * Set the value of an attribute of type "clingo_ast_attribute_type_optional_ast".
@@ -2351,7 +2356,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_set_optional_ast(Pointer ast, int attribute, Pointer value);
+    byte clingo_ast_attribute_set_optional_ast(Pointer ast, int attribute, Pointer value);
 
 
     // Functions to get/set string array attributes of ASTs
@@ -2368,7 +2373,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_get_string_at(Pointer ast, int attribute, NativeSize index, String[] value);
+    byte clingo_ast_attribute_get_string_at(Pointer ast, int attribute, NativeSize index, String[] value);
 
     /**
      * Set the value of an attribute of type "clingo_ast_attribute_type_string_array" at the given index.
@@ -2382,7 +2387,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_set_string_at(Pointer ast, int attribute, NativeSize index, String value);
+    byte clingo_ast_attribute_set_string_at(Pointer ast, int attribute, NativeSize index, String value);
 
     /**
      * Remove an element from an attribute of type "clingo_ast_attribute_type_string_array" at the given index.
@@ -2395,7 +2400,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_delete_string_at(Pointer ast, int attribute, NativeSize index);
+    byte clingo_ast_attribute_delete_string_at(Pointer ast, int attribute, NativeSize index);
 
     /**
      * Get the size of an attribute of type "clingo_ast_attribute_type_string_array".
@@ -2408,7 +2413,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_size_string_array(Pointer ast, int attribute, NativeSizeByReference size);
+    byte clingo_ast_attribute_size_string_array(Pointer ast, int attribute, NativeSizeByReference size);
 
     /**
      * Insert a value into an attribute of type "clingo_ast_attribute_type_string_array" at the given index.
@@ -2422,7 +2427,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_insert_string_at(Pointer ast, int attribute, NativeSize index, String value);
+    byte clingo_ast_attribute_insert_string_at(Pointer ast, int attribute, NativeSize index, String value);
 
     // Functions to get/set AST array attributes of ASTs
 
@@ -2438,7 +2443,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_get_ast_at(Pointer ast, int attribute, NativeSize index, PointerByReference value);
+    byte clingo_ast_attribute_get_ast_at(Pointer ast, int attribute, NativeSize index, PointerByReference value);
 
     /**
      * Set the value of an attribute of type "clingo_ast_attribute_type_ast_array" at the given index.
@@ -2452,7 +2457,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_set_ast_at(Pointer ast, int attribute, NativeSize index, Pointer value);
+    byte clingo_ast_attribute_set_ast_at(Pointer ast, int attribute, NativeSize index, Pointer value);
 
     /**
      * Remove an element from an attribute of type "clingo_ast_attribute_type_ast_array" at the given index.
@@ -2465,7 +2470,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_delete_ast_at(Pointer ast, int attribute, NativeSize index);
+    byte clingo_ast_attribute_delete_ast_at(Pointer ast, int attribute, NativeSize index);
 
     /**
      * Get the size of an attribute of type "clingo_ast_attribute_type_ast_array".
@@ -2478,7 +2483,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_size_ast_array(Pointer ast, int attribute, NativeSizeByReference size);
+    byte clingo_ast_attribute_size_ast_array(Pointer ast, int attribute, NativeSizeByReference size);
 
     /**
      * Insert a value into an attribute of type "clingo_ast_attribute_type_ast_array" at the given index.
@@ -2492,7 +2497,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_ast_attribute_insert_ast_at(Pointer ast, int attribute, NativeSize index, Pointer value);
+    byte clingo_ast_attribute_insert_ast_at(Pointer ast, int attribute, NativeSize index, Pointer value);
 
     //  Functions to construct ASTs from strings
 
@@ -2510,7 +2515,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_ast_parse_string(String program, AstCallback callback, Pointer callback_data, LoggerCallback logger, Pointer logger_data, int message_limit);
+    byte clingo_ast_parse_string(String program, AstCallback callback, Pointer callback_data, LoggerCallback logger, Pointer logger_data, int message_limit);
 
     /**
      * Parse the programs in the given list of files and return an abstract syntax tree for each statement via a callback.
@@ -2530,7 +2535,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_ast_parse_files(String[] files, NativeSize size, AstCallback callback, Pointer callback_data, LoggerCallback logger, Pointer logger_data, int message_limit);
+    byte clingo_ast_parse_files(String[] files, NativeSize size, AstCallback callback, Pointer callback_data, LoggerCallback logger, Pointer logger_data, int message_limit);
 
     // Functions to add ASTs to logic programs
 
@@ -2540,7 +2545,7 @@ public interface Clingo extends Library {
      * @param builder the target program builder
      * @return whether the call was successful
      */
-    boolean clingo_program_builder_begin(Pointer builder);
+    byte clingo_program_builder_begin(Pointer builder);
 
     /**
      * End building a program.
@@ -2548,7 +2553,7 @@ public interface Clingo extends Library {
      * @param builder the target program builder
      * @return whether the call was successful
      */
-    boolean clingo_program_builder_end(Pointer builder);
+    byte clingo_program_builder_end(Pointer builder);
 
     /**
      * Adds a statement to the program.
@@ -2561,7 +2566,7 @@ public interface Clingo extends Library {
      * </ul>
      * {@link Clingo#clingo_program_builder_begin} must be called before adding statements and {@link Clingo#clingo_program_builder_end} must be called after all statements have been added.
      */
-    boolean clingo_program_builder_add(Pointer builder, Pointer ast);
+    byte clingo_program_builder_add(Pointer builder, Pointer ast);
 
     // Functions to unpool ASts
 
@@ -2577,7 +2582,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_ast_unpool(Pointer ast, int unpool_type, AstCallback callback, Pointer callback_data);
+    byte clingo_ast_unpool(Pointer ast, int unpool_type, AstCallback callback, Pointer callback_data);
 
     // ground program observer
 
@@ -2604,7 +2609,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if argument parsing fails</li>
      * </ul>
      */
-    boolean clingo_control_new(String[] arguments, NativeSize arguments_size, LoggerCallback logger, Pointer logger_data, int message_limit, PointerByReference control);
+    byte clingo_control_new(String[] arguments, NativeSize arguments_size, LoggerCallback logger, Pointer logger_data, int message_limit, PointerByReference control);
 
     /**
      * Free a control object created with {@link Clingo#clingo_control_new}.
@@ -2625,7 +2630,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if parsing or checking fails</li>
      * </ul>
      */
-    boolean clingo_control_load(Pointer control, String file);
+    byte clingo_control_load(Pointer control, String file);
 
     /**
      * Extend the logic program with the given non-ground logic program in string form.
@@ -2644,7 +2649,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if parsing fails</li>
      * </ul>
      */
-    boolean clingo_control_add(Pointer control, String name, String[] parameters, NativeSize parameters_size, String program);
+    byte clingo_control_add(Pointer control, String name, String[] parameters, NativeSize parameters_size, String program);
 
     /**
      * Ground the selected {@link ProgramPart parts} of the current (non-ground) logic program.
@@ -2666,7 +2671,7 @@ public interface Clingo extends Library {
      * <li>error code of ground callback</li>
      * </ul>
      */
-    boolean clingo_control_ground(Pointer control, Structure[] parts, NativeSize parts_size, GroundCallback ground_callback, Pointer ground_callback_data);
+    byte clingo_control_ground(Pointer control, Structure[] parts, NativeSize parts_size, GroundCallback ground_callback, Pointer ground_callback_data);
 
     // Solving Functions
 
@@ -2687,7 +2692,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if solving could not be started</li>
      * </ul>
      */
-    boolean clingo_control_solve(Pointer control, int mode, int[] assumptions, NativeSize assumptions_size, SolveEventCallback notify, Pointer data, PointerByReference handle);
+    byte clingo_control_solve(Pointer control, int mode, int[] assumptions, NativeSize assumptions_size, SolveEventCallback notify, Pointer data, PointerByReference handle);
 
     /**
      * Clean up the domains of the grounding component using the solving
@@ -2707,7 +2712,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_control_cleanup(Pointer control);
+    byte clingo_control_cleanup(Pointer control);
 
     /**
      * Assign a truth value to an external atom.
@@ -2725,7 +2730,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_control_assign_external(Pointer control, int literal, int value);
+    byte clingo_control_assign_external(Pointer control, int literal, int value);
 
     /**
      * Release an external atom.
@@ -2743,7 +2748,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_control_release_external(Pointer control, int literal);
+    byte clingo_control_release_external(Pointer control, int literal);
 
     /**
      * Register a custom propagator with the control object.
@@ -2762,7 +2767,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_control_register_propagator(Pointer control, Propagator propagator, Pointer data, boolean sequential);
+    byte clingo_control_register_propagator(Pointer control, Propagator propagator, Pointer data, byte sequential);
 
     /**
      * Check if the solver has determined that the internal program representation is conflicting.
@@ -2776,7 +2781,7 @@ public interface Clingo extends Library {
      * @param control the target
      * @return whether the program representation is conflicting
      */
-    boolean clingo_control_is_conflicting(Pointer control);
+    byte clingo_control_is_conflicting(Pointer control);
 
     /**
      * Get a statistics object to inspect solver statistics.
@@ -2800,7 +2805,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_control_statistics(Pointer control, PointerByReference statistics);
+    byte clingo_control_statistics(Pointer control, PointerByReference statistics);
 
     /**
      * Interrupt the active solve call (or the following solve call right at the beginning).
@@ -2821,7 +2826,7 @@ public interface Clingo extends Library {
      * @param clasp   pointer to the ClaspFacade object (may be <code>nullptr</code>)
      * @return whether the call was successful
      */
-    boolean clingo_control_clasp_facade(Pointer control, PointerByReference clasp);
+    byte clingo_control_clasp_facade(Pointer control, PointerByReference clasp);
 
     // Configuration Functions
 
@@ -2834,7 +2839,7 @@ public interface Clingo extends Library {
      * @param configuration the configuration object
      * @return whether the call was successful
      */
-    boolean clingo_control_configuration(Pointer control, PointerByReference configuration);
+    byte clingo_control_configuration(Pointer control, PointerByReference configuration);
 
     /**
      * Configure how learnt constraints are handled during enumeration.
@@ -2853,7 +2858,7 @@ public interface Clingo extends Library {
      * @param enable  whether to enable the assumption
      * @return whether the call was successful
      */
-    boolean clingo_control_set_enable_enumeration_assumption(Pointer control, boolean enable);
+    byte clingo_control_set_enable_enumeration_assumption(Pointer control, byte enable);
 
     /**
      * Check whether the enumeration assumption is enabled.
@@ -2863,7 +2868,7 @@ public interface Clingo extends Library {
      * @param control the target
      * @return whether using the enumeration assumption is enabled
      */
-    boolean clingo_control_get_enable_enumeration_assumption(Pointer control);
+    byte clingo_control_get_enable_enumeration_assumption(Pointer control);
 
     /**
      * Enable automatic cleanup after solving.
@@ -2874,7 +2879,7 @@ public interface Clingo extends Library {
      * @param enable  whether to enable cleanups
      * @return whether the call was successful
      */
-    boolean clingo_control_set_enable_cleanup(Pointer control, boolean enable);
+    byte clingo_control_set_enable_cleanup(Pointer control, byte enable);
 
     /**
      * Check whether automatic cleanup is enabled.
@@ -2883,7 +2888,7 @@ public interface Clingo extends Library {
      *
      * @param control the target
      */
-    boolean clingo_control_get_enable_cleanup(Pointer control);
+    byte clingo_control_get_enable_cleanup(Pointer control);
 
     //  Program Inspection Functions
 
@@ -2895,7 +2900,7 @@ public interface Clingo extends Library {
      * @param symbol  the resulting symbol
      * @return whether the call was successful
      */
-    boolean clingo_control_get_const(Pointer control, String name, LongByReference symbol);
+    byte clingo_control_get_const(Pointer control, String name, LongByReference symbol);
 
     /**
      * Check if there is a constant definition for the given constant.
@@ -2908,7 +2913,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if constant definition does not exist</li>
      * </ul>
      */
-    boolean clingo_control_has_const(Pointer control, String name, ByteByReference exists);
+    byte clingo_control_has_const(Pointer control, String name, ByteByReference exists);
 
     /**
      * Get an object to inspect symbolic atoms (the relevant Herbrand base) used
@@ -2920,7 +2925,7 @@ public interface Clingo extends Library {
      * @param atoms   the symbolic atoms object
      * @return whether the call was successful
      */
-    boolean clingo_control_symbolic_atoms(Pointer control, PointerByReference atoms);
+    byte clingo_control_symbolic_atoms(Pointer control, PointerByReference atoms);
 
     /**
      * Get an object to inspect theory atoms that occur in the grounding.
@@ -2931,7 +2936,7 @@ public interface Clingo extends Library {
      * @param atoms   the theory atoms object
      * @return whether the call was successful
      */
-    boolean clingo_control_theory_atoms(Pointer control, PointerByReference atoms);
+    byte clingo_control_theory_atoms(Pointer control, PointerByReference atoms);
 
     /**
      * Register a program observer with the control object.
@@ -2942,7 +2947,7 @@ public interface Clingo extends Library {
      * @param data     user data passed to the observer functions
      * @return whether the call was successful
      */
-    boolean clingo_control_register_observer(Pointer control, Observer observer, boolean replace, Pointer data);
+    byte clingo_control_register_observer(Pointer control, Observer observer, byte replace, Pointer data);
 
     // Program Modification Functions
 
@@ -2958,7 +2963,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    boolean clingo_control_backend(Pointer control, PointerByReference backend);
+    byte clingo_control_backend(Pointer control, PointerByReference backend);
 
     /**
      * Get an object to add non-ground directives to the program.
@@ -2969,7 +2974,7 @@ public interface Clingo extends Library {
      * @param builder the program builder object
      * @return whether the call was successful
      */
-    boolean clingo_control_program_builder(Pointer control, PointerByReference builder);
+    byte clingo_control_program_builder(Pointer control, PointerByReference builder);
 
     /**
      * Add an option that is processed with a custom parser.
@@ -2992,7 +2997,7 @@ public interface Clingo extends Library {
      * @param argument    optional string to change the value name in the generated help output
      * @return whether the call was successful
      */
-    boolean clingo_options_add(Pointer options, String group, String option, String description, ParseCallback parse, Pointer data, boolean multi, String argument);
+    byte clingo_options_add(Pointer options, String group, String option, String description, ParseCallback parse, Pointer data, byte multi, String argument);
 
     /**
      * Add an option that is a simple flag.
@@ -3007,7 +3012,7 @@ public interface Clingo extends Library {
      * @param target      boolean set to true if the flag is given on the command-line
      * @return whether the call was successful
      */
-    boolean clingo_options_add_flag(Pointer options, String group, String option, String description, ByteByReference target);
+    byte clingo_options_add_flag(Pointer options, String group, String option, String description, ByteByReference target);
 
     /**
      * Run clingo with a customized main function (similar to python and lua embedding).
@@ -3028,7 +3033,7 @@ public interface Clingo extends Library {
      * @param data   user data to pass to callbacks in the script
      * @return whether the call was successful
      */
-    boolean clingo_register_script(String name, Script script, Pointer data);
+    byte clingo_register_script(String name, Script script, Pointer data);
 
     /**
      * Get the version of the registered scripting language.

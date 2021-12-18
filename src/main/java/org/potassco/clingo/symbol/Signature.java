@@ -39,7 +39,7 @@ public class Signature implements Comparable<Signature> {
         this.positive = positive;
 
         LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_signature_create(name, arity, positive, longByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_signature_create(name, arity, positive ? (byte) 1 : 0, longByReference));
         this.signature = longByReference.getValue();
     }
 
@@ -52,7 +52,7 @@ public class Signature implements Comparable<Signature> {
     public Signature(long signature) {
         this.name = Clingo.INSTANCE.clingo_signature_name(signature);
         this.arity = Clingo.INSTANCE.clingo_signature_arity(signature);
-        this.positive = Clingo.INSTANCE.clingo_signature_is_positive(signature);
+        this.positive = Clingo.INSTANCE.clingo_signature_is_positive(signature) > 0;
         this.signature = signature;
     }
 
@@ -86,7 +86,7 @@ public class Signature implements Comparable<Signature> {
      * @return Whether the signature is negative (is classically negated).
      */
     public boolean isNegative() {
-        return Clingo.INSTANCE.clingo_signature_is_negative(signature);
+        return Clingo.INSTANCE.clingo_signature_is_negative(signature) > 0;
     }
 
     /**
@@ -98,7 +98,7 @@ public class Signature implements Comparable<Signature> {
     public boolean equals(Object other) {
         if (!(other instanceof Signature))
             return false;
-        return Clingo.INSTANCE.clingo_signature_is_equal_to(signature, ((Signature) other).getLong());
+        return Clingo.INSTANCE.clingo_signature_is_equal_to(signature, ((Signature) other).getLong()) > 0;
     }
 
     /**
@@ -109,7 +109,7 @@ public class Signature implements Comparable<Signature> {
      * @return whether a < b
      */
     public boolean isLess(Signature other) {
-        return Clingo.INSTANCE.clingo_signature_is_less_than(signature, other.getLong());
+        return Clingo.INSTANCE.clingo_signature_is_less_than(signature, other.getLong()) > 0;
     }
 
     @Override

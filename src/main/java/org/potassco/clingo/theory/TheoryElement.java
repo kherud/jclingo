@@ -70,14 +70,8 @@ public class TheoryElement implements Comparable<TheoryElement> {
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
         Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_element_condition(theoryAtoms, id, pointerByReference, nativeSizeByReference));
         int amountElements = (int) nativeSizeByReference.getValue();
-        return pointerByReference.getValue().getIntArray(0, amountElements);
+        return amountElements == 0 ? new int[0] : pointerByReference.getValue().getIntArray(0, amountElements);
         // TODO: return something different than ints?
-//        int[] theoryElementInts = pointerByReference.getValue().getIntArray(0, amountElements);
-//        TheoryElement[] theoryElements = new TheoryElement[amountElements];
-//        for (int i = 0; i < amountElements; i++) {
-//            theoryElements[i] = new TheoryElement(theoryElementInts[i]);
-//        }
-//        return theoryElements;
     }
 
     @Override

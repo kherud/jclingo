@@ -136,7 +136,7 @@ public class Backend implements AutoCloseable {
     public void addRule(int[] head, int[] body, boolean choice) {
         Clingo.check(Clingo.INSTANCE.clingo_backend_rule(
                 backend,
-                choice,
+                choice ? (byte) 1 : 0,
                 head,
                 new NativeSize(head.length),
                 body,
@@ -155,7 +155,7 @@ public class Backend implements AutoCloseable {
     public void addWeightRule(int[] head, int lowerBound, WeightedLiteral[] body, boolean choice) {
         Clingo.check(Clingo.INSTANCE.clingo_backend_weight_rule(
                 backend,
-                choice,
+                choice ? (byte) 1 : 0,
                 head,
                 new NativeSize(head.length),
                 lowerBound,

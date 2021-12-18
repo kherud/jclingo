@@ -54,7 +54,7 @@ public class SolvingTest {
         control.solve(mcb).wait(-1.);
         testSatisfiable(mcb.solveResult);
         Assert.assertEquals(2, mcb.models.size());
-        Assert.assertArrayEquals(new Symbol[]{new Function("a"), new Function("b")}, mcb.models.get(0).symbols);
+        Assert.assertArrayEquals(new Symbol[]{new Function("a"), new Function("c")}, mcb.models.get(0).symbols);
         Assert.assertArrayEquals(new Symbol[]{new Function("b"), new Function("c")}, mcb.models.get(1).symbols);
     }
 
@@ -73,9 +73,9 @@ public class SolvingTest {
         testSatisfiable(mit.solveResult);
         Assert.assertEquals(2, mcb.models.size());
         Assert.assertEquals(2, mit.models.size());
-        Assert.assertArrayEquals(new Symbol[]{new Function("a"), new Function("b")}, mcb.models.get(0).symbols);
+        Assert.assertArrayEquals(new Symbol[]{new Function("a"), new Function("c")}, mcb.models.get(0).symbols);
         Assert.assertArrayEquals(new Symbol[]{new Function("b"), new Function("c")}, mcb.models.get(1).symbols);
-        Assert.assertArrayEquals(new Symbol[]{new Function("a"), new Function("b")}, mit.models.get(0).symbols);
+        Assert.assertArrayEquals(new Symbol[]{new Function("a"), new Function("c")}, mit.models.get(0).symbols);
         Assert.assertArrayEquals(new Symbol[]{new Function("b"), new Function("c")}, mit.models.get(1).symbols);
     }
 
@@ -101,9 +101,9 @@ public class SolvingTest {
         testSatisfiable(mit.solveResult);
         Assert.assertEquals(2, mcb.models.size());
         Assert.assertEquals(2, mit.models.size());
-        Assert.assertArrayEquals(new Symbol[]{new Function("a"), new Function("b")}, mcb.models.get(0).symbols);
+        Assert.assertArrayEquals(new Symbol[]{new Function("a"), new Function("c")}, mcb.models.get(0).symbols);
         Assert.assertArrayEquals(new Symbol[]{new Function("b"), new Function("c")}, mcb.models.get(1).symbols);
-        Assert.assertArrayEquals(new Symbol[]{new Function("a"), new Function("b")}, mit.models.get(0).symbols);
+        Assert.assertArrayEquals(new Symbol[]{new Function("a"), new Function("c")}, mit.models.get(0).symbols);
         Assert.assertArrayEquals(new Symbol[]{new Function("b"), new Function("c")}, mit.models.get(1).symbols);
     }
 
@@ -136,9 +136,7 @@ public class SolvingTest {
         int[] assumptionLiterals = new int[assumptions.size()];
         for (int i = 0; i < assumptions.size(); i++)
             assumptionLiterals[i] = assumptions.get(i);
-        System.out.println(assumptions);
         control.solve(assumptionLiterals, mcb, SolveMode.ASYNC).wait(-1.);
-        System.out.println(mcb.solveResult.unsatisfiable());
     }
 
     private void testSatisfiable(SolveResult solveResult) {
@@ -149,7 +147,7 @@ public class SolvingTest {
     }
 
 
-    private static class TestCallback extends SolveEventCallback {
+    static class TestCallback extends SolveEventCallback {
         public final List<ModelTuple> models = new ArrayList<>();
         public final List<long[]> cores = new ArrayList<>();
         public SolveResult solveResult;
@@ -172,7 +170,7 @@ public class SolvingTest {
             cores.add(literals);
         }
 
-        private static class ModelTuple {
+        public static class ModelTuple {
             public final ModelType type;
             public final Symbol[] symbols;
 

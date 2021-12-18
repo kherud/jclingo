@@ -6,8 +6,8 @@ import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.configuration.Configuration;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.grounding.Observer;
-import org.potassco.clingo.grounding.GroundCallback;
+import org.potassco.clingo.solving.Observer;
+import org.potassco.clingo.solving.GroundCallback;
 import org.potassco.clingo.propagator.Propagator;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.solving.SolveEventCallback;
@@ -157,7 +157,7 @@ public class Control implements AutoCloseable {
      * @return a solve-handle to interact with
      */
     public SolveHandle solve() {
-        return solve(Collections.emptyList(), null, SolveMode.YIELD);
+        return solve(Collections.emptyList(), null, SolveMode.NONE);
     }
 
     /**
@@ -196,9 +196,9 @@ public class Control implements AutoCloseable {
     /**
      * Starts a search.
      *
-     * @param callback    Optional callbacks for intercepting models, lower bounds during optimization,
-     *                    statistics updates, or the end of the search (implement {@link SolveEventCallback}.
-     * @param solveMode   whether the search is blocking / non-blocking
+     * @param callback  Optional callbacks for intercepting models, lower bounds during optimization,
+     *                  statistics updates, or the end of the search (implement {@link SolveEventCallback}.
+     * @param solveMode whether the search is blocking / non-blocking
      * @return a solve-handle to interact with
      */
     public SolveHandle solve(SolveEventCallback callback, SolveMode solveMode) {
@@ -389,7 +389,7 @@ public class Control implements AutoCloseable {
      * @return Check whether automatic cleanup is enabled.
      */
     public boolean getCleanupEnabled() {
-        return Clingo.INSTANCE.clingo_control_get_enable_cleanup(control);
+        return Clingo.INSTANCE.clingo_control_get_enable_cleanup(control) > 0;
     }
 
     /**
@@ -398,7 +398,7 @@ public class Control implements AutoCloseable {
      * @param value boolean whether to enable or disable cleanup
      */
     public void setEnableCleanup(boolean value) {
-        Clingo.check(Clingo.INSTANCE.clingo_control_set_enable_cleanup(control, value));
+        Clingo.check(Clingo.INSTANCE.clingo_control_set_enable_cleanup(control, value ? (byte) 1 : 0));
     }
 
     /**
@@ -421,7 +421,7 @@ public class Control implements AutoCloseable {
      * @return whether the enumeration assumption is enabled
      */
     public boolean getEnumerationAssumptionEnabled() {
-        return Clingo.INSTANCE.clingo_control_get_enable_enumeration_assumption(control);
+        return Clingo.INSTANCE.clingo_control_get_enable_enumeration_assumption(control) > 0;
     }
 
     /**
@@ -444,7 +444,7 @@ public class Control implements AutoCloseable {
      * @param value a boolean whether to enable or disable the enumeration assumption
      */
     public void setEnableEnumerationAssumption(boolean value) {
-        Clingo.check(Clingo.INSTANCE.clingo_control_set_enable_enumeration_assumption(control, value));
+        Clingo.check(Clingo.INSTANCE.clingo_control_set_enable_enumeration_assumption(control, value ? (byte) 1 : 0));
     }
 
     /**
@@ -464,7 +464,12 @@ public class Control implements AutoCloseable {
      *                 the underlying solver (or any previously registered observers).
      */
     public void registerObserver(Observer observer, boolean replace) {
-        Clingo.check(Clingo.INSTANCE.clingo_control_register_observer(control, observer, replace, control));
+        Clingo.check(Clingo.INSTANCE.clingo_control_register_observer(
+                control,
+                observer,
+                replace ? (byte) 1 : 0,
+                control)
+        );
     }
 
     /**
@@ -477,7 +482,12 @@ public class Control implements AutoCloseable {
      * @param sequentially Whether to call the propagator sequentially
      */
     public void registerPropagator(Propagator propagator, boolean sequentially) {
-        Clingo.check(Clingo.INSTANCE.clingo_control_register_propagator(control, propagator, control, sequentially));
+        Clingo.check(Clingo.INSTANCE.clingo_control_register_propagator(
+                control,
+                propagator,
+                control,
+                sequentially ? (byte) 1 : 0)
+        );
     }
 
     /**
@@ -493,7 +503,7 @@ public class Control implements AutoCloseable {
      * @return Whether the internal program representation is conflicting.
      */
     public boolean isConflicting() {
-        return Clingo.INSTANCE.clingo_control_is_conflicting(control);
+        return Clingo.INSTANCE.clingo_control_is_conflicting(control) > 0;
     }
 
     /**

@@ -1,4 +1,4 @@
-package org.potassco.clingo.grounding;
+package org.potassco.clingo.control;
 
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;

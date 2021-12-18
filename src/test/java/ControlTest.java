@@ -20,12 +20,7 @@ public class ControlTest {
 
     @Test
     public void testCreate() {
-        LoggerCallback logger = new LoggerCallback() {
-            @Override
-            public void call(WarningCode code, String message) {
-                System.out.printf("[%d] %s\n", code.getValue(), message);
-            }
-        };
+        LoggerCallback logger = (code, message) -> System.out.printf("[%d] %s\n", code.getValue(), message);
         Control control;
         control = new Control();
         control.close();
@@ -45,21 +40,6 @@ public class ControlTest {
         control.add("part", "{a}.");
 //        ProgramPart programPart = new ProgramPart("part");
 //        control.ground(programPart);
-    }
-
-    @Test
-    public void testGround2() {
-//        Control control = new Control();
-//        control.add("part", "p(1).", "c");
-//        ProgramPart programPart = new ProgramPart("part", new Number(1));
-//        control.ground(programPart);
-//        System.out.println(control.getSymbolicAtoms().size());
-//        List<Symbol> expectedSymbols = List.of();
-//        List<Symbol> symbolicAtoms = control.getSymbolicAtoms().getAll().stream().map(SymbolicAtom::getSymbol).collect(Collectors.toList());
-//        Assert.assertEquals(symbolicAtoms, );
-//        for (SymbolicAtom symbolicAtom : control.getSymbolicAtoms()) {
-//            System.out.println(symbolicAtom);
-//        }
     }
 
     @Test
@@ -83,7 +63,7 @@ public class ControlTest {
         control.ground();
         control.solve(callback).wait(-1.);
 
-        Assert.assertEquals(unsatSymbols, List.of(1, 2, 3));
+        Assert.assertEquals(unsatSymbols, List.of(1L, 2L, 3L));
 //        Assert.assertEquals(control.getStatistics());
 
     }

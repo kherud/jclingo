@@ -2,9 +2,8 @@ import com.sun.jna.Pointer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.potassco.clingo.control.Control;
-import org.potassco.clingo.grounding.Observer;
+import org.potassco.clingo.solving.Observer;
 import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.symbol.Function;
 
 import java.util.HashSet;
 import java.util.Set;

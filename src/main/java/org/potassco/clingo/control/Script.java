@@ -5,7 +5,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.ByteByReference;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.grounding.SymbolCallback;
+import org.potassco.clingo.solving.SymbolCallback;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 

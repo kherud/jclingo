@@ -88,7 +88,7 @@ public class PropagateControl {
      * @return Whether the literal is watched.
      */
     public boolean hasWatch(int literal) {
-        return Clingo.INSTANCE.clingo_propagate_control_has_watch(propagateControl, literal);
+        return Clingo.INSTANCE.clingo_propagate_control_has_watch(propagateControl, literal) > 0;
     }
 
     /**

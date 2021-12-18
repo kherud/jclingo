@@ -1,7 +1,7 @@
 import com.sun.jna.Pointer;
 import org.junit.Assert;
 import org.junit.Test;
-import org.potassco.clingo.grounding.Observer;
+import org.potassco.clingo.solving.Observer;
 import org.potassco.clingo.backend.WeightedLiteral;
 import org.potassco.clingo.backend.ExternalType;
 import org.potassco.clingo.backend.HeuristicType;
@@ -11,7 +11,6 @@ import org.potassco.clingo.control.Control;
 import org.potassco.clingo.symbol.Function;
 import org.potassco.clingo.symbol.Number;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,14 +22,12 @@ public class TestObserver extends Observer {
     public void testBackendObserver() throws Exception {
         Control control = new Control();
         control.registerObserver(new TestObserver(), false);
-        System.out.println(new Function("abd", true, new Number(1)));
 
         control.add("{a}.");
         try (Backend backend = control.getBackend()) {
             Assert.assertTrue(called.contains("initProgram"));
             Assert.assertTrue(called.contains("beginStep"));
             backend.addAtom();
-            System.out.println(called);
 //            backend.addAtom(new Function("a"));
 //            backend.addRule(new int[]{1}, new int[]{2, 3}, true);
 //            Assert.assertTrue(called.contains("rule"));

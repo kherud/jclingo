@@ -50,7 +50,11 @@ public class PropagateInit {
      */
     public int addLiteral(boolean freeze) {
         IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_add_literal(propagateInit, freeze, intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_add_literal(
+                propagateInit,
+                freeze ? (byte) 1 : 0,
+                intByReference)
+        );
         return intByReference.getValue();
     }
 
@@ -150,7 +154,7 @@ public class PropagateInit {
                 new NativeSize(literals.length),
                 bound,
                 type.getValue(),
-                compareEqual,
+                compareEqual ? (byte) 1 : 0,
                 byteByReference
         ));
         return byteByReference.getValue() > 0;

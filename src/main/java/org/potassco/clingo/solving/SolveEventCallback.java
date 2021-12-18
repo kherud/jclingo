@@ -48,6 +48,7 @@ public abstract class SolveEventCallback implements Callback {
                 break;
             case FINISH:
                 onResult(new SolveResult(event.getInt(0)));
+                break;
             default:
                 throw new IllegalStateException("unknown solve event type " + type);
         }

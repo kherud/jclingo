@@ -1,5 +1,6 @@
 package org.potassco.clingo.symbol;
 
+import com.sun.jna.Native;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -7,9 +8,11 @@ import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * Construct a function symbol.
- *
+ * <p>
  * This includes constants and tuples. Constants have an empty argument list
  * and tuples have an empty name. Functions can represent classically negated
  * atoms. Argument `positive` has to be set to false to represent such atoms.
@@ -99,7 +102,8 @@ public class Function extends Symbol {
      */
     public int getArity() {
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_arguments(symbol, null, nativeSizeByReference));
+        PointerByReference pointerByReference = new PointerByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_symbol_arguments(symbol, pointerByReference, nativeSizeByReference));
         return (int) nativeSizeByReference.getValue();
     }
 
@@ -111,21 +115,21 @@ public class Function extends Symbol {
     /**
      * Statically create a new native function from a name and its sign
      *
-     * @param name the name of the function
+     * @param name     the name of the function
      * @param positive the sign of the function
      * @return the newly created native function
      */
     private static long create(String name, boolean positive) {
         LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_create_id(name, positive, longByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_symbol_create_id(name, positive ? (byte) 1 : 0, longByReference));
         return longByReference.getValue();
     }
 
     /**
      * Statically create a new native function from a name, its sign, and a list of arguments
      *
-     * @param name the name of the function
-     * @param positive the sign of the function
+     * @param name      the name of the function
+     * @param positive  the sign of the function
      * @param arguments the symbol arguments
      * @return the newly created native function
      */
@@ -137,7 +141,13 @@ public class Function extends Symbol {
         NativeSize argumentsSize = new NativeSize(arguments.length);
 
         LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_create_function(name, argumentSymbols, argumentsSize, positive, longByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_symbol_create_function(
+                name,
+                argumentSymbols,
+                argumentsSize,
+                positive ? (byte) 1 : 0,
+                longByReference)
+        );
         return longByReference.getValue();
     }
 }

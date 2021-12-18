@@ -79,7 +79,7 @@ public class Assignment implements Iterable<Integer> {
      * @return whether the assignment is conflicting
      */
     public boolean isConflicting() {
-        return Clingo.INSTANCE.clingo_assignment_has_conflict(assignment);
+        return Clingo.INSTANCE.clingo_assignment_has_conflict(assignment) > 0;
     }
 
     /**
@@ -88,7 +88,7 @@ public class Assignment implements Iterable<Integer> {
      * @return whether the assignment is total
      */
     public boolean isTotal() {
-        return Clingo.INSTANCE.clingo_assignment_is_total(assignment);
+        return Clingo.INSTANCE.clingo_assignment_is_total(assignment) > 0;
     }
 
     /**
@@ -98,7 +98,7 @@ public class Assignment implements Iterable<Integer> {
      * @return a bool determining if the given literal is valid in this solver.
      */
     public boolean hasLiteral(int literal) {
-        return Clingo.INSTANCE.clingo_assignment_has_literal(assignment, literal);
+        return Clingo.INSTANCE.clingo_assignment_has_literal(assignment, literal) > 0;
     }
 
     /**

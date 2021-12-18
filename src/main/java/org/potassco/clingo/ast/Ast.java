@@ -200,7 +200,7 @@ public class Ast implements Comparable<Ast> {
      * @return the result of the compariso
      */
     public boolean equals(Ast other) {
-        return Clingo.INSTANCE.clingo_ast_equal(ast, other.getPointer());
+        return Clingo.INSTANCE.clingo_ast_equal(ast, other.getPointer()) > 0;
     }
 
     /**
@@ -209,7 +209,7 @@ public class Ast implements Comparable<Ast> {
      * @return the result of the compariso
      */
     public boolean isLess(Ast other) {
-        return Clingo.INSTANCE.clingo_ast_less_than(ast, other.getPointer());
+        return Clingo.INSTANCE.clingo_ast_less_than(ast, other.getPointer()) > 0;
     }
 
     @Override

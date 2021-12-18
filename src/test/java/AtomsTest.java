@@ -69,11 +69,11 @@ public class AtomsTest {
         Assert.assertFalse(p2.match(new Signature("b", 1, true)));
         Assert.assertFalse(p2.match(new Signature("p", 1, false)));
 
-        SymbolicAtom p3 = symbolicAtoms.getSymbolicAtom(new Function("p", new Number(1)));
+        SymbolicAtom p3 = symbolicAtoms.getSymbolicAtom(new Function("p", new Number(3)));
         Assert.assertNotNull(p3);
         Assert.assertFalse(p3.isFact());
         Assert.assertTrue(p3.isExternal());
-        Assert.assertTrue(p3.getLiteral() >= 3);
+        Assert.assertTrue(p3.getLiteral() >= 2);
         Assert.assertEquals(p3.getSymbol(), new Function("p", new Number(3)));
         Assert.assertTrue(p3.match(new Signature("p", 1, true)));
         Assert.assertFalse(p3.match(new Signature("p", 2, true)));
@@ -88,7 +88,7 @@ public class AtomsTest {
 
         SymbolicAtoms symbolicAtoms = control.getSymbolicAtoms();
 
-        symbolicAtoms.getSymbolicAtom(new Function("p", new Number(1)));
+        symbolicAtoms.getSymbolicAtom(new Function("p", new Number(4)));
     }
 
     @Test
@@ -101,6 +101,7 @@ public class AtomsTest {
         List<Signature> signatures = symbolicAtoms.getSignatures();
         signatures.sort(Signature::compareTo);
         Assert.assertEquals(3, signatures.size());
+
         Assert.assertEquals(new Signature("p", 1, true), signatures.get(0));
         Assert.assertEquals(new Signature("q", 1, true), signatures.get(1));
         Assert.assertEquals(new Signature("p", 1, false), signatures.get(2));

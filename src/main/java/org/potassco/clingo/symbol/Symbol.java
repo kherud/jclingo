@@ -8,6 +8,8 @@ import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
 
+import java.util.Arrays;
+
 public abstract class Symbol implements Comparable<Symbol> {
 
     protected final long symbol;
@@ -59,7 +61,7 @@ public abstract class Symbol implements Comparable<Symbol> {
         int length = (int) nativeSizeByRef.getValue();
         byte[] symbolBytes = new byte[length];
         Clingo.check(Clingo.INSTANCE.clingo_symbol_to_string(symbol, symbolBytes, new NativeSize(length)));
-        return Native.toString(symbolBytes);
+        return new String(Arrays.copyOf(symbolBytes, symbolBytes.length - 1));
     }
 
     /**
@@ -126,7 +128,7 @@ public abstract class Symbol implements Comparable<Symbol> {
     public boolean equals(Object other) {
         if (!(other instanceof Symbol))
             return false;
-        return Clingo.INSTANCE.clingo_symbol_is_equal_to(symbol, ((Symbol) other).getLong());
+        return Clingo.INSTANCE.clingo_symbol_is_equal_to(symbol, ((Symbol) other).getLong()) > 0;
     }
 
     /**
@@ -140,7 +142,7 @@ public abstract class Symbol implements Comparable<Symbol> {
      * @return whether this < other
      */
     public boolean lessThan(Symbol other) {
-        return Clingo.INSTANCE.clingo_symbol_is_less_than(symbol, other.getLong());
+        return Clingo.INSTANCE.clingo_symbol_is_less_than(symbol, other.getLong()) > 0;
     }
 
     public long getLong() {

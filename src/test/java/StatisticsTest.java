@@ -47,7 +47,7 @@ public class StatisticsTest {
         control.solve();
         Statistics statistics = control.getStatistics();
         Assert.assertTrue(statistics.get("problem.lp.atoms").get() >= 2.);
-        Assert.assertTrue(statistics.get("solving.solvers.choices").get() >= 2.);
+        Assert.assertTrue(statistics.get("solving.solvers.choices").get() >= 1.);
     }
 
     @Ignore

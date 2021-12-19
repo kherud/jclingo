@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.backend;
 
 import com.sun.jna.Pointer;
@@ -96,7 +96,7 @@ public class Backend implements AutoCloseable {
      * Mark a program atom as external fixing its truth value.
      * Can also be used to release an external atom using `TruthValue.Release`.
      *
-     * @param atom       The program atom to mark as external.
+     * @param atom         The program atom to mark as external.
      * @param externalType The truth value.
      */
     public void addExternal(int atom, ExternalType externalType) {
@@ -131,7 +131,14 @@ public class Backend implements AutoCloseable {
      * @param priority Integer for the priority.
      */
     public void addMinimize(WeightedLiteral[] literals, int priority) {
-        Clingo.check(Clingo.INSTANCE.clingo_backend_minimize(backend, priority, literals, new NativeSize(literals.length)));
+        //TODO: JNA exception "Structure array elements must use contiguous memory"
+        // is there a better way than to recreate a contiguous array?
+        WeightedLiteral[] contiguousArray = (WeightedLiteral[]) (new WeightedLiteral()).toArray(literals.length);
+        for (int i = 0; i < literals.length; i++) {
+            contiguousArray[i].literal = literals[i].literal;
+            contiguousArray[i].weight = literals[i].weight;
+        }
+        Clingo.check(Clingo.INSTANCE.clingo_backend_minimize(backend, priority, contiguousArray, new NativeSize(literals.length)));
     }
 
     /**
@@ -166,25 +173,32 @@ public class Backend implements AutoCloseable {
     /**
      * Add a disjuntive or choice rule with one weight constraint with a lower bound in the body to the program.
      *
-     * @param head The program atoms forming the rule head.
+     * @param head       The program atoms forming the rule head.
      * @param lowerBound The lower bound.
-     * @param body The pairs of program literals and weights forming the elements of the weight constraint.
-     * @param choice Whether to add a disjunctive or choice rule.
+     * @param body       The pairs of program literals and weights forming the elements of the weight constraint.
+     * @param choice     Whether to add a disjunctive or choice rule.
      */
     public void addWeightRule(int[] head, int lowerBound, WeightedLiteral[] body, boolean choice) {
+        //TODO: JNA exception "Structure array elements must use contiguous memory"
+        // is there a better way than to recreate a contiguous array?
+        WeightedLiteral[] contiguousArray = (WeightedLiteral[]) (new WeightedLiteral()).toArray(body.length);
+        for (int i = 0; i < body.length; i++) {
+            contiguousArray[i].literal = body[i].literal;
+            contiguousArray[i].weight = body[i].weight;
+        }
         Clingo.check(Clingo.INSTANCE.clingo_backend_weight_rule(
                 backend,
                 choice ? (byte) 1 : 0,
                 head,
                 new NativeSize(head.length),
                 lowerBound,
-                body,
+                contiguousArray,
                 new NativeSize(body.length)
         ));
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         Clingo.check(Clingo.INSTANCE.clingo_backend_end(backend));
     }
 }

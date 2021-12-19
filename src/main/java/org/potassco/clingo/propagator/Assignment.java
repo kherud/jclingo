@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.propagator;
 
 import com.sun.jna.Pointer;
@@ -56,10 +56,36 @@ public class Assignment implements Iterable<Integer> {
      * @param index the index of the literal
      * @return The (positive) literal at the given offset in the assignment.
      */
-    public int getAssignmentAt(int index) {
+    public int get(int index) {
         IntByReference intByReference = new IntByReference();
         Clingo.check(Clingo.INSTANCE.clingo_assignment_at(assignment, new NativeSize(index), intByReference));
         return intByReference.getValue();
+    }
+
+    /**
+     * @param begin the start index of the literal
+     * @param end   the end index of the literal
+     * @return The (positive) literals at the given interval in the assignment.
+     */
+    public int[] get(int begin, int end) {
+        assert end > begin;
+        int[] literals = new int[end - begin];
+        for (int i = begin; i < end; i++) {
+            literals[i] = get(i);
+        }
+        return literals;
+    }
+
+    /**
+     * Determine the truth value of a given literal.
+     *
+     * @param literal The solver literal.
+     * @return a bool determining if the literal is assigned on the top level.
+     */
+    public TruthValue getTruthValue(int literal) {
+        IntByReference intByReference = new IntByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_assignment_truth_value(assignment, literal, intByReference));
+        return TruthValue.fromValue(intByReference.getValue());
     }
 
     /**
@@ -157,15 +183,13 @@ public class Assignment implements Iterable<Integer> {
     }
 
     /**
-     * Determine the truth value of a given literal.
+     * Determine if the literal is free.
      *
      * @param literal The solver literal.
      * @return a bool determining if the literal is assigned on the top level.
      */
     public boolean isFree(int literal) {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_assignment_truth_value(assignment, literal, intByReference));
-        return intByReference.getValue() == TruthValue.FREE.getValue();
+        return getTruthValue(literal) == TruthValue.FREE;
     }
 
     /**
@@ -208,7 +232,7 @@ public class Assignment implements Iterable<Integer> {
 
             @Override
             public Integer next() {
-                return getAssignmentAt(i++);
+                return get(i++);
             }
         };
     }

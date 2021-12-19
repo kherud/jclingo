@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.configuration;
 
 import com.sun.jna.Native;
@@ -190,6 +190,20 @@ public class Configuration {
         }
 
         return keys;
+    }
+
+    /**
+     * Get the name associated with the offset-th subkey.
+     * Throws an error if the current object is not an option group.
+     *
+     * @return the key
+     */
+    public String getKey(int index) {
+        if (!isMap())
+            throw new IllegalStateException("configuration entry is not a map");
+        String[] stringByReference = new String[1];
+        Clingo.check(Clingo.INSTANCE.clingo_configuration_map_subkey_name(configuration, key, new NativeSize(index), stringByReference));
+        return stringByReference[0];
     }
 
     /**
@@ -371,5 +385,43 @@ public class Configuration {
 
     public Pointer getPointer() {
         return configuration;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        if (isMap()) {
+            int size = mapSize();
+            List<String> keys = getKeys();
+            builder.append("{");
+            for (int i = 0; i < size; i++) {
+                String name = keys.get(i);
+                builder.append('"').append(name).append('"');
+                builder.append(": ");
+                builder.append(get(name));
+                if (i < size - 1)
+                    builder.append(", ");
+            }
+            builder.append("}");
+        }
+
+        if (isArray()) {
+            int size = arraySize();
+            builder.append("[");
+            for (int i = 0; i < size; i++) {
+                builder.append(get(i).toString());
+                if (i < size - 1)
+                    builder.append(", ");
+            }
+            builder.append("]");
+        }
+
+        if (isValue()) {
+            builder.append('"').append(get()).append('"');
+            return builder.toString();
+        }
+
+        return builder.toString();
     }
 }

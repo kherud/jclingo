@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.propagator;
 
 import com.sun.jna.Pointer;
@@ -34,6 +34,16 @@ public class PropagateControl {
 
     public PropagateControl(Pointer propagateControl) {
         this.propagateControl = propagateControl;
+    }
+
+    /**
+     * Add the given clause to the solver.
+     *
+     * @param clause List of solver literals forming the clause.
+     * @return This method returns false if the current propagation must be stopped.
+     */
+    public boolean addClause(int[] clause) {
+        return addClause(clause, false, false);
     }
 
     /**

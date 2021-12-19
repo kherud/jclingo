@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.control;
 
 import com.sun.jna.Pointer;
@@ -235,7 +235,7 @@ public class Control implements AutoCloseable {
      */
     public SolveHandle solve(Collection<Symbol> assumptions, SolveEventCallback callback, SolveMode solveMode) {
         int[] assumptionLiterals = assumptions.stream()
-                .map(getSymbolicAtoms()::getSymbolicAtom)
+                .map(getSymbolicAtoms()::get)
                 .mapToInt(SymbolicAtom::getLiteral).toArray();
         return solve(assumptionLiterals, callback, solveMode);
     }
@@ -318,7 +318,7 @@ public class Control implements AutoCloseable {
     public void assignExternal(Symbol[] symbols, TruthValue truthValue) {
         SymbolicAtoms symbolicAtoms = getSymbolicAtoms();
         for (Symbol symbol : symbols) {
-            int literal = symbolicAtoms.getSymbolicAtom(symbol).getLiteral();
+            int literal = symbolicAtoms.get(symbol).getLiteral();
             assignExternal(literal, truthValue);
         }
     }
@@ -363,7 +363,7 @@ public class Control implements AutoCloseable {
     public void releaseExternal(Symbol[] symbols) {
         SymbolicAtoms symbolicAtoms = getSymbolicAtoms();
         for (Symbol symbol : symbols) {
-            int literal = symbolicAtoms.getSymbolicAtom(symbol).getLiteral();
+            int literal = symbolicAtoms.get(symbol).getLiteral();
             releaseExternal(literal);
         }
     }
@@ -489,6 +489,18 @@ public class Control implements AutoCloseable {
                 replace ? (byte) 1 : 0,
                 control)
         );
+    }
+
+    /**
+     * Registers the given propagator with all solvers.
+     * <p>
+     * If the sequential flag is set to true, the propagator is called sequentially
+     * when solving with multiple threads (default should be false).
+     *
+     * @param propagator   The propagator to register.
+     */
+    public void registerPropagator(Propagator propagator) {
+        registerPropagator(propagator, false);
     }
 
     /**

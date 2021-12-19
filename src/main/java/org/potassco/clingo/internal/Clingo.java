@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.internal;
 
 import com.sun.jna.*;
@@ -1866,7 +1866,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if the size is too small</li>
      * </ul>
      */
-    byte clingo_model_cost(Pointer model, PointerByReference costs, NativeSize size);
+    byte clingo_model_cost(Pointer model, LongByReference costs, NativeSize size);
 
     /**
      * Whether the optimality of a model has been proven.

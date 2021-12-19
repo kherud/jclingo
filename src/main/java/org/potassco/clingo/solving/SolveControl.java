@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.solving;
 
 import com.sun.jna.Pointer;
@@ -67,7 +67,7 @@ public class SolveControl {
         int[] literals = new int[symbols.length];
         for (int i = 0; i < literals.length; i++)
             try {
-                literals[i] = symbolicAtoms.getSymbolicAtom(symbols[i]).getLiteral();
+                literals[i] = symbolicAtoms.get(symbols[i]).getLiteral();
                 literals[i] = truthValue == TruthValue.TRUE || truthValue == TruthValue.FREE ? literals[i] : -literals[i];
             } catch (NoSuchElementException e) {
                 literals[i] = -1;

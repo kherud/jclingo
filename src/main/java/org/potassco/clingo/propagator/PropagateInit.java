@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.propagator;
 
 import com.sun.jna.Pointer;
@@ -56,11 +56,27 @@ public class PropagateInit {
 
     /**
      * Statically adds a literal to the solver.
-     *
+     * <p>
      * To be able to use the variable in clauses during propagation or add
      * watches to it, it has to be frozen. Otherwise, it might be removed
      * during preprocessing.
+     * <p>
+     * If literals are added to the solver, subsequent calls to `add_clause` and
+     * `propagate` are expensive. It is best to add literals in batches.
      *
+     * @return Returns the added literal.
+     */
+    public int addLiteral() {
+        return addLiteral(true);
+    }
+
+    /**
+     * Statically adds a literal to the solver.
+     * <p>
+     * To be able to use the variable in clauses during propagation or add
+     * watches to it, it has to be frozen. Otherwise, it might be removed
+     * during preprocessing.
+     * <p>
      * If literals are added to the solver, subsequent calls to `add_clause` and
      * `propagate` are expensive. It is best to add literals in batches.
      *
@@ -79,8 +95,19 @@ public class PropagateInit {
 
     /**
      * Extends the solver's minimize constraint with the given weighted literal.
-     * @param literal The literal to add.
-     * @param weight The weight of the literal.
+     *
+     * @param literal  The literal to add.
+     * @param weight   The weight of the literal.
+     */
+    public void addMinimize(int literal, int weight) {
+        addMinimize(literal, weight, 0);
+    }
+
+    /**
+     * Extends the solver's minimize constraint with the given weighted literal.
+     *
+     * @param literal  The literal to add.
+     * @param weight   The weight of the literal.
      * @param priority The priority of the literal.
      */
     public void addMinimize(int literal, int weight, int priority) {
@@ -100,7 +127,7 @@ public class PropagateInit {
     /**
      * Add a watch to a specific thread for the solver literal in the given phase.
      *
-     * @param literal The solver literal to watch.
+     * @param literal  The solver literal to watch.
      * @param threadId The id of the thread to watch the literal.
      */
     public void addWatch(int literal, int threadId) {
@@ -120,7 +147,7 @@ public class PropagateInit {
     /**
      * Remove the watch for the solver literal in the given phase.
      *
-     * @param literal The solver literal to remove the watch from.
+     * @param literal  The solver literal to remove the watch from.
      * @param threadId The id of the thread from which to remove the watch.
      */
     public void removeWatch(int literal, int threadId) {
@@ -129,7 +156,7 @@ public class PropagateInit {
 
     /**
      * Freeze the given solver literal.
-     *
+     * <p>
      * Any solver literal that is not frozen is subject to simplification and
      * might be removed in a preprocessing step after propagator
      * initialization. A propagator should freeze all literals over which it
@@ -145,31 +172,36 @@ public class PropagateInit {
 
     /**
      * Statically adds a constraint of form
-     *
-     *      literal <=> { l=w | (l, w) in literals } >= bound
-     *
+     * <p>
+     * literal <=> { l=w | (l, w) in literals } >= bound
+     * <p>
      * to the solver.
-     *
+     * <p>
      * - If `type_ < 0`, then `<=>` is a left implication.
      * - If `type_ > 0`, then `<=>` is a right implication.
      * - Otherwise, `<=>` is an equivalence.
-     *
+     * <p>
      * If this function returns false, initialization should be stopped and no further
      * functions of the `PropagateInit` and related objects should be called.
      *
-     * @param literal The literal associated with the constraint.
-     * @param literals The weighted literals of the constraint.
-     * @param bound The bound of the constraint.
-     * @param type Add a weight constraint of the given type_.
+     * @param literal      The literal associated with the constraint.
+     * @param literals     The weighted literals of the constraint.
+     * @param bound        The bound of the constraint.
+     * @param type         Add a weight constraint of the given type_.
      * @param compareEqual A Boolean indicating whether to compare equal or less than equal.
      * @return Returns false if the program became unsatisfiable.
      */
     public boolean addWeightConstraint(int literal, WeightedLiteral[] literals, int bound, WeightConstraintType type, boolean compareEqual) {
         ByteByReference byteByReference = new ByteByReference();
+        WeightedLiteral[] weightedLiterals = (WeightedLiteral[]) (new WeightedLiteral()).toArray(literals.length);
+        for (int i = 0; i < weightedLiterals.length; i++) {
+            weightedLiterals[i].literal = literals[i].literal;
+            weightedLiterals[i].weight = literals[i].weight;
+        }
         Clingo.check(Clingo.INSTANCE.clingo_propagate_init_add_weight_constraint(
                 propagateInit,
                 literal,
-                literals,
+                weightedLiterals,
                 new NativeSize(literals.length),
                 bound,
                 type.getValue(),
@@ -181,9 +213,9 @@ public class PropagateInit {
 
     /**
      * Propagates consequences of the underlying problem excluding registered propagators.
-     *
+     * <p>
      * This function has no effect if SAT-preprocessing is enabled.
-     *
+     * <p>
      * If this function returns false, initialization should be stopped and no
      * further functions of the `PropagateInit` and related objects should be
      * called.

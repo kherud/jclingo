@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo;
 
 import org.potassco.clingo.configuration.args.Option;
@@ -48,7 +48,7 @@ public class Solver {
                 Model model = solveHandle.next();
                 Symbol[] symbols = model.getSymbols();
                 ModelType type = model.getType();
-                int[] cost = model.getCost();
+                long[] cost = model.getCost();
                 AnswerSet answer = new AnswerSet(Arrays.asList(symbols), type, cost);
                 answers.add(answer);
             }

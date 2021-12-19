@@ -16,12 +16,14 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.solving;
 
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 import org.potassco.clingo.ast.Location;
+import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.symbol.Symbol;
 
 /**
  * Callback function to implement external functions.
@@ -35,27 +37,40 @@ import org.potassco.clingo.ast.Location;
  */
 public interface GroundCallback extends Callback {
     /**
-     * @param location location from which the external function was called
-     * @param name name of the called external function
-     * @param arguments arguments of the called external function
-     * @param argumentsSize number of arguments
-     * @param data user data of the callback
-     * @param symbolCallback function to inject symbols
+     * @param locationPointer    location from which the external function was called
+     * @param name               name of the called external function
+     * @param argumentsPointer   arguments of the called external function
+     * @param argumentsSize      number of arguments
+     * @param data               user data of the callback
+     * @param symbolCallback     function to inject symbols
      * @param symbolCallbackData user data for the symbol callback (must be passed untouched)
      * @return whether the call was successful
      */
-    // TODO: long[] arguments probably is not correct, rather LongByReference?
-    default boolean callback(Pointer location, String name, long[] arguments, long argumentsSize, Pointer data, SymbolCallback symbolCallback, Pointer symbolCallbackData) {
-        call(new Location(location), name, arguments, symbolCallback);
+    default boolean callback(
+            Pointer locationPointer,
+            String name,
+            Pointer argumentsPointer,
+            NativeSize argumentsSize,
+            Pointer data,
+            SymbolCallback symbolCallback,
+            Pointer symbolCallbackData) {
+        int size = argumentsSize.intValue();
+        long[] argumentLongs = size == 0 ? new long[0] : argumentsPointer.getLongArray(0, size);
+        Symbol[] arguments = new Symbol[size];
+        for (int i = 0; i < size; i++)
+            arguments[i] = Symbol.fromLong(argumentLongs[0]);
+        Location location = new Location(locationPointer);
+        call(location, name, arguments, symbolCallback);
         return true;
     }
 
     /**
      * Callback function to implement external functions.
-     * @param location location from which the external function was called
-     * @param name name of the called external function
-     * @param arguments arguments of the called external function
+     *
+     * @param location       location from which the external function was called
+     * @param name           name of the called external function
+     * @param arguments      arguments of the called external function
      * @param symbolCallback function to inject symbols
      */
-    void call(Location location, String name, long[] arguments, SymbolCallback symbolCallback);
+    void call(Location location, String name, Symbol[] arguments, SymbolCallback symbolCallback);
 }

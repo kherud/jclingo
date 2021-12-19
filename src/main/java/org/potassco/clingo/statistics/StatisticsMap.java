@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.statistics;
 
 import com.sun.jna.Pointer;
@@ -25,6 +25,8 @@ import com.sun.jna.ptr.LongByReference;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
+
+import java.util.ArrayList;
 
 public class StatisticsMap extends Statistics {
 
@@ -154,5 +156,22 @@ public class StatisticsMap extends Statistics {
     @Override
     public StatisticsType getType() {
         return StatisticsType.MAP;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("{");
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            String name = getKey(i);
+            builder.append('"').append(name).append('"');
+            builder.append(": ");
+            builder.append(get(name).toString());
+            if (i < size - 1)
+                builder.append(", ");
+        }
+        builder.append("}");
+        return builder.toString();
     }
 }

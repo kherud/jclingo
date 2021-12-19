@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo;
 
 import org.potassco.clingo.solving.ModelType;
@@ -27,10 +27,10 @@ import java.util.List;
 public class AnswerSet {
 
     private final List<Symbol> symbols;
-    private final int[] cost;
+    private final long[] cost;
     private final ModelType type;
 
-    public AnswerSet(List<Symbol> symbols, ModelType type, int[] cost) {
+    public AnswerSet(List<Symbol> symbols, ModelType type, long[] cost) {
         this.symbols = symbols;
         this.type = type;
         this.cost = cost;
@@ -40,7 +40,7 @@ public class AnswerSet {
         return symbols;
     }
 
-    public int[] getCost() {
+    public long[] getCost() {
         return cost;
     }
 

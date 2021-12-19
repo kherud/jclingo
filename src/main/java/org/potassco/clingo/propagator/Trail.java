@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.propagator;
 
 import com.sun.jna.Pointer;
@@ -96,10 +96,14 @@ public class Trail implements Iterable<Integer> {
     }
 
     public Iterator<Integer> iterator() {
+        return iterator(0);
+    }
+
+    public Iterator<Integer> iterator(int begin) {
         return new Iterator<>() {
             private final IntByReference intByReference = new IntByReference();
             private final int size = size();
-            private int i = 0;
+            private int i = begin;
 
             @Override
             public boolean hasNext() {

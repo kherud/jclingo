@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.statistics;
 
 import com.sun.jna.Pointer;
@@ -91,5 +91,19 @@ public class StatisticsArray extends Statistics {
     @Override
     public StatisticsType getType() {
         return StatisticsType.ARRAY;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[");
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            builder.append(get(i).toString());
+            if (i < size - 1)
+                builder.append(", ");
+        }
+        builder.append("]");
+        return builder.toString();
     }
 }

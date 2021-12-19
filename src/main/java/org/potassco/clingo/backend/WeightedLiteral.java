@@ -16,9 +16,10 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.backend;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +33,11 @@ public class WeightedLiteral extends Structure {
 
     public WeightedLiteral() {
 
+    }
+
+    public WeightedLiteral(Pointer pointer) {
+        super(pointer);
+        read();
     }
 
     public WeightedLiteral(int literal, int weight) {

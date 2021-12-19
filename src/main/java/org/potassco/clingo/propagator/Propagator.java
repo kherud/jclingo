@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.propagator;
 
 import com.sun.jna.Callback;
@@ -103,15 +103,15 @@ public abstract class Propagator extends Structure {
 	 * should return a free solver literal that is to be assigned true.
 	 * In case multiple propagators are registered,
 	 * this function can return 0 to let a propagator registered later make a decision.
-	 * If all propagators return 0, then the fallback literal is
+	 * If all propagators return 0, then the fallback literal is used.
 	 *
 	 * @param threadId the solver's thread id
 	 * @param assignment the assignment of the solver
 	 * @param fallback the literal chosen by the solver's heuristic
-	 * @param decision the literal to make true
+	 * @return the literal to make true
 	 */
-	public void decide(int threadId, Assignment assignment, int fallback, IntByReference decision) {
-
+	public int decide(int threadId, Assignment assignment, int fallback) {
+		return fallback;
 	}
 
 	/**
@@ -160,7 +160,7 @@ public abstract class Propagator extends Structure {
 	}
 
 	private interface PropagatorCheckCallback extends Callback {
-		default boolean check(Pointer control, Pointer data) {
+		default boolean callback(Pointer control, Pointer data) {
 			call(new PropagateControl(control));
 			return true;
 		}
@@ -169,11 +169,12 @@ public abstract class Propagator extends Structure {
 	}
 
 	private interface PropagatorDecideCallback extends Callback {
-		default boolean callback(int threadId, Pointer assignment, int fallback, Pointer data, IntByReference decision) {
-			call(threadId, new Assignment(assignment), fallback, decision);
+		default boolean callback(int threadId, Pointer assignment, int fallback, Pointer data, IntByReference decisionReference) {
+			int decision = call(threadId, new Assignment(assignment), fallback);
+			decisionReference.setValue(decision);
 			return true;
 		}
 
-		void call(int threadId, Assignment assignment, int fallbackLiteral, IntByReference decision);
+		int call(int threadId, Assignment assignment, int fallbackLiteral);
 	}
 }

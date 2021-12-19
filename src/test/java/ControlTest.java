@@ -1,7 +1,9 @@
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
+import com.sun.jna.ptr.LongByReference;
 import org.junit.Assert;
 import org.junit.Test;
+import org.potassco.clingo.ast.Location;
 import org.potassco.clingo.control.*;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.solving.*;
@@ -37,9 +39,31 @@ public class ControlTest {
     @Test
     public void testGround() {
         Control control = new Control();
-        control.add("part", "{a}.");
-//        ProgramPart programPart = new ProgramPart("part");
-//        control.ground(programPart);
+        control.add("part1", "{a}.");
+        control.add("part2", "{b}.");
+        ProgramPart programPart1 = new ProgramPart("part1");
+        ProgramPart programPart2 = new ProgramPart("part2");
+        control.ground(programPart1, programPart2);
+    }
+
+    private void groundCallback(Location location, String name, Symbol[] arguments, SymbolCallback symbolCallback) {
+        symbolCallback.callback(null, 1);
+        throw new IllegalStateException();
+    }
+
+    @Test
+    public void testGround2() {
+        Control control = new Control();
+        control.add("part", "p(@cb_num(c)).", "c");
+        Assert.assertThrows(IllegalStateException.class, () -> control.ground(this::groundCallback, new ProgramPart("part", new Number(1))));
+
+    }
+
+    @Test
+    public void testGroundError() {
+        Control control = new Control();
+        control.add("base", "p(@cb_error(c)).", "c");;
+        Assert.assertThrows(IllegalStateException.class, () -> control.ground(this::groundCallback, new ProgramPart("part", new Number(1))));
     }
 
     @Test
@@ -63,8 +87,31 @@ public class ControlTest {
         control.ground();
         control.solve(callback).wait(-1.);
 
-        Assert.assertEquals(unsatSymbols, List.of(1L, 2L, 3L));
-//        Assert.assertEquals(control.getStatistics());
+        Assert.assertEquals(List.of(1L, 2L, 3L), unsatSymbols);
+        Assert.assertEquals(3.0, control.getStatistics().get("summary.lower").get(0).get(), 1e-5);
 
+    }
+
+    @Test
+    public void testErrorHandling() {
+        SolveEventCallback callback = new SolveEventCallback() {
+            @Override
+            public void onModel(Model model) {
+                int x = 1 / 0;
+            }
+        };
+
+        Control control = new Control();
+        control.add("base", "1 {a; b} 1.");
+        control.ground();
+        Assert.assertThrows(ArithmeticException.class, () -> control.solve(callback));
+
+        try (SolveHandle handle = control.solve(callback, SolveMode.YIELD)) {
+            Assert.assertThrows(ArithmeticException.class, handle::getSolveResult);
+        }
+
+        try (SolveHandle handle = control.solve(callback, SolveMode.ASYNC)) {
+            Assert.assertThrows(ArithmeticException.class, handle::getSolveResult);
+        }
     }
 }

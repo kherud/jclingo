@@ -11,6 +11,7 @@ import org.potassco.clingo.symbol.Signature;
 import org.potassco.clingo.symbol.Symbol;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SolvingTest {
 
@@ -128,15 +129,98 @@ public class SolvingTest {
 
     @Test
     public void testSolveCore() {
+        Control control = new Control("0");
         control.add("3 { p(1..10) } 3.");
         control.ground();
         List<Integer> assumptions = new ArrayList<>();
-        Iterator<SymbolicAtom> atoms = control.getSymbolicAtoms().iterator(new Signature("p", 1, true));
+        Iterator<SymbolicAtom> atoms = control.getSymbolicAtoms().iterator(new Signature("p", 1));
         atoms.forEachRemaining(atom -> assumptions.add(-atom.getLiteral()));
         int[] assumptionLiterals = new int[assumptions.size()];
-        for (int i = 0; i < assumptions.size(); i++)
+        for (int i = 0; i < assumptions.size(); i++) {
             assumptionLiterals[i] = assumptions.get(i);
-        control.solve(assumptionLiterals, mcb, SolveMode.ASYNC).wait(-1.);
+        }
+
+        // this unit tests differs a little from the python API due to its opaque handling of SolveMode.NONE
+        SolveHandle handle = control.solve(assumptionLiterals, null, SolveMode.NONE);
+        SolveResult result = handle.getSolveResult();
+        int[] core = handle.getCore();
+
+        Assert.assertTrue(result.unsatisfiable());
+        Assert.assertTrue(core.length > 7);
+    }
+
+    @Test
+    public void testSolveEnumCautios() {
+        Control control = new Control("0", "-e", "cautious");
+        control.add("1 {a; b} 1. c.");
+        control.ground();
+        control.solve(mcb).wait(-1.);
+        TestCallback.ModelTuple model = mcb.models.get(mcb.models.size() - 1);
+        Assert.assertEquals(ModelType.CAUTIOUS_CONSEQUENCES, model.type);
+        Assert.assertEquals("c", Arrays.stream(model.symbols).map(Symbol::toString).collect(Collectors.joining(" ")));
+    }
+
+    @Test
+    public void testSolveEnumBrave() {
+        Control control = new Control("0", "-e", "brave");
+        control.add("1 {a; b} 1. c.");
+        control.ground();
+        control.solve(mcb).wait(-1.);
+        TestCallback.ModelTuple model = mcb.models.get(mcb.models.size() - 1);
+        Assert.assertEquals(ModelType.BRAVE_CONSEQUENCES, model.type);
+        Assert.assertEquals("a b c", Arrays.stream(model.symbols).map(Symbol::toString).collect(Collectors.joining(" ")));
+    }
+
+    @Test
+    public void testModel() {
+        SolveEventCallback solveEventCallback = new SolveEventCallback() {
+            @Override
+            public void onModel(Model model) {
+                Assert.assertTrue(model.contains(new Function("a")));
+                int literal = model.getContext().getSymbolicAtoms().get(new Function("a")).getLiteral();
+                Assert.assertTrue(model.isTrue(literal));
+                Assert.assertFalse(model.isTrue(1000));
+                Assert.assertEquals(0, model.getThreadId());
+                Assert.assertEquals(1, model.getNumber());
+                Assert.assertFalse(model.getOptimalityProven());
+                Assert.assertArrayEquals(new long[]{3}, model.getCost());
+                model.extend(new Function("e"));
+                Assert.assertArrayEquals(new Symbol[]{new Function("e")}, model.getSymbols(ShowType.Type.THEORY));
+            }
+        };
+        control.add("a. b. c. #minimize { 1,a:a; 1,b:b; 1,c:c }.");
+        control.ground();
+        control.solve(solveEventCallback, SolveMode.NONE).wait(-1.);
+    }
+
+    @Test
+    public void testControlClause() {
+        control.add("1 {a; b; c} 1.");
+        control.ground();
+        try (SolveHandle handle = control.solve(mcb, SolveMode.YIELD)) {
+            while (handle.hasNext()) {
+                Model model = handle.next();
+                Symbol clause = model.contains(new Function("a")) ? new Function("b") : new Function("a");
+                model.getContext().addClause(new Symbol[]{clause}, TruthValue.FALSE);
+            }
+            testSatisfiable(handle.getSolveResult());
+            Assert.assertEquals(2, mcb.models.size());
+        }
+    }
+
+    @Test
+    public void testControlNogood() {
+        control.add("1 {a; b; c} 1.");
+        control.ground();
+        try (SolveHandle handle = control.solve(mcb, SolveMode.YIELD)) {
+            while (handle.hasNext()) {
+                Model model = handle.next();
+                Symbol clause = model.contains(new Function("a")) ? new Function("b") : new Function("a");
+                model.getContext().addNogood(new Symbol[]{clause}, TruthValue.TRUE);
+            }
+            testSatisfiable(handle.getSolveResult());
+            Assert.assertEquals(2, mcb.models.size());
+        }
     }
 
     private void testSatisfiable(SolveResult solveResult) {

@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.solving;
 
 import com.sun.jna.Pointer;
@@ -80,16 +80,27 @@ public class Model {
     }
 
     /**
+     * Extend a model with a single symbol.
+     *
+     * This only has an effect if there is an underlying clingo application, which will print the added symbols.
+     *
+     * @param symbol The symbol to add to the model.
+     */
+    public void extend(Symbol symbol) {
+        long[] symbolLongs = new long[]{symbol.getLong()};
+        Clingo.check(Clingo.INSTANCE.clingo_model_extend(model, symbolLongs, new NativeSize(symbolLongs.length)));
+    }
+
+    /**
      * Check if the given program literal is true.
      *
-     * @param symbolicAtom The given program literal.
+     * @param literal The given program literal.
      * @return Whether the given program literal is true.
      */
-    public boolean isTrue(SymbolicAtom symbolicAtom) {
-        return false;
-        // TODO: symbolic atoms needed here
-//        ByteByReference byteByReference = new ByteByReference();
-//        Clingo.INSTANCE.clingo_model_is_true(model, symbolicAtom);
+    public boolean isTrue(int literal) {
+        ByteByReference byteByReference = new ByteByReference();
+        Clingo.INSTANCE.clingo_model_is_true(model, literal, byteByReference);
+        return byteByReference.getValue() > 0;
     }
 
     /**
@@ -104,6 +115,20 @@ public class Model {
      */
     public Symbol[] getSymbols() {
         return getSymbols(ShowType.shown());
+    }
+
+    /**
+     * Return the list of atoms, terms, or CSP assignments in the model.
+     *
+     * Atoms are represented using functions (`Symbol` objects), and CSP
+     * assignments are represented using functions with name `"$"` where the
+     * first argument is the name of the CSP variable and the second its
+     * value.
+     *
+     * @return The selected symbols.
+     */
+    public Symbol[] getSymbols(ShowType.Type showType) {
+        return getSymbols(new ShowType(showType));
     }
 
     /**
@@ -159,14 +184,18 @@ public class Model {
      *
      * @return array of integer costs
      */
-    public int[] getCost() {
+    public long[] getCost() {
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_model_cost_size(model, nativeSizeByReference));
         int costSize = (int) nativeSizeByReference.getValue();
-        Clingo.check(Clingo.INSTANCE.clingo_model_cost(model, pointerByReference, new NativeSize(costSize)));
 
-        return costSize > 0 ? new int[0] : pointerByReference.getValue().getIntArray(0, costSize);
+        if (costSize == 0)
+            return new long[0];
+
+        LongByReference longByReference = new LongByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_model_cost(model, longByReference, new NativeSize(costSize)));
+
+        return longByReference.getPointer().getLongArray(0, costSize);
     }
 
     /**

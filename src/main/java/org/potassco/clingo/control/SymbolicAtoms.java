@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.control;
 
 import com.sun.jna.Pointer;
@@ -48,7 +48,7 @@ public class SymbolicAtoms implements Iterable<SymbolicAtom> {
      * @param symbol the symbol to return the symbolic atom for
      * @return the symbolic atom of the symbol
      */
-    public SymbolicAtom getSymbolicAtom(Symbol symbol) {
+    public SymbolicAtom get(Symbol symbol) {
         LongByReference longByReference = new LongByReference();
         ByteByReference byteByReference = new ByteByReference();
 

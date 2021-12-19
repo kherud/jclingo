@@ -24,11 +24,11 @@ public class ShowType {
 
     private int bitset;
 
-    ShowType(int bitset) {
+    public ShowType(int bitset) {
         this.bitset = bitset;
     }
 
-    ShowType(ShowType.Type type, ShowType.Type... types) {
+    public ShowType(ShowType.Type type, ShowType.Type... types) {
         this(type.type);
 
         for (ShowType.Type addType : types) {

@@ -38,6 +38,20 @@ public class StatisticsTest {
         }
     };
 
+    @Test
+    public void userStatisticsTest() {
+        Control control = new Control("-t", "2", "--stats=2");
+        control.add("1 { a; b }.");
+        control.ground();
+        control.solve();
+        Statistics statistics = control.getStatistics();
+        System.out.println(statistics);
+        StatisticsMap map = (StatisticsMap) statistics.get("userStep.test");
+        Assert.assertEquals(4, map.size());
+        Assert.assertEquals(1.0, map.get("a").get(), 1e-9);
+        Assert.assertEquals(1.0, map.get("a").get(), 1e-9);
+    }
+
 
     @Test
     public void simpleStatisticsTest() {
@@ -48,19 +62,5 @@ public class StatisticsTest {
         Statistics statistics = control.getStatistics();
         Assert.assertTrue(statistics.get("problem.lp.atoms").get() >= 2.);
         Assert.assertTrue(statistics.get("solving.solvers.choices").get() >= 1.);
-    }
-
-    @Ignore
-    @Test
-    public void userStatisticsTest() {
-        Control control = new Control("-t", "2", "--stats=2");
-        control.add("1 { a; b }.");
-        control.ground();
-        control.solve(onStatistics, SolveMode.NONE);
-        Statistics statistics = control.getStatistics();
-        StatisticsMap map = (StatisticsMap) statistics.get("userStep.test");
-        Assert.assertEquals(4, map.size());
-        Assert.assertEquals(1.0, map.get("a").get(), 1e-9);
-        Assert.assertEquals(1.0, map.get("a").get(), 1e-9);
     }
 }

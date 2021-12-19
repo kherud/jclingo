@@ -47,7 +47,7 @@ public class AtomsTest {
 
         SymbolicAtoms symbolicAtoms = control.getSymbolicAtoms();
 
-        SymbolicAtom p1 = symbolicAtoms.getSymbolicAtom(new Function("p", new Number(1)));
+        SymbolicAtom p1 = symbolicAtoms.get(new Function("p", new Number(1)));
         Assert.assertNotNull(p1);
         Assert.assertTrue(p1.isFact());
         Assert.assertFalse(p1.isExternal());
@@ -58,7 +58,7 @@ public class AtomsTest {
         Assert.assertFalse(p1.match(new Signature("b", 1, true)));
         Assert.assertFalse(p1.match(new Signature("p", 1, false)));
 
-        SymbolicAtom p2 = symbolicAtoms.getSymbolicAtom(new Function("p", new Number(2)));
+        SymbolicAtom p2 = symbolicAtoms.get(new Function("p", new Number(2)));
         Assert.assertNotNull(p2);
         Assert.assertFalse(p2.isFact());
         Assert.assertFalse(p2.isExternal());
@@ -69,7 +69,7 @@ public class AtomsTest {
         Assert.assertFalse(p2.match(new Signature("b", 1, true)));
         Assert.assertFalse(p2.match(new Signature("p", 1, false)));
 
-        SymbolicAtom p3 = symbolicAtoms.getSymbolicAtom(new Function("p", new Number(3)));
+        SymbolicAtom p3 = symbolicAtoms.get(new Function("p", new Number(3)));
         Assert.assertNotNull(p3);
         Assert.assertFalse(p3.isFact());
         Assert.assertTrue(p3.isExternal());
@@ -88,7 +88,7 @@ public class AtomsTest {
 
         SymbolicAtoms symbolicAtoms = control.getSymbolicAtoms();
 
-        symbolicAtoms.getSymbolicAtom(new Function("p", new Number(4)));
+        symbolicAtoms.get(new Function("p", new Number(4)));
     }
 
     @Test

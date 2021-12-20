@@ -24,18 +24,19 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
-public class Id extends Ast {
+public class CspSum extends Ast {
 
-    public Id(Pointer ast) {
+    public CspSum(Pointer ast) {
         super(ast);
     }
     
-    public Id(Location location, String name) {
-        super(create(location, name));
+    public CspSum(Location location, AstSequence terms) {
+        super(create(location, terms));
     }
     
     public Location getLocation() {
@@ -44,23 +45,21 @@ public class Id extends Ast {
         return locationByReference;
     }
 
-    public String getName() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, Attribute.NAME.ordinal(), stringByReference));
-        return stringByReference[0];
+    public AstSequence getTerms() {
+        return new AstSequence(ast, Attribute.TERMS);
     }
 
     public void setLocation(Location location) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
     }
 
-    public void setName(String name) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.NAME.ordinal(), name));
+    public void setTerms(AstSequence terms) {
+        new AstSequence(ast, Attribute.TERMS).set(terms);
     }
     
-    private static Pointer create(Location location, String name) {
+    private static Pointer create(Location location, AstSequence terms) {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.ID.ordinal(), pointerByReference, location, name));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.CSP_SUM.ordinal(), pointerByReference, location, terms.getPointer(), new NativeSize(terms.size())));
         return pointerByReference.getValue();
     }
 

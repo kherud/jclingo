@@ -28,39 +28,29 @@ import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
-public class Id extends Ast {
+public class BooleanConstant extends Ast {
 
-    public Id(Pointer ast) {
+    public BooleanConstant(Pointer ast) {
         super(ast);
     }
     
-    public Id(Location location, String name) {
-        super(create(location, name));
+    public BooleanConstant(int value) {
+        super(create(value));
     }
     
-    public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, Attribute.LOCATION.ordinal(), locationByReference));
-        return locationByReference;
+    public int getValue() {
+        IntByReference intByReference = new IntByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, Attribute.VALUE.ordinal(), intByReference));
+        return intByReference.getValue();
     }
 
-    public String getName() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, Attribute.NAME.ordinal(), stringByReference));
-        return stringByReference[0];
-    }
-
-    public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
-    }
-
-    public void setName(String name) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.NAME.ordinal(), name));
+    public void setValue(int value) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, Attribute.VALUE.ordinal(), value));
     }
     
-    private static Pointer create(Location location, String name) {
+    private static Pointer create(int value) {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.ID.ordinal(), pointerByReference, location, name));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.BOOLEAN_CONSTANT.ordinal(), pointerByReference, value));
         return pointerByReference.getValue();
     }
 

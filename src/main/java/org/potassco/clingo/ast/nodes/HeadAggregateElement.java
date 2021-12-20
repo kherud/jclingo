@@ -24,43 +24,42 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
-public class Id extends Ast {
+public class HeadAggregateElement extends Ast {
 
-    public Id(Pointer ast) {
+    public HeadAggregateElement(Pointer ast) {
         super(ast);
     }
     
-    public Id(Location location, String name) {
-        super(create(location, name));
+    public HeadAggregateElement(AstSequence terms, Ast condition) {
+        super(create(terms, condition));
     }
     
-    public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, Attribute.LOCATION.ordinal(), locationByReference));
-        return locationByReference;
+    public AstSequence getTerms() {
+        return new AstSequence(ast, Attribute.TERMS);
     }
 
-    public String getName() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, Attribute.NAME.ordinal(), stringByReference));
-        return stringByReference[0];
-    }
-
-    public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
-    }
-
-    public void setName(String name) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.NAME.ordinal(), name));
-    }
-    
-    private static Pointer create(Location location, String name) {
+    public Ast getCondition() {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.ID.ordinal(), pointerByReference, location, name));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, Attribute.CONDITION.ordinal(), pointerByReference));
+        return Ast.create(pointerByReference.getValue());
+    }
+
+    public void setTerms(AstSequence terms) {
+        new AstSequence(ast, Attribute.TERMS).set(terms);
+    }
+
+    public void setCondition(Ast condition) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.CONDITION.ordinal(), condition.getPointer()));
+    }
+    
+    private static Pointer create(AstSequence terms, Ast condition) {
+        PointerByReference pointerByReference = new PointerByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.HEAD_AGGREGATE_ELEMENT.ordinal(), pointerByReference, terms.getPointer(), new NativeSize(terms.size()), condition.getPointer()));
         return pointerByReference.getValue();
     }
 

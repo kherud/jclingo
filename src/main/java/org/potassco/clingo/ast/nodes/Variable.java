@@ -28,13 +28,13 @@ import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
-public class Id extends Ast {
+public class Variable extends Ast {
 
-    public Id(Pointer ast) {
+    public Variable(Pointer ast) {
         super(ast);
     }
     
-    public Id(Location location, String name) {
+    public Variable(Location location, String name) {
         super(create(location, name));
     }
     
@@ -60,7 +60,7 @@ public class Id extends Ast {
     
     private static Pointer create(Location location, String name) {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.ID.ordinal(), pointerByReference, location, name));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.VARIABLE.ordinal(), pointerByReference, location, name));
         return pointerByReference.getValue();
     }
 

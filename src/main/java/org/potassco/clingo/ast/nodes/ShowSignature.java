@@ -28,14 +28,14 @@ import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
-public class Id extends Ast {
+public class ShowSignature extends Ast {
 
-    public Id(Pointer ast) {
+    public ShowSignature(Pointer ast) {
         super(ast);
     }
     
-    public Id(Location location, String name) {
-        super(create(location, name));
+    public ShowSignature(Location location, String name, int arity, int positive, int csp) {
+        super(create(location, name, arity, positive, csp));
     }
     
     public Location getLocation() {
@@ -50,6 +50,24 @@ public class Id extends Ast {
         return stringByReference[0];
     }
 
+    public int getArity() {
+        IntByReference intByReference = new IntByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, Attribute.ARITY.ordinal(), intByReference));
+        return intByReference.getValue();
+    }
+
+    public int getPositive() {
+        IntByReference intByReference = new IntByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, Attribute.POSITIVE.ordinal(), intByReference));
+        return intByReference.getValue();
+    }
+
+    public int getCsp() {
+        IntByReference intByReference = new IntByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, Attribute.CSP.ordinal(), intByReference));
+        return intByReference.getValue();
+    }
+
     public void setLocation(Location location) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
     }
@@ -57,10 +75,22 @@ public class Id extends Ast {
     public void setName(String name) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.NAME.ordinal(), name));
     }
+
+    public void setArity(int arity) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, Attribute.ARITY.ordinal(), arity));
+    }
+
+    public void setPositive(int positive) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, Attribute.POSITIVE.ordinal(), positive));
+    }
+
+    public void setCsp(int csp) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, Attribute.CSP.ordinal(), csp));
+    }
     
-    private static Pointer create(Location location, String name) {
+    private static Pointer create(Location location, String name, int arity, int positive, int csp) {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.ID.ordinal(), pointerByReference, location, name));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.SHOW_SIGNATURE.ordinal(), pointerByReference, location, name, arity, positive, csp));
         return pointerByReference.getValue();
     }
 

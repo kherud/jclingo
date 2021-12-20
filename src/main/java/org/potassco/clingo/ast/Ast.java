@@ -16,24 +16,21 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.ast;
 
-import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
+import org.potassco.clingo.ast.nodes.*;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.control.LoggerCallback;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
-import org.potassco.clingo.symbol.Symbol;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
-
 /**
  * Represents a node in the abstract syntax tree.
  *
@@ -46,80 +43,13 @@ import java.util.NoSuchElementException;
  * can be parsed again. Note that it is possible to construct ASTs
  * that are not parsable, though.
  */
-public class Ast implements Comparable<Ast> {
+public abstract class Ast implements Comparable<Ast> {
 
-    private final Pointer ast;
+    protected final Pointer ast;
 
     public Ast(Pointer ast) {
         this.ast = ast;
-    }
-
-    public String getString() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, AttributeType.STRING.getValue(), stringByReference));
-        return stringByReference[0];
-    }
-
-    public void setString(String string) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, AttributeType.STRING.getValue(), string));
-    }
-
-    public int getNumber() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, AttributeType.NUMBER.getValue(), intByReference));
-        return intByReference.getValue();
-    }
-
-    public void setNumber(int number) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, AttributeType.NUMBER.getValue(), number));
-    }
-
-    public Symbol getSymbol() {
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_symbol(ast, AttributeType.AST.getValue(), longByReference));
-        return Symbol.fromLong(longByReference.getValue());
-    }
-
-    public void setSymbol(long symbol) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_symbol(ast, AttributeType.AST.getValue(), symbol));
-    }
-
-    public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, AttributeType.LOCATION.getValue(), locationByReference));
-        return locationByReference;
-    }
-
-    public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, AttributeType.LOCATION.getValue(), location));
-    }
-
-    public Ast getOptionalAst() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_optional_ast(ast, AttributeType.OPTIONAL_AST.getValue(), pointerByReference));
-        if (pointerByReference.getValue() == null)
-            throw new NoSuchElementException("there is no optional ast");
-        return new Ast(pointerByReference.getValue());
-    }
-
-    public void setOptionalAst(Ast ast) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(this.ast, AttributeType.OPTIONAL_AST.getValue(), ast.getPointer()));
-    }
-
-    // TODO: implement
-    public void setStringArray() {
-        throw new IllegalStateException("not yet implemented");
-    }
-
-    public Ast getAst() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, AttributeType.AST.getValue(), pointerByReference));
-        return new Ast(pointerByReference.getValue());
-    }
-
-    // TODO: implement
-    public void setAstArray() {
-        throw new IllegalStateException("not yet implemented");
+        Clingo.INSTANCE.clingo_ast_acquire(ast);
     }
 
     @Override
@@ -129,25 +59,9 @@ public class Ast implements Comparable<Ast> {
         int stringSize = (int) nativeSizeByReference.getValue();
         byte[] stringBytes = new byte[stringSize];
         Clingo.check(Clingo.INSTANCE.clingo_ast_to_string(ast, stringBytes, new NativeSize(stringSize)));
-        return Native.toString(stringBytes);
+        // return Native.toString(stringBytes);
+        return new String(Arrays.copyOf(stringBytes, stringBytes.length - 1));
     }
-
-    /**
-     * @return Return a shallow copy of the ast.
-     */
-    public Ast copy() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_copy(ast, pointerByReference));
-        return new Ast(pointerByReference.getValue());
-    }
-
-//    public Ast update(String key) {
-//
-//    }
-//    TODO: how to implement this?!
-//    public List<String> getKeys() {
-//        Clingo.INSTANCE.g_clingo_ast_constructors
-//    }
 
     /**
      * @return The type of the node.
@@ -175,12 +89,43 @@ public class Ast implements Comparable<Ast> {
     }
 
     /**
+     * @return Return a shallow copy of the ast.
+     */
+    public Ast copy() {
+        PointerByReference pointerByReference = new PointerByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_copy(ast, pointerByReference));
+        return create(pointerByReference.getValue());
+    }
+
+    /**
      * @return Return a deep copy of the ast.
      */
     public Ast deepCopy() {
         PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_deep_copy(ast, pointerByReference));
-        return new Ast(pointerByReference.getValue());
+        return create(pointerByReference.getValue());
+    }
+
+    /**
+     * Parse the given program and return a list of abstract syntax trees for each statement.
+     * @param program String representation of the program.
+     */
+    public static List<Ast> parseString(String program) {
+        List<Ast> asts = new ArrayList<>();
+        Ast.parseString(program, asts::add, null, 0);
+        return asts;
+    }
+
+    /**
+     * Parse the given program and return a list of abstract syntax trees for each statement.
+     * @param program String representation of the program.
+     * @param logger Function to intercept messages normally printed to standard error.
+     * @param messageLimit The maximum number of messages passed to the logger.
+     */
+    public static List<Ast> parseString(String program, LoggerCallback logger, int messageLimit) {
+        List<Ast> asts = new ArrayList<>();
+        Ast.parseString(program, asts::add, logger, messageLimit);
+        return asts;
     }
 
     /**
@@ -218,8 +163,11 @@ public class Ast implements Comparable<Ast> {
      * @param other the right-hand-side AST
      * @return the result of the compariso
      */
-    public boolean equals(Ast other) {
-        return Clingo.INSTANCE.clingo_ast_equal(ast, other.getPointer()) > 0;
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Ast))
+            return false;
+        return Clingo.INSTANCE.clingo_ast_equal(ast, ((Ast) other).getPointer()) > 0;
     }
 
     /**
@@ -238,6 +186,70 @@ public class Ast implements Comparable<Ast> {
 
     public Pointer getPointer() {
         return ast;
+    }
+
+    protected static Ast create(Pointer ast) {
+        IntByReference intByReference = new IntByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_get_type(ast, intByReference));
+        AstType type = AstType.fromOrdinal(intByReference.getValue());
+        return create(ast, type);
+    }
+
+    protected static Ast create(Pointer ast, AstType type) {
+        switch (type) {
+            case ID: return new Id(ast);
+            case VARIABLE: return new Variable(ast);
+            case SYMBOLIC_TERM: return new SymbolicTerm(ast);
+            case UNARY_OPERATION: return new UnaryOperation(ast);
+            case BINARY_OPERATION: return new BinaryOperation(ast);
+            case INTERVAL: return new Interval(ast);
+            case FUNCTION: return new Function(ast);
+            case POOL: return new Pool(ast);
+            case CSP_PRODUCT: return new CspProduct(ast);
+            case CSP_SUM: return new CspSum(ast);
+            case CSP_GUARD: return new CspGuard(ast);
+            case BOOLEAN_CONSTANT: return new BooleanConstant(ast);
+            case SYMBOLIC_ATOM: return new SymbolicAtom(ast);
+            case COMPARISON: return new Comparison(ast);
+            case CSP_LITERAL: return new CspLiteral(ast);
+            case AGGREGATE_GUARD: return new AggregateGuard(ast);
+            case CONDITIONAL_LITERAL: return new ConditionalLiteral(ast);
+            case AGGREGATE: return new Aggregate(ast);
+            case BODY_AGGREGATE_ELEMENT: return new BodyAggregateElement(ast);
+            case BODY_AGGREGATE: return new BodyAggregate(ast);
+            case HEAD_AGGREGATE_ELEMENT: return new HeadAggregateElement(ast);
+            case HEAD_AGGREGATE: return new HeadAggregate(ast);
+            case DISJUNCTION: return new Disjunction(ast);
+            case DISJOINT_ELEMENT: return new DisjointElement(ast);
+            case DISJOINT: return new Disjoint(ast);
+            case THEORY_SEQUENCE: return new TheorySequence(ast);
+            case THEORY_FUNCTION: return new TheoryFunction(ast);
+            case THEORY_UNPARSED_TERM_ELEMENT: return new TheoryUnparsedTermElement(ast);
+            case THEORY_UNPARSED_TERM: return new TheoryUnparsedTerm(ast);
+            case THEORY_GUARD: return new TheoryGuard(ast);
+            case THEORY_ATOM_ELEMENT: return new TheoryAtomElement(ast);
+            case THEORY_ATOM: return new TheoryAtom(ast);
+            case LITERAL: return new Literal(ast);
+            case THEORY_OPERATOR_DEFINITION: return new TheoryOperatorDefinition(ast);
+            case THEORY_TERM_DEFINITION: return new TheoryTermDefinition(ast);
+            case THEORY_GUARD_DEFINITION: return new TheoryGuardDefinition(ast);
+            case THEORY_ATOM_DEFINITION: return new TheoryAtomDefinition(ast);
+            case RULE: return new Rule(ast);
+            case DEFINITION: return new Definition(ast);
+            case SHOW_SIGNATURE: return new ShowSignature(ast);
+            case SHOW_TERM: return new ShowTerm(ast);
+            case MINIMIZE: return new Minimize(ast);
+            case SCRIPT: return new Script(ast);
+            case PROGRAM: return new Program(ast);
+            case EXTERNAL: return new External(ast);
+            case EDGE: return new Edge(ast);
+            case HEURISTIC: return new Heuristic(ast);
+            case PROJECT_ATOM: return new ProjectAtom(ast);
+            case PROJECT_SIGNATURE: return new ProjectSignature(ast);
+            case DEFINED: return new Defined(ast);
+            case THEORY_DEFINITION: return new TheoryDefinition(ast);
+            default: throw new IllegalStateException("Unknown AST type: " + type.name());
+        }
     }
 
 }

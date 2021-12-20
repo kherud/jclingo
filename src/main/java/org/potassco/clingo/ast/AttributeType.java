@@ -1,5 +1,7 @@
 package org.potassco.clingo.ast;
 
+import org.potassco.clingo.internal.Clingo;
+
 import java.util.HashMap;
 import java.util.Map;
 

@@ -28,14 +28,14 @@ import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
-public class Id extends Ast {
+public class Definition extends Ast {
 
-    public Id(Pointer ast) {
+    public Definition(Pointer ast) {
         super(ast);
     }
     
-    public Id(Location location, String name) {
-        super(create(location, name));
+    public Definition(Location location, String name, Ast value, int isDefault) {
+        super(create(location, name, value, isDefault));
     }
     
     public Location getLocation() {
@@ -50,6 +50,18 @@ public class Id extends Ast {
         return stringByReference[0];
     }
 
+    public Ast getValue() {
+        PointerByReference pointerByReference = new PointerByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, Attribute.VALUE.ordinal(), pointerByReference));
+        return Ast.create(pointerByReference.getValue());
+    }
+
+    public int getIsDefault() {
+        IntByReference intByReference = new IntByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, Attribute.IS_DEFAULT.ordinal(), intByReference));
+        return intByReference.getValue();
+    }
+
     public void setLocation(Location location) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
     }
@@ -57,10 +69,18 @@ public class Id extends Ast {
     public void setName(String name) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.NAME.ordinal(), name));
     }
+
+    public void setValue(Ast value) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.VALUE.ordinal(), value.getPointer()));
+    }
+
+    public void setIsDefault(int isDefault) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, Attribute.IS_DEFAULT.ordinal(), isDefault));
+    }
     
-    private static Pointer create(Location location, String name) {
+    private static Pointer create(Location location, String name, Ast value, int isDefault) {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.ID.ordinal(), pointerByReference, location, name));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.DEFINITION.ordinal(), pointerByReference, location, name, value.getPointer(), isDefault));
         return pointerByReference.getValue();
     }
 

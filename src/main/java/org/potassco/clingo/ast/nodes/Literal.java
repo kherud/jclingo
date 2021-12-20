@@ -28,14 +28,14 @@ import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
-public class Id extends Ast {
+public class Literal extends Ast {
 
-    public Id(Pointer ast) {
+    public Literal(Pointer ast) {
         super(ast);
     }
     
-    public Id(Location location, String name) {
-        super(create(location, name));
+    public Literal(Location location, int sign, Ast atom) {
+        super(create(location, sign, atom));
     }
     
     public Location getLocation() {
@@ -44,23 +44,33 @@ public class Id extends Ast {
         return locationByReference;
     }
 
-    public String getName() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, Attribute.NAME.ordinal(), stringByReference));
-        return stringByReference[0];
+    public int getSign() {
+        IntByReference intByReference = new IntByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, Attribute.SIGN.ordinal(), intByReference));
+        return intByReference.getValue();
+    }
+
+    public Ast getAtom() {
+        PointerByReference pointerByReference = new PointerByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, Attribute.ATOM.ordinal(), pointerByReference));
+        return Ast.create(pointerByReference.getValue());
     }
 
     public void setLocation(Location location) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
     }
 
-    public void setName(String name) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.NAME.ordinal(), name));
+    public void setSign(int sign) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, Attribute.SIGN.ordinal(), sign));
+    }
+
+    public void setAtom(Ast atom) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.ATOM.ordinal(), atom.getPointer()));
     }
     
-    private static Pointer create(Location location, String name) {
+    private static Pointer create(Location location, int sign, Ast atom) {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.ID.ordinal(), pointerByReference, location, name));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.LITERAL.ordinal(), pointerByReference, location, sign, atom.getPointer()));
         return pointerByReference.getValue();
     }
 

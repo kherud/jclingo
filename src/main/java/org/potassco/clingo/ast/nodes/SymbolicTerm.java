@@ -21,6 +21,7 @@ package org.potassco.clingo.ast.nodes;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
@@ -28,39 +29,39 @@ import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
-public class Id extends Ast {
+public class SymbolicTerm extends Ast {
 
-    public Id(Pointer ast) {
+    public SymbolicTerm(Pointer ast) {
         super(ast);
     }
-    
-    public Id(Location location, String name) {
-        super(create(location, name));
+
+    public SymbolicTerm(Location location, Symbol symbol) {
+        super(create(location, symbol));
     }
-    
+
     public Location getLocation() {
         Location.ByReference locationByReference = new Location.ByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, Attribute.LOCATION.ordinal(), locationByReference));
         return locationByReference;
     }
 
-    public String getName() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, Attribute.NAME.ordinal(), stringByReference));
-        return stringByReference[0];
+    public Symbol getSymbol() {
+        LongByReference longByReference = new LongByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_symbol(ast, Attribute.SYMBOL.ordinal(), longByReference));
+        return Symbol.fromLong(longByReference.getValue());
     }
 
     public void setLocation(Location location) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
     }
 
-    public void setName(String name) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.NAME.ordinal(), name));
+    public void setSymbol(Symbol symbol) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_symbol(ast, Attribute.SYMBOL.ordinal(), symbol.getLong()));
     }
-    
-    private static Pointer create(Location location, String name) {
+
+    private static Pointer create(Location location, Symbol symbol) {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.ID.ordinal(), pointerByReference, location, name));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.SYMBOLIC_TERM.ordinal(), pointerByReference, location, symbol.getLong()));
         return pointerByReference.getValue();
     }
 

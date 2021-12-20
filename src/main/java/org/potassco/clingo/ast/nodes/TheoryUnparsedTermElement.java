@@ -24,43 +24,42 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
-public class Id extends Ast {
+public class TheoryUnparsedTermElement extends Ast {
 
-    public Id(Pointer ast) {
+    public TheoryUnparsedTermElement(Pointer ast) {
         super(ast);
     }
     
-    public Id(Location location, String name) {
-        super(create(location, name));
+    public TheoryUnparsedTermElement(StringSequence operators, Ast term) {
+        super(create(operators, term));
     }
     
-    public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, Attribute.LOCATION.ordinal(), locationByReference));
-        return locationByReference;
+    public StringSequence getOperators() {
+        return new StringSequence(ast, Attribute.OPERATORS);
     }
 
-    public String getName() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, Attribute.NAME.ordinal(), stringByReference));
-        return stringByReference[0];
-    }
-
-    public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
-    }
-
-    public void setName(String name) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.NAME.ordinal(), name));
-    }
-    
-    private static Pointer create(Location location, String name) {
+    public Ast getTerm() {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.ID.ordinal(), pointerByReference, location, name));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, Attribute.TERM.ordinal(), pointerByReference));
+        return Ast.create(pointerByReference.getValue());
+    }
+
+    public void setOperators(StringSequence operators) {
+        new StringSequence(ast, Attribute.OPERATORS).set(operators);
+    }
+
+    public void setTerm(Ast term) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.TERM.ordinal(), term.getPointer()));
+    }
+    
+    private static Pointer create(StringSequence operators, Ast term) {
+        PointerByReference pointerByReference = new PointerByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.THEORY_UNPARSED_TERM_ELEMENT.ordinal(), pointerByReference, operators.get(), new NativeSize(operators.size()), term.getPointer()));
         return pointerByReference.getValue();
     }
 

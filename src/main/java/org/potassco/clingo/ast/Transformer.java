@@ -33,11 +33,6 @@ package org.potassco.clingo.ast;
  */
 public class Transformer {
 
-    // TODO: implement
-    public Transformer() {
-
-    }
-
     public Ast visit(Ast ast) {
         return null;
     }

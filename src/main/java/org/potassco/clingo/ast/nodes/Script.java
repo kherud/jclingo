@@ -28,14 +28,14 @@ import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
-public class Id extends Ast {
+public class Script extends Ast {
 
-    public Id(Pointer ast) {
+    public Script(Pointer ast) {
         super(ast);
     }
     
-    public Id(Location location, String name) {
-        super(create(location, name));
+    public Script(Location location, String name, String code) {
+        super(create(location, name, code));
     }
     
     public Location getLocation() {
@@ -50,6 +50,12 @@ public class Id extends Ast {
         return stringByReference[0];
     }
 
+    public String getCode() {
+        String[] stringByReference = new String[1];
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, Attribute.CODE.ordinal(), stringByReference));
+        return stringByReference[0];
+    }
+
     public void setLocation(Location location) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
     }
@@ -57,10 +63,14 @@ public class Id extends Ast {
     public void setName(String name) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.NAME.ordinal(), name));
     }
+
+    public void setCode(String code) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.CODE.ordinal(), code));
+    }
     
-    private static Pointer create(Location location, String name) {
+    private static Pointer create(Location location, String name, String code) {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.ID.ordinal(), pointerByReference, location, name));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.SCRIPT.ordinal(), pointerByReference, location, name, code));
         return pointerByReference.getValue();
     }
 

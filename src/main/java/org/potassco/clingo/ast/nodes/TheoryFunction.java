@@ -24,18 +24,19 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
-public class Id extends Ast {
+public class TheoryFunction extends Ast {
 
-    public Id(Pointer ast) {
+    public TheoryFunction(Pointer ast) {
         super(ast);
     }
     
-    public Id(Location location, String name) {
-        super(create(location, name));
+    public TheoryFunction(Location location, String name, AstSequence arguments) {
+        super(create(location, name, arguments));
     }
     
     public Location getLocation() {
@@ -50,6 +51,10 @@ public class Id extends Ast {
         return stringByReference[0];
     }
 
+    public AstSequence getArguments() {
+        return new AstSequence(ast, Attribute.ARGUMENTS);
+    }
+
     public void setLocation(Location location) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
     }
@@ -57,10 +62,14 @@ public class Id extends Ast {
     public void setName(String name) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.NAME.ordinal(), name));
     }
+
+    public void setArguments(AstSequence arguments) {
+        new AstSequence(ast, Attribute.ARGUMENTS).set(arguments);
+    }
     
-    private static Pointer create(Location location, String name) {
+    private static Pointer create(Location location, String name, AstSequence arguments) {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.ID.ordinal(), pointerByReference, location, name));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.THEORY_FUNCTION.ordinal(), pointerByReference, location, name, arguments.getPointer(), new NativeSize(arguments.size())));
         return pointerByReference.getValue();
     }
 

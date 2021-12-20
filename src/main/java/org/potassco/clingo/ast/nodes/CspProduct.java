@@ -28,14 +28,14 @@ import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
-public class Id extends Ast {
+public class CspProduct extends Ast {
 
-    public Id(Pointer ast) {
+    public CspProduct(Pointer ast) {
         super(ast);
     }
     
-    public Id(Location location, String name) {
-        super(create(location, name));
+    public CspProduct(Location location, Ast coefficient, Ast variable) {
+        super(create(location, coefficient, variable));
     }
     
     public Location getLocation() {
@@ -44,23 +44,35 @@ public class Id extends Ast {
         return locationByReference;
     }
 
-    public String getName() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, Attribute.NAME.ordinal(), stringByReference));
-        return stringByReference[0];
+    public Ast getCoefficient() {
+        PointerByReference pointerByReference = new PointerByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, Attribute.COEFFICIENT.ordinal(), pointerByReference));
+        return Ast.create(pointerByReference.getValue());
+    }
+
+    public Ast getVariable() {
+        PointerByReference pointerByReference = new PointerByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_optional_ast(ast, Attribute.VARIABLE.ordinal(), pointerByReference));
+        if (pointerByReference.getValue() == null)
+            throw new NoSuchElementException("there is no optional ast");
+        return Ast.create(pointerByReference.getValue());
     }
 
     public void setLocation(Location location) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
     }
 
-    public void setName(String name) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.NAME.ordinal(), name));
+    public void setCoefficient(Ast coefficient) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.COEFFICIENT.ordinal(), coefficient.getPointer()));
+    }
+
+    public void setVariable(Ast variable) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(this.ast, Attribute.VARIABLE.ordinal(), variable.getPointer()));
     }
     
-    private static Pointer create(Location location, String name) {
+    private static Pointer create(Location location, Ast coefficient, Ast variable) {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.ID.ordinal(), pointerByReference, location, name));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.CSP_PRODUCT.ordinal(), pointerByReference, location, coefficient.getPointer(), variable.getPointer()));
         return pointerByReference.getValue();
     }
 

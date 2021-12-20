@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.ast;
 
 import com.sun.jna.Pointer;
@@ -30,10 +30,20 @@ import org.potassco.clingo.internal.NativeSizeByReference;
 public class StringSequence {
 
     private final Pointer ast;
-    private final AttributeType attributeType = AttributeType.STRING_ARRAY;
+    private final Attribute attribute;
 
-    public StringSequence(Pointer ast) {
+    public StringSequence(Pointer ast, Attribute attribute) {
         this.ast = ast;
+        this.attribute = attribute;
+    }
+
+    public String[] get() {
+        int size = size();
+        String[] strings = new String[size];
+        for (int i = 0; i < size; i++) {
+            strings[i] = get(i);
+        }
+        return strings;
     }
 
     /**
@@ -48,7 +58,7 @@ public class StringSequence {
         if (index < 0 || index >= size)
             throw new IndexOutOfBoundsException();
         String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string_at(ast, attributeType.getValue(), new NativeSize(index), stringByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string_at(ast, attribute.ordinal(), new NativeSize(index), stringByReference));
         return stringByReference[0];
     }
 
@@ -58,7 +68,11 @@ public class StringSequence {
      */
     public int size() {
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_size_string_array(ast, attributeType.getValue(), nativeSizeByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_size_string_array(ast, attribute.ordinal(), nativeSizeByReference));
         return (int) nativeSizeByReference.getValue();
+    }
+
+    public void set(StringSequence stringSequence) {
+
     }
 }

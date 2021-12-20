@@ -24,18 +24,19 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
-public class Id extends Ast {
+public class TheorySequence extends Ast {
 
-    public Id(Pointer ast) {
+    public TheorySequence(Pointer ast) {
         super(ast);
     }
     
-    public Id(Location location, String name) {
-        super(create(location, name));
+    public TheorySequence(Location location, int sequenceType, AstSequence terms) {
+        super(create(location, sequenceType, terms));
     }
     
     public Location getLocation() {
@@ -44,23 +45,31 @@ public class Id extends Ast {
         return locationByReference;
     }
 
-    public String getName() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, Attribute.NAME.ordinal(), stringByReference));
-        return stringByReference[0];
+    public int getSequenceType() {
+        IntByReference intByReference = new IntByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, Attribute.SEQUENCE_TYPE.ordinal(), intByReference));
+        return intByReference.getValue();
+    }
+
+    public AstSequence getTerms() {
+        return new AstSequence(ast, Attribute.TERMS);
     }
 
     public void setLocation(Location location) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
     }
 
-    public void setName(String name) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.NAME.ordinal(), name));
+    public void setSequenceType(int sequenceType) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, Attribute.SEQUENCE_TYPE.ordinal(), sequenceType));
+    }
+
+    public void setTerms(AstSequence terms) {
+        new AstSequence(ast, Attribute.TERMS).set(terms);
     }
     
-    private static Pointer create(Location location, String name) {
+    private static Pointer create(Location location, int sequenceType, AstSequence terms) {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.ID.ordinal(), pointerByReference, location, name));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.THEORY_SEQUENCE.ordinal(), pointerByReference, location, sequenceType, terms.getPointer(), new NativeSize(terms.size())));
         return pointerByReference.getValue();
     }
 

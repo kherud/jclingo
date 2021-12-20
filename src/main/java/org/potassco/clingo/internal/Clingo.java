@@ -2050,7 +2050,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if one of the arguments is incompatible with the type</li>
      * </ul>
      */
-    byte clingo_ast_build(int type, int... ast);
+    byte clingo_ast_build(int type, PointerByReference ast, Object... arguments);
 
 
     //  Functions to manage life time of ASTs

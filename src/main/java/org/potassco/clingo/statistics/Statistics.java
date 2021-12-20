@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.statistics;
 
 import com.sun.jna.Pointer;
@@ -74,6 +74,15 @@ public abstract class Statistics {
     public Statistics get(int index) {
         throw new IllegalStateException("Statistics entry is not an array");
     }
+
+    /**
+     * Get the size of a map or array entry.
+     *
+     * @return the resulting size
+     */
+     public int size() {
+         throw new IllegalStateException("Statistics entry is a value");
+     }
 
     /**
      * Returns the statistics root entry given a pointer to an existing native object

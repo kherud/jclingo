@@ -33,6 +33,7 @@ public class StatisticsArray extends Statistics {
 
     public StatisticsArray(Pointer statistics, long key, double[] values) {
         super(statistics, key);
+        add(values);
     }
 
     /**

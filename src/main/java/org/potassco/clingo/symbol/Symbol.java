@@ -16,12 +16,10 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.symbol;
 
-import com.sun.jna.Native;
 import com.sun.jna.ptr.LongByReference;
-import org.potassco.clingo.control.ErrorCode;
 import org.potassco.clingo.control.LoggerCallback;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
@@ -52,11 +50,14 @@ public abstract class Symbol implements Comparable<Symbol> {
                 && (symbol.getArity() == signature.getArity());
     }
 
-    // TODO: can ints be used here?
-    // @Override
-    // public int hashCode() {
-    //     return Clingo.INSTANCE.clingo_symbol_hash(symbol).intValue();
-    // }
+    /**
+     * Calculate a hash code of a symbol.
+     *
+     * @return the hash code of the symbol
+     */
+    public int hash() {
+        return Clingo.INSTANCE.clingo_symbol_hash(symbol).intValue();
+    }
 
     /**
      * Get the type of a symbol.

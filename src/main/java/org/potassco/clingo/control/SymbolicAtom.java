@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.control;
 
 import com.sun.jna.Pointer;
@@ -83,6 +83,11 @@ public class SymbolicAtom {
         LongByReference longByReference = new LongByReference();
         Clingo.check(Clingo.INSTANCE.clingo_symbolic_atoms_symbol(symbolicAtoms, iterator, longByReference));
         return Symbol.fromLong(longByReference.getValue());
+    }
+
+    @Override
+    public String toString() {
+        return getSymbol().toString();
     }
 
     /**

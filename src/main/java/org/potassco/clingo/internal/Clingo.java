@@ -22,16 +22,23 @@ package org.potassco.clingo.internal;
 import com.sun.jna.*;
 import com.sun.jna.ptr.*;
 import org.potassco.clingo.ast.Location;
+import org.potassco.clingo.backend.ExternalType;
+import org.potassco.clingo.backend.HeuristicType;
 import org.potassco.clingo.backend.WeightedLiteral;
 import org.potassco.clingo.configuration.Configuration;
 import org.potassco.clingo.configuration.ConfigurationType;
 import org.potassco.clingo.control.*;
-import org.potassco.clingo.solving.Observer;
+import org.potassco.clingo.propagator.Assignment;
+import org.potassco.clingo.propagator.PropagateControl;
+import org.potassco.clingo.propagator.PropagateInit;
+import org.potassco.clingo.solving.*;
 import org.potassco.clingo.propagator.Propagator;
 import org.potassco.clingo.ast.AstCallback;
-import org.potassco.clingo.solving.GroundCallback;
 import org.potassco.clingo.control.ParseCallback;
-import org.potassco.clingo.solving.SolveEventCallback;
+import org.potassco.clingo.symbol.Symbol;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public interface Clingo extends Library {
 
@@ -3061,4 +3068,663 @@ public interface Clingo extends Library {
      * @return the version
      */
     String clingo_script_version(String name);
+
+    /**
+     * An instance of this struct has to be registered with a solver to implement a custom propagator.
+     * Not all callbacks have to be implemented and can be set to NULL if not needed.
+     */
+    @Structure.FieldOrder({"init", "propagate", "undo", "check", "decide"})
+    class Propagator extends Structure {
+        public PropagatorInitCallback init;
+        public PropagatorPropagateCallback propagate;
+        public PropagatorUndoCallback undo;
+        public PropagatorCheckCallback check;
+        public PropagatorDecideCallback decide;
+    }
+
+    interface PropagatorInitCallback extends Callback {
+        /**
+         * This function is called once before each solving step.
+         * It is used to map relevant program literals to solver literals, add watches for solver literals, and initialize the data structures used during propagation.
+         * <p>
+         * This is the last point to access symbolic and theory atoms.
+         * Once the search has started, they are no longer accessible.
+         *
+         * @param init initizialization object
+         * @param data user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(Pointer init, Pointer data) {
+            call(new PropagateInit(init));
+            return true;
+        }
+
+        void call(PropagateInit init);
+    }
+
+    interface PropagatorPropagateCallback extends Callback {
+        /**
+         * Can be used to propagate solver literals given a partial assignment.
+         * <p>
+         * Called during propagation with a non-empty array of {@link Clingo#clingo_propagate_init_add_watch watched solver}
+         * that have been assigned to true since the last call to either propagate, undo, (or the start of the search) - the change set.
+         * Only watched solver literals are contained in the change set.
+         * Each literal in the change set is true w.r.t. the current assignment.
+         * {@link Clingo#clingo_propagate_control_add_clause} can be used to add clauses.
+         * If a clause is unit resulting, it can be propagated using {@link Clingo#clingo_propagate_control_propagate}.
+         * If the result of either of the two methods is false, the propagate function must return immediately.
+         * <p>
+         * This function can be called from different solving threads.
+         * Each thread has its own assignment and id, which can be obtained using {@link Clingo#clingo_propagate_control_thread_id}.
+         *
+         * @param control control object for the target solver
+         * @param changes the change set
+         * @param size    the size of the change set
+         * @param data    user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(Pointer control, Pointer changes, NativeSize size, Pointer data) {
+            int intSize = size.intValue();
+            int[] literals = intSize > 0 ? changes.getIntArray(0, intSize) : new int[0];
+            call(new PropagateControl(control), literals);
+            return true;
+        }
+
+        void call(PropagateControl control, int[] literals);
+    }
+
+    interface PropagatorUndoCallback extends Callback {
+        /**
+         * Called whenever a solver undoes assignments to watched solver literals.
+         * <p>
+         * This callback is meant to update assignment dependent state in the propagator.
+         * <p>
+         * No clauses must be propagated in this callback and no errors should be set.
+         *
+         * @param control control object for the target solver
+         * @param changes the change set
+         * @param size    the size of the change set
+         * @param data    user data for the callback
+         * @return whether the call was successful
+         */
+        default void callback(Pointer control, Pointer changes, NativeSize size, Pointer data) {
+            int intSize = size.intValue();
+            int[] literals = intSize > 0 ? changes.getIntArray(0, intSize) : new int[0];
+            call(new PropagateControl(control), literals);
+        }
+
+        void call(PropagateControl control, int[] changes);
+    }
+
+    interface PropagatorCheckCallback extends Callback {
+        /**
+         * This function is similar to @ref clingo_propagate_control_propagate() but is called without a change set on propagation fixpoints.
+         * <p>
+         * When exactly this function is called, can be configured using the @ref clingo_propagate_init_set_check_mode() function.
+         * <p>
+         * This function is called even if no watches have been added.
+         *
+         * @param control control object for the target solver
+         * @param data    user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(Pointer control, Pointer data) {
+            call(new PropagateControl(control));
+            return true;
+        }
+
+        void call(PropagateControl control);
+    }
+
+    interface PropagatorDecideCallback extends Callback {
+        /**
+         * This function allows a propagator to implement domain-specific heuristics.
+         * <p>
+         * It is called whenever propagation reaches a fixed point and
+         * should return a free solver literal that is to be assigned true.
+         * In case multiple propagators are registered,
+         * this function can return 0 to let a propagator registered later make a decision.
+         * If all propagators return 0, then the fallback literal is
+         *
+         * @param threadId          the solver's thread id
+         * @param assignment        the assignment of the solver
+         * @param fallback          the literal choosen by the solver's heuristic
+         * @param decisionReference the literal to make true
+         * @return whether the call was successful
+         */
+        default boolean callback(int threadId, Pointer assignment, int fallback, Pointer data, IntByReference decisionReference) {
+            int decision = call(threadId, new Assignment(assignment), fallback);
+            decisionReference.setValue(decision);
+            return true;
+        }
+
+        int call(int threadId, Assignment assignment, int fallbackLiteral);
+    }
+
+    /**
+     * An instance of this struct has to be registered with a solver to observe ground directives as they are passed to the solver.
+     *
+     * This interface is closely modeled after the aspif format.
+     * For more information please refer to the specification of the aspif format.
+     *
+     * Not all callbacks have to be implemented and can be set to NULL if not needed.
+     * If one of the callbacks in the struct fails, grounding is stopped.
+     * If a non-recoverable clingo API call fails, a callback must return false.
+     * Otherwise {@link ErrorCode#UNKNOWN} should be set and false returned.
+     */
+    @Structure.FieldOrder({"initProgram", "beginStep", "endStep", "rule", "weightRule", "minimize", "project",
+            "outputAtom", "outputTerm", "outputCsp", "external", "assume", "heuristic", "acycEdge", "theoryTermNumber",
+            "theoryTermString", "theoryTermCompound", "theoryElement", "theoryAtom", "theoryAtomWithGuard"})
+    class Observer extends Structure {
+        public ObserverInitProgramCallback initProgram;
+        public ObserverBeginStepCallback beginStep;
+        public ObserverEndStepCallback endStep;
+        public ObserverRuleCallback rule;
+        public ObserverWeightRuleCallback weightRule;
+        public ObserverMinimizeCallback minimize;
+        public ObserverProjectCallback project;
+        public ObserverOutputAtomCallback outputAtom;
+        public ObserverOutputTermCallback outputTerm;
+        public ObserverOutputCspCallback outputCsp;
+        public ObserverExternalCallback external;
+        public ObserverAssumeCallback assume;
+        public ObserverHeuristicCallback heuristic;
+        public ObserverAcycEdgeCallback acycEdge;
+        public ObserverTheoryTermNumberCallback theoryTermNumber;
+        public ObserverTheoryTermStringCallback theoryTermString;
+        public ObserverTheoryTermCompoundCallback theoryTermCompound;
+        public ObserverTheoryElementCallback theoryElement;
+        public ObserverTheoryAtomCallback theoryAtom;
+        public ObserverTheoryAtomWithGuardCallback theoryAtomWithGuard;
+    }
+
+    interface ObserverInitProgramCallback extends Callback {
+        /**
+         * Called once in the beginning.
+         * <p>
+         * If the incremental flag is true, there can be multiple calls to @ref clingo_control_solve().
+         *
+         * @param incremental whether the program is incremental
+         * @param data        user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(boolean incremental, Pointer data) {
+            call(incremental);
+            return true;
+        }
+
+        void call(boolean incremental);
+    }
+
+    interface ObserverBeginStepCallback extends Callback {
+        /**
+         * Marks the beginning of a block of directives passed to the solver.
+         *
+         * @param data user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(Pointer data) {
+            call();
+            return true;
+        }
+
+        void call();
+    }
+
+    interface ObserverEndStepCallback extends Callback {
+        /**
+         * Marks the end of a block of directives passed to the solver.
+         * <p>
+         * This function is called before solving starts.
+         *
+         * @param data user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(Pointer data) {
+            call();
+            return true;
+        }
+
+        void call();
+    }
+
+    interface ObserverRuleCallback extends Callback {
+        /**
+         * Observe rules passed to the solver.
+         *
+         * @param choice      determines if the head is a choice or a disjunction
+         * @param headPointer the head atoms
+         * @param headSizeT   the number of atoms in the head
+         * @param bodyPointer the body literals
+         * @param bodySizeT   the number of literals in the body
+         * @param data        user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(boolean choice, Pointer headPointer, NativeSize headSizeT, Pointer bodyPointer, NativeSize bodySizeT, Pointer data) {
+            int headSize = headSizeT.intValue();
+            int bodySize = bodySizeT.intValue();
+            int[] head = headSize == 0 ? new int[0] : headPointer.getIntArray(0, headSize);
+            int[] body = bodySize == 0 ? new int[0] : bodyPointer.getIntArray(0, bodySize);
+            call(choice, head, body);
+            return true;
+        }
+
+        void call(boolean choice, int[] head, int[] body);
+    }
+
+    interface ObserverWeightRuleCallback extends Callback {
+        /**
+         * Observe weight rules passed to the solver.
+         *
+         * @param choice      determines if the head is a choice or a disjunction
+         * @param headPointer the head atoms
+         * @param headSizeT   the number of atoms in the head
+         * @param lowerBound  the lower bound of the weight rule
+         * @param bodyPointer the weighted body literals
+         * @param bodySizeT   the number of weighted literals in the body
+         * @param data        user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(boolean choice, Pointer headPointer, NativeSize headSizeT, int lowerBound, Pointer bodyPointer, NativeSize bodySizeT, Pointer data) {
+            int headSize = headSizeT.intValue();
+            int bodySize = bodySizeT.intValue();
+            int[] head = headSize == 0 ? new int[0] : headPointer.getIntArray(0, headSize);
+            WeightedLiteral[] body = new WeightedLiteral[bodySize];
+            int structSize = Native.getNativeSize(WeightedLiteral.class);
+            for (int i = 0; i < bodySize; i++) {
+                body[i] = new WeightedLiteral(bodyPointer.share((long) i * structSize));
+            }
+            call(choice, head, lowerBound, body);
+            return true;
+        }
+
+        void call(boolean choice, int[] head, int lowerBound, WeightedLiteral[] body);
+    }
+
+    interface ObserverMinimizeCallback extends Callback {
+        /**
+         * Observe minimize constraints (or weak constraints) passed to the solver.
+         *
+         * @param priority        the priority of the constraint
+         * @param literalsPointer the weighted literals whose sum to minimize
+         * @param sizeT           the number of weighted literals
+         * @param data            user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(int priority, Pointer literalsPointer, NativeSize sizeT, Pointer data) {
+            int size = sizeT.intValue();
+            WeightedLiteral[] literals = new WeightedLiteral[size];
+            int structSize = Native.getNativeSize(WeightedLiteral.class);
+            for (int i = 0; i < size; i++) {
+                literals[i] = new WeightedLiteral(literalsPointer.share((long) i * structSize));
+            }
+            call(priority, literals);
+            return true;
+        }
+
+        void call(int priority, WeightedLiteral[] literals);
+    }
+
+    interface ObserverProjectCallback extends Callback {
+        /**
+         * Observe projection directives passed to the solver.
+         *
+         * @param atomsPointer the atoms to project on
+         * @param sizeT        the number of atoms
+         * @param data         user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(Pointer atomsPointer, NativeSize sizeT, Pointer data) {
+            int size = sizeT.intValue();
+            int[] atoms = size == 0 ? new int[0] : atomsPointer.getIntArray(0, size);
+            call(atoms);
+            return true;
+        }
+
+        void call(int[] atoms);
+    }
+
+    interface ObserverOutputAtomCallback extends Callback {
+        /**
+         * Observe shown atoms passed to the solver.
+         * Facts do not have an associated aspif atom.
+         * The value of the atom is set to zero.
+         *
+         * @param symbol the symbolic representation of the atom
+         * @param atom   the aspif atom (0 for facts)
+         * @param data   user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(long symbol, int atom, Pointer data) {
+            call(Symbol.fromLong(symbol), atom);
+            return true;
+        }
+
+        void call(Symbol symbol, int atom);
+    }
+
+    interface ObserverOutputTermCallback extends Callback {
+        /**
+         * Observe shown terms passed to the solver.
+         *
+         * @param symbol           the symbolic representation of the term
+         * @param conditionPointer the literals of the condition
+         * @param sizeT            the size of the condition
+         * @param data             user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(long symbol, Pointer conditionPointer, NativeSize sizeT, Pointer data) {
+            int size = sizeT.intValue();
+            int[] condition = size == 0 ? new int[0] : conditionPointer.getIntArray(0, size);
+            call(Symbol.fromLong(symbol), condition);
+            return true;
+        }
+
+        void call(Symbol symbol, int[] condition);
+    }
+
+    interface ObserverOutputCspCallback extends Callback {
+        /**
+         * Observe shown csp variables passed to the solver.
+         *
+         * @param symbol           the symbolic representation of the variable
+         * @param value            the value of the variable
+         * @param conditionPointer the literals of the condition
+         * @param sizeT            the size of the condition
+         * @param data             user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(long symbol, int value, Pointer conditionPointer, NativeSize sizeT, Pointer data) {
+            int size = sizeT.intValue();
+            int[] condition = size == 0 ? new int[0] : conditionPointer.getIntArray(0, size);
+            call(Symbol.fromLong(symbol), value, condition);
+            return true;
+        }
+
+        void call(Symbol symbol, int value, int[] condition);
+    }
+
+    interface ObserverExternalCallback extends Callback {
+        /**
+         * Observe external statements passed to the solver.
+         *
+         * @param atom the external atom
+         * @param type the type of the external statement
+         * @param data user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(int atom, int type, Pointer data) {
+            call(atom, ExternalType.fromValue(type));
+            return true;
+        }
+
+        void call(int atom, ExternalType type);
+    }
+
+    interface ObserverAssumeCallback extends Callback {
+        /**
+         * Observe assumption directives passed to the solver.
+         *
+         * @param literalsPointer the literals to assume (positive literals are true and negative literals false for the next solve call)
+         * @param sizeT           the number of atoms
+         * @param data            user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(Pointer literalsPointer, NativeSize sizeT, Pointer data) {
+            int size = sizeT.intValue();
+            int[] literals = size == 0 ? new int[0] : literalsPointer.getIntArray(0, size);
+            call(literals);
+            return true;
+        }
+
+        void call(int[] literals);
+    }
+
+    interface ObserverHeuristicCallback extends Callback {
+        /**
+         * Observe heuristic directives passed to the solver.
+         *
+         * @param atom             the target atom
+         * @param type             the type of the heuristic modification
+         * @param bias             the heuristic bias
+         * @param priority         the heuristic priority
+         * @param conditionPointer the condition under which to apply the heuristic modification
+         * @param sizeT            the number of atoms in the condition
+         * @param data             user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(int atom, int type, int bias, int priority, Pointer conditionPointer, NativeSize sizeT, Pointer data) {
+            int size = sizeT.intValue();
+            int[] condition = size == 0 ? new int[0] : conditionPointer.getIntArray(0, size);
+            call(atom, HeuristicType.fromValue(type), bias, priority, condition);
+            return true;
+        }
+
+        void call(int atom, HeuristicType type, int bias, int priority, int[] condition);
+    }
+
+    interface ObserverAcycEdgeCallback extends Callback {
+        /**
+         * Observe edge directives passed to the solver.
+         *
+         * @param nodeU            the start vertex of the edge
+         * @param nodeV            the end vertex of the edge
+         * @param conditionPointer the condition under which the edge is part of the graph
+         * @param sizeT            the number of atoms in the condition
+         * @param data             user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(int nodeU, int nodeV, Pointer conditionPointer, NativeSize sizeT, Pointer data) {
+            int size = sizeT.intValue();
+            int[] condition = size == 0 ? new int[0] : conditionPointer.getIntArray(0, size);
+            call(nodeU, nodeV, condition);
+            return true;
+        }
+
+        void call(int nodeU, int nodeV, int[] condition);
+    }
+
+    interface ObserverTheoryTermNumberCallback extends Callback {
+        /**
+         * Observe numeric theory terms.
+         *
+         * @param termId the id of the term
+         * @param number the value of the term
+         * @param data   user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(int termId, int number, Pointer data) {
+            call(termId, number);
+            return true;
+        }
+
+        void call(int termId, int number);
+    }
+
+    interface ObserverTheoryTermStringCallback extends Callback {
+        /**
+         * Observe string theory terms.
+         *
+         * @param termId the id of the term
+         * @param name   the value of the term
+         * @param data   user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(int termId, String name, Pointer data) {
+            call(termId, name);
+            return true;
+        }
+
+        void call(int termId, String name);
+    }
+
+    interface ObserverTheoryTermCompoundCallback extends Callback {
+        /**
+         * Observe compound theory terms.
+         * <p>
+         * The name_id_or_type gives the type of the compound term:
+         * - if it is -1, then it is a tuple
+         * - if it is -2, then it is a set
+         * - if it is -3, then it is a list
+         * - otherwise, it is a function and name_id_or_type refers to the id of the name (in form of a string term)
+         *
+         * @param termId           the id of the term
+         * @param nameIdOrType     the name or type of the term
+         * @param argumentsPointer the arguments of the term
+         * @param sizeT            the number of arguments
+         * @param data             user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(int termId, int nameIdOrType, Pointer argumentsPointer, NativeSize sizeT, Pointer data) {
+            int size = sizeT.intValue();
+            int[] arguments = size == 0 ? new int[0] : argumentsPointer.getIntArray(0, size);
+            call(termId, nameIdOrType, arguments);
+            return true;
+        }
+
+        void call(int termId, int nameIdOrType, int[] arguments);
+    }
+
+    interface ObserverTheoryElementCallback extends Callback {
+        /**
+         * Observe theory elements.
+         *
+         * @param elementId        the id of the element
+         * @param termsPointer     the term tuple of the element
+         * @param termsSizeT       the number of terms in the tuple
+         * @param conditionPointer the condition of the elemnt
+         * @param conditionSizeT   the number of literals in the condition
+         * @param data             user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(int elementId, Pointer termsPointer, NativeSize termsSizeT, Pointer conditionPointer, NativeSize conditionSizeT, Pointer data) {
+            int termsSize = termsSizeT.intValue();
+            int conditionSize = conditionSizeT.intValue();
+            int[] terms = termsSize == 0 ? new int[0] : termsPointer.getIntArray(0, termsSize);
+            int[] condition = conditionSize == 0 ? new int[0] : conditionPointer.getIntArray(0, conditionSize);
+            call(elementId, terms, condition);
+            return true;
+        }
+
+        void call(int elementId, int[] terms, int[] condition);
+    }
+
+    interface ObserverTheoryAtomCallback extends Callback {
+        /**
+         * Observe theory atoms without guard.
+         *
+         * @param atomIdOrZero    the id of the atom or zero for directives
+         * @param termId          the term associated with the atom
+         * @param elementsPointer the elements of the atom
+         * @param sizeT           the number of elements
+         * @param data            user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(int atomIdOrZero, int termId, Pointer elementsPointer, NativeSize sizeT, Pointer data) {
+            int size = sizeT.intValue();
+            int[] elements = size == 0 ? new int[0] : elementsPointer.getIntArray(0, size);
+            call(atomIdOrZero, termId, elements);
+            return true;
+        }
+
+        void call(int atomIdOrZero, int termId, int[] elements);
+    }
+
+    interface ObserverTheoryAtomWithGuardCallback extends Callback {
+        /**
+         * Observe theory atoms with guard.
+         *
+         * @param atomIdOrZero    the id of the atom or zero for directives
+         * @param termId          the term associated with the atom
+         * @param elementsPointer the elements of the atom
+         * @param sizeT           the number of elements
+         * @param operatorId      the id of the operator (a string term)
+         * @param rightHandSideId the id of the term on the right hand side of the atom
+         * @param data            user data for the callback
+         * @return whether the call was successful
+         */
+        default boolean callback(int atomIdOrZero, int termId, Pointer elementsPointer, NativeSize sizeT, int operatorId, int rightHandSideId, Pointer data) {
+            int size = sizeT.intValue();
+            int[] elements = size == 0 ? new int[0] : elementsPointer.getIntArray(0, size);
+            call(atomIdOrZero, termId, elements, operatorId, rightHandSideId);
+            return true;
+        }
+
+        void call(int atomIdOrZero, int termId, int[] elements, int operatorId, int rightHandSideId);
+    }
+
+    // This struct contains a set of functions to customize the clingo application.
+    @Structure.FieldOrder({"programName", "version", "messageLimit", "main", "logger", "modelPrinter", "registerOptions", "validateOptions"})
+    class Application extends Structure {
+        public ProgramNameCallback programName;
+        public VersionCallback version;
+        public MessageLimitCallback messageLimit;
+        public MainFunctionCallback main;
+        public LoggerCallback logger;
+        public ModelPrinterCallback modelPrinter;
+        public RegisterOptionsCallback registerOptions;
+        public ValidateOptionsCallback validateOptions;
+    }
+
+    // callback to obtain program name
+    interface ProgramNameCallback extends Callback {
+        default String callback(Pointer data) {
+            return call();
+        }
+
+        String call();
+    }
+
+    // callback to obtain version information
+    interface VersionCallback extends Callback {
+        default String callback(Pointer data) {
+            return call();
+        }
+
+        String call();
+    }
+
+    // callback to obtain message limit
+    interface MessageLimitCallback extends Callback {
+        default int callback(Pointer data) {
+            return call();
+        }
+
+        int call();
+    }
+
+    // callback to override clingo's main function
+    interface MainFunctionCallback extends Callback {
+        default boolean callback(Pointer control, String[] files, NativeSize size, Pointer data) {
+            int amountFiles = size.intValue();
+            Path[] filePaths = new Path[amountFiles];
+            for (int i = 0; i < amountFiles; i++) {
+                filePaths[i] = Paths.get(files[i]);
+            }
+            call(new Control(control), filePaths);
+            return true;
+        }
+
+        void call(Control control, Path[] filePaths);
+
+    }
+
+    // callback to register options
+    interface RegisterOptionsCallback extends Callback {
+        default boolean callback(Pointer options, Pointer data) {
+            call(new ApplicationOptions(options));
+            return true;
+        }
+
+        void call(ApplicationOptions options);
+    }
+
+    // callback validate options
+    interface ValidateOptionsCallback extends Callback {
+        default boolean callback(Pointer data) {
+            return validate();
+        }
+
+        boolean validate();
+    }
 }

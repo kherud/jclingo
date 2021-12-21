@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TheoryObserverTest extends Observer {
+public class TheoryObserverTest implements Observer {
 
     private static final Set<String> called = new HashSet<>();
 
@@ -27,7 +27,7 @@ public class TheoryObserverTest extends Observer {
         String testTheory = Files.readString(file);
 
         Control control = new Control();
-        control.registerObserver(new TheoryObserverTest(), false);
+        control.registerObserver(this, false);
         control.add(testTheory);
         control.ground();
 

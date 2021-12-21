@@ -55,10 +55,10 @@ public abstract class SolveEventCallback implements Callback {
                 onModel(new Model(event));
                 break;
             case UNSAT:
-                Pointer symbolsPointer = event.getPointer(0);
-                int symbolsSize = getUnsatAmountSymbols(event);
-                long[] unsatSymbols = symbolsSize == 0 ? new long[0] : symbolsPointer.getLongArray(0, symbolsSize);
-                onUnsat(unsatSymbols);
+                Pointer costPointer = event.getPointer(0);
+                int costSize = getUnsatCostSize(event);
+                long[] unsatCost = costSize == 0 ? new long[0] : costPointer.getLongArray(0, costSize);
+                onUnsat(unsatCost);
                 break;
             case STATISTICS:
                 Statistics perStep = Statistics.fromPointer(event.getPointer(0));
@@ -78,7 +78,7 @@ public abstract class SolveEventCallback implements Callback {
 
     }
 
-    public void onUnsat(long[] literals) {
+    public void onUnsat(long[] cost) {
 
     }
 
@@ -91,7 +91,7 @@ public abstract class SolveEventCallback implements Callback {
     }
 
     // TODO: check if this is implemented correctly
-    private int getUnsatAmountSymbols(Pointer event) {
+    private int getUnsatCostSize(Pointer event) {
         switch (Native.SIZE_T_SIZE) {
             case 2:
                 return event.getShort(Native.POINTER_SIZE);

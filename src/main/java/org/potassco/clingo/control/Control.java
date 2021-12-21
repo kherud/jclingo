@@ -144,6 +144,20 @@ public class Control implements AutoCloseable {
     }
 
     /**
+     * Ground the program with the given name.
+     *
+     * @param name the name of the program
+     */
+    public void ground(String name) {
+        ProgramPart[] programParts = (ProgramPart[]) new ProgramPart(name).toArray(1);
+        Clingo.check(Clingo.INSTANCE.clingo_control_ground(
+                this.control,
+                programParts, new NativeSize(1),
+                null, null)
+        );
+    }
+
+    /**
      * Ground the given list of program parts specified by tuples of names and arguments.
      * <p>
      * Note that parts of a logic program without an explicit `#program`
@@ -177,6 +191,15 @@ public class Control implements AutoCloseable {
      */
     public SolveHandle solve() {
         return solve(Collections.emptyList(), null, SolveMode.NONE);
+    }
+
+    /**
+     * Starts a search.
+     *
+     * @param solveMode whether the search is blocking / non-blocking
+     */
+    public SolveHandle solve(SolveMode solveMode) {
+        return solve(Collections.emptyList(), null, solveMode);
     }
 
     /**
@@ -483,9 +506,32 @@ public class Control implements AutoCloseable {
      *                 the underlying solver (or any previously registered observers).
      */
     public void registerObserver(Observer observer, boolean replace) {
+        // TODO: maybe set callbacks to null if not implemented
+        Clingo.Observer nativeObserver = new Clingo.Observer();
+        nativeObserver.initProgram = observer::initProgram;
+        nativeObserver.beginStep = observer::beginStep;
+        nativeObserver.endStep = observer::endStep;
+        nativeObserver.rule = observer::rule;
+        nativeObserver.weightRule = observer::weightRule;
+        nativeObserver.minimize = observer::minimize;
+        nativeObserver.project = observer::project;
+        nativeObserver.outputAtom = observer::outputAtom;
+        nativeObserver.outputTerm = observer::outputTerm;
+        nativeObserver.outputCsp = observer::outputCSP;
+        nativeObserver.external = observer::external;
+        nativeObserver.assume = observer::assume;
+        nativeObserver.heuristic = observer::heuristic;
+        nativeObserver.acycEdge = observer::acycEdge;
+        nativeObserver.theoryTermNumber = observer::theoryTermNumber;
+        nativeObserver.theoryTermString = observer::theoryTermString;
+        nativeObserver.theoryTermCompound = observer::theoryTermCompound;
+        nativeObserver.theoryElement = observer::theoryElement;
+        nativeObserver.theoryAtom = observer::theoryAtom;
+        nativeObserver.theoryAtomWithGuard = observer::theoryAtomWithGuard;
+
         Clingo.check(Clingo.INSTANCE.clingo_control_register_observer(
                 control,
-                observer,
+                nativeObserver,
                 replace ? (byte) 1 : 0,
                 control)
         );
@@ -513,9 +559,16 @@ public class Control implements AutoCloseable {
      * @param sequentially Whether to call the propagator sequentially
      */
     public void registerPropagator(Propagator propagator, boolean sequentially) {
+        // TODO: maybe set callbacks to null if not implemented
+        Clingo.Propagator nativePropagator = new Clingo.Propagator();
+        nativePropagator.init = propagator::init;
+        nativePropagator.propagate = propagator::propagate;
+        nativePropagator.undo = propagator::undo;
+        nativePropagator.check = propagator::check;
+        nativePropagator.decide = propagator::decide;
         Clingo.check(Clingo.INSTANCE.clingo_control_register_propagator(
                 control,
-                propagator,
+                nativePropagator,
                 control,
                 sequentially ? (byte) 1 : 0)
         );

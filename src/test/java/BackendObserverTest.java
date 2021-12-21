@@ -1,27 +1,25 @@
-import com.sun.jna.Pointer;
 import org.junit.Assert;
 import org.junit.Test;
-import org.potassco.clingo.solving.Observer;
-import org.potassco.clingo.backend.WeightedLiteral;
+import org.potassco.clingo.backend.Backend;
 import org.potassco.clingo.backend.ExternalType;
 import org.potassco.clingo.backend.HeuristicType;
-import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.backend.Backend;
+import org.potassco.clingo.backend.WeightedLiteral;
 import org.potassco.clingo.control.Control;
+import org.potassco.clingo.solving.Observer;
 import org.potassco.clingo.symbol.Function;
 import org.potassco.clingo.symbol.Symbol;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class BackendObserverTest extends Observer {
+public class BackendObserverTest implements Observer {
 
-    private static final Set<String> called = new HashSet<>();
+    private final Set<String> called = new HashSet<>();
 
     @Test
     public void testBackendObserver() {
         Control control = new Control();
-        control.registerObserver(new BackendObserverTest(), false);
+        control.registerObserver(this, false);
 
         control.add("{a}.");
         try (Backend backend = control.getBackend()) {
@@ -49,6 +47,7 @@ public class BackendObserverTest extends Observer {
             backend.addExternal(3, ExternalType.RELEASE);
             Assert.assertTrue(called.contains("external"));
         }
+
         Assert.assertTrue(called.contains("outputAtom"));
         control.solve();
         Assert.assertTrue(called.contains("endStep"));

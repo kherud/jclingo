@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PropagatorInitTest extends Propagator {
+public class PropagatorInitTest implements Propagator {
 
     @Test
     public void testPropagatorControl() {

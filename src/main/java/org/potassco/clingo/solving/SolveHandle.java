@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.solving;
 
 import com.sun.jna.Pointer;
@@ -62,6 +62,14 @@ public class SolveHandle implements AutoCloseable, Iterator<Model> {
      */
     public void resume() {
         Clingo.check(Clingo.INSTANCE.clingo_solve_handle_resume(solveHandle));
+    }
+
+    /**
+     * Poll whether a result is ready.
+     * This function corresponds to {@link SolveHandle#wait(double)} with a time of 0.
+     */
+    public boolean poll() {
+        return wait(0.);
     }
 
     /**

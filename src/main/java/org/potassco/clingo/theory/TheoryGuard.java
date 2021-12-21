@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.theory;
 
 public class TheoryGuard {
@@ -35,5 +35,10 @@ public class TheoryGuard {
 
     public TheoryTerm getTheoryTerm() {
         return theoryTerm;
+    }
+
+    @Override
+    public String toString() {
+        return connective + " " + theoryTerm.toString();
     }
 }

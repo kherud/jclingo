@@ -1,4 +1,3 @@
-import com.sun.jna.ptr.IntByReference;
 import org.junit.Assert;
 import org.junit.Test;
 import org.potassco.clingo.control.Control;
@@ -7,17 +6,16 @@ import org.potassco.clingo.control.SymbolicAtoms;
 import org.potassco.clingo.propagator.Assignment;
 import org.potassco.clingo.propagator.PropagateInit;
 import org.potassco.clingo.propagator.Propagator;
-import org.potassco.clingo.solving.SolveResult;
 import org.potassco.clingo.symbol.Function;
 import org.potassco.clingo.symbol.Symbol;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class PropagatorHeuristicTest extends Propagator {
+public class PropagatorHeuristicTest implements Propagator {
 
-    private static int litA;
-    private static int litB;
+    private int litA;
+    private int litB;
 
     @Test
     public void testPropagatorControl() {

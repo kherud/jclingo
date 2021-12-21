@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * Test application covering most of the Application related API.
  */
-public class ApplicationTest extends Application {
+public class ApplicationTest implements Application {
 
     private static final List<String> queue = new ArrayList<>();
     private final Flag flag;

@@ -12,9 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PropagatorControlTest extends Propagator {
+public class PropagatorControlTest implements Propagator {
 
-    private static int litA;
+    private int litA;
 
     @Test
     public void testPropagatorControl() {

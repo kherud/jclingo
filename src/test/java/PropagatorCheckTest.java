@@ -9,9 +9,9 @@ import org.potassco.clingo.symbol.Symbol;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class PropagatorCheckTest extends Propagator {
+public class PropagatorCheckTest implements Propagator {
 
-    private static boolean added = false;
+    private boolean added = false;
 
     @Test
     public void testPropagatorControl() {

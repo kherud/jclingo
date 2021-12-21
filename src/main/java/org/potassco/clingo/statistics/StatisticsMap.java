@@ -70,6 +70,19 @@ public class StatisticsMap extends Statistics {
     }
 
     /**
+     * Get the names of all subkeys.
+     *
+     * @return the resulting keys
+     */
+    public String[] keys() {
+        int size = size();
+        String[] keys = new String[size];
+        for (int i = 0; i < size; i++)
+            keys[i] = getKey(i);
+        return keys;
+    }
+
+    /**
      * Test if the given map contains a specific subkey.
      *
      * @param name the name of the key
@@ -84,8 +97,8 @@ public class StatisticsMap extends Statistics {
     /**
      * Add a subkey with the given name.
      *
-     * @param name       the name of the new subkey
-     * @param type       the type of the new subkey
+     * @param name the name of the new subkey
+     * @param type the type of the new subkey
      * @return the resulting entry
      */
     public Statistics addKey(String name, StatisticsType type) {
@@ -98,7 +111,7 @@ public class StatisticsMap extends Statistics {
     /**
      * Set a value of the map for the specified key
      *
-     * @param name the key name
+     * @param name  the key name
      * @param value the raw value
      * @return the newly created entry
      */
@@ -112,7 +125,7 @@ public class StatisticsMap extends Statistics {
     /**
      * Set an array of values for the specified map key
      *
-     * @param name the key name
+     * @param name   the key name
      * @param values the raw values
      * @return the newly created entry
      */
@@ -126,7 +139,7 @@ public class StatisticsMap extends Statistics {
     /**
      * Set a statistics object for the specified map key
      *
-     * @param name the key name
+     * @param name  the key name
      * @param entry the statistics object
      * @return the newly created entry
      */
@@ -141,8 +154,8 @@ public class StatisticsMap extends Statistics {
      * <p>
      * Multiple levels can be looked up by concatenating keys with a period.
      *
-     * @param name       the name to lookup the subkey
-     * @return     the resulting subkey
+     * @param name the name to lookup the subkey
+     * @return the resulting subkey
      */
     private long getSubKey(String name) {
         LongByReference longByReference = new LongByReference();

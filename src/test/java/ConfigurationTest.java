@@ -21,5 +21,6 @@ public class ConfigurationTest {
         Assert.assertNotNull(solver0Config.getDescription("heuristic"));
         solver0Config.set("heuristic", "berkmin");
         Assert.assertTrue(solver0Config.get("heuristic").get().startsWith("berkmin"));
+        control.close();
     }
 }

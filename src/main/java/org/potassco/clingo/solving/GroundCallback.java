@@ -54,7 +54,7 @@ public abstract class GroundCallback implements Callback {
      * @param symbolCallbackData user data for the symbol callback (must be passed untouched)
      * @return whether the call was successful
      */
-    public boolean callback(
+    public byte callback(
             Pointer locationPointer,
             String name,
             Pointer argumentsPointer,
@@ -140,7 +140,7 @@ public abstract class GroundCallback implements Callback {
         return method;
     }
 
-    private boolean invokeMethod(Method method, Object[] args) {
+    private byte invokeMethod(Method method, Object[] args) {
         try {
             method.setAccessible(true);
             Object ret = method.invoke(this, args);
@@ -155,7 +155,7 @@ public abstract class GroundCallback implements Callback {
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new IllegalStateException("Could not invoke method '" + method.getName() + "'");
         }
-        return true;
+        return 1;
     }
 
     /**

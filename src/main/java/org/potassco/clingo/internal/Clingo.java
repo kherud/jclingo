@@ -3093,9 +3093,9 @@ public interface Clingo extends Library {
          * @param data user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(Pointer init, Pointer data) {
+        default byte callback(Pointer init, Pointer data) {
             call(new PropagateInit(init));
-            return true;
+            return 1;
         }
 
         void call(PropagateInit init);
@@ -3122,11 +3122,11 @@ public interface Clingo extends Library {
          * @param data    user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(Pointer control, Pointer changes, NativeSize size, Pointer data) {
+        default byte callback(Pointer control, Pointer changes, NativeSize size, Pointer data) {
             int intSize = size.intValue();
             int[] literals = intSize > 0 ? changes.getIntArray(0, intSize) : new int[0];
             call(new PropagateControl(control), literals);
-            return true;
+            return 1;
         }
 
         void call(PropagateControl control, int[] literals);
@@ -3167,9 +3167,9 @@ public interface Clingo extends Library {
          * @param data    user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(Pointer control, Pointer data) {
+        default byte callback(Pointer control, Pointer data) {
             call(new PropagateControl(control));
-            return true;
+            return 1;
         }
 
         void call(PropagateControl control);
@@ -3191,10 +3191,10 @@ public interface Clingo extends Library {
          * @param decisionReference the literal to make true
          * @return whether the call was successful
          */
-        default boolean callback(int threadId, Pointer assignment, int fallback, Pointer data, IntByReference decisionReference) {
+        default byte callback(int threadId, Pointer assignment, int fallback, Pointer data, IntByReference decisionReference) {
             int decision = call(threadId, new Assignment(assignment), fallback);
             decisionReference.setValue(decision);
-            return true;
+            return 1;
         }
 
         int call(int threadId, Assignment assignment, int fallbackLiteral);
@@ -3247,9 +3247,9 @@ public interface Clingo extends Library {
          * @param data        user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(boolean incremental, Pointer data) {
+        default byte callback(boolean incremental, Pointer data) {
             call(incremental);
-            return true;
+            return 1;
         }
 
         void call(boolean incremental);
@@ -3262,9 +3262,9 @@ public interface Clingo extends Library {
          * @param data user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(Pointer data) {
+        default byte callback(Pointer data) {
             call();
-            return true;
+            return 1;
         }
 
         void call();
@@ -3279,9 +3279,9 @@ public interface Clingo extends Library {
          * @param data user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(Pointer data) {
+        default byte callback(Pointer data) {
             call();
-            return true;
+            return 1;
         }
 
         void call();
@@ -3299,13 +3299,13 @@ public interface Clingo extends Library {
          * @param data        user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(boolean choice, Pointer headPointer, NativeSize headSizeT, Pointer bodyPointer, NativeSize bodySizeT, Pointer data) {
+        default byte callback(boolean choice, Pointer headPointer, NativeSize headSizeT, Pointer bodyPointer, NativeSize bodySizeT, Pointer data) {
             int headSize = headSizeT.intValue();
             int bodySize = bodySizeT.intValue();
             int[] head = headSize == 0 ? new int[0] : headPointer.getIntArray(0, headSize);
             int[] body = bodySize == 0 ? new int[0] : bodyPointer.getIntArray(0, bodySize);
             call(choice, head, body);
-            return true;
+            return 1;
         }
 
         void call(boolean choice, int[] head, int[] body);
@@ -3324,7 +3324,7 @@ public interface Clingo extends Library {
          * @param data        user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(boolean choice, Pointer headPointer, NativeSize headSizeT, int lowerBound, Pointer bodyPointer, NativeSize bodySizeT, Pointer data) {
+        default byte callback(boolean choice, Pointer headPointer, NativeSize headSizeT, int lowerBound, Pointer bodyPointer, NativeSize bodySizeT, Pointer data) {
             int headSize = headSizeT.intValue();
             int bodySize = bodySizeT.intValue();
             int[] head = headSize == 0 ? new int[0] : headPointer.getIntArray(0, headSize);
@@ -3334,7 +3334,7 @@ public interface Clingo extends Library {
                 body[i] = new WeightedLiteral(bodyPointer.share((long) i * structSize));
             }
             call(choice, head, lowerBound, body);
-            return true;
+            return 1;
         }
 
         void call(boolean choice, int[] head, int lowerBound, WeightedLiteral[] body);
@@ -3350,7 +3350,7 @@ public interface Clingo extends Library {
          * @param data            user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(int priority, Pointer literalsPointer, NativeSize sizeT, Pointer data) {
+        default byte callback(int priority, Pointer literalsPointer, NativeSize sizeT, Pointer data) {
             int size = sizeT.intValue();
             WeightedLiteral[] literals = new WeightedLiteral[size];
             int structSize = Native.getNativeSize(WeightedLiteral.class);
@@ -3358,7 +3358,7 @@ public interface Clingo extends Library {
                 literals[i] = new WeightedLiteral(literalsPointer.share((long) i * structSize));
             }
             call(priority, literals);
-            return true;
+            return 1;
         }
 
         void call(int priority, WeightedLiteral[] literals);
@@ -3373,11 +3373,11 @@ public interface Clingo extends Library {
          * @param data         user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(Pointer atomsPointer, NativeSize sizeT, Pointer data) {
+        default byte callback(Pointer atomsPointer, NativeSize sizeT, Pointer data) {
             int size = sizeT.intValue();
             int[] atoms = size == 0 ? new int[0] : atomsPointer.getIntArray(0, size);
             call(atoms);
-            return true;
+            return 1;
         }
 
         void call(int[] atoms);
@@ -3394,9 +3394,9 @@ public interface Clingo extends Library {
          * @param data   user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(long symbol, int atom, Pointer data) {
+        default byte callback(long symbol, int atom, Pointer data) {
             call(Symbol.fromLong(symbol), atom);
-            return true;
+            return 1;
         }
 
         void call(Symbol symbol, int atom);
@@ -3412,11 +3412,11 @@ public interface Clingo extends Library {
          * @param data             user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(long symbol, Pointer conditionPointer, NativeSize sizeT, Pointer data) {
+        default byte callback(long symbol, Pointer conditionPointer, NativeSize sizeT, Pointer data) {
             int size = sizeT.intValue();
             int[] condition = size == 0 ? new int[0] : conditionPointer.getIntArray(0, size);
             call(Symbol.fromLong(symbol), condition);
-            return true;
+            return 1;
         }
 
         void call(Symbol symbol, int[] condition);
@@ -3433,11 +3433,11 @@ public interface Clingo extends Library {
          * @param data             user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(long symbol, int value, Pointer conditionPointer, NativeSize sizeT, Pointer data) {
+        default byte callback(long symbol, int value, Pointer conditionPointer, NativeSize sizeT, Pointer data) {
             int size = sizeT.intValue();
             int[] condition = size == 0 ? new int[0] : conditionPointer.getIntArray(0, size);
             call(Symbol.fromLong(symbol), value, condition);
-            return true;
+            return 1;
         }
 
         void call(Symbol symbol, int value, int[] condition);
@@ -3452,9 +3452,9 @@ public interface Clingo extends Library {
          * @param data user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(int atom, int type, Pointer data) {
+        default byte callback(int atom, int type, Pointer data) {
             call(atom, ExternalType.fromValue(type));
-            return true;
+            return 1;
         }
 
         void call(int atom, ExternalType type);
@@ -3469,11 +3469,11 @@ public interface Clingo extends Library {
          * @param data            user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(Pointer literalsPointer, NativeSize sizeT, Pointer data) {
+        default byte callback(Pointer literalsPointer, NativeSize sizeT, Pointer data) {
             int size = sizeT.intValue();
             int[] literals = size == 0 ? new int[0] : literalsPointer.getIntArray(0, size);
             call(literals);
-            return true;
+            return 1;
         }
 
         void call(int[] literals);
@@ -3492,11 +3492,11 @@ public interface Clingo extends Library {
          * @param data             user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(int atom, int type, int bias, int priority, Pointer conditionPointer, NativeSize sizeT, Pointer data) {
+        default byte callback(int atom, int type, int bias, int priority, Pointer conditionPointer, NativeSize sizeT, Pointer data) {
             int size = sizeT.intValue();
             int[] condition = size == 0 ? new int[0] : conditionPointer.getIntArray(0, size);
             call(atom, HeuristicType.fromValue(type), bias, priority, condition);
-            return true;
+            return 1;
         }
 
         void call(int atom, HeuristicType type, int bias, int priority, int[] condition);
@@ -3513,11 +3513,11 @@ public interface Clingo extends Library {
          * @param data             user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(int nodeU, int nodeV, Pointer conditionPointer, NativeSize sizeT, Pointer data) {
+        default byte callback(int nodeU, int nodeV, Pointer conditionPointer, NativeSize sizeT, Pointer data) {
             int size = sizeT.intValue();
             int[] condition = size == 0 ? new int[0] : conditionPointer.getIntArray(0, size);
             call(nodeU, nodeV, condition);
-            return true;
+            return 1;
         }
 
         void call(int nodeU, int nodeV, int[] condition);
@@ -3532,9 +3532,9 @@ public interface Clingo extends Library {
          * @param data   user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(int termId, int number, Pointer data) {
+        default byte callback(int termId, int number, Pointer data) {
             call(termId, number);
-            return true;
+            return 1;
         }
 
         void call(int termId, int number);
@@ -3549,9 +3549,9 @@ public interface Clingo extends Library {
          * @param data   user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(int termId, String name, Pointer data) {
+        default byte callback(int termId, String name, Pointer data) {
             call(termId, name);
-            return true;
+            return 1;
         }
 
         void call(int termId, String name);
@@ -3574,11 +3574,11 @@ public interface Clingo extends Library {
          * @param data             user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(int termId, int nameIdOrType, Pointer argumentsPointer, NativeSize sizeT, Pointer data) {
+        default byte callback(int termId, int nameIdOrType, Pointer argumentsPointer, NativeSize sizeT, Pointer data) {
             int size = sizeT.intValue();
             int[] arguments = size == 0 ? new int[0] : argumentsPointer.getIntArray(0, size);
             call(termId, nameIdOrType, arguments);
-            return true;
+            return 1;
         }
 
         void call(int termId, int nameIdOrType, int[] arguments);
@@ -3596,13 +3596,13 @@ public interface Clingo extends Library {
          * @param data             user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(int elementId, Pointer termsPointer, NativeSize termsSizeT, Pointer conditionPointer, NativeSize conditionSizeT, Pointer data) {
+        default byte callback(int elementId, Pointer termsPointer, NativeSize termsSizeT, Pointer conditionPointer, NativeSize conditionSizeT, Pointer data) {
             int termsSize = termsSizeT.intValue();
             int conditionSize = conditionSizeT.intValue();
             int[] terms = termsSize == 0 ? new int[0] : termsPointer.getIntArray(0, termsSize);
             int[] condition = conditionSize == 0 ? new int[0] : conditionPointer.getIntArray(0, conditionSize);
             call(elementId, terms, condition);
-            return true;
+            return 1;
         }
 
         void call(int elementId, int[] terms, int[] condition);
@@ -3619,11 +3619,11 @@ public interface Clingo extends Library {
          * @param data            user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(int atomIdOrZero, int termId, Pointer elementsPointer, NativeSize sizeT, Pointer data) {
+        default byte callback(int atomIdOrZero, int termId, Pointer elementsPointer, NativeSize sizeT, Pointer data) {
             int size = sizeT.intValue();
             int[] elements = size == 0 ? new int[0] : elementsPointer.getIntArray(0, size);
             call(atomIdOrZero, termId, elements);
-            return true;
+            return 1;
         }
 
         void call(int atomIdOrZero, int termId, int[] elements);
@@ -3642,11 +3642,11 @@ public interface Clingo extends Library {
          * @param data            user data for the callback
          * @return whether the call was successful
          */
-        default boolean callback(int atomIdOrZero, int termId, Pointer elementsPointer, NativeSize sizeT, int operatorId, int rightHandSideId, Pointer data) {
+        default byte callback(int atomIdOrZero, int termId, Pointer elementsPointer, NativeSize sizeT, int operatorId, int rightHandSideId, Pointer data) {
             int size = sizeT.intValue();
             int[] elements = size == 0 ? new int[0] : elementsPointer.getIntArray(0, size);
             call(atomIdOrZero, termId, elements, operatorId, rightHandSideId);
-            return true;
+            return 1;
         }
 
         void call(int atomIdOrZero, int termId, int[] elements, int operatorId, int rightHandSideId);
@@ -3694,14 +3694,14 @@ public interface Clingo extends Library {
 
     // callback to override clingo's main function
     interface MainFunctionCallback extends Callback {
-        default boolean callback(Pointer control, String[] files, NativeSize size, Pointer data) {
+        default byte callback(Pointer control, String[] files, NativeSize size, Pointer data) {
             int amountFiles = size.intValue();
             Path[] filePaths = new Path[amountFiles];
             for (int i = 0; i < amountFiles; i++) {
                 filePaths[i] = Paths.get(files[i]);
             }
             call(new Control(control), filePaths);
-            return true;
+            return 1;
         }
 
         void call(Control control, Path[] filePaths);
@@ -3710,9 +3710,9 @@ public interface Clingo extends Library {
 
     // callback to register options
     interface RegisterOptionsCallback extends Callback {
-        default boolean callback(Pointer options, Pointer data) {
+        default byte callback(Pointer options, Pointer data) {
             call(new ApplicationOptions(options));
-            return true;
+            return 1;
         }
 
         void call(ApplicationOptions options);
@@ -3737,7 +3737,7 @@ public interface Clingo extends Library {
          * @return whether the call was successful; might set one of the following error codes:
          * - ::clingo_error_bad_alloc
          */
-        boolean callback(long[] symbols, NativeSize symbolsSize, Pointer symbolCallbackData);
+        byte callback(long[] symbols, NativeSize symbolsSize, Pointer symbolCallbackData);
 
     }
 }

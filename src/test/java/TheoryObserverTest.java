@@ -38,6 +38,8 @@ public class TheoryObserverTest implements Observer {
         Assert.assertTrue(called.contains("theoryElement"));
         Assert.assertTrue(called.contains("theoryAtom"));
 
+        control.close();
+
     }
 
     public void initProgram(boolean incremental) {

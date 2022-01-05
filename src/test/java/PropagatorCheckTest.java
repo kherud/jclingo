@@ -30,6 +30,8 @@ public class PropagatorCheckTest implements Propagator {
         Assert.assertEquals(2, mcb.models.size());
         Assert.assertEquals("", Arrays.stream(mcb.models.get(0).symbols).map(Symbol::toString).collect(Collectors.joining(" ")));
         Assert.assertEquals("", Arrays.stream(mcb.models.get(1).symbols).map(Symbol::toString).collect(Collectors.joining(" ")));
+
+        control.close();
     }
 
     public void check(PropagateControl control) {

@@ -34,6 +34,8 @@ public class TheoryWithGuardObserverTest extends TheoryObserverTest {
         Assert.assertTrue(called.contains("theoryAtomWithGuard"));
 
         control.solve();
+
+        control.close();
     }
 
     public void theoryTermString(int termId, String name) {

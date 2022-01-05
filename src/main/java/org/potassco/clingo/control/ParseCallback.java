@@ -16,26 +16,30 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.control;
 
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 
-// parse callback to parse the value of the option
+/**
+ * parse callback to parse the value of the option
+ */
+@FunctionalInterface
 public interface ParseCallback extends Callback {
     /**
      * @param value the value of the option
-     * @param data callback data
+     * @param data  callback data
      * @return whether the call was successful
      */
-    default boolean callback(String value, Pointer data) {
+    default byte callback(String value, Pointer data) {
         call(value);
-        return true;
+        return 1;
     }
 
     /**
      * parse callback to parse the value of the option
+     *
      * @param value the value of the option
      */
     void call(String value);

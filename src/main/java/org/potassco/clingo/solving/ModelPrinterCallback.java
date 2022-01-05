@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.solving;
 
 import com.sun.jna.Callback;
@@ -34,7 +34,7 @@ public interface ModelPrinterCallback extends Callback {
          * @param data user data for the callback
          * @return whether the call was successful
          */
-        boolean callback(Pointer data);
+        byte callback(Pointer data);
     }
 
     /**
@@ -44,9 +44,9 @@ public interface ModelPrinterCallback extends Callback {
      * @param data user data for the callback
      * @return whether the call was successful
      */
-    default boolean callback(Pointer model, DefaultModelPrinter printer, Pointer printerData, Pointer data) {
+    default byte callback(Pointer model, DefaultModelPrinter printer, Pointer printerData, Pointer data) {
         call(new Model(model));
-        return true;
+        return 1;
     }
 
     void call(Model model);

@@ -147,6 +147,8 @@ public class SolvingTest {
 
         Assert.assertTrue(result.unsatisfiable());
         Assert.assertTrue(core.length > 7);
+
+        control.close();
     }
 
     @Test
@@ -158,6 +160,8 @@ public class SolvingTest {
         TestCallback.ModelTuple model = mcb.models.get(mcb.models.size() - 1);
         Assert.assertEquals(ModelType.CAUTIOUS_CONSEQUENCES, model.type);
         Assert.assertEquals("c", Arrays.stream(model.symbols).map(Symbol::toString).collect(Collectors.joining(" ")));
+
+        control.close();
     }
 
     @Test
@@ -169,6 +173,8 @@ public class SolvingTest {
         TestCallback.ModelTuple model = mcb.models.get(mcb.models.size() - 1);
         Assert.assertEquals(ModelType.BRAVE_CONSEQUENCES, model.type);
         Assert.assertEquals("a b c", Arrays.stream(model.symbols).map(Symbol::toString).collect(Collectors.joining(" ")));
+
+        control.close();
     }
 
     @Test

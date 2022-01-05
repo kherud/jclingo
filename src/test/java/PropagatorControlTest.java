@@ -32,6 +32,8 @@ public class PropagatorControlTest implements Propagator {
 
         Assert.assertEquals(1, mcb.models.size());
         Assert.assertEquals("a", Arrays.stream(mcb.models.get(0).symbols).map(Symbol::toString).collect(Collectors.joining(" ")));
+
+        control.close();
     }
 
     public void init(PropagateInit init) {

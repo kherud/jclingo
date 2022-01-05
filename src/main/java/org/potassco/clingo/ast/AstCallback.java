@@ -22,20 +22,24 @@ package org.potassco.clingo.ast;
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 
-// Callback function to intercept AST nodes.
-public interface AstCallback  extends Callback {
+/**
+ * Callback function to intercept AST nodes.
+ */
+@FunctionalInterface
+public interface AstCallback extends Callback {
     /**
-     * @param ast the AST
+     * @param ast  the AST
      * @param data a user data pointer
      * @return whether the call was successful
      */
-    default boolean callback(Pointer ast, Pointer data) {
+    default byte callback(Pointer ast, Pointer data) {
         call(Ast.create(ast));
-        return true;
+        return 1;
     }
 
     /**
      * Callback function to intercept AST nodes.
+     *
      * @param ast the AST
      */
     void call(Ast ast);

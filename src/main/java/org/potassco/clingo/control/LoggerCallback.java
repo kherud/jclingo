@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.control;
 
 import com.sun.jna.Callback;
@@ -25,6 +25,7 @@ import com.sun.jna.Pointer;
 /**
  * Callback to intercept warning messages.
  */
+@FunctionalInterface
 public interface LoggerCallback extends Callback {
     /**
      * @param code associated warning code

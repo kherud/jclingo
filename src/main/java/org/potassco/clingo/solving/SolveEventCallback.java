@@ -48,7 +48,7 @@ public abstract class SolveEventCallback implements Callback {
      * @param goon  can be set to false to stop solving
      * @return whether the call was successful
      */
-    public boolean callback(int code, Pointer event, Pointer data, ByteByReference goon) {
+    public byte callback(int code, Pointer event, Pointer data, ByteByReference goon) {
         SolveEventType type = SolveEventType.fromValue(code);
         switch (type) {
             case MODEL:
@@ -71,7 +71,7 @@ public abstract class SolveEventCallback implements Callback {
             default:
                 throw new IllegalStateException("unknown solve event type " + type);
         }
-        return true;
+        return 1;
     }
 
     public void onModel(Model model) {

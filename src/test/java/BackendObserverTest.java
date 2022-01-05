@@ -61,6 +61,7 @@ public class BackendObserverTest implements Observer {
         Assert.assertFalse(called.contains("theoryAtom"));
         Assert.assertFalse(called.contains("theoryAtomWithGuard"));
 
+        control.close();
     }
 
     public void initProgram(boolean incremental) {

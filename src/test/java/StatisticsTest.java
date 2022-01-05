@@ -67,6 +67,8 @@ public class StatisticsTest {
         Assert.assertEquals(3.0, map.get("c.d").get(), 1e-9);
 
         // TODO: set user_accu correctly
+
+        control.close();
     }
 
 
@@ -79,5 +81,7 @@ public class StatisticsTest {
         Statistics statistics = control.getStatistics();
         Assert.assertTrue(statistics.get("problem.lp.atoms").get() >= 2.);
         Assert.assertTrue(statistics.get("solving.solvers.choices").get() >= 1.);
+
+        control.close();
     }
 }

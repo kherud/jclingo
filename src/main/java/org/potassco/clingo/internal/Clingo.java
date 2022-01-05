@@ -21,6 +21,7 @@ package org.potassco.clingo.internal;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.*;
+import org.potassco.clingo.ast.AstCallback;
 import org.potassco.clingo.ast.Location;
 import org.potassco.clingo.backend.ExternalType;
 import org.potassco.clingo.backend.HeuristicType;
@@ -31,10 +32,9 @@ import org.potassco.clingo.control.*;
 import org.potassco.clingo.propagator.Assignment;
 import org.potassco.clingo.propagator.PropagateControl;
 import org.potassco.clingo.propagator.PropagateInit;
-import org.potassco.clingo.solving.*;
-import org.potassco.clingo.propagator.Propagator;
-import org.potassco.clingo.ast.AstCallback;
-import org.potassco.clingo.control.ParseCallback;
+import org.potassco.clingo.solving.GroundCallback;
+import org.potassco.clingo.solving.ModelPrinterCallback;
+import org.potassco.clingo.solving.SolveEventCallback;
 import org.potassco.clingo.symbol.Symbol;
 
 import java.nio.file.Path;
@@ -100,7 +100,6 @@ public interface Clingo extends Library {
     /**
      * Convert warning code into string.
      */
-    // TODO: where do the warning codes come from?
     String clingo_warning_string(int code);
 
     /**
@@ -2210,7 +2209,7 @@ public interface Clingo extends Library {
     //  Functions to get/set numeric attributes of ASTs
 
     /**
-     * Get the value of an attribute of type "clingo_ast_attribute_type_number".
+     * Get the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#NUMBER}.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2223,7 +2222,7 @@ public interface Clingo extends Library {
     byte clingo_ast_attribute_get_number(Pointer ast, int attribute, IntByReference value);
 
     /**
-     * Set the value of an attribute of type "clingo_ast_attribute_type_number".
+     * Set the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#NUMBER}.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2239,7 +2238,7 @@ public interface Clingo extends Library {
     // Functions to get/set symbolic attributes of ASTs
 
     /**
-     * Set the value of an attribute of type "clingo_ast_attribute_type_number".
+     * Set the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#NUMBER}.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2252,7 +2251,7 @@ public interface Clingo extends Library {
     byte clingo_ast_attribute_get_symbol(Pointer ast, int attribute, LongByReference value);
 
     /**
-     * Set the value of an attribute of type "clingo_ast_attribute_type_symbol".
+     * Set the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#SYMBOL}.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2268,7 +2267,7 @@ public interface Clingo extends Library {
     // Functions to get/set location attributes of ASTs
 
     /**
-     * Get the value of an attribute of type "clingo_ast_attribute_type_location".
+     * Get the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#LOCATION}.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2281,7 +2280,7 @@ public interface Clingo extends Library {
     byte clingo_ast_attribute_get_location(Pointer ast, int attribute, Location value);
 
     /**
-     * Set the value of an attribute of type "clingo_ast_attribute_type_location".
+     * Set the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#LOCATION}.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2297,7 +2296,7 @@ public interface Clingo extends Library {
     // Functions to get/set string attributes of ASTs
 
     /**
-     * Get the value of an attribute of type "clingo_ast_attribute_type_string".
+     * Get the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#STRING}.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2310,7 +2309,7 @@ public interface Clingo extends Library {
     byte clingo_ast_attribute_get_string(Pointer ast, int attribute, String[] value);
 
     /**
-     * Set the value of an attribute of type "clingo_ast_attribute_type_string".
+     * Set the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#STRING}.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2326,7 +2325,7 @@ public interface Clingo extends Library {
     // Functions to get/set AST attributes of ASTs
 
     /**
-     * Get the value of an attribute of type "clingo_ast_attribute_type_ast".
+     * Get the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#AST}.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2339,7 +2338,7 @@ public interface Clingo extends Library {
     byte clingo_ast_attribute_get_ast(Pointer ast, int attribute, PointerByReference value);
 
     /**
-     * Set the value of an attribute of type "clingo_ast_attribute_type_ast".
+     * Set the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#AST}.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2355,7 +2354,7 @@ public interface Clingo extends Library {
     // Functions to get/set optional AST attributes of ASTs
 
     /**
-     * Get the value of an attribute of type "clingo_ast_attribute_type_optional_ast".
+     * Get the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#OPTIONAL_AST}.
      * <p>
      * The value might be "NULL".
      *
@@ -2370,7 +2369,7 @@ public interface Clingo extends Library {
     byte clingo_ast_attribute_get_optional_ast(Pointer ast, int attribute, PointerByReference value);
 
     /**
-     * Set the value of an attribute of type "clingo_ast_attribute_type_optional_ast".
+     * Set the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#OPTIONAL_AST}.
      * <p>
      * The value might be "NULL".
      *
@@ -2388,7 +2387,7 @@ public interface Clingo extends Library {
     // Functions to get/set string array attributes of ASTs
 
     /**
-     * Get the value of an attribute of type "clingo_ast_attribute_type_string_array" at the given index.
+     * Get the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#STRING_ARRAY} at the given index.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2402,7 +2401,7 @@ public interface Clingo extends Library {
     byte clingo_ast_attribute_get_string_at(Pointer ast, int attribute, NativeSize index, String[] value);
 
     /**
-     * Set the value of an attribute of type "clingo_ast_attribute_type_string_array" at the given index.
+     * Set the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#STRING_ARRAY} at the given index.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2416,7 +2415,7 @@ public interface Clingo extends Library {
     byte clingo_ast_attribute_set_string_at(Pointer ast, int attribute, NativeSize index, String value);
 
     /**
-     * Remove an element from an attribute of type "clingo_ast_attribute_type_string_array" at the given index.
+     * Remove an element from an attribute of type {@link org.potassco.clingo.ast.AttributeType#STRING_ARRAY} at the given index.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2429,7 +2428,7 @@ public interface Clingo extends Library {
     byte clingo_ast_attribute_delete_string_at(Pointer ast, int attribute, NativeSize index);
 
     /**
-     * Get the size of an attribute of type "clingo_ast_attribute_type_string_array".
+     * Get the size of an attribute of type {@link org.potassco.clingo.ast.AttributeType#STRING_ARRAY}.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2442,7 +2441,7 @@ public interface Clingo extends Library {
     byte clingo_ast_attribute_size_string_array(Pointer ast, int attribute, NativeSizeByReference size);
 
     /**
-     * Insert a value into an attribute of type "clingo_ast_attribute_type_string_array" at the given index.
+     * Insert a value into an attribute of type {@link org.potassco.clingo.ast.AttributeType#STRING_ARRAY} at the given index.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2458,7 +2457,7 @@ public interface Clingo extends Library {
     // Functions to get/set AST array attributes of ASTs
 
     /**
-     * Get the value of an attribute of type "clingo_ast_attribute_type_ast_array" at the given index.
+     * Get the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#AST_ARRAY} at the given index.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2472,7 +2471,7 @@ public interface Clingo extends Library {
     byte clingo_ast_attribute_get_ast_at(Pointer ast, int attribute, NativeSize index, PointerByReference value);
 
     /**
-     * Set the value of an attribute of type "clingo_ast_attribute_type_ast_array" at the given index.
+     * Set the value of an attribute of type {@link org.potassco.clingo.ast.AttributeType#AST_ARRAY} at the given index.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2486,7 +2485,7 @@ public interface Clingo extends Library {
     byte clingo_ast_attribute_set_ast_at(Pointer ast, int attribute, NativeSize index, Pointer value);
 
     /**
-     * Remove an element from an attribute of type "clingo_ast_attribute_type_ast_array" at the given index.
+     * Remove an element from an attribute of type {@link org.potassco.clingo.ast.AttributeType#AST_ARRAY} at the given index.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2499,7 +2498,7 @@ public interface Clingo extends Library {
     byte clingo_ast_attribute_delete_ast_at(Pointer ast, int attribute, NativeSize index);
 
     /**
-     * Get the size of an attribute of type "clingo_ast_attribute_type_ast_array".
+     * Get the size of an attribute of type {@link org.potassco.clingo.ast.AttributeType#AST_ARRAY}.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -2512,7 +2511,7 @@ public interface Clingo extends Library {
     byte clingo_ast_attribute_size_ast_array(Pointer ast, int attribute, NativeSizeByReference size);
 
     /**
-     * Insert a value into an attribute of type "clingo_ast_attribute_type_ast_array" at the given index.
+     * Insert a value into an attribute of type {@link org.potassco.clingo.ast.AttributeType#AST_ARRAY} at the given index.
      *
      * @param ast       the target AST
      * @param attribute the target attribute
@@ -3203,10 +3202,10 @@ public interface Clingo extends Library {
 
     /**
      * An instance of this struct has to be registered with a solver to observe ground directives as they are passed to the solver.
-     *
+     * <p>
      * This interface is closely modeled after the aspif format.
      * For more information please refer to the specification of the aspif format.
-     *
+     * <p>
      * Not all callbacks have to be implemented and can be set to NULL if not needed.
      * If one of the callbacks in the struct fails, grounding is stopped.
      * If a non-recoverable clingo API call fails, a callback must return false.
@@ -3726,5 +3725,19 @@ public interface Clingo extends Library {
         }
 
         boolean validate();
+    }
+
+    /**
+     * Callback function to inject symbols.
+     */
+    interface SymbolCallback extends Callback {
+        /**
+         * @param symbols     array of symbols
+         * @param symbolsSize size of the symbol array
+         * @return whether the call was successful; might set one of the following error codes:
+         * - ::clingo_error_bad_alloc
+         */
+        boolean callback(long[] symbols, NativeSize symbolsSize, Pointer symbolCallbackData);
+
     }
 }

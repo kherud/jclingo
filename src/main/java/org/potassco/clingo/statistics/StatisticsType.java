@@ -5,32 +5,41 @@ import java.util.Map;
 
 /**
  * Enumeration for entries of the statistics.
+ *
  * @author Josef Schneeberger
  */
 public enum StatisticsType {
-    /** the entry is invalid (has neither of the types below) */
+    /**
+     * the entry is invalid (has neither of the types below)
+     */
     EMPTY(0),
-    /** the entry is a (double) value */
+    /**
+     * the entry is a (double) value
+     */
     VALUE(1),
-    /** the entry is an array */
+    /**
+     * the entry is an array
+     */
     ARRAY(2),
-    /** the entry is a map */
+    /**
+     * the entry is a map
+     */
     MAP(3);
 
     private static final Map<Integer, StatisticsType> mapping = new HashMap<>();
 
-	static {
-	    for (StatisticsType solveEventType : StatisticsType.values()) {
-	    	mapping.put(
-	          solveEventType.getValue(),
-	          solveEventType
-	        );
-	    }
-	}
+    static {
+        for (StatisticsType solveEventType : StatisticsType.values()) {
+            mapping.put(
+                    solveEventType.getValue(),
+                    solveEventType
+            );
+        }
+    }
 
-	public static StatisticsType fromValue(int type) {
-		return mapping.get(type);
-	}
+    public static StatisticsType fromValue(int type) {
+        return mapping.get(type);
+    }
 
     private final int type;
 

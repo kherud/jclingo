@@ -33,11 +33,11 @@ public class AggregateGuard extends Ast {
     public AggregateGuard(Pointer ast) {
         super(ast);
     }
-    
+
     public AggregateGuard(int comparison, Ast term) {
         super(create(comparison, term));
     }
-    
+
     public int getComparison() {
         IntByReference intByReference = new IntByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, Attribute.COMPARISON.ordinal(), intByReference));
@@ -57,7 +57,7 @@ public class AggregateGuard extends Ast {
     public void setTerm(Ast term) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.TERM.ordinal(), term.getPointer()));
     }
-    
+
     private static Pointer create(int comparison, Ast term) {
         PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.AGGREGATE_GUARD.ordinal(), pointerByReference, comparison, term.getPointer()));

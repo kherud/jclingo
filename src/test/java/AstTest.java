@@ -1,21 +1,15 @@
 import org.junit.Assert;
 import org.junit.Test;
 import org.potassco.clingo.ast.*;
-import org.potassco.clingo.ast.nodes.Id;
-import org.potassco.clingo.ast.nodes.Program;
-import org.potassco.clingo.ast.nodes.Rule;
+import org.potassco.clingo.ast.nodes.*;
 import org.potassco.clingo.control.Control;
 import org.potassco.clingo.control.WarningCode;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class AstTest {
 
@@ -23,33 +17,49 @@ public class AstTest {
         System.out.printf("[%s] %s", code, message);
     }
 
-    private Ast deepCopy(Ast node) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
-        // TODO: update reflection
+    private final Map<AstType, List<String>> constructorMapping = getMapping();
+
+    private Ast deepCopy(Ast node) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
         Constructor<?>[] constructors = node.getClass().getConstructors();
+        Arrays.sort(constructors, Comparator.comparingInt(Constructor::getParameterCount));
         Assert.assertEquals(2, constructors.length);
         Constructor<?> constructor = constructors[1];
-        Method[] methods = node.getClass().getDeclaredMethods();
-        List<Method> getters = Arrays.stream(methods).filter(method -> method.getName().startsWith("get")).collect(Collectors.toList());
-        getters.sort((o1, o2) -> {
-            Class<?>[] types = constructor.getParameterTypes();
-            int pos1 = IntStream.range(0, types.length).filter(i -> types[i] == o1.getReturnType()).findFirst().orElseThrow();
-            int pos2 = IntStream.range(0, types.length).filter(i -> types[i] == o2.getReturnType()).findFirst().orElseThrow();
-            return Integer.compare(pos1, pos2);
-        });
+        Class<?> clazz = node.getClass();
 
-        Object[] arguments = new Object[getters.size()];
-        for (int i = 0; i < getters.size(); i++) {
-            arguments[i] = getters.get(i).invoke(node);
+        List<String> parameters = constructorMapping.get(node.getType());
+        Object[] arguments = new Object[parameters.size()];
+        Assert.assertEquals(parameters.size(), arguments.length);
+
+        for (int i = 0; i < parameters.size(); i++) {
+            String parameter = parameters.get(i);
+            String getterName = "get" + parameter.substring(0, 1).toUpperCase() + parameter.substring(1);
+            Method getter = clazz.getMethod(getterName);
+            arguments[i] = getter.invoke(node);
         }
 
-        return (Ast) constructor.newInstance(arguments);
+        Ast copy = (Ast) constructor.newInstance(arguments);
+
+        // Also test setters
+        for (String parameter : parameters) {
+            String getterName = "get" + parameter.substring(0, 1).toUpperCase() + parameter.substring(1);
+            String setterName = "set" + parameter.substring(0, 1).toUpperCase() + parameter.substring(1);
+            Method getter = clazz.getMethod(getterName);
+            Object argument = getter.invoke(node);
+            Method setter = Arrays.stream(clazz.getMethods())
+                    .filter(method -> method.getName()
+                            .startsWith(setterName)).findFirst().orElseThrow();
+            setter.invoke(copy, argument);
+        }
+
+
+        return copy;
     }
 
     private void testString(String term) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
         testString(term, term);
     }
 
-    private void testString(String term, String alternative) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+    private void testString(String term, String alternative) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
         List<Ast> asts = Ast.parseString(term, this::logger, 100);
 
         Ast node = asts.get(asts.size() - 1);
@@ -63,7 +73,14 @@ public class AstTest {
 
         Control control = new Control();
         try (ProgramBuilder builder = new ProgramBuilder(control)) {
-            builder.add(copy2);
+            try {
+                builder.add(copy2);
+            } catch (RuntimeException e) {
+                String message = e.getMessage();
+                if (!message.contains("error: python support not available") ||
+                        message.contains("error: lua support not available"))
+                    throw e;
+            }
         }
     }
 
@@ -217,14 +234,13 @@ public class AstTest {
         testString("a :- #true.");
     }
 
-    @Test
     public void testStatements() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
         testString("a.");
         testString("#false.");
         testString("#false :- a.");
         testString("a :- a; b.");
-        // testString("#const x = 10.");
-        // testString("#const x = 10. [override]");
+        testString("#const x = 10.");
+        testString("#const x = 10. [override]");
         testString("#show p/1.");
         testString("#show -p/1.");
         testString("#defined p/1.");
@@ -281,10 +297,52 @@ public class AstTest {
         Assert.assertTrue(x.compareTo(y) >= 0);
     }
 
+    @Test
     public void testAstSequence() {
         Location location = new Location("<string>", "<string>", 1, 1, 1, 1);
-        // AstSequence sequence = new AstSequence();
-        // Program program = new Program(location, "p", sequence);
+        Ast[] astArray = new Ast[]{new Id(location, "x"), new Id(location, "y"), new Id(location, "z")};
+        Program program = new Program(location, "p", astArray);
+        AstSequence parameters = program.getParameters();
+        Assert.assertEquals(3, parameters.size());
+        Assert.assertArrayEquals(astArray, parameters.get());
+        Assert.assertEquals(astArray[0], parameters.get(0));
+
+        parameters.insert(0, new Id(location, "i"));
+        Assert.assertArrayEquals(new Ast[]{new Id(location, "i"), new Id(location, "x"), new Id(location, "y"), new Id(location, "z")}, parameters.get());
+
+        parameters.insert(0, parameters.get(3));
+        Assert.assertArrayEquals(new Ast[]{new Id(location, "z"), new Id(location, "i"), new Id(location, "x"), new Id(location, "y"), new Id(location, "z")}, parameters.get());
+
+        parameters.delete(2);
+        Assert.assertArrayEquals(new Ast[]{new Id(location, "z"), new Id(location, "i"), new Id(location, "y"), new Id(location, "z")}, parameters.get());
+    }
+
+    @Test
+    public void testAstSequence2() {
+        String term = "a :- a; b.";
+        List<Ast> asts = Ast.parseString(term);
+        Rule rule = (Rule) asts.get(asts.size() - 1);
+        rule.setBody(rule.getBody());
+        Assert.assertEquals(term, rule.toString());
+    }
+
+    @Test
+    public void testStringSequence() {
+        String[] sequence = new String[]{"x", "y", "z"};
+        Location location = new Location("<string>", "<string>", 1, 1, 1, 1);
+        SymbolicTerm symbolicTerm = new SymbolicTerm(location, new org.potassco.clingo.symbol.Function("a", new org.potassco.clingo.symbol.Number(1)));
+        TheoryUnparsedTermElement unparsedTermElement = new TheoryUnparsedTermElement(sequence, symbolicTerm);
+        StringSequence operators = unparsedTermElement.getOperators();
+        Assert.assertEquals(3, operators.size());
+        Assert.assertArrayEquals(sequence, operators.get());
+        Assert.assertEquals(sequence[0], operators.get(0));
+
+        operators.insert(0, "i");
+        Assert.assertArrayEquals(new String[]{"i", "x", "y", "z"}, operators.get());
+        operators.insert(0, operators.get(3));
+        Assert.assertArrayEquals(new String[]{"z", "i", "x", "y", "z"}, operators.get());
+        operators.delete(2);
+        Assert.assertArrayEquals(new String[]{"z", "i", "y", "z"}, operators.get());
     }
 
     @Test
@@ -304,11 +362,70 @@ public class AstTest {
 
     @Test
     public void testTransformer() {
-        Ast.parseString("p(X) :- q(X).", new AstCallback() {
+        Transformer transformer = new Transformer() {
             @Override
-            public void call(Ast ast) {
-
+            public Variable visit(Variable variable) {
+                return new Variable(variable.getLocation(), "_" + variable.getName());
             }
-        });
+        };
+        List<Ast> program = new ArrayList<>();
+        Ast.parseString("p(X) :- q(X).", ast -> program.add(transformer.visit(ast)));
+        Assert.assertEquals("p(_X) :- q(_X).", program.get(program.size() - 1).toString());
+    }
+
+    private Map<AstType, List<String>> getMapping() {
+        Map<AstType, List<String>> mapping = new HashMap<>();
+        mapping.put(AstType.ID, List.of("location", "name"));
+        mapping.put(AstType.VARIABLE, List.of("location", "name"));
+        mapping.put(AstType.SYMBOLIC_TERM, List.of("location", "symbol"));
+        mapping.put(AstType.UNARY_OPERATION, List.of("location", "operatorType", "argument"));
+        mapping.put(AstType.BINARY_OPERATION, List.of("location", "operatorType", "left", "right"));
+        mapping.put(AstType.INTERVAL, List.of("location", "left", "right"));
+        mapping.put(AstType.FUNCTION, List.of("location", "name", "arguments", "external"));
+        mapping.put(AstType.POOL, List.of("location", "arguments"));
+        mapping.put(AstType.CSP_PRODUCT, List.of("location", "coefficient", "variable"));
+        mapping.put(AstType.CSP_SUM, List.of("location", "terms"));
+        mapping.put(AstType.CSP_GUARD, List.of("comparison", "term"));
+        mapping.put(AstType.BOOLEAN_CONSTANT, List.of("value"));
+        mapping.put(AstType.SYMBOLIC_ATOM, List.of("symbol"));
+        mapping.put(AstType.COMPARISON, List.of("comparison", "left", "right"));
+        mapping.put(AstType.CSP_LITERAL, List.of("location", "term", "guards"));
+        mapping.put(AstType.AGGREGATE_GUARD, List.of("comparison", "term"));
+        mapping.put(AstType.CONDITIONAL_LITERAL, List.of("location", "literal", "condition"));
+        mapping.put(AstType.AGGREGATE, List.of("location", "leftGuard", "elements", "rightGuard"));
+        mapping.put(AstType.BODY_AGGREGATE_ELEMENT, List.of("terms", "condition"));
+        mapping.put(AstType.BODY_AGGREGATE, List.of("location", "leftGuard", "function", "elements", "rightGuard"));
+        mapping.put(AstType.HEAD_AGGREGATE_ELEMENT, List.of("terms", "condition"));
+        mapping.put(AstType.HEAD_AGGREGATE, List.of("location", "leftGuard", "function", "elements", "rightGuard"));
+        mapping.put(AstType.DISJUNCTION, List.of("location", "elements"));
+        mapping.put(AstType.DISJOINT_ELEMENT, List.of("location", "terms", "term", "condition"));
+        mapping.put(AstType.DISJOINT, List.of("location", "elements"));
+        mapping.put(AstType.THEORY_SEQUENCE, List.of("location", "sequenceType", "terms"));
+        mapping.put(AstType.THEORY_FUNCTION, List.of("location", "name", "arguments"));
+        mapping.put(AstType.THEORY_UNPARSED_TERM_ELEMENT, List.of("operators", "term"));
+        mapping.put(AstType.THEORY_UNPARSED_TERM, List.of("location", "elements"));
+        mapping.put(AstType.THEORY_GUARD, List.of("operatorName", "term"));
+        mapping.put(AstType.THEORY_ATOM_ELEMENT, List.of("terms", "condition"));
+        mapping.put(AstType.THEORY_ATOM, List.of("location", "term", "elements", "guard"));
+        mapping.put(AstType.LITERAL, List.of("location", "sign", "atom"));
+        mapping.put(AstType.THEORY_OPERATOR_DEFINITION, List.of("location", "name", "priority", "operatorType"));
+        mapping.put(AstType.THEORY_TERM_DEFINITION, List.of("location", "name", "operators"));
+        mapping.put(AstType.THEORY_GUARD_DEFINITION, List.of("operators", "term"));
+        mapping.put(AstType.THEORY_ATOM_DEFINITION, List.of("location", "atomType", "name", "arity", "term", "guard"));
+        mapping.put(AstType.RULE, List.of("location", "head", "body"));
+        mapping.put(AstType.DEFINITION, List.of("location", "name", "value", "isDefault"));
+        mapping.put(AstType.SHOW_SIGNATURE, List.of("location", "name", "arity", "positive", "csp"));
+        mapping.put(AstType.SHOW_TERM, List.of("location", "term", "body", "csp"));
+        mapping.put(AstType.MINIMIZE, List.of("location", "weight", "priority", "terms", "body"));
+        mapping.put(AstType.SCRIPT, List.of("location", "name", "code"));
+        mapping.put(AstType.PROGRAM, List.of("location", "name", "parameters"));
+        mapping.put(AstType.EXTERNAL, List.of("location", "atom", "body", "externalType"));
+        mapping.put(AstType.EDGE, List.of("location", "nodeU", "nodeV", "body"));
+        mapping.put(AstType.HEURISTIC, List.of("location", "atom", "body", "bias", "priority", "modifier"));
+        mapping.put(AstType.PROJECT_ATOM, List.of("location", "atom", "body"));
+        mapping.put(AstType.PROJECT_SIGNATURE, List.of("location", "name", "arity", "positive"));
+        mapping.put(AstType.DEFINED, List.of("location", "name", "arity", "positive"));
+        mapping.put(AstType.THEORY_DEFINITION, List.of("location", "name", "terms", "atoms"));
+        return mapping;
     }
 }

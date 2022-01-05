@@ -18,7 +18,7 @@ import java.util.Set;
 
 public class TheoryObserverTest implements Observer {
 
-    private static final Set<String> called = new HashSet<>();
+    private final Set<String> called = new HashSet<>();
 
     @Test
     public void testBackendObserver() throws IOException {

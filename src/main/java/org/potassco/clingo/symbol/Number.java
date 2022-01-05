@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.symbol;
 
 import com.sun.jna.ptr.IntByReference;
@@ -41,6 +41,88 @@ public class Number extends Symbol {
 
     public int getNumber() {
         return number;
+    }
+
+    /**
+     * Create a new number resulting from an addition between this object and a constant,
+     *
+     * @param number the constant to add
+     * @return the symbolic result of the addition
+     */
+    public Number add(int number) {
+        return new Number(this.number + number);
+    }
+
+    /**
+     * Create a new number resulting from an addition between this object and a symbolic constant,
+     *
+     * @param number the constant to add
+     * @return the symbolic result of the addition
+     */
+    public Number add(Number number) {
+        return new Number(this.number + number.number);
+    }
+
+    /**
+     * Create a new number resulting from a subtraction between this object and a constant,
+     *
+     * @param number the constant to add
+     * @return the symbolic result of the subtraction
+     */
+    public Number sub(int number) {
+        return new Number(this.number - number);
+    }
+
+    /**
+     * Create a new number resulting from a subtraction between this object and a symbolic constant,
+     *
+     * @param number the constant to add
+     * @return the symbolic result of the subtraction
+     */
+    public Number sub(Number number) {
+        return new Number(this.number - number.number);
+    }
+
+    /**
+     * Create a new number resulting from a multiplication between this object and a constant,
+     *
+     * @param number the constant to add
+     * @return the symbolic result of the multiplication
+     */
+    public Number mul(int number) {
+        return new Number(this.number * number);
+    }
+
+    /**
+     * Create a new number resulting from a multiplication between this object and a symbolic constant.
+     *
+     * @param number the constant to add
+     * @return the symbolic result of the multiplication
+     */
+    public Number mul(Number number) {
+        return new Number(this.number * number.number);
+    }
+
+    /**
+     * Create a new number resulting from a division between this object and a constant.
+     * Be aware of rounding with integer divisions.
+     *
+     * @param number the constant to add
+     * @return the symbolic result of the division
+     */
+    public Number div(int number) {
+        return new Number(this.number / number);
+    }
+
+    /**
+     * Create a new number resulting from a division between this object and a symbolic constant.
+     * Be aware of rounding with integer divisions.
+     *
+     * @param number the constant to add
+     * @return the symbolic result of the division
+     */
+    public Number div(Number number) {
+        return new Number(this.number / number.number);
     }
 
     private static long create(int number) {

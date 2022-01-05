@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class TheoryWithGuardObserverTest extends TheoryObserverTest {
 
-    private static final Set<String> called = new HashSet<>();
+    private final Set<String> called = new HashSet<>();
 
     @Test
     public void testBackendObserver() throws IOException {
@@ -25,7 +25,7 @@ public class TheoryWithGuardObserverTest extends TheoryObserverTest {
         String testTheory = Files.readString(file);
 
         Control control = new Control();
-        control.registerObserver(new TheoryWithGuardObserverTest(), false);
+        control.registerObserver(this, false);
         control.add(testTheory);
         control.ground();
 

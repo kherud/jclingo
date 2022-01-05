@@ -8,32 +8,41 @@ import java.util.Map;
  * <p>
  * Clauses in the solver are either cleaned up based on a configurable deletion policy or at the end of a solving step.
  * The values of this enumeration determine if a clause is subject to one of the above deletion strategies.
+ *
  * @author Josef Schneeberger
  */
 public enum ClauseType {
-    /** clause is subject to the solvers deletion policy */
+    /**
+     * clause is subject to the solvers deletion policy
+     */
     LEARNT(0, "Learnt"),
-    /** clause is not subject to the solvers deletion policy */
+    /**
+     * clause is not subject to the solvers deletion policy
+     */
     STATIC(1, "Static"),
-    /** like ::clingo_clause_type_learnt but the clause is deleted after a solving step */
+    /**
+     * like {@link ClauseType#LEARNT} but the clause is deleted after a solving step
+     */
     VOLATILE(2, "Volatile"),
-    /** like ::clingo_clause_type_static but the clause is deleted after a solving step */
+    /**
+     * like {@link ClauseType#STATIC} but the clause is deleted after a solving step
+     */
     VOLATILE_STATIC(3, "VolatileStatic");
 
     private static final Map<Integer, ClauseType> mapping = new HashMap<>();
 
-	static {
-	    for (ClauseType solveEventType : ClauseType.values()) {
-	    	mapping.put(
-	          solveEventType.getValue(),
-	          solveEventType
-	        );
-	    }
-	}
+    static {
+        for (ClauseType solveEventType : ClauseType.values()) {
+            mapping.put(
+                    solveEventType.getValue(),
+                    solveEventType
+            );
+        }
+    }
 
-	public static ClauseType fromValue(int type) {
-		return mapping.get(type);
-	}
+    public static ClauseType fromValue(int type) {
+        return mapping.get(type);
+    }
 
     private final int type;
 

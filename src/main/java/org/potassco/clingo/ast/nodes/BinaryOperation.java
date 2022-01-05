@@ -33,11 +33,11 @@ public class BinaryOperation extends Ast {
     public BinaryOperation(Pointer ast) {
         super(ast);
     }
-    
+
     public BinaryOperation(Location location, int operatorType, Ast left, Ast right) {
         super(create(location, operatorType, left, right));
     }
-    
+
     public Location getLocation() {
         Location.ByReference locationByReference = new Location.ByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, Attribute.LOCATION.ordinal(), locationByReference));
@@ -77,7 +77,7 @@ public class BinaryOperation extends Ast {
     public void setRight(Ast right) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.RIGHT.ordinal(), right.getPointer()));
     }
-    
+
     private static Pointer create(Location location, int operatorType, Ast left, Ast right) {
         PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.BINARY_OPERATION.ordinal(), pointerByReference, location, operatorType, left.getPointer(), right.getPointer()));

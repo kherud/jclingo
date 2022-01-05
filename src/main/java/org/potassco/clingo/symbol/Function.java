@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.symbol;
 
 import com.sun.jna.Native;
@@ -55,6 +55,16 @@ public class Function extends Symbol {
      */
     public Function(String name, Symbol... arguments) {
         this(name, true, arguments);
+    }
+
+    /**
+     * Create a new true Function from a name and a list of arguments.
+     *
+     * @param argument  the first element of the Tuple
+     * @param arguments more elemenets of the tuple
+     */
+    public Function(Symbol argument, Symbol... arguments) {
+        this(Function.create(argument, arguments));
     }
 
     /**
@@ -126,13 +136,8 @@ public class Function extends Symbol {
         return (int) nativeSizeByReference.getValue();
     }
 
-//    public String toString() {
-//        String argumentsString = arguments.length == 0 ? "" : "(" + Arrays.stream(arguments).map(Symbol::toString).collect(Collectors.joining(",")) + ")";
-//        return (positive ? "" : "-") + name + argumentsString;
-//    }
-
     /**
-     * Statically create a new native function from a name and its sign
+     * Statically create a new native id from a name and its sign
      *
      * @param name     the name of the function
      * @param positive the sign of the function
@@ -141,6 +146,30 @@ public class Function extends Symbol {
     private static long create(String name, boolean positive) {
         LongByReference longByReference = new LongByReference();
         Clingo.check(Clingo.INSTANCE.clingo_symbol_create_id(name, positive ? (byte) 1 : 0, longByReference));
+        return longByReference.getValue();
+    }
+
+    /**
+     * Statically create a new native tuple from a name and its sign
+     *
+     * @param symbol  the first symbol of the tuple
+     * @param symbols more symbols of the tuple
+     * @return the newly created native tuple
+     */
+    private static long create(Symbol symbol, Symbol[] symbols) {
+        long[] arguments = new long[1 + symbols.length];
+        arguments[0] = symbol.getLong();
+        for (int i = 0; i < symbols.length; i++) {
+            arguments[1 + i] = symbols[i].getLong();
+        }
+        LongByReference longByReference = new LongByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_symbol_create_function(
+                "",
+                arguments,
+                new NativeSize(arguments.length),
+                (byte) 1,
+                longByReference)
+        );
         return longByReference.getValue();
     }
 

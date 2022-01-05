@@ -38,6 +38,7 @@ import org.potassco.clingo.statistics.Statistics;
 import org.potassco.clingo.symbol.Symbol;
 import org.potassco.clingo.theory.TheoryAtoms;
 
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,9 +52,8 @@ import java.util.NoSuchElementException;
  * object while a solve call is active.
  */
 public class Control implements AutoCloseable {
+
     private final Pointer control;
-    private final LoggerCallback logger;
-    private final int messageLimit;
 
     public Control() {
         this(null, 0);
@@ -82,8 +82,6 @@ public class Control implements AutoCloseable {
                 controlObjectRef)
         );
         this.control = controlObjectRef.getValue();
-        this.logger = logger;
-        this.messageLimit = messageLimit;
     }
 
     /**
@@ -93,8 +91,6 @@ public class Control implements AutoCloseable {
      */
     public Control(Pointer pointer) {
         this.control = pointer;
-        this.logger = null;
-        this.messageLimit = 0;
     }
 
     /**
@@ -135,12 +131,14 @@ public class Control implements AutoCloseable {
      * Ground the base program.
      */
     public void ground() {
-        ProgramPart[] programParts = (ProgramPart[]) new ProgramPart("base").toArray(1);
-        Clingo.check(Clingo.INSTANCE.clingo_control_ground(
-                this.control,
-                programParts, new NativeSize(1),
-                null, null)
-        );
+        ground("base", null);
+    }
+
+    /**
+     * Ground the base program.
+     */
+    public void ground(GroundCallback callback) {
+        ground("base", callback);
     }
 
     /**
@@ -149,11 +147,20 @@ public class Control implements AutoCloseable {
      * @param name the name of the program
      */
     public void ground(String name) {
+        ground(name, null);
+    }
+
+    /**
+     * Ground the program with the given name.
+     *
+     * @param name the name of the program
+     */
+    public void ground(String name, GroundCallback callback) {
         ProgramPart[] programParts = (ProgramPart[]) new ProgramPart(name).toArray(1);
         Clingo.check(Clingo.INSTANCE.clingo_control_ground(
                 this.control,
                 programParts, new NativeSize(1),
-                null, null)
+                callback, null)
         );
     }
 
@@ -166,20 +173,32 @@ public class Control implements AutoCloseable {
      * @param programParts Objects of program names and program arguments to ground.
      */
     public void ground(ProgramPart programPart, ProgramPart... programParts) {
-        ProgramPart[] parts = (ProgramPart[]) programPart.toArray(1 + programParts.length);
-        System.arraycopy(programParts, 0, parts, 1, programParts.length);
-
-        Clingo.check(Clingo.INSTANCE.clingo_control_ground(
-                this.control,
-                parts, new NativeSize(parts.length),
-                null, null)
-        );
+        ground(null, programPart, programParts);
     }
 
-    public void ground(GroundCallback groundCallback, ProgramPart... programParts) {
+    /**
+     * Ground the selected {@link ProgramPart parts} of the current (non-ground) logic program.
+     * <p>
+     * After grounding, logic programs can be solved with {@link Clingo#clingo_control_solve}.
+     * <p>
+     * Parts of a logic program without an explicit <tt>#program</tt>
+     * specification are by default put into a program called `base` without
+     * arguments.
+     *
+     * @param programPart    program part
+     * @param programParts   additional program parts to ground
+     * @param groundCallback callback to implement external functions
+     */
+    public void ground(GroundCallback groundCallback, ProgramPart programPart, ProgramPart... programParts) {
+        ProgramPart[] contiguous = (ProgramPart[]) programPart.toArray(1 + programParts.length);
+        for (int i = 0; i < programParts.length; i++) {
+            contiguous[1 + i].name = programParts[i].name;
+            contiguous[1 + i].size = programParts[i].size;
+            contiguous[1 + i].params = programParts[i].params;
+        }
         Clingo.check(Clingo.INSTANCE.clingo_control_ground(
                 this.control,
-                programParts, new NativeSize(programParts.length),
+                contiguous, new NativeSize(contiguous.length),
                 groundCallback, control)
         );
     }
@@ -506,7 +525,9 @@ public class Control implements AutoCloseable {
      *                 the underlying solver (or any previously registered observers).
      */
     public void registerObserver(Observer observer, boolean replace) {
-        // TODO: maybe set callbacks to null if not implemented
+        //TODO: maybe set callbacks to null if not implemented´
+        // Class<?> clazz = observer.getClass();
+        // nativeObserver.initProgram = clazz.getMethod("initProgram", boolean.class).isDefault() ? null : observer::initProgram
         Clingo.Observer nativeObserver = new Clingo.Observer();
         nativeObserver.initProgram = observer::initProgram;
         nativeObserver.beginStep = observer::beginStep;
@@ -543,7 +564,7 @@ public class Control implements AutoCloseable {
      * If the sequential flag is set to true, the propagator is called sequentially
      * when solving with multiple threads (default should be false).
      *
-     * @param propagator   The propagator to register.
+     * @param propagator The propagator to register.
      */
     public void registerPropagator(Propagator propagator) {
         registerPropagator(propagator, false);

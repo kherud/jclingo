@@ -20,9 +20,13 @@
 package org.potassco.clingo.ast;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * A sequence holding strings.
@@ -37,42 +41,54 @@ public class StringSequence {
         this.attribute = attribute;
     }
 
-    public String[] get() {
-        int size = size();
-        String[] strings = new String[size];
-        for (int i = 0; i < size; i++) {
-            strings[i] = get(i);
-        }
-        return strings;
-    }
-
-    /**
-     * Get the value at the given index.
-     * @param index the target index
-     * @return the resulting value
-     */
-    public String get(int index) {
-        int size = size();
-        if (index < 0)
-            index += size;
-        if (index < 0 || index >= size)
-            throw new IndexOutOfBoundsException();
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string_at(ast, attribute.ordinal(), new NativeSize(index), stringByReference));
-        return stringByReference[0];
-    }
-
-    /**
-     * Get the size of the array
-     * @return the resulting size
-     */
     public int size() {
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_size_string_array(ast, attribute.ordinal(), nativeSizeByReference));
         return (int) nativeSizeByReference.getValue();
     }
 
-    public void set(StringSequence stringSequence) {
+    public String[] get() {
+        int size = size();
+        String[] elements = new String[size];
+        for (int i = 0; i < size; i++)
+            elements[i] = get(i);
+        return elements;
+    }
 
+
+    public String get(int index) {
+        String[] stringByReference = new String[1];
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string_at(ast, attribute.ordinal(), new NativeSize(index), stringByReference));
+        return stringByReference[0];
+    }
+
+    public void insert(int index, String string) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_insert_string_at(this.ast, attribute.ordinal(), new NativeSize(index), string));
+    }
+
+    public void set(int index, String string) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string_at(this.ast, attribute.ordinal(), new NativeSize(index), string));
+    }
+
+    public void delete(int index) {
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_delete_string_at(ast, attribute.ordinal(), new NativeSize(index)));
+    }
+
+    public void set(StringSequence sequence) {
+        String[] insertions = sequence.get();
+        while (size() > 0) {
+            delete(0);
+        }
+        for (int i = 0; i < insertions.length; i++)
+            insert(i, insertions[i]);
+    }
+
+    public Attribute getAttribute() {
+        return attribute;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + String.join(", ", get()) + "]";
     }
 }

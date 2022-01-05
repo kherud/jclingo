@@ -34,11 +34,11 @@ public class Aggregate extends Ast {
     public Aggregate(Pointer ast) {
         super(ast);
     }
-    
+
     public Aggregate(Location location, Ast leftGuard, AstSequence elements, Ast rightGuard) {
         super(create(location, leftGuard, elements, rightGuard));
     }
-    
+
     public Location getLocation() {
         Location.ByReference locationByReference = new Location.ByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, Attribute.LOCATION.ordinal(), locationByReference));
@@ -80,7 +80,7 @@ public class Aggregate extends Ast {
     public void setRightGuard(Ast rightGuard) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(this.ast, Attribute.RIGHT_GUARD.ordinal(), rightGuard.getPointer()));
     }
-    
+
     private static Pointer create(Location location, Ast leftGuard, AstSequence elements, Ast rightGuard) {
         PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.AGGREGATE.ordinal(), pointerByReference, location, leftGuard.getPointer(), elements.getPointer(), new NativeSize(elements.size()), rightGuard.getPointer()));

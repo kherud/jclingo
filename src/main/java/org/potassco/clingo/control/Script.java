@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.control;
 
 import com.sun.jna.Callback;
@@ -24,7 +24,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.ByteByReference;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.solving.SymbolCallback;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 
@@ -76,7 +75,7 @@ public class Script extends Structure {
      * @param name           the name of the function
      * @param symbolCallback callback to return a pool of symbols
      */
-    public void call(Location location, String name, long[] symbols, SymbolCallback symbolCallback) {
+    public void call(Location location, String name, long[] symbols, Clingo.SymbolCallback symbolCallback) {
 
     }
 
@@ -162,12 +161,12 @@ public class Script extends Structure {
          * @param data               user data as given when registering the script
          * @return whether the function call was successful
          */
-        default boolean callback(Pointer location, String name, long[] arguments, NativeSize argumentsSize, SymbolCallback symbolCallback, Pointer symbolCallbackData, Pointer data) {
+        default boolean callback(Pointer location, String name, long[] arguments, NativeSize argumentsSize, Clingo.SymbolCallback symbolCallback, Pointer symbolCallbackData, Pointer data) {
             call(new Location(location), name, arguments, symbolCallback);
             return true;
         }
 
-        void call(Location location, String name, long[] symbols, SymbolCallback symbolCallback);
+        void call(Location location, String name, long[] symbols, Clingo.SymbolCallback symbolCallback);
     }
 
     private interface CallableCallback extends Callback {

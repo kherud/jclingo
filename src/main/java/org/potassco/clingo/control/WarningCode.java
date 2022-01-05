@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.control;
 
 
@@ -29,39 +29,60 @@ import java.util.Map;
  * Enumeration of warning codes.
  */
 public enum WarningCode {
-	OPERATION_UNDEFINED(0), // undefined arithmetic operation or weight of aggregate
-	RUNTIME_ERROR(1), // to report multiple errors; a corresponding runtime error is raised later
-	ATOM_UNDEFINED(2), // undefined atom in program
-	FILE_INCLUDED(3), // same file included multiple times
-	VARIABLE_UNBOUNDED(4), // CSP variable with unbounded domain
-	GLOBAL_VARIABLE(5), // global variable in tuple of aggregate element
-	OTHER(6); // other kinds of warnings
+    /**
+     * undefined arithmetic operation or weight of aggregate
+     */
+    OPERATION_UNDEFINED(0),
+    /**
+     * to report multiple errors; a corresponding runtime error is raised later
+     */
+    RUNTIME_ERROR(1),
+    /**
+     * undefined atom in program
+     */
+    ATOM_UNDEFINED(2),
+    /**
+     * same file included multiple times
+     */
+    FILE_INCLUDED(3),
+    /**
+     * CSP variable with unbounded domain
+     */
+    VARIABLE_UNBOUNDED(4),
+    /**
+     * global variable in tuple of aggregate element
+     */
+    GLOBAL_VARIABLE(5),
+    /**
+     * other kinds of warnings
+     */
+    OTHER(6);
 
-	private final int code;
+    private final int code;
 
-	WarningCode(int code) {
-		this.code = code;
-	}
+    WarningCode(int code) {
+        this.code = code;
+    }
 
-	@Override
-	public String toString() {
-		return Clingo.INSTANCE.clingo_warning_string(code);
-	}
+    @Override
+    public String toString() {
+        return Clingo.INSTANCE.clingo_warning_string(code);
+    }
 
-	private static final Map<Integer, WarningCode> mapping = new HashMap<>();
+    private static final Map<Integer, WarningCode> mapping = new HashMap<>();
 
-	static {
-	    for (WarningCode solveEventType : WarningCode.values()) {
-	    	mapping.put(
-	          solveEventType.getValue(),
-	          solveEventType
-	        );
-	    }
-	}
+    static {
+        for (WarningCode solveEventType : WarningCode.values()) {
+            mapping.put(
+                    solveEventType.getValue(),
+                    solveEventType
+            );
+        }
+    }
 
-	public static WarningCode fromValue(int code) {
-		return mapping.get(code);
-	}
+    public static WarningCode fromValue(int code) {
+        return mapping.get(code);
+    }
 
     public int getValue() {
         return code;

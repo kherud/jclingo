@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  */
 public class ApplicationTest implements Application {
 
-    private static final List<String> queue = new ArrayList<>();
+    private final List<String> queue = new ArrayList<>();
     private final Flag flag;
 
     public ApplicationTest() {
@@ -68,8 +68,7 @@ public class ApplicationTest implements Application {
         String program = "1 {a; b; c(1/0)}.";
         Path tmpFile = Files.createTempFile(null, null);
         Files.write(tmpFile, program.getBytes(StandardCharsets.UTF_8));
-        Application application = new ApplicationTest();
-        int ret = application.run(tmpFile.toAbsolutePath().toString(), "--outf=3", "0", "--test=x", "--flag");
+        int ret = this.run(tmpFile.toAbsolutePath().toString(), "--outf=3", "0", "--test=x", "--flag");
 
         Assert.assertEquals(30, ret);
         Assert.assertEquals(14, queue.size());

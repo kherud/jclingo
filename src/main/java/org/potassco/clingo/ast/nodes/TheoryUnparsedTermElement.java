@@ -34,6 +34,10 @@ public class TheoryUnparsedTermElement extends Ast {
     public TheoryUnparsedTermElement(Pointer ast) {
         super(ast);
     }
+
+    public TheoryUnparsedTermElement(String[] operators, Ast term) {
+        super(create(operators, term));
+    }
     
     public TheoryUnparsedTermElement(StringSequence operators, Ast term) {
         super(create(operators, term));
@@ -55,6 +59,12 @@ public class TheoryUnparsedTermElement extends Ast {
 
     public void setTerm(Ast term) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.TERM.ordinal(), term.getPointer()));
+    }
+
+    private static Pointer create(String[] operators, Ast term) {
+        PointerByReference pointerByReference = new PointerByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.THEORY_UNPARSED_TERM_ELEMENT.ordinal(), pointerByReference, operators, new NativeSize(operators.length), term.getPointer()));
+        return pointerByReference.getValue();
     }
     
     private static Pointer create(StringSequence operators, Ast term) {

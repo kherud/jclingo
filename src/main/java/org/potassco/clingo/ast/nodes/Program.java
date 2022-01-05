@@ -35,6 +35,10 @@ public class Program extends Ast {
         super(ast);
     }
     
+    public Program(Location location, String name, Ast[] parameters) {
+        super(create(location, name, parameters));
+    }
+
     public Program(Location location, String name, AstSequence parameters) {
         super(create(location, name, parameters));
     }
@@ -65,6 +69,16 @@ public class Program extends Ast {
 
     public void setParameters(AstSequence parameters) {
         new AstSequence(ast, Attribute.PARAMETERS).set(parameters);
+    }
+
+    private static Pointer create(Location location, String name, Ast[] parameters) {
+        Pointer[] parameterPointers = new Pointer[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            parameterPointers[i] = parameters[i].getPointer();
+        }
+        PointerByReference pointerByReference = new PointerByReference();
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.PROGRAM.ordinal(), pointerByReference, location, name, parameterPointers, new NativeSize(parameters.length)));
+        return pointerByReference.getValue();
     }
     
     private static Pointer create(Location location, String name, AstSequence parameters) {

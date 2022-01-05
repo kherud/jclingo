@@ -31,22 +31,27 @@ import org.potassco.clingo.symbol.Symbol;
 @Structure.FieldOrder({"name", "params", "size"})
 public class ProgramPart extends Structure {
     public String name;
-    public long[] params;
+    public Pointer params;
     public NativeSize size;
+
+    public ProgramPart() {
+        super();
+        this.name = "base";
+        this.params = Pointer.NULL;
+        this.size = new NativeSize(0);
+    }
 
     public ProgramPart(String name, Symbol... params) {
         this.name = name;
-        // TODO: why does this only work with `1 +` is JNA `Arrays of length zero not allowed` related?
-        this.params = new long[1 + params.length];
-        for (int i = 0; i < params.length; i++) {
-            this.params[i] = params[i].getLong();
+        if (params.length > 0) {
+            this.params = new Memory((long) params.length * Native.LONG_SIZE);
+            for (int i = 0; i < params.length; i++) {
+                this.params.setLong((long) i * Native.LONG_SIZE, params[i].getLong());
+            }
+        } else {
+            this.params = Pointer.NULL;
         }
         this.size = new NativeSize(params.length);
-    }
-
-    public ProgramPart(Pointer pointer) {
-        super(pointer);
-        read();
     }
 
 }

@@ -23,6 +23,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
+import org.potassco.clingo.backend.ExternalType;
 import org.potassco.clingo.configuration.Configuration;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.solving.Observer;
@@ -31,14 +32,12 @@ import org.potassco.clingo.propagator.Propagator;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.solving.SolveEventCallback;
 import org.potassco.clingo.solving.SolveMode;
-import org.potassco.clingo.solving.TruthValue;
 import org.potassco.clingo.backend.Backend;
 import org.potassco.clingo.solving.SolveHandle;
 import org.potassco.clingo.statistics.Statistics;
 import org.potassco.clingo.symbol.Symbol;
 import org.potassco.clingo.theory.TheoryAtoms;
 
-import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
@@ -330,7 +329,7 @@ public class Control implements AutoCloseable {
      * @param external   A symbol representing the external atom.
      * @param truthValue Fixes the external to the respective truth value.
      */
-    public void assignExternal(int external, TruthValue truthValue) {
+    public void assignExternal(int external, ExternalType truthValue) {
         Clingo.check(Clingo.INSTANCE.clingo_control_assign_external(
                 control,
                 external,
@@ -344,7 +343,7 @@ public class Control implements AutoCloseable {
      * @param literals   Multiple solver literals representing external atoms.
      * @param truthValue Fixes the external to the respective truth value.
      */
-    public void assignExternal(int[] literals, TruthValue truthValue) {
+    public void assignExternal(int[] literals, ExternalType truthValue) {
         for (int literal : literals) {
             assignExternal(literal, truthValue);
         }
@@ -357,7 +356,7 @@ public class Control implements AutoCloseable {
      * @param symbols    Multiple external atoms.
      * @param truthValue Fixes the external to the respective truth value.
      */
-    public void assignExternal(Symbol[] symbols, TruthValue truthValue) {
+    public void assignExternal(Symbol[] symbols, ExternalType truthValue) {
         SymbolicAtoms symbolicAtoms = getSymbolicAtoms();
         for (Symbol symbol : symbols) {
             int literal = symbolicAtoms.get(symbol).getLiteral();

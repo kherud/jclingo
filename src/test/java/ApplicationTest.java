@@ -1,4 +1,5 @@
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.potassco.clingo.control.*;
 import org.potassco.clingo.symbol.Symbol;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 /**
  * Test application covering most of the Application related API.
  */
+@Ignore
 public class ApplicationTest implements Application {
 
     private final List<String> queue = new ArrayList<>();

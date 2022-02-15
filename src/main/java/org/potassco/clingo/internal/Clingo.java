@@ -1872,7 +1872,7 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#RUNTIME} if the size is too small</li>
      * </ul>
      */
-    byte clingo_model_cost(Pointer model, LongByReference costs, NativeSize size);
+    byte clingo_model_cost(Pointer model, long[] costs, NativeSize size);
 
     /**
      * Whether the optimality of a model has been proven.

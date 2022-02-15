@@ -189,13 +189,9 @@ public class Model {
         Clingo.check(Clingo.INSTANCE.clingo_model_cost_size(model, nativeSizeByReference));
         int costSize = (int) nativeSizeByReference.getValue();
 
-        if (costSize == 0)
-            return new long[0];
-
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_model_cost(model, longByReference, new NativeSize(costSize)));
-
-        return longByReference.getPointer().getLongArray(0, costSize);
+        long[] costs = new long[costSize];
+        Clingo.check(Clingo.INSTANCE.clingo_model_cost(model, costs, new NativeSize(costSize)));
+        return costs;
     }
 
     /**

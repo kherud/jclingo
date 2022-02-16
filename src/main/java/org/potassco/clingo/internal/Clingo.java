@@ -63,7 +63,8 @@ public interface Clingo extends Library {
             String errorMessage = Clingo.INSTANCE.clingo_error_message();
             int errorId = Clingo.INSTANCE.clingo_error_code();
             ErrorCode errorCode = ErrorCode.fromValue(errorId);
-            throw new RuntimeException(String.format("[%s] %s", errorCode.name(), errorMessage));
+            String error = String.format("[%s] %s", errorCode.name(), errorMessage);
+            throw new ClingoRuntimeException(error);
         }
         return ErrorCode.SUCCESS;
     }

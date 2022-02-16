@@ -32,10 +32,11 @@ public class OptimizationTest {
 
     @Test
     public void testCostVector() {
-        String program = "{a(0..10,@rnd(0..10))} = 1.\n" +
-                "{b(0..10,@rnd(0..10))} = 1.\n" +
-                "#minimize { W@1,I : a(I, W) }.\n" +
-                "#minimize { W@2,I : b(I, W) }. ";
+        String program = "#const n = 2." +
+                "{a(@rnd(0..100))} = n.\n" +
+                "{b(@rnd(0..100))} = n.\n" +
+                "#minimize { W@1 : a(W) }.\n" +
+                "#minimize { W@2 : b(W) }. ";
         Control control = new Control("--opt-mode=opt", "--single-shot");
         control.add(program);
         control.ground(groundCallback);

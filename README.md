@@ -17,3 +17,25 @@ Please consult the following resources for further information:
 - [Changes between releases](CHANGES.md)
 - [Documentation](https://github.com/potassco/guide/releases)
 - [Potassco clingo page](https://potassco.org/clingo/)
+
+# Installation
+
+You can use this API via Maven:
+
+```
+<dependencies>
+    <dependency>
+        <groupId>org.potassco</groupId>
+        <artifactId>clingo</artifactId>
+        <version>1.0-des-rc1</version>
+    </dependency>
+</dependencies>
+
+<repositories>
+    <repository>
+        <id>des-releases-public</id>
+        <name>denkbares Public Releases Repository</name>
+        <url>https://repo.denkbares.com/releases-public/</url>
+    </repository>
+</repositories>
+```

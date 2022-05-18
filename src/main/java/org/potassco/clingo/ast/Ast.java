@@ -19,6 +19,7 @@
 
 package org.potassco.clingo.ast;
 
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -62,7 +63,7 @@ public abstract class Ast implements Comparable<Ast> {
         byte[] stringBytes = new byte[stringSize];
         Clingo.check(Clingo.INSTANCE.clingo_ast_to_string(ast, stringBytes, new NativeSize(stringSize)));
         // return Native.toString(stringBytes);
-        return new String(Arrays.copyOf(stringBytes, stringBytes.length - 1));
+        return Native.toString(stringBytes);
     }
 
     /**

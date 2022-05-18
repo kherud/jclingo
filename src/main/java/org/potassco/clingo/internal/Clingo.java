@@ -47,6 +47,7 @@ public interface Clingo extends Library {
     static Clingo loadLibrary() {
 //        Map<String, Object> options = Map.of(Library.OPTION_TYPE_MAPPER, new ClingoTypeMapper());
 //        Native.setProtected(true);
+        System.setProperty("jna.encoding", "UTF-8");
         return Native.load("clingo", Clingo.class);  // options
     }
 
@@ -3145,7 +3146,6 @@ public interface Clingo extends Library {
          * @param changes the change set
          * @param size    the size of the change set
          * @param data    user data for the callback
-         * @return whether the call was successful
          */
         default void callback(Pointer control, Pointer changes, NativeSize size, Pointer data) {
             int intSize = size.intValue();

@@ -19,6 +19,7 @@
 
 package org.potassco.clingo.symbol;
 
+import com.sun.jna.Native;
 import com.sun.jna.ptr.LongByReference;
 import org.potassco.clingo.control.LoggerCallback;
 import org.potassco.clingo.internal.Clingo;
@@ -81,7 +82,7 @@ public abstract class Symbol implements Comparable<Symbol> {
         int length = (int) nativeSizeByRef.getValue();
         byte[] symbolBytes = new byte[length];
         Clingo.check(Clingo.INSTANCE.clingo_symbol_to_string(symbol, symbolBytes, new NativeSize(length)));
-        return new String(Arrays.copyOf(symbolBytes, symbolBytes.length - 1));
+        return Native.toString(symbolBytes);
     }
 
     /**

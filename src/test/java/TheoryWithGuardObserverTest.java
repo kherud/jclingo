@@ -1,11 +1,3 @@
-import org.junit.Assert;
-import org.junit.Test;
-import org.potassco.clingo.backend.ExternalType;
-import org.potassco.clingo.backend.HeuristicType;
-import org.potassco.clingo.backend.WeightedLiteral;
-import org.potassco.clingo.control.Control;
-import org.potassco.clingo.symbol.Symbol;
-
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -14,11 +6,16 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.Assert;
+import org.junit.Test;
+import org.potassco.clingo.control.Control;
+
 public class TheoryWithGuardObserverTest extends TheoryObserverTest {
 
     private final Set<String> called = new HashSet<>();
 
-    @Test
+    @Override
+	@Test
     public void testBackendObserver() throws IOException {
         URL url = Thread.currentThread().getContextClassLoader().getResource("observer-theory-with-guard.lp");
         Path file = Paths.get(url.getPath());
@@ -38,10 +35,12 @@ public class TheoryWithGuardObserverTest extends TheoryObserverTest {
         control.close();
     }
 
-    public void theoryTermString(int termId, String name) {
+    @Override
+	public void theoryTermString(int termId, String name) {
         called.add("theoryTermString: " + name);
     }
 
+    @Override
     public void theoryAtomWithGuard(int atomIdOrZero, int termId, int[] elements, int operatorId, int rightHandSideId) {
         called.add("theoryAtomWithGuard");
         Assert.assertEquals(0, elements.length);

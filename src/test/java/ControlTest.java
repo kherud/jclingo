@@ -1,16 +1,21 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.potassco.clingo.control.Control;
 import org.potassco.clingo.control.LoggerCallback;
 import org.potassco.clingo.control.ProgramPart;
-import org.potassco.clingo.control.SymbolicAtom;
-import org.potassco.clingo.solving.*;
+import org.potassco.clingo.solving.GroundCallback;
+import org.potassco.clingo.solving.SolveEventCallback;
+import org.potassco.clingo.solving.SolveResult;
 import org.potassco.clingo.symbol.Function;
 import org.potassco.clingo.symbol.Number;
 import org.potassco.clingo.symbol.Symbol;
 import org.potassco.clingo.symbol.Text;
-
-import java.util.*;
 
 public class ControlTest {
 

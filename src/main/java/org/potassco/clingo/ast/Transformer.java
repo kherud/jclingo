@@ -46,13 +46,9 @@ public class Transformer {
             case INTERVAL: return visit((Interval) ast);
             case FUNCTION: return visit((Function) ast);
             case POOL: return visit((Pool) ast);
-            case CSP_PRODUCT: return visit((CspProduct) ast);
-            case CSP_SUM: return visit((CspSum) ast);
-            case CSP_GUARD: return visit((CspGuard) ast);
             case BOOLEAN_CONSTANT: return visit((BooleanConstant) ast);
             case SYMBOLIC_ATOM: return visit((SymbolicAtom) ast);
             case COMPARISON: return visit((Comparison) ast);
-            case CSP_LITERAL: return visit((CspLiteral) ast);
             case AGGREGATE_GUARD: return visit((AggregateGuard) ast);
             case CONDITIONAL_LITERAL: return visit((ConditionalLiteral) ast);
             case AGGREGATE: return visit((Aggregate) ast);
@@ -61,8 +57,6 @@ public class Transformer {
             case HEAD_AGGREGATE_ELEMENT: return visit((HeadAggregateElement) ast);
             case HEAD_AGGREGATE: return visit((HeadAggregate) ast);
             case DISJUNCTION: return visit((Disjunction) ast);
-            case DISJOINT_ELEMENT: return visit((DisjointElement) ast);
-            case DISJOINT: return visit((Disjoint) ast);
             case THEORY_SEQUENCE: return visit((TheorySequence) ast);
             case THEORY_FUNCTION: return visit((TheoryFunction) ast);
             case THEORY_UNPARSED_TERM_ELEMENT: return visit((TheoryUnparsedTermElement) ast);
@@ -140,22 +134,6 @@ public class Transformer {
         return pool;
     }
 
-    public CspProduct visit(CspProduct cspProduct) {
-        cspProduct.setCoefficient(visit(cspProduct.getCoefficient()));
-        cspProduct.setVariable(visit(cspProduct.getVariable()));
-        return cspProduct;
-    }
-
-    public CspSum visit(CspSum cspSum) {
-        cspSum.setTerms(visit(cspSum.getTerms()));
-        return cspSum;
-    }
-
-    public CspGuard visit(CspGuard cspGuard) {
-        visit(cspGuard.getTerm());
-        return cspGuard;
-    }
-
     public BooleanConstant visit(BooleanConstant booleanConstant) {
         return booleanConstant;
     }
@@ -169,12 +147,6 @@ public class Transformer {
         comparison.setLeft(visit(comparison.getLeft()));
         comparison.setRight(visit(comparison.getRight()));
         return comparison;
-    }
-
-    public CspLiteral visit(CspLiteral cspLiteral) {
-        cspLiteral.setTerm(visit(cspLiteral.getTerm()));
-        cspLiteral.setGuards(visit(cspLiteral.getGuards()));
-        return cspLiteral;
     }
 
     public AggregateGuard visit(AggregateGuard aggregateGuard) {
@@ -224,18 +196,6 @@ public class Transformer {
     public Disjunction visit(Disjunction disjunction) {
         disjunction.setElements(visit(disjunction.getElements()));
         return disjunction;
-    }
-
-    public DisjointElement visit(DisjointElement disjointElement) {
-        disjointElement.setTerms(visit(disjointElement.getTerms()));
-        disjointElement.setTerm(visit(disjointElement.getTerm()));
-        disjointElement.setCondition(visit(disjointElement.getCondition()));
-        return disjointElement;
-    }
-
-    public Disjoint visit(Disjoint disjoint) {
-        disjoint.setElements(visit(disjoint.getElements()));
-        return disjoint;
     }
 
     public TheorySequence visit(TheorySequence theorySequence) {

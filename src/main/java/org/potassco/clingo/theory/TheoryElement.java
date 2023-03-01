@@ -29,7 +29,7 @@ import org.potassco.clingo.internal.NativeSizeByReference;
 
 /**
  * Class to represent theory elements.
- *
+ * <p>
  * Theory elements have a readable string representation, implement Python's rich
  * comparison operators, and can be used as dictionary keys.
  */
@@ -43,10 +43,9 @@ public class TheoryElement implements Comparable<TheoryElement> {
         this.id = id;
     }
 
-    public boolean equals(TheoryElement other) {
-        return this.hashCode() == other.hashCode();
-    }
 
+
+    @Override
     public int compareTo(TheoryElement other) {
         return Integer.compare(this.hashCode(), other.hashCode());
     }
@@ -91,6 +90,14 @@ public class TheoryElement implements Comparable<TheoryElement> {
         int amountElements = (int) nativeSizeByReference.getValue();
         return amountElements == 0 ? new int[0] : pointerByReference.getValue().getIntArray(0, amountElements);
         // TODO: return something different than ints?
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TheoryElement that = (TheoryElement) o;
+        return this.hashCode() == that.hashCode();
     }
 
     @Override

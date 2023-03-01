@@ -29,11 +29,11 @@ import org.potassco.clingo.internal.NativeSizeByReference;
 
 /**
  * `TheoryTerm` objects represent theory terms.
- *
+ * <p>
  * Theory terms have a readable string representation, implement Python's rich
  * comparison operators, and can be used as dictionary keys.
  */
-public class TheoryTerm {
+public class TheoryTerm implements Comparable<TheoryTerm> {
 
     private final Pointer theoryAtoms;
     private final int id;
@@ -96,6 +96,7 @@ public class TheoryTerm {
         return this.hashCode() == other.hashCode();
     }
 
+    @Override
     public int compareTo(TheoryTerm other) {
         return Integer.compare(this.hashCode(), other.hashCode());
     }

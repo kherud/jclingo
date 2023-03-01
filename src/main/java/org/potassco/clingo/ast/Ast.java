@@ -19,20 +19,20 @@
 
 package org.potassco.clingo.ast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.nodes.*;
-import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.control.Control;
 import org.potassco.clingo.control.LoggerCallback;
+import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Represents a node in the abstract syntax tree.
@@ -187,7 +187,20 @@ public abstract class Ast implements Comparable<Ast> {
      * @param messageLimit The maximum number of messages passed to the logger.
      */
     public static void parseString(String program, AstCallback callback, LoggerCallback logger, int messageLimit) {
-        Clingo.INSTANCE.clingo_ast_parse_string(program, callback, null, logger, null, messageLimit);
+        Clingo.INSTANCE.clingo_ast_parse_string(program, callback, null, null, logger, null, messageLimit);
+    }
+
+    /**
+     * Parse the given program and return an abstract syntax tree for each
+     * statement via a callback.
+     *
+     * @param program      String representation of the program.
+     * @param callback     Callable taking an ast as argument.
+     * @param logger       Function to intercept messages normally printed to standard error.
+     * @param messageLimit The maximum number of messages passed to the logger.
+     */
+    public static void parseString(String program, AstCallback callback, Control control, LoggerCallback logger, int messageLimit) {
+        Clingo.INSTANCE.clingo_ast_parse_string(program, callback, control.getPointer(), null, logger, null, messageLimit);
     }
 
     /**
@@ -255,20 +268,12 @@ public abstract class Ast implements Comparable<Ast> {
                 return new Function(ast);
             case POOL:
                 return new Pool(ast);
-            case CSP_PRODUCT:
-                return new CspProduct(ast);
-            case CSP_SUM:
-                return new CspSum(ast);
-            case CSP_GUARD:
-                return new CspGuard(ast);
             case BOOLEAN_CONSTANT:
                 return new BooleanConstant(ast);
             case SYMBOLIC_ATOM:
                 return new SymbolicAtom(ast);
             case COMPARISON:
                 return new Comparison(ast);
-            case CSP_LITERAL:
-                return new CspLiteral(ast);
             case AGGREGATE_GUARD:
                 return new AggregateGuard(ast);
             case CONDITIONAL_LITERAL:
@@ -285,10 +290,6 @@ public abstract class Ast implements Comparable<Ast> {
                 return new HeadAggregate(ast);
             case DISJUNCTION:
                 return new Disjunction(ast);
-            case DISJOINT_ELEMENT:
-                return new DisjointElement(ast);
-            case DISJOINT:
-                return new Disjoint(ast);
             case THEORY_SEQUENCE:
                 return new TheorySequence(ast);
             case THEORY_FUNCTION:

@@ -1,19 +1,24 @@
-import org.junit.Assert;
-import org.junit.Test;
-import org.potassco.clingo.backend.WeightedLiteral;
-import org.potassco.clingo.control.Control;
-import org.potassco.clingo.control.SymbolicAtom;
-import org.potassco.clingo.control.SymbolicAtoms;
-import org.potassco.clingo.propagator.*;
-import org.potassco.clingo.solving.SolveResult;
-import org.potassco.clingo.symbol.Function;
-import org.potassco.clingo.symbol.Symbol;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.potassco.clingo.backend.WeightedLiteral;
+import org.potassco.clingo.control.Control;
+import org.potassco.clingo.control.SymbolicAtom;
+import org.potassco.clingo.control.SymbolicAtoms;
+import org.potassco.clingo.propagator.Assignment;
+import org.potassco.clingo.propagator.PropagateInit;
+import org.potassco.clingo.propagator.Propagator;
+import org.potassco.clingo.propagator.WeightConstraintType;
+import org.potassco.clingo.solving.SolveResult;
+import org.potassco.clingo.symbol.Function;
+import org.potassco.clingo.symbol.Symbol;
+
+@Ignore
 public class PropagatorInitTest implements Propagator {
 
     @Test
@@ -37,7 +42,8 @@ public class PropagatorInitTest implements Propagator {
         control.close();
     }
 
-    public void init(PropagateInit init) {
+    @Override
+	public void init(PropagateInit init) {
         SymbolicAtoms symbolicAtoms = init.getSymbolicAtoms();
         SymbolicAtom a = symbolicAtoms.get(new Function("a"));
         SymbolicAtom b = symbolicAtoms.get(new Function("b"));

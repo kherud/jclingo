@@ -1458,6 +1458,107 @@ public interface Clingo extends Library {
      */
     byte clingo_backend_add_atom(Pointer backend, LongByReference symbol, IntByReference atom);
 
+    /**
+     * Add a numeric theory term.
+     *
+     * @param backend the target backend
+     * @param number the value of the term
+     * @param term_id the resulting term id
+     * @return whether the call was successful; might set one of the following error codes:
+     * Throws {@link ErrorCode#BAD_ALLOC}
+     */
+    byte clingo_backend_theory_term_number(Pointer backend, int number, IntByReference term_id);
+
+    /**
+     * Add a theory term representing a string.
+     *
+     * @param backend the target backend
+     * @param string the value of the term
+     * @param term_id the resulting term id
+     * @return whether the call was successful; might set one of the following error codes:
+     * Throws {@link ErrorCode#BAD_ALLOC}
+     */
+    byte clingo_backend_theory_term_string(Pointer backend, String string, IntByReference term_id);
+
+    /**
+     * Add a theory term representing a sequence of theory terms.
+     *
+     * @param backend the target backend
+     * @param type the type of the sequence
+     * @param arguments the term ids of the terms in the sequence
+     * @param size the number of elements of the sequence
+     * @param term_id the resulting term id
+     * @return whether the call was successful; might set one of the following error codes:
+     * Throws {@link ErrorCode#BAD_ALLOC}
+     */
+    byte clingo_backend_theory_term_sequence(Pointer backend, int type, int[] arguments, NativeSize size, IntByReference term_id);
+
+    /**
+     * Add a theory term representing a function.
+     *
+     * @param backend the target backend
+     * @param name the name of the function
+     * @param arguments an array of term ids for the theory terms in the arguments
+     * @param size the number of arguments
+     * @param term_id the resulting term id
+     * @return whether the call was successful; might set one of the following error codes:
+     * Throws {@link ErrorCode#BAD_ALLOC}
+     */
+    byte clingo_backend_theory_term_function(Pointer backend, String name, int[] arguments, NativeSize size, IntByReference term_id);
+
+    /**
+     * Convert the given symbol into a theory term.
+     *
+     * @param backend the target backend
+     * @param symbol the symbol to convert
+     * @param term_id the resulting term id
+     * @return whether the call was successful; might set one of the following error codes:
+     * Throws {@link ErrorCode#BAD_ALLOC}
+     */
+    byte clingo_backend_theory_term_symbol(Pointer backend, long symbol, IntByReference term_id);
+
+    /**
+     * Add a theory atom element.
+     *
+     * @param backend the target backend
+     * @param tuple the array of term ids represeting the tuple
+     * @param tuple_size the size of the tuple
+     * @param condition an array of program literals represeting the condition
+     * @param condition_size the size of the condition
+     * @param element_id the resulting element id
+     * @return whether the call was successful; might set one of the following error codes:
+     * Throws {@link ErrorCode#BAD_ALLOC}
+     */
+    byte clingo_backend_theory_element(Pointer backend, int[] tuple, NativeSize tuple_size, int[] condition, NativeSize condition_size, IntByReference element_id);
+
+    /**
+     * Add a theory atom without a guard.
+     *
+     * @param backend the target backend
+     * @param atom_id_or_zero a program atom or zero for theory directives
+     * @param term_id the term id of the term associated with the theory atom
+     * @param elements an array of element ids for the theory atoms's elements
+     * @param size the number of elements
+     * @return whether the call was successful; might set one of the following error codes:
+     * Throws {@link ErrorCode#BAD_ALLOC}
+     */
+    byte clingo_backend_theory_atom(Pointer backend, int atom_id_or_zero, int term_id, IntByReference elements, NativeSize size);
+
+    /**
+     * Add a theory atom with a guard.
+     *
+     * @param backend the target backend
+     * @param atom_id_or_zero a program atom or zero for theory directives
+     * @param term_id the term id of the term associated with the theory atom
+     * @param elements an array of element ids for the theory atoms's elements
+     * @param size the number of elements
+     * @param operator_name the string representation of a theory operator
+     * @param right_hand_side_id the term id of the right hand side term
+     * @return whether the call was successful; might set one of the following error codes:
+     * Throws {@link ErrorCode#BAD_ALLOC}
+     */
+    byte clingo_backend_theory_atom_with_guard(Pointer backend, int atom_id_or_zero, int term_id, int[] elements, NativeSize size, String operator_name, int right_hand_side_id);
+
     // configuration
 
     /**
@@ -2086,7 +2187,7 @@ public interface Clingo extends Library {
     //  Functions to copy ASTs
 
     /**
-     * Deep copy an AST node.
+     * Create a shallow copy of an AST node.
      *
      * @param ast  the AST to copy
      * @param copy the resulting AST
@@ -2098,7 +2199,7 @@ public interface Clingo extends Library {
     byte clingo_ast_copy(Pointer ast, PointerByReference copy);
 
     /**
-     * Create a shallow copy of an AST node.
+     * Create a deep copy of an AST node.
      *
      * @param ast  the AST to copy
      * @param copy the resulting AST
@@ -2530,10 +2631,13 @@ public interface Clingo extends Library {
 
     /**
      * Parse the given program and return an abstract syntax tree for each statement via a callback.
+     * <p>
+     * The control object can be set to a NULL to disable reading input in aspif format.
      *
      * @param program       the program in gringo syntax
      * @param callback      the callback reporting statements
      * @param callback_data user data for the callback
+     * @param control object to add ground statements to
      * @param logger        callback to report messages during parsing
      * @param logger_data   user data for the logger
      * @param message_limit the maximum number of times the logger is called
@@ -2542,18 +2646,21 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    byte clingo_ast_parse_string(String program, AstCallback callback, Pointer callback_data, LoggerCallback logger, Pointer logger_data, int message_limit);
+    byte clingo_ast_parse_string(String program, AstCallback callback, Pointer control, Pointer callback_data, LoggerCallback logger, Pointer logger_data, int message_limit);
 
     /**
      * Parse the programs in the given list of files and return an abstract syntax tree for each statement via a callback.
      * <p>
      * The function follows clingo's handling of files on the command line.
      * Filename "-" is treated as "STDIN" and if an empty list is given, then the parser will read from "STDIN".
+     * <p>
+     * The control object can be set to a NULL to disable reading input in aspif format.
      *
      * @param files         the beginning of the file name array
      * @param size          the number of file names
      * @param callback      the callback reporting statements
      * @param callback_data user data for the callback
+     * @param control control object to add ground statements to
      * @param logger        callback to report messages during parsing
      * @param logger_data   user data for the logger
      * @param message_limit the maximum number of times the logger is called
@@ -2562,9 +2669,20 @@ public interface Clingo extends Library {
      * <li>{@link ErrorCode#BAD_ALLOC}</li>
      * </ul>
      */
-    byte clingo_ast_parse_files(String[] files, NativeSize size, AstCallback callback, Pointer callback_data, LoggerCallback logger, Pointer logger_data, int message_limit);
+    byte clingo_ast_parse_files(String[] files, NativeSize size, AstCallback callback, Pointer callback_data, Pointer control, LoggerCallback logger, Pointer logger_data, int message_limit);
 
     // Functions to add ASTs to logic programs
+
+    /**
+     * Get an object to add non-ground directives to the program.
+     * <p>
+     * See the {@link org.potassco.clingo.ast.ProgramBuilder} module for more information.
+     *
+     * @param control the target
+     * @param builder the program builder object
+     * @return whether the call was successful
+     */
+    byte clingo_program_builder_init(Pointer control, PointerByReference builder);
 
     /**
      * Begin building a program.
@@ -2993,17 +3111,6 @@ public interface Clingo extends Library {
     byte clingo_control_backend(Pointer control, PointerByReference backend);
 
     /**
-     * Get an object to add non-ground directives to the program.
-     * <p>
-     * See the {@link org.potassco.clingo.ast.ProgramBuilder} module for more information.
-     *
-     * @param control the target
-     * @param builder the program builder object
-     * @return whether the call was successful
-     */
-    byte clingo_control_program_builder(Pointer control, PointerByReference builder);
-
-    /**
      * Add an option that is processed with a custom parser.
      * <p>
      * Note that the parser also has to take care of storing the semantic value of
@@ -3213,7 +3320,7 @@ public interface Clingo extends Library {
      * Otherwise {@link ErrorCode#UNKNOWN} should be set and false returned.
      */
     @Structure.FieldOrder({"initProgram", "beginStep", "endStep", "rule", "weightRule", "minimize", "project",
-            "outputAtom", "outputTerm", "outputCsp", "external", "assume", "heuristic", "acycEdge", "theoryTermNumber",
+            "outputAtom", "outputTerm", "external", "assume", "heuristic", "acycEdge", "theoryTermNumber",
             "theoryTermString", "theoryTermCompound", "theoryElement", "theoryAtom", "theoryAtomWithGuard"})
     class Observer extends Structure {
         public ObserverInitProgramCallback initProgram;
@@ -3225,7 +3332,6 @@ public interface Clingo extends Library {
         public ObserverProjectCallback project;
         public ObserverOutputAtomCallback outputAtom;
         public ObserverOutputTermCallback outputTerm;
-        public ObserverOutputCspCallback outputCsp;
         public ObserverExternalCallback external;
         public ObserverAssumeCallback assume;
         public ObserverHeuristicCallback heuristic;

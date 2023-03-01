@@ -1,10 +1,13 @@
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.potassco.clingo.control.Control;
 import org.potassco.clingo.solving.SolveEventCallback;
 import org.potassco.clingo.solving.SolveMode;
-import org.potassco.clingo.statistics.*;
+import org.potassco.clingo.statistics.Statistics;
+import org.potassco.clingo.statistics.StatisticsArray;
+import org.potassco.clingo.statistics.StatisticsMap;
+import org.potassco.clingo.statistics.StatisticsType;
+import org.potassco.clingo.statistics.StatisticsValue;
 
 public class StatisticsTest {
 

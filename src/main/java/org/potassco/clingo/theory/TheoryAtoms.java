@@ -24,6 +24,7 @@ import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSizeByReference;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class TheoryAtoms implements Iterable<TheoryAtom> {
 
@@ -47,6 +48,9 @@ public class TheoryAtoms implements Iterable<TheoryAtom> {
 
             @Override
             public TheoryAtom next() {
+                if (i >= size) {
+                    throw new NoSuchElementException();
+                }
                 return new TheoryAtom(theoryAtoms, i++);
             }
         };

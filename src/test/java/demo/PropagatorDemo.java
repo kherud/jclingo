@@ -27,7 +27,7 @@ public class PropagatorDemo implements Propagator {
 
         control.registerPropagator(propagator);
 
-        control.add("pigeon", "1 { place(P,H) : H = 1..h } 1 :- P = 1..p.\"");
+        control.add("pigeon", "1 { place(P,H) : H = 1..h } 1 :- P = 1..p.");
         control.ground("pigeon");
         control.solve(callback);
 

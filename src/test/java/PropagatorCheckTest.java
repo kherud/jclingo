@@ -34,6 +34,7 @@ public class PropagatorCheckTest implements Propagator {
         control.close();
     }
 
+    @Override
     public void check(PropagateControl control) {
         if (!added) {
             added = true;

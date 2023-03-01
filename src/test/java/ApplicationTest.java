@@ -32,6 +32,7 @@ public class ApplicationTest implements Application {
         return true;
     }
 
+    @Override
     public void registerOptions(ApplicationOptions options) {
         queue.add("register");
         String group = "Clingo.Test";
@@ -39,6 +40,7 @@ public class ApplicationTest implements Application {
         options.addFlag(group, "flag", "test description", this.flag);
     }
 
+    @Override
     public boolean validateOptions() {
         queue.add("validate");
         queue.add("flag");
@@ -46,12 +48,14 @@ public class ApplicationTest implements Application {
         return true;
     }
 
+    @Override
     public void log(WarningCode code, String message) {
         queue.add("log");
         queue.add(String.valueOf(code));
         queue.add(message.replaceAll("^.*:(?=[0-9]+:)", ""));
     }
 
+    @Override
     public void main(Control control, Path[] filePaths) {
         queue.add("main");
         for (Path filePath : filePaths)

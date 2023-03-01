@@ -1,3 +1,5 @@
+![Clingo Version 5.6.2](https://img.shields.io/badge/clingo-5.6.2-success)
+
 # Java Bindings for Clingo: A grounder and solver for logic programs
 
 **This non-official repository contains Java bindings for Clingo.**
@@ -13,14 +15,18 @@ version](https://potassco.org/clingo/run/) of clingo.
 Please consult the following resources for further information:
 
 - [**Downloading source and binary releases**](https://github.com/potassco/clingo/releases)
-- [**Installation and software requirements**](INSTALL.md)
-- [Changes between releases](CHANGES.md)
+- [**Installation and software requirements**](https://github.com/potassco/clingo/blob/master/INSTALL.md)
 - [Documentation](https://github.com/potassco/guide/releases)
 - [Potassco clingo page](https://potassco.org/clingo/)
 
 # Installation
 
-You can use this API via Maven:
+First make sure to install the Clingo shared library (see the [official repository](https://github.com/potassco/clingo/blob/master/INSTALL.md)).
+- linux: libclingo.so (pre-compiled x86-64 provided)
+- macos: libclingo.dylib (pre-compiled arm64 provided)
+- windows: clingo.dll
+
+You can then use this API via Maven:
 
 ```
 <dependencies>

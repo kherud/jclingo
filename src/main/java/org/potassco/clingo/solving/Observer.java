@@ -110,17 +110,6 @@ public interface Observer {
     }
 
     /**
-     * Observe shown csp variables passed to the solver.
-     *
-     * @param symbol    the symbolic representation of the variable
-     * @param value     the value of the variable
-     * @param condition the literals of the condition
-     */
-    default void outputCSP(Symbol symbol, int value, int[] condition) {
-
-    }
-
-    /**
      * Observe external statements passed to the solver.
      *
      * @param atom the external atom

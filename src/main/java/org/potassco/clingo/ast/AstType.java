@@ -17,15 +17,10 @@ public enum AstType {
     INTERVAL,
     FUNCTION,
     POOL,
-    // csp terms
-    CSP_PRODUCT,
-    CSP_SUM,
-    CSP_GUARD,
     // simple atoms
     BOOLEAN_CONSTANT,
     SYMBOLIC_ATOM,
     COMPARISON,
-    CSP_LITERAL,
     // aggregates
     AGGREGATE_GUARD,
     CONDITIONAL_LITERAL,
@@ -35,8 +30,6 @@ public enum AstType {
     HEAD_AGGREGATE_ELEMENT,
     HEAD_AGGREGATE,
     DISJUNCTION,
-    DISJOINT_ELEMENT,
-    DISJOINT,
     // theory atoms
     THEORY_SEQUENCE,
     THEORY_FUNCTION,

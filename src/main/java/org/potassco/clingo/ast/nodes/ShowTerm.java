@@ -20,14 +20,14 @@
 package org.potassco.clingo.ast.nodes;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-import org.potassco.clingo.ast.*;
+import org.potassco.clingo.ast.Ast;
+import org.potassco.clingo.ast.AstSequence;
+import org.potassco.clingo.ast.AstType;
+import org.potassco.clingo.ast.Attribute;
+import org.potassco.clingo.ast.Location;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.symbol.Symbol;
-
-import java.util.NoSuchElementException;
 
 public class ShowTerm extends Ast {
 
@@ -35,8 +35,8 @@ public class ShowTerm extends Ast {
         super(ast);
     }
     
-    public ShowTerm(Location location, Ast term, AstSequence body, int csp) {
-        super(create(location, term, body, csp));
+    public ShowTerm(Location location, Ast term, AstSequence body) {
+        super(create(location, term, body));
     }
     
     public Location getLocation() {
@@ -55,12 +55,6 @@ public class ShowTerm extends Ast {
         return new AstSequence(ast, Attribute.BODY);
     }
 
-    public int getCsp() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, Attribute.CSP.ordinal(), intByReference));
-        return intByReference.getValue();
-    }
-
     public void setLocation(Location location) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
     }
@@ -72,14 +66,10 @@ public class ShowTerm extends Ast {
     public void setBody(AstSequence body) {
         new AstSequence(ast, Attribute.BODY).set(body);
     }
-
-    public void setCsp(int csp) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, Attribute.CSP.ordinal(), csp));
-    }
     
-    private static Pointer create(Location location, Ast term, AstSequence body, int csp) {
+    private static Pointer create(Location location, Ast term, AstSequence body) {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.SHOW_TERM.ordinal(), pointerByReference, location, term.getPointer(), body.getPointer(), new NativeSize(body.size()), csp));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.SHOW_TERM.ordinal(), pointerByReference, location, term.getPointer(), body.getPointer(), new NativeSize(body.size())));
         return pointerByReference.getValue();
     }
 

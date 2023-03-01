@@ -32,7 +32,7 @@ import java.util.NoSuchElementException;
 
 /**
  * Class to represent theory atoms.
- *
+ * <p>
  * Theory atoms have a readable string representation, implement Python's rich
  * comparison operators, and can be used as dictionary keys.
  */
@@ -47,10 +47,15 @@ public class TheoryAtom implements Comparable<TheoryAtom> {
         this.id = id;
     }
 
-    public boolean equals(TheoryAtom other) {
-        return this.hashCode() == other.hashCode();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TheoryAtom that = (TheoryAtom) o;
+        return this.hashCode() == that.hashCode();
     }
 
+    @Override
     public int compareTo(TheoryAtom other) {
         return Integer.compare(this.hashCode(), other.hashCode());
     }

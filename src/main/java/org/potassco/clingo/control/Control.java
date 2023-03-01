@@ -537,7 +537,6 @@ public class Control implements AutoCloseable {
         nativeObserver.project = observer::project;
         nativeObserver.outputAtom = observer::outputAtom;
         nativeObserver.outputTerm = observer::outputTerm;
-        nativeObserver.outputCsp = observer::outputCSP;
         nativeObserver.external = observer::external;
         nativeObserver.assume = observer::assume;
         nativeObserver.heuristic = observer::heuristic;

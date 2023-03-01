@@ -64,18 +64,22 @@ public class BackendObserverTest implements Observer {
         control.close();
     }
 
-    public void initProgram(boolean incremental) {
+    @Override
+	public void initProgram(boolean incremental) {
         called.add("initProgram");
     }
 
+    @Override
     public void beginStep() {
         called.add("beginStep");
     }
 
+    @Override
     public void endStep() {
         called.add("endStep");
     }
 
+    @Override
     public void rule(boolean choice, int[] head, int[] body) {
         called.add("rule");
         Assert.assertTrue(choice);
@@ -83,6 +87,7 @@ public class BackendObserverTest implements Observer {
         Assert.assertArrayEquals(new int[]{2, 3}, body);
     }
 
+    @Override
     public void weightRule(boolean choice, int[] head, int lowerBound, WeightedLiteral[] body) {
         called.add("weightRule");
         Assert.assertFalse(choice);
@@ -95,6 +100,7 @@ public class BackendObserverTest implements Observer {
         Assert.assertEquals(5, body[1].weight);
     }
 
+    @Override
     public void minimize(int priority, WeightedLiteral[] literals) {
         called.add("minimize");
         Assert.assertEquals(0, priority);
@@ -105,36 +111,38 @@ public class BackendObserverTest implements Observer {
         Assert.assertEquals(5, literals[1].weight);
     }
 
+    @Override
     public void project(int[] atoms) {
         called.add("project");
         Assert.assertArrayEquals(new int[]{2, 4}, atoms);
     }
 
+    @Override
     public void outputAtom(Symbol symbol, int atom) {
         called.add("outputAtom");
         Assert.assertEquals(new Function("a"), symbol);
         Assert.assertEquals(2, atom);
     }
 
+    @Override
     public void outputTerm(Symbol symbol, int[] condition) {
         called.add("outputTerm");
     }
 
-    public void outputCSP(Symbol symbol, int value, int[] condition) {
-        called.add("outputCSP");
-    }
-
+    @Override
     public void external(int atom, ExternalType type) {
         called.add("external");
         Assert.assertEquals(3, atom);
         Assert.assertEquals(ExternalType.RELEASE, type);
     }
 
+    @Override
     public void assume(int[] literals) {
         called.add("assume");
         Assert.assertArrayEquals(new int[]{2, 3}, literals);
     }
 
+    @Override
     public void heuristic(int atom, HeuristicType type, int bias, int priority, int[] condition) {
         called.add("heuristic");
         Assert.assertEquals(2, atom);
@@ -144,6 +152,7 @@ public class BackendObserverTest implements Observer {
         Assert.assertArrayEquals(new int[]{1, 3}, condition);
     }
 
+    @Override
     public void acycEdge(int nodeU, int nodeV, int[] condition) {
         called.add("acycEdge");
         Assert.assertEquals(1, nodeU);
@@ -151,26 +160,32 @@ public class BackendObserverTest implements Observer {
         Assert.assertArrayEquals(new int[]{3, 4}, condition);
     }
 
+    @Override
     public void theoryTermNumber(int termId, int number) {
         called.add("theoryTermNumber");
     }
 
+    @Override
     public void theoryTermString(int termId, String name) {
         called.add("theoryTermString");
     }
 
+    @Override
     public void theoryTermCompound(int termId, int nameIdOrType, int[] arguments) {
         called.add("theoryTermCompound");
     }
 
+    @Override
     public void theoryElement(int elementId, int[] terms, int[] condition) {
         called.add("theoryElement");
     }
 
+    @Override
     public void theoryAtom(int atomIdOrZero, int termId, int[] elements) {
         called.add("theoryAtom");
     }
 
+    @Override
     public void theoryAtomWithGuard(int atomIdOrZero, int termId, int[] elements, int operatorId, int rightHandSideId) {
         called.add("theoryAtomWithGuard");
     }

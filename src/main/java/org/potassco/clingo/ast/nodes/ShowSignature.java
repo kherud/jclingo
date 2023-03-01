@@ -22,11 +22,11 @@ package org.potassco.clingo.ast.nodes;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-import org.potassco.clingo.ast.*;
+import org.potassco.clingo.ast.Ast;
+import org.potassco.clingo.ast.AstType;
+import org.potassco.clingo.ast.Attribute;
+import org.potassco.clingo.ast.Location;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.symbol.Symbol;
-
-import java.util.NoSuchElementException;
 
 public class ShowSignature extends Ast {
 
@@ -34,8 +34,8 @@ public class ShowSignature extends Ast {
         super(ast);
     }
     
-    public ShowSignature(Location location, String name, int arity, int positive, int csp) {
-        super(create(location, name, arity, positive, csp));
+    public ShowSignature(Location location, String name, int arity, int positive) {
+        super(create(location, name, arity, positive));
     }
     
     public Location getLocation() {
@@ -62,12 +62,6 @@ public class ShowSignature extends Ast {
         return intByReference.getValue();
     }
 
-    public int getCsp() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, Attribute.CSP.ordinal(), intByReference));
-        return intByReference.getValue();
-    }
-
     public void setLocation(Location location) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
     }
@@ -83,14 +77,10 @@ public class ShowSignature extends Ast {
     public void setPositive(int positive) {
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, Attribute.POSITIVE.ordinal(), positive));
     }
-
-    public void setCsp(int csp) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, Attribute.CSP.ordinal(), csp));
-    }
     
-    private static Pointer create(Location location, String name, int arity, int positive, int csp) {
+    private static Pointer create(Location location, String name, int arity, int positive) {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.SHOW_SIGNATURE.ordinal(), pointerByReference, location, name, arity, positive, csp));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.SHOW_SIGNATURE.ordinal(), pointerByReference, location, name, arity, positive));
         return pointerByReference.getValue();
     }
 

@@ -25,11 +25,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import org.potassco.clingo.statistics.Statistics;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * Callback function called during search to notify when the search is finished or a model is ready.
  * <p>

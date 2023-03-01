@@ -36,6 +36,7 @@ public class PropagatorControlTest implements Propagator {
         control.close();
     }
 
+    @Override
     public void init(PropagateInit init) {
         init.setCheckMode(PropagatorCheckMode.NONE);
         Assert.assertEquals(PropagatorCheckMode.NONE, init.getCheckMode());
@@ -46,6 +47,7 @@ public class PropagatorControlTest implements Propagator {
         init.addWatch(-litA);
     }
 
+    @Override
     public void propagate(PropagateControl control, int[] changes) {
         Assignment assignment = control.getAssignment();
         Trail trail = assignment.getTrail();
@@ -64,6 +66,7 @@ public class PropagatorControlTest implements Propagator {
         Assert.assertFalse(control.addClause(new int[]{litA}));
     }
 
+    @Override
     public void undo(PropagateControl control, int[] changes) {
         Assert.assertEquals(0, control.getThreadId());
         Assert.assertTrue(Arrays.stream(changes).anyMatch(x -> x == -litA));

@@ -32,6 +32,7 @@ public class PropagatorHeuristicTest implements Propagator {
         control.close();
     }
 
+    @Override
     public void init(PropagateInit init) {
         SymbolicAtoms symbolicAtoms = init.getSymbolicAtoms();
         SymbolicAtom a = symbolicAtoms.get(new Function("a"));
@@ -40,6 +41,7 @@ public class PropagatorHeuristicTest implements Propagator {
         litB = init.solverLiteral(b.getLiteral());
     }
 
+    @Override
     public int decide(int threadId, Assignment assignment, int fallback) {
         Assert.assertEquals(0, threadId);
         if (assignment.isFree(litA)) {

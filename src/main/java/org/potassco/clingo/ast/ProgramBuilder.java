@@ -39,7 +39,7 @@ public class ProgramBuilder implements AutoCloseable {
      */
     public ProgramBuilder(Control control) {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_control_program_builder(control.getPointer(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_program_builder_init(control.getPointer(), pointerByReference));
         this.builder = pointerByReference.getValue();
         Clingo.check(Clingo.INSTANCE.clingo_program_builder_begin(builder));
     }

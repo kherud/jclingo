@@ -20,7 +20,6 @@ public enum Attribute {
     COEFFICIENT,
     COMPARISON,
     CONDITION,
-    CSP,
     ELEMENTS,
     EXTERNAL,
     EXTERNAL_TYPE,

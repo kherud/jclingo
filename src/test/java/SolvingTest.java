@@ -88,10 +88,10 @@ public class SolvingTest {
             while (true) {
                 handle.resume();
                 handle.wait(-1.);
-                try {
-                    Model model = handle.getModel();
+                Model model = handle.getModel();
+                if (model != null) {
                     mit.onModel(model);
-                } catch (NoSuchElementException e) {
+                } else {
                     break;
                 }
             }

@@ -41,6 +41,8 @@ public class SolveHandle implements AutoCloseable, Iterator<Model> {
     private final Pointer solveHandle;
     private Model currentModel;
 
+    private boolean continueIteration = true;
+
     public SolveHandle(Pointer solveHandle) {
         this.solveHandle = solveHandle;
     }
@@ -119,29 +121,34 @@ public class SolveHandle implements AutoCloseable, Iterator<Model> {
     }
 
     /**
-     * @return the current model
+     * Get the next model or null if there are no more models.
+     *
+     * @return the current model or null
      */
     public Model getModel() {
         PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_solve_handle_model(solveHandle, pointerByReference));
         if (pointerByReference.getValue() == null)
-            throw new NoSuchElementException();
+            return null;
         return new Model(pointerByReference.getValue());
     }
 
     @Override
     public boolean hasNext() {
-        try {
-            currentModel = getModel();
+        if (continueIteration) {
             resume();
-            return true;
-        } catch (NoSuchElementException e) {
-            return false;
+            currentModel = getModel();
+            continueIteration = false;
         }
+        return currentModel != null;
     }
 
     @Override
     public Model next() {
+        if (currentModel == null) {
+            throw new NoSuchElementException();
+        }
+        continueIteration = true;
         return currentModel;
     }
 }

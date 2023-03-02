@@ -1,7 +1,7 @@
 **/.idea
 **/.directory
 *.log
-**/target
+target
 *.txt
 *.gz
 .DS_Store

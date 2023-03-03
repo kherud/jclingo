@@ -16,7 +16,7 @@ public class SymbolDemo {
 
         // print the symbols along with their hash values
         for (Symbol symbol : symbols) {
-            System.out.printf("The hash of %s is %d\n", symbol.toString(), symbol.hash());
+            System.out.printf("The hash of %s is %d\n", symbol.toString(), symbol.hashCode());
         }
 
         Symbol[] arguments = function.getArguments();

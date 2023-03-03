@@ -19,15 +19,12 @@
 
 package org.potassco.clingo.symbol;
 
-import com.sun.jna.Native;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * Construct a function symbol.

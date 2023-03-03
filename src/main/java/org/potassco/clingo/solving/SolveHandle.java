@@ -148,8 +148,7 @@ public class SolveHandle implements AutoCloseable, Iterator<Model> {
         if (hasNext()) {
             continueIteration = true;
             return currentModel;
-        } else {
-            throw new NoSuchElementException();
         }
+        throw new NoSuchElementException();
     }
 }

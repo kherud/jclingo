@@ -26,8 +26,6 @@ import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
 
-import java.util.Arrays;
-
 public abstract class Symbol implements Comparable<Symbol> {
 
     protected final long symbol;
@@ -49,15 +47,6 @@ public abstract class Symbol implements Comparable<Symbol> {
         return (symbol.isPositive() == signature.isPositive())
                 && (symbol.getName().equals(signature.getName()))
                 && (symbol.getArity() == signature.getArity());
-    }
-
-    /**
-     * Calculate a hash code of a symbol.
-     *
-     * @return the hash code of the symbol
-     */
-    public int hash() {
-        return Clingo.INSTANCE.clingo_symbol_hash(symbol).intValue();
     }
 
     /**
@@ -150,6 +139,16 @@ public abstract class Symbol implements Comparable<Symbol> {
         if (!(other instanceof Symbol))
             return false;
         return Clingo.INSTANCE.clingo_symbol_is_equal_to(symbol, ((Symbol) other).getLong()) > 0;
+    }
+
+    /**
+     * Calculate a hash code of a symbol.
+     *
+     * @return the hash code of the symbol
+     */
+    @Override
+    public int hashCode() {
+        return Clingo.INSTANCE.clingo_symbol_hash(symbol).intValue();
     }
 
     /**

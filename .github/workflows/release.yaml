@@ -141,3 +141,27 @@ jobs:
         with:
           name: libraries
           path: ${{ github.workspace }}\jclingo\src\main\resources\
+
+
+  release-github-packages:
+    name: Publish to GitHub packages
+    needs: [build-linux-docker,build-macos-native,build-win-native]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v3
+        with:
+          name: artifacts
+          path: ${{ github.workspace }}/src/main/resources/
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'zulu'
+      - name: Publish package
+        run: mvn --batch-mode deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

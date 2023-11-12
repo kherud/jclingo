@@ -1,0 +1,143 @@
+name: Build clingo and publish JAR
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+jobs:
+
+  build-linux-docker:
+    name: Build ${{ matrix.target.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - {
+            name: linux-x86-64,
+            image: dockcross-manylinux2014-x64,
+          }
+          - {
+            name: linux-aarch64,
+            image: dockcross-linux-arm64-lts,
+          }
+    steps:
+      - name: Checkout clingo
+        uses: actions/checkout@v4
+        with:
+          repository: potassco/clingo
+          submodules: recursive
+          path: clingo
+      - name: Checkout jclingo
+        uses: actions/checkout@v4
+        with:
+          path: jclingo
+      - name: Build clingo
+        shell: bash
+        run: |
+          cp jclingo/.github/build.sh clingo/jclingo-build.sh
+          cd clingo
+          ../jclingo/.github/dockcross/${{ matrix.target.image }} ./jclingo-build.sh
+      - name: Move library
+        run: |
+          cd ${{ github.workspace }}
+          mkdir -p jclingo/src/main/resources/${{ matrix.target.name }}
+          mv clingo/build/bin/libclingo.so.4.0 jclingo/src/main/resources/${{ matrix.target.name }}/libclingo.so
+      - name: Upload clingo
+        uses: actions/upload-artifact@v3
+        with:
+          name: libraries
+          path: ${{ github.workspace }}/jclingo/src/main/resources/
+
+
+  build-macos-native:
+    name: Build ${{ matrix.target.name }}
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - {
+            name: darwin-x86-64,
+            cmake: '-DCMAKE_OSX_ARCHITECTURES=x86_64'
+          }
+          - {
+            name: darwin-arm64,
+            cmake: '-DCMAKE_OSX_ARCHITECTURES=arm64'
+          }
+    steps:
+      - name: Checkout clingo
+        uses: actions/checkout@v4
+        with:
+          repository: potassco/clingo
+          submodules: recursive
+          path: clingo
+      - name: Checkout jclingo
+        uses: actions/checkout@v4
+        with:
+          path: jclingo
+      - name: Build clingo
+        shell: bash
+        run: |
+          cd ${{ github.workspace }}/clingo
+          ../jclingo/.github/build.sh ${{ matrix.target.cmake }}
+      - name: Move library
+        run: |
+          cd ${{ github.workspace }}
+          mkdir -p jclingo/src/main/resources/${{ matrix.target.name }}
+          mv clingo/build/bin/libclingo.4.0.dylib jclingo/src/main/resources/${{ matrix.target.name }}/libclingo.dylib
+      - name: Upload clingo
+        uses: actions/upload-artifact@v3
+        with:
+          name: libraries
+          path: ${{ github.workspace }}/jclingo/src/main/resources/
+
+
+  build-win-native:
+    name: Build ${{ matrix.target.name }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - {
+            name: win32-x86-64,
+            cmake: '-G "Visual Studio 17 2022" -A "x64"'
+          }
+          - {
+            name: win32-aarch64,
+            cmake: '-G "Visual Studio 17 2022" -A "ARM64"'
+          }
+          - {
+            name: win32-x86,
+            cmake: '-G "Visual Studio 17 2022" -A "Win32"'
+          }
+          - {
+            name: win32-arm,
+            cmake: '-G "Visual Studio 17 2022" -A "ARM"'
+          }
+    steps:
+      - name: Checkout clingo
+        uses: actions/checkout@v4
+        with:
+          repository: potassco/clingo
+          submodules: recursive
+          path: clingo
+      - name: Checkout jclingo
+        uses: actions/checkout@v4
+        with:
+          path: jclingo
+      - name: Build clingo
+        shell: cmd
+        run: |
+          cd ${{ github.workspace }}\clingo
+          ..\jclingo\.github\build.bat ${{ matrix.target.cmake }}
+      - name: Move library
+        run: |
+          cd ${{ github.workspace }}
+          mkdir jclingo\src\main\resources\${{ matrix.target.name }}
+          move clingo\build\bin\Release\clingo.dll jclingo\src\main\resources\${{ matrix.target.name }}
+      - name: Upload clingo
+        uses: actions/upload-artifact@v3
+        with:
+          name: libraries
+          path: ${{ github.workspace }}\jclingo\src\main\resources\

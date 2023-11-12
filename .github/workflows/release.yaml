@@ -145,7 +145,7 @@ jobs:
 
   release-github-packages:
     name: Publish to GitHub packages
-    needs: [build-linux-docker,build-macos-native,build-win-native]
+    needs: [build-macos-native]
     runs-on: ubuntu-latest
     permissions:
       contents: read

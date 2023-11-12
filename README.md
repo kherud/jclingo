@@ -45,26 +45,25 @@ Please have a look at the [demonstrations](src/test/java/demo), for example:
 
 ```java
 public class Main {
+    public static void main(String... args) {
+        Control control = new Control("0");
 
-	public static void main(String... args) {
-		Control control = new Control("0");
+        // add a logic program to the base part
+        control.add("a :- not b. b :- not a.");
 
-		// add a logic program to the base part
-		control.add("a :- not b. b :- not a.");
+        // ground the base part
+        control.ground();
 
-		// ground the base part
-		control.ground();
+        try (SolveHandle handle = control.solve(SolveMode.YIELD)) {
+            while (handle.hasNext()) {
+                // get the next model
+                Model model = handle.next();
+                System.out.println(model);
+            }
+        }
 
-		try (SolveHandle handle = control.solve(SolveMode.YIELD)) {
-			while (handle.hasNext()) {
-				// get the next model
-				Model model = handle.next();
-				System.out.println(model);
-			}
-		}
-
-		control.close();
-	}
+        control.close();
+    }
 }
 ```
 

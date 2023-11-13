@@ -34,7 +34,7 @@ import java.util.Iterator;
  * Assigns truth values to solver literals.  Each solver literal is either
  * true, false, or undefined.
  * <p>
- * This class implements {@link Iterable<Integer>} to access the (positive)
+ * This class implements <code>Iterable&lt;Integer&gt;</code> to access the (positive)
  * literals in the assignment.
  */
 public class Assignment implements Iterable<Integer> {

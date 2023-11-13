@@ -1150,7 +1150,7 @@ public interface Clingo extends Library {
     /**
      * Add the given weight constraint to the solver.
      * <p>
-     * This function adds a constraint of form <code>literal &lt;=&gt; { lit=weight | (lit, weight) in literals } >=
+     * This function adds a constraint of form <code>literal &lt;=&gt; { lit=weight | (lit, weight) in literals } &gt;=
      * bound</code> to the solver. Depending on the type the <code>&lt;=&gt;</code> connective can be either a left
      * implication, right implication, or equivalence.
      * <p>

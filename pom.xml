@@ -12,11 +12,12 @@
 	<url>https://github.com/kherud/jclingo</url>
 
 	<properties>
+		<clingo.version>5.6.2</clingo.version>
+		<jna.version>5.13.0</jna.version>
+		<junit.version>4.13.1</junit.version>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jna.version>5.13.0</jna.version>
-		<junit.version>4.13.1</junit.version>
 	</properties>
 
 	<licenses>
@@ -117,6 +118,11 @@
 								<goals>
 									<goal>jar-no-fork</goal>
 								</goals>
+								<configuration>
+									<excludes>
+										<exclude>src/main/resources/**</exclude>
+									</excludes>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>

@@ -36,7 +36,7 @@ jobs:
         run: |
           cp jclingo/.github/build.sh clingo/jclingo-build.sh
           cd clingo
-          ../jclingo/.github/dockcross/${{ matrix.target.image }} ./jclingo-build.sh -DCMAKE_SHARED_LINKER_FLAGS="-static-libgcc -static-libstdc++"
+          ../jclingo/.github/dockcross/${{ matrix.target.image }} './jclingo-build.sh -DCMAKE_SHARED_LINKER_FLAGS="-static-libgcc -static-libstdc++"'
       - name: Move library
         run: |
           cd ${{ github.workspace }}

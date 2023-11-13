@@ -10,6 +10,7 @@ cmake -H. -Bbuild $@ \
   -DCLINGO_BUILD_TESTS=OFF \
   -DCLINGO_MANAGE_RPATH=OFF \
   -DCLINGO_BUILD_SHARED=ON \
+  -DCMAKE_BUILD_TYPE=release \
   || exit 1
 
 cmake --build build \

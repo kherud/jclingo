@@ -36,12 +36,12 @@ jobs:
         run: |
           cp jclingo/.github/build.sh clingo/jclingo-build.sh
           cd clingo
-          ../jclingo/.github/dockcross/${{ matrix.target.image }} ./jclingo-build.sh
+          ../jclingo/.github/dockcross/${{ matrix.target.image }} ./jclingo-build.sh -DCMAKE_SHARED_LINKER_FLAGS="-static-libgcc -static-libstdc++"
       - name: Move library
         run: |
           cd ${{ github.workspace }}
           mkdir -p jclingo/src/main/resources/${{ matrix.target.name }}
-          mv clingo/build/bin/libclingo.so.4.0 jclingo/src/main/resources/${{ matrix.target.name }}/libclingo.so
+          cp -p clingo/build/bin/libclingo.so jclingo/src/main/resources/${{ matrix.target.name }}/libclingo.so
       - name: Upload clingo
         uses: actions/upload-artifact@v3
         with:
@@ -84,7 +84,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           mkdir -p jclingo/src/main/resources/${{ matrix.target.name }}
-          mv clingo/build/bin/libclingo.4.0.dylib jclingo/src/main/resources/${{ matrix.target.name }}/libclingo.dylib
+          cp -p clingo/build/bin/libclingo.dylib jclingo/src/main/resources/${{ matrix.target.name }}/libclingo.dylib
       - name: Upload clingo
         uses: actions/upload-artifact@v3
         with:

@@ -7,6 +7,10 @@
 	<artifactId>clingo</artifactId>
 	<version>1.0.0</version>
 
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>Java Bindings for Clingo: A grounder and solver for logic programs</description>
+	<url>https://github.com/kherud/jclingo</url>
+
 	<properties>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>

@@ -25,7 +25,7 @@ import org.potassco.clingo.ast.nodes.*;
  * Utility class to transform ASTs.
  * <p>
  * Classes should inherit from this class and implement functions with name
- * `visit<AstType>` where `<AstType>` is the type of the ASTs to visit and
+ * <code>visit&lt;AstType&gt;</code> where <code>&lt;AstType&gt;</code> is the type of the ASTs to visit and
  * modify. Such a function should return an updated AST or the same AST if no
  * change is necessary. The transformer will take care to copy all parent ASTs
  * involving a modified child. Note that the class works like a visitor if

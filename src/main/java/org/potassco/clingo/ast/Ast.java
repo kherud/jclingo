@@ -37,12 +37,12 @@ import org.potassco.clingo.internal.NativeSizeByReference;
 /**
  * Represents a node in the abstract syntax tree.
  * <p>
- * The attributes of an `AST` are tied to its type.
+ * The attributes of an <code>AST</code> are tied to its type.
  * <p>
  * Furthermore, AST nodes implement comparison operators and are
  * ordered structurally ignoring the location. Their string representation
  * corresponds to their gringo representation. In fact, the string
- * representation of any AST obtained from `parse_files` and `parse_string`
+ * representation of any AST obtained from {@link #parseString(String)}
  * can be parsed again. Note that it is possible to construct ASTs
  * that are not parsable, though.
  */

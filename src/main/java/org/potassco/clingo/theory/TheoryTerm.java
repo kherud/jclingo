@@ -28,7 +28,7 @@ import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
 
 /**
- * `TheoryTerm` objects represent theory terms.
+ * <code>TheoryTerm</code> objects represent theory terms.
  * <p>
  * Theory terms have a readable string representation, implement Python's rich
  * comparison operators, and can be used as dictionary keys.

@@ -24,12 +24,13 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.solving.TruthValue;
 import org.potassco.clingo.symbol.Symbol;
 
 /**
  * Backend object providing a low level interface to extend a logic program.
  * This class allows for adding statements in ASPIF format.
- * The `Backend` is a context manager and should be used with Java's `try with` statement.
+ * The <code>Backend</code> is a context manager and should be used with Java's <code>try with</code> statement.
  * Alternatively it must be closed manually.
  */
 public class Backend implements AutoCloseable {
@@ -94,7 +95,7 @@ public class Backend implements AutoCloseable {
 
     /**
      * Mark a program atom as external fixing its truth value.
-     * Can also be used to release an external atom using `TruthValue.Release`.
+     * Can also be used to release an external atom using {@link TruthValue#FREE}.
      *
      * @param atom         The program atom to mark as external.
      * @param externalType The truth value.

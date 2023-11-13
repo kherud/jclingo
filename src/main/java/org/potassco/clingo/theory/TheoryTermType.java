@@ -11,27 +11,27 @@ import java.util.Map;
  */
 public enum TheoryTermType {
     /**
-     * a tuple term, e.g., `(1,2,3)`
+     * a tuple term, e.g., <code>(1,2,3)</code>
      */
     TUPLE(0),
     /**
-     * a list term, e.g., `[1,2,3]`
+     * a list term, e.g., <code>[1,2,3]</code>
      */
     LIST(1),
     /**
-     * a set term, e.g., `{1,2,3}`
+     * a set term, e.g., <code>{1,2,3}</code>
      */
     SET(2),
     /**
-     * a function term, e.g., `f(1,2,3)`
+     * a function term, e.g., <code>f(1,2,3)</code>
      */
     FUNCTION(3),
     /**
-     * a number term, e.g., `42`
+     * a number term, e.g., <code>42</code>
      */
     NUMBER(4),
     /**
-     * a symbol term, e.g., `c`
+     * a symbol term, e.g., <code>c</code>
      */
     SYMBOL(5);
 

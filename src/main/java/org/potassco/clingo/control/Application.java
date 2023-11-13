@@ -44,7 +44,7 @@ public interface Application {
     }
 
     /**
-     * @return Maximum number of messages defaulting to `20` passed to the logger.
+     * @return Maximum number of messages defaulting to <code>20</code> passed to the logger.
      */
     default int getMessageLimit() {
         // TODO: WHY IS THERE A SEG FAULT WITHOUT THIS PRINT??!

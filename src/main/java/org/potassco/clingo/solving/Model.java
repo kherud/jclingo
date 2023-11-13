@@ -24,6 +24,7 @@ import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
+import org.potassco.clingo.control.Control;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
@@ -36,12 +37,13 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
- * Provides access to a model during a solve call and provides a `SolveContext` object to influence the running search.
- *
+ * Provides access to a model during a solve call and provides a {@link SolveControl} object to influence the running
+ * search.
+ * <p>
  * The string representation of a model object is similar to the output of models by clingo using the default output.
- *
- * `Model` objects cannot be constructed from Java. Instead they are obained
- *  during solving (see `Control.solve`). Furthermore, the lifetime of a model
+ * <p>
+ * <code>Model</code> objects cannot be constructed from Java. Instead, they are obtained
+ *  during solving (see {@link Control#solve()}). Furthermore, the lifetime of a model
  *  object is limited to the scope of the callback it was passed to or until
  *  the search for the next model is started. They must not be stored for later
  *  use.
@@ -105,9 +107,9 @@ public class Model {
 
     /**
      * Return the list of atoms, terms, or CSP assignments in the model.
-     *
-     * Atoms are represented using functions (`Symbol` objects), and CSP
-     * assignments are represented using functions with name `"$"` where the
+     * <p>
+     * Atoms are represented using functions ({@link Symbol}s), and CSP
+     * assignments are represented using functions with name <code>$</code> where the
      * first argument is the name of the CSP variable and the second its
      * value.
      *
@@ -119,9 +121,9 @@ public class Model {
 
     /**
      * Return the list of atoms, terms, or CSP assignments in the model.
-     *
-     * Atoms are represented using functions (`Symbol` objects), and CSP
-     * assignments are represented using functions with name `"$"` where the
+     * <p>
+     * Atoms are represented using functions ({@link Symbol}s), and CSP
+     * assignments are represented using functions with name <code>$</code> where the
      * first argument is the name of the CSP variable and the second its
      * value.
      *
@@ -133,9 +135,9 @@ public class Model {
 
     /**
      * Return the list of atoms, terms, or CSP assignments in the model.
-     *
-     * Atoms are represented using functions (`Symbol` objects), and CSP
-     * assignments are represented using functions with name `"$"` where the
+     * <p>
+     * Atoms are represented using functions ({@link Symbol}s), and CSP
+     * assignments are represented using functions with name <code>$</code> where the
      * first argument is the name of the CSP variable and the second its
      * value.
      *

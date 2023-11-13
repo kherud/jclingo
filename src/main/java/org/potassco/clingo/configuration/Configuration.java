@@ -40,21 +40,21 @@ import static org.potassco.clingo.configuration.ConfigurationType.Type.*;
  * Allows for changing the configuration of the underlying solver.
  * <p>
  * Options are organized hierarchically. To change and inspect an option use:
- * <code>
+ * <pre>
  * config.group.subgroup.option = "value"
  * value = config.group.subgroup.option
- * </code>
+ * </pre>
  * There are also arrays of option groups that can be accessed using integer
  * indices:
- * <p>
+ * <pre>
  * config.group.subgroup[0].option = "value1"
  * config.group.subgroup[1].option = "value2"
- * <p>
- * To list the subgroups of an option group, use the `Configuration.keys`
- * member. Array option groups, like solver, can be iterated. Furthermore,
- * there are meta options having key `configuration`. Assigning a meta option
+ * </pre>
+ * To list the subgroups of an option group, use {@link #getKeys()}.
+ * Array option groups, like solver, can be iterated. Furthermore,
+ * there are meta options having key <code>configuration</code>. Assigning a meta option
  * sets a number of related options.  To get further information about an
- * option or option group, use `Configuration.description`.
+ * option or option group, use {@link #getDescription(String)}.
  * <p>
  * The value of an option is always a string and any value assigned to an
  * option is automatically converted into a string.

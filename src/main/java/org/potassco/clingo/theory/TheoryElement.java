@@ -26,6 +26,7 @@ import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
+import org.potassco.clingo.propagator.PropagateInit;
 
 /**
  * Class to represent theory elements.
@@ -52,8 +53,8 @@ public class TheoryElement implements Comparable<TheoryElement> {
 
     /**
      * Each condition has an id, which is a temporary program literal. This id
-     * can be passed to `clingo.propagator.PropagateInit.solver_literal` to
-     * obtain a corresponding solver literal.
+     * can be passed to {@link PropagateInit#solverLiteral(int)} to obtain a corresponding solver literal.
+     *
      * @return condition literal
      */
     public int getConditionId() {

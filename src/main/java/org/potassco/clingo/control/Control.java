@@ -30,6 +30,7 @@ import org.potassco.clingo.solving.Observer;
 import org.potassco.clingo.solving.GroundCallback;
 import org.potassco.clingo.propagator.Propagator;
 import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.solving.SolveControl;
 import org.potassco.clingo.solving.SolveEventCallback;
 import org.potassco.clingo.solving.SolveMode;
 import org.potassco.clingo.backend.Backend;
@@ -46,8 +47,8 @@ import java.util.NoSuchElementException;
 /**
  * Control object for the grounding/solving process.
  * <p>
- * Note that only gringo options (without `--text`) and clasp's search options
- * are supported. Furthermore, you must not call any functions of a `Control`
+ * Note that only gringo options (without <code>--text</code>) and clasp's search options
+ * are supported. Furthermore, you must not call any functions of a <code>Control</code>
  * object while a solve call is active.
  */
 public class Control implements AutoCloseable {
@@ -166,8 +167,8 @@ public class Control implements AutoCloseable {
     /**
      * Ground the given list of program parts specified by tuples of names and arguments.
      * <p>
-     * Note that parts of a logic program without an explicit `#program`
-     * specification are by default put into a program called `base` without arguments.
+     * Note that parts of a logic program without an explicit <code>#program</code>
+     * specification are by default put into a program called <code>base</code> without arguments.
      *
      * @param programParts Objects of program names and program arguments to ground.
      */
@@ -180,8 +181,8 @@ public class Control implements AutoCloseable {
      * <p>
      * After grounding, logic programs can be solved with {@link Clingo#clingo_control_solve}.
      * <p>
-     * Parts of a logic program without an explicit <tt>#program</tt>
-     * specification are by default put into a program called `base` without
+     * Parts of a logic program without an explicit <code>#program</code>
+     * specification are by default put into a program called <code>base</code> without
      * arguments.
      *
      * @param programPart    program part
@@ -318,8 +319,8 @@ public class Control implements AutoCloseable {
      * <p>
      * The truth value of an external atom can be changed before each solve
      * call. An atom is treated as external if it has been declared using an
-     * `#external` directive, and has not been released by calling
-     * `Control.release_external` or defined in a logic program with some
+     * <code>#external</code> directive, and has not been released by calling
+     * {@link #releaseExternal(int)} or defined in a logic program with some
      * rule. If the given atom is not external, then the function has no
      * effect.
      * <p>
@@ -413,8 +414,8 @@ public class Control implements AutoCloseable {
      * Interrupt the active solve call.
      * <p>
      * This function is thread-safe and can be called from a signal handler. If no
-     * search is active, the subsequent call to `Control.solve` is interrupted. The
-     * result of the `Control.solve` method can be used to query if the search was
+     * search is active, the subsequent call to {@link #solve()} is interrupted. The
+     * result of the {@link #solve()} method can be used to query if the search was
      * interrupted.
      */
     public void interrupt() {
@@ -462,13 +463,13 @@ public class Control implements AutoCloseable {
     }
 
     /**
-     * Whether do discard or keep learnt information from enumeration modes.
+     * Whether to discard or keep learnt information from enumeration modes.
      * <p>
      * If the enumeration assumption is enabled, then all information learnt from
      * clasp's various enumeration modes is removed after a solve call. This includes
      * enumeration of cautious or brave consequences, enumeration of answer sets with
      * or without projection, or finding optimal models; as well as clauses added with
-     * `clingo.solving.SolveControl.add_clause`.
+     * {@link SolveControl#addClause(int[])}.
      * <p>
      * Initially the enumeration assumption is enabled.
      * <p>
@@ -491,7 +492,7 @@ public class Control implements AutoCloseable {
      * clasp's various enumeration modes is removed after a solve call. This includes
      * enumeration of cautious or brave consequences, enumeration of answer sets with
      * or without projection, or finding optimal models; as well as clauses added with
-     * `clingo.solving.SolveControl.add_clause`.
+     * {@link SolveControl#addClause(int[])}.
      * <p>
      * Initially the enumeration assumption is enabled.
      * <p>
@@ -610,7 +611,7 @@ public class Control implements AutoCloseable {
     }
 
     /**
-     * Return the symbol for a constant definition of form `#const name = symbol`.
+     * Return the symbol for a constant definition of form <code>#const name = symbol</code>.
      *
      * @param name The name of the constant to retrieve.
      * @return The constant
@@ -630,7 +631,7 @@ public class Control implements AutoCloseable {
     }
 
     /**
-     * @return a `Backend` object providing a low level interface to extend a logic program.
+     * @return a {@link Backend} object providing a low level interface to extend a logic program.
      */
     public Backend getBackend() {
         PointerByReference backendRef = new PointerByReference();
@@ -664,9 +665,9 @@ public class Control implements AutoCloseable {
     }
 
     /**
-     * The statistics correspond to the `--stats` output of clingo. The detail of the
+     * The statistics correspond to the <code>--stats</code> output of clingo. The detail of the
      * statistics depends on what level is requested on the command line. Furthermore,
-     * there are some functions like `Control.release_external` that start a new
+     * there are some functions like {@link #releaseExternal(int)} that start a new
      * solving step resetting the current step statistics. It is best to access the
      * statistics right after solving.
      * <p>

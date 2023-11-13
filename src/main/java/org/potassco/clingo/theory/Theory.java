@@ -19,11 +19,14 @@
  
 package org.potassco.clingo.theory;
 
+import org.potassco.clingo.control.Application;
+import org.potassco.clingo.control.Control;
+
 /**
  * Interface to call functions from a C-library extending clingo's C/Python library.
  * <p>
- * The functions in here are designed to be used with a `Application`
- * object but can also be used with a standalone `Control` object.
+ * The functions in here are designed to be used with a {@link Application}
+ * object but can also be used with a standalone {@link Control} object.
  */
 public class Theory {
 

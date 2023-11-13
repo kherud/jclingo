@@ -159,7 +159,7 @@ public abstract class Symbol implements Comparable<Symbol> {
      * compared by signature and then lexicographically by arguments.
      *
      * @param other second symbol
-     * @return whether this < other
+     * @return whether this &lt; other
      */
     public boolean lessThan(Symbol other) {
         return Clingo.INSTANCE.clingo_symbol_is_less_than(symbol, other.getLong()) > 0;

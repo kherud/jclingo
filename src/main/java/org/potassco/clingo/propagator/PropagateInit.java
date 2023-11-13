@@ -43,7 +43,7 @@ public class PropagateInit {
     /**
      * Statically adds the given clause to the problem.
      * If this function returns false, initialization should be stopped and no
-     * further functions of the `PropagateInit` and related objects should be called.
+     * further functions of the <code>PropagateInit</code> and related objects should be called.
      *
      * @param clause The clause over solver literals to add.
      * @return Returns false if the program becomes unsatisfiable.
@@ -61,8 +61,8 @@ public class PropagateInit {
      * watches to it, it has to be frozen. Otherwise, it might be removed
      * during preprocessing.
      * <p>
-     * If literals are added to the solver, subsequent calls to `add_clause` and
-     * `propagate` are expensive. It is best to add literals in batches.
+     * If literals are added to the solver, subsequent calls to {@link #addClause(int[])} and
+     * {@link #propagate()} are expensive. It is best to add literals in batches.
      *
      * @return Returns the added literal.
      */
@@ -77,8 +77,8 @@ public class PropagateInit {
      * watches to it, it has to be frozen. Otherwise, it might be removed
      * during preprocessing.
      * <p>
-     * If literals are added to the solver, subsequent calls to `add_clause` and
-     * `propagate` are expensive. It is best to add literals in batches.
+     * If literals are added to the solver, subsequent calls to {@link #addClause(int[])} and
+     * {@link #propagate()} are expensive. It is best to add literals in batches.
      *
      * @param freeze Whether to freeze the variable.
      * @return Returns the added literal.
@@ -171,18 +171,15 @@ public class PropagateInit {
     }
 
     /**
-     * Statically adds a constraint of form
-     * <p>
-     * literal <=> { l=w | (l, w) in literals } >= bound
-     * <p>
-     * to the solver.
-     * <p>
-     * - If `type_ < 0`, then `<=>` is a left implication.
-     * - If `type_ > 0`, then `<=>` is a right implication.
-     * - Otherwise, `<=>` is an equivalence.
-     * <p>
+     * Statically adds a constraint of form <code>literal &lt;=&gt; { l=w | (l, w) in literals } &gt;= bound</code> to
+     * the solver.
+     * <ul>
+     *  <li>If <code>type_ &lt; 0</code>, then <code>&lt;=&gt;</code> is a left implication.</li>
+     *  <li>If <code>type_ &gt; 0</code>, then <code>&lt;=&gt;</code> is a right implication.</li>
+     *  <li>Otherwise, <code>&lt;=&gt;</code> is an equivalence.</li>
+     * </ul>
      * If this function returns false, initialization should be stopped and no further
-     * functions of the `PropagateInit` and related objects should be called.
+     * functions of the <code>PropagateInit</code> and related objects should be called.
      *
      * @param literal      The literal associated with the constraint.
      * @param literals     The weighted literals of the constraint.
@@ -217,7 +214,7 @@ public class PropagateInit {
      * This function has no effect if SAT-preprocessing is enabled.
      * <p>
      * If this function returns false, initialization should be stopped and no
-     * further functions of the `PropagateInit` and related objects should be
+     * further functions of the <code>PropagateInit</code> and related objects should be
      * called.
      *
      * @return Returns false if the program becomes unsatisfiable.
@@ -241,7 +238,7 @@ public class PropagateInit {
     }
 
     /**
-     * @return `Assignment` object capturing the top level assignment.
+     * @return {@link Assignment} object capturing the top level assignment.
      */
     public Assignment getAssignment() {
         Pointer assignment = Clingo.INSTANCE.clingo_propagate_init_assignment(propagateInit);
@@ -249,7 +246,7 @@ public class PropagateInit {
     }
 
     /**
-     * @return `PropagatorCheckMode` controlling when to call `Propagator.check`.
+     * @return {@link PropagatorCheckMode} controlling when to call {@link org.potassco.clingo.internal.Clingo.Propagator#check(byte)}.
      */
     public PropagatorCheckMode getCheckMode() {
         int checkMode = Clingo.INSTANCE.clingo_propagate_init_get_check_mode(propagateInit);
@@ -257,7 +254,7 @@ public class PropagateInit {
     }
 
     /**
-     * @param mode `PropagatorCheckMode` controlling when to call `Propagator.check`.
+     * @param mode {@link PropagatorCheckMode} controlling when to call {@link org.potassco.clingo.internal.Clingo.Propagator#check(byte)}.
      */
     public void setCheckMode(PropagatorCheckMode mode) {
         Clingo.INSTANCE.clingo_propagate_init_set_check_mode(propagateInit, mode.getValue());
@@ -271,7 +268,7 @@ public class PropagateInit {
     }
 
     /**
-     * @return The symbolic atoms captured by a `SymbolicAtoms` object.
+     * @return The symbolic atoms captured by a {@link SymbolicAtoms} object.
      */
     public SymbolicAtoms getSymbolicAtoms() {
         PointerByReference pointerByReference = new PointerByReference();
@@ -280,7 +277,7 @@ public class PropagateInit {
     }
 
     /**
-     * @return The theory atoms captured by a `TheoryAtoms` object.
+     * @return The theory atoms captured by a {@link TheoryAtoms} object.
      */
     public TheoryAtoms getTheoryAtoms() {
         PointerByReference pointerByReference = new PointerByReference();

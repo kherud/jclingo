@@ -27,7 +27,7 @@ import org.potassco.clingo.control.Control;
 /**
  * Object to build non-ground programs.
  * <p>
- * A `ProgramBuilder` is an AutoCloseable and should be used with Java's `try with` statement.
+ * A <code>ProgramBuilder</code> is an AutoCloseable and should be used with Java's <code>try with</code> statement.
  * Alternatively it must be manually closed.
  */
 public class ProgramBuilder implements AutoCloseable {
@@ -53,7 +53,7 @@ public class ProgramBuilder implements AutoCloseable {
     }
 
     /**
-     * Adds a statement in form of an `AST` node to the program.
+     * Adds a statement in form of an {@link Ast} node to the program.
      * @param ast The statement to add.
      */
     public void add(Ast ast) {

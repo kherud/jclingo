@@ -22,6 +22,7 @@ package org.potassco.clingo.solving;
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 import org.potassco.clingo.ast.Location;
+import org.potassco.clingo.control.ErrorCode;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.symbol.Symbol;
@@ -32,12 +33,15 @@ import java.lang.reflect.Method;
 /**
  * Callback function to implement external functions.
  * <p>
- * If an external function of form <tt>\@name(parameters)</tt> occurs in a logic program,
+ * If an external function of form <code>@name(parameters)</code> occurs in a logic program,
  * then this function is called with its location, name, parameters, and a callback to inject symbols as arguments.
  * The callback can be called multiple times; all symbols passed are injected.
  * <p>
- * If a (non-recoverable) clingo API function fails in this callback, for example, the symbol callback, the callback must return false.
- * In case of errors not related to clingo, this function can set error ::clingo_error_unknown and return false to stop grounding with an error.
+ * If a (non-recoverable) clingo API function fails in this callback, for example, the symbol callback, the callback must
+ * return false.
+ * <p>
+ * In case of errors not related to clingo, this function can set an error with {@link ErrorCode#UNKNOWN} and return
+ * false to stop grounding with an error.
  */
 public abstract class GroundCallback implements Callback {
 

@@ -83,7 +83,7 @@ public class PropagateControl {
     }
 
     /**
-     * Equivalent to `self.add_clause([-lit for lit in clause], tag, lock)`.
+     * Equivalent to <code>self.add_clause([-lit for lit in clause], tag, lock)</code>.
      *
      * @param clause List of solver literals forming the clause.
      * @param tag If true, the clause applies only in the current solving step.
@@ -100,8 +100,8 @@ public class PropagateControl {
 
     /**
      * Add a watch for the solver literal in the given phase.
-     *
-     * Unlike `PropagateInit.add_watch` this does not add a watch to all
+     * <p>
+     * Unlike {@link PropagateInit#addWatch(int)} this does not add a watch to all
      * solver threads but just the current one.
      *
      * @param literal The target solver literal.
@@ -141,7 +141,7 @@ public class PropagateControl {
     }
 
     /**
-     * @return `Assignment` object capturing the partial assignment of the current solver thread.
+     * @return {@link Assignment} object capturing the partial assignment of the current solver thread.
      */
     public Assignment getAssignment() {
         Pointer assignment = Clingo.INSTANCE.clingo_propagate_control_assignment(propagateControl);

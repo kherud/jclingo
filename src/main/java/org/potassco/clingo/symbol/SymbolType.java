@@ -11,23 +11,23 @@ import java.util.Map;
  */
 public enum SymbolType {
     /**
-     * the <tt>\#inf</tt> symbol
+     * the <code>#inf</code> symbol
      */
     INFIMUM(0),
     /**
-     * a numeric symbol, e.g., `1`
+     * a numeric symbol, e.g., <code>1</code>
      */
     NUMBER(1),
     /**
-     * a string symbol, e.g., `"a"`
+     * a string symbol, e.g., <code>"a"</code>
      */
     STRING(4),
     /**
-     * a numeric symbol, e.g., `c`, `(1, "a")`, or `f(1,"a")`
+     * a numeric symbol, e.g., <code>c</code>, <code>(1, "a")</code>, or <code>f(1,"a")</code>
      */
     FUNCTION(5),
     /**
-     * the <tt>\#sup</tt> symbol
+     * the <code>#sup</code> symbol
      */
     SUPREMUM(7);
 

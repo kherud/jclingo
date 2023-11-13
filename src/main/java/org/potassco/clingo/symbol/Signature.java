@@ -122,10 +122,10 @@ public class Signature implements Comparable<Signature> {
 
     /**
      * Check if a signature is less than another signature.
-     * Signatures are compared first by sign (int < signed), then by arity, then by name.
+     * Signatures are compared first by sign (int &lt; signed), then by arity, then by name.
      *
      * @param other second signature
-     * @return whether a < b
+     * @return whether a &lt; b
      */
     public boolean isLess(Signature other) {
         return Clingo.INSTANCE.clingo_signature_is_less_than(signature, other.getLong()) > 0;

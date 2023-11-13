@@ -31,7 +31,7 @@ import org.potassco.clingo.internal.NativeSizeByReference;
  * <p>
  * This includes constants and tuples. Constants have an empty argument list
  * and tuples have an empty name. Functions can represent classically negated
- * atoms. Argument `positive` has to be set to false to represent such atoms.
+ * atoms. Argument {@link #isPositive()} has to be set to false to represent such atoms.
  */
 public class Function extends Symbol {
 

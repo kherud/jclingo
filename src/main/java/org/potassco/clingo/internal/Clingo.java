@@ -178,12 +178,12 @@ public interface Clingo extends Library {
     /**
      * Check if a signature is less than another signature.
      * <p>
-     * Signatures are compared first by sign (int < signed), then by arity,
+     * Signatures are compared first by sign (int &lt; signed), then by arity,
      * then by name.
      *
      * @param a first signature
      * @param b second signature
-     * @return whether a < b
+     * @return whether a &lt; b
      */
     byte clingo_signature_is_less_than(long a, long b);
 
@@ -213,7 +213,7 @@ public interface Clingo extends Library {
     void clingo_symbol_create_supremum(LongByReference symbol);
 
     /**
-     * Construct a symbol representing <tt>#inf</tt>.
+     * Construct a symbol representing <code>#inf</code>.
      *
      * @param symbol the resulting symbol
      */
@@ -396,7 +396,7 @@ public interface Clingo extends Library {
      *
      * @param a first symbol
      * @param b second symbol
-     * @return whether a < b
+     * @return whether a &lt; b
      */
     byte clingo_symbol_is_less_than(long a, long b);
 
@@ -1150,8 +1150,9 @@ public interface Clingo extends Library {
     /**
      * Add the given weight constraint to the solver.
      * <p>
-     * This function adds a constraint of form `literal <=> { lit=weight | (lit, weight) in literals } >= bound` to the solver.
-     * Depending on the type the `<=>` connective can be either a left implication, right implication, or equivalence.
+     * This function adds a constraint of form <code>literal &lt;=&gt; { lit=weight | (lit, weight) in literals } >=
+     * bound</code> to the solver. Depending on the type the <code>&lt;=&gt;</code> connective can be either a left
+     * implication, right implication, or equivalence.
      * <p>
      * No further calls on the init object or functions on the assignment should be called when the result of this method is false.
      *
@@ -1173,7 +1174,7 @@ public interface Clingo extends Library {
     /**
      * Add the given literal to minimize to the solver.
      * <p>
-     * This corresponds to a weak constraint of form `:~ literal. [weight@priority]`.
+     * This corresponds to a weak constraint of form <code>:~ literal. [weight@priority]</code>.
      *
      * @param init     the target
      * @param literal  the literal to minimize
@@ -2780,7 +2781,7 @@ public interface Clingo extends Library {
     /**
      * Extend the logic program with the given non-ground logic program in string form.
      * <p>
-     * This function puts the given program into a block of form: <tt>#program name(parameters).</tt>
+     * This function puts the given program into a block of form: <code>#program name(parameters).</code>
      * <p>
      * After extending the logic program, the corresponding program parts are typically grounded with {@link Clingo#clingo_control_ground}.
      *
@@ -2801,8 +2802,8 @@ public interface Clingo extends Library {
      * <p>
      * After grounding, logic programs can be solved with {@link Clingo#clingo_control_solve}.
      * <p>
-     * Parts of a logic program without an explicit <tt>#program</tt>
-     * specification are by default put into a program called `base` without
+     * Parts of a logic program without an explicit <code>#program</code>
+     * specification are by default put into a program called <code>base</code> without
      * arguments.
      *
      * @param control              the target
@@ -2959,20 +2960,6 @@ public interface Clingo extends Library {
      */
     void clingo_control_interrupt(Pointer control);
 
-    /**
-     * Get low-level access to clasp.
-     * <p>
-     * This function is intended for experimental use only and not part of the stable API.
-     * <p>
-     * This function may return a <code>nullptr</code>.
-     * Otherwise, the returned pointer can be casted to a ClaspFacade pointer.
-     *
-     * @param control the target
-     * @param clasp   pointer to the ClaspFacade object (may be <code>nullptr</code>)
-     * @return whether the call was successful
-     */
-    byte clingo_control_clasp_facade(Pointer control, PointerByReference clasp);
-
     // Configuration Functions
 
     /**
@@ -3038,7 +3025,7 @@ public interface Clingo extends Library {
     //  Program Inspection Functions
 
     /**
-     * Return the symbol for a constant definition of form: <tt>#const name = symbol</tt>.
+     * Return the symbol for a constant definition of form: <code>#const name = symbol</code>.
      *
      * @param control the target
      * @param name    the name of the constant

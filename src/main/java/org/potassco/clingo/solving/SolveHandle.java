@@ -33,7 +33,7 @@ import java.util.NoSuchElementException;
  * Handle for solve calls.
  * They can be used to control solving, like, retrieving models or cancelling a search.
  * <p>
- * A `SolveHandle` is an AutoCloseable and should be used with Java's `try with` statement.
+ * A <code>SolveHandle</code> is an AutoCloseable and should be used with Java's <code>try with</code> statement.
  * Alternatively it must be manually closed.
  */
 public class SolveHandle implements AutoCloseable, Iterator<Model> {

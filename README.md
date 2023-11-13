@@ -24,13 +24,11 @@ Please consult the following resources for further information:
 This library is available via Maven:
 
 ```xml
-<dependencies>
-    <dependency>
-        <groupId>org.potassco</groupId>
-        <artifactId>clingo</artifactId>
-        <version>1.0.0</version>
-    </dependency>
-</dependencies>
+<dependency>
+    <groupId>org.potassco</groupId>
+    <artifactId>clingo</artifactId>
+    <version>1.0.0</version>
+</dependency>
 ```
 
 Please have a look at the [demonstrations](src/test/java/demo), for example:

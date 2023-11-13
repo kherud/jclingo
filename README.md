@@ -21,7 +21,7 @@ Please consult the following resources for further information:
 
 # Usage
 
-This library is available via GitHub packages:
+This library is available via Maven:
 
 ```xml
 <dependencies>
@@ -31,14 +31,6 @@ This library is available via GitHub packages:
         <version>1.0.0</version>
     </dependency>
 </dependencies>
-
-<repositories>
-    <repository>
-        <id>github</id>
-        <name>GitHub Packages</name>
-        <url>https://maven.pkg.github.com/kherud/jclingo</url>
-    </repository>
-</repositories>
 ```
 
 Please have a look at the [demonstrations](src/test/java/demo), for example:
@@ -79,7 +71,7 @@ This repository provides out of the box support for the following platforms:
 
 If your system is not in the previous list, either
 
-- Feel free to create an issue with details about your OS and CPU
+- Feel free to create an issue with details about your OS and CPU.
 - Compile clingo yourself (see [this](https://github.com/potassco/clingo/blob/master/INSTALL.md#build-install-and-test)) and appropriately set the JVM argument `jna.library.path`, e.g. `java -Djna.library.path=/path/to/library`.
 
 This also applies if you get any errors of the kind:

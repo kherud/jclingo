@@ -18,7 +18,3 @@ cmake --build build \
       --target libclingo \
       -j $(nproc) \
       || exit 1
-
-ls -l
-ls -l build
-ls -l build/bin

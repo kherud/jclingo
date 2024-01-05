@@ -1,6 +1,11 @@
 name: Build clingo and publish JAR
 on:
   workflow_dispatch:
+    inputs:
+      build_only:
+        description: 'Whether to only build the project and skip releasing it (yes/NO)'
+        required: false
+        default: 'no'
   release:
     types: [created]
 jobs:
@@ -143,9 +148,45 @@ jobs:
           path: ${{ github.workspace }}\jclingo\src\main\resources\
 
 
+  test-libraries:
+    name: Test ${{ matrix.target.os }}
+    needs: [build-linux-docker,build-macos-native,build-win-native]
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - {
+            os: ubuntu-latest,
+            shell: bash
+          }
+          - {
+            os: macos-latest,
+            shell: bash
+          }
+          - {
+            os: windows-latest,
+            shell: cmd
+          }
+    runs-on: ${{ matrix.target.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v3
+        with:
+          name: libraries
+          path: ${{ github.workspace }}/src/main/resources/
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      - name: Run tests
+        shell: ${{ matrix.target.shell }}
+        run: mvn test
+
+
   release-github-packages:
     name: Publish to GitHub packages
-    needs: [build-linux-docker,build-macos-native,build-win-native]
+    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_only == 'no' }}
+    needs: test-libraries
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -167,7 +208,8 @@ jobs:
 
   release-maven-central:
     name: Publish to Maven Central
-    needs: [build-linux-docker,build-macos-native,build-win-native]
+    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_only == 'no' }}
+    needs: test-libraries
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

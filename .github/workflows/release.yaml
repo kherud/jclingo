@@ -157,7 +157,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: libraries
-          path: ${{ github.workspace }}/jclingo/src/main/resources/
+          path: ${{ github.workspace }}/src/main/resources/
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
@@ -176,7 +176,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: libraries
-          path: ${{ github.workspace }}/jclingo/src/main/resources/
+          path: ${{ github.workspace }}/src/main/resources/
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
@@ -195,7 +195,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: libraries
-          path: ${{ github.workspace }}\jclingo\src\main\resources\
+          path: ${{ github.workspace }}\src\main\resources\
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'

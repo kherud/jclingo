@@ -1,3 +1,12 @@
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.NoSuchElementException;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,14 +18,11 @@ import org.potassco.clingo.symbol.Function;
 import org.potassco.clingo.symbol.Number;
 import org.potassco.clingo.symbol.Signature;
 import org.potassco.clingo.symbol.SymbolType;
-import org.potassco.clingo.theory.*;
-
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import org.potassco.clingo.theory.TheoryAtom;
+import org.potassco.clingo.theory.TheoryAtoms;
+import org.potassco.clingo.theory.TheoryElement;
+import org.potassco.clingo.theory.TheoryTerm;
+import org.potassco.clingo.theory.TheoryTermType;
 
 
 public class AtomsTest {
@@ -25,9 +31,10 @@ public class AtomsTest {
     private final String testTheory;
 
     public AtomsTest() throws IOException {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("atoms-theory.lp");
-        Path file = Paths.get(url.getPath());
-        this.testTheory = Files.readString(file);
+        this.testTheory = Files.readString(
+                // wrapped in file here to avoid Windows file system problems
+                new File(getClass().getResource("atoms-theory.lp").getFile()).toPath()
+        );
     }
 
     @Before

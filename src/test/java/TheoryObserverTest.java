@@ -1,3 +1,9 @@
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.potassco.clingo.backend.ExternalType;
@@ -8,23 +14,15 @@ import org.potassco.clingo.solving.Observer;
 import org.potassco.clingo.symbol.Function;
 import org.potassco.clingo.symbol.Symbol;
 
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
-
 public class TheoryObserverTest implements Observer {
 
     private final Set<String> called = new HashSet<>();
 
     @Test
     public void testBackendObserver() throws IOException {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("observer-theory.lp");
-        Path file = Paths.get(url.getPath());
-        String testTheory = Files.readString(file);
+        String testTheory = Files.readString(
+                new File(getClass().getResource("observer-theory.lp").getFile()).toPath()
+        );
 
         Control control = new Control();
         control.registerObserver(this, false);

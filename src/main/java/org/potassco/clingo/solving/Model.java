@@ -106,6 +106,25 @@ public class Model {
 	}
 
 	/**
+	 * Check if the given literal is a consequence.
+	 * <p>
+	 * While enumerating cautious or brave consequences, there is partial
+	 * information about which literals are consequences. The current state of a
+	 * literal can be requested using this function. If this function is used
+	 * during normal model enumeration, the function just returns whether a
+	 * literal is true of false in the current model.
+	 *
+	 * @param literal the literal to lookup
+	 * @return whether the literal is a consequence
+	 */
+	public ConsequenceType getConsequenceType(int literal) {
+		IntByReference intByReference = new IntByReference();
+		Clingo.check(Clingo.INSTANCE.clingo_model_is_consequence(model, literal, intByReference));
+		ConsequenceType type = ConsequenceType.fromValue(intByReference.getValue());
+		return Objects.requireNonNull(type);
+	}
+
+	/**
 	 * Return the list of atoms, terms, or CSP assignments in the model.
 	 * <p>
 	 * Atoms are represented using functions ({@link Symbol}s), and CSP

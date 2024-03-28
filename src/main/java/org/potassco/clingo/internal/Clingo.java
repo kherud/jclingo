@@ -3418,8 +3418,8 @@ public interface Clingo extends Library {
          * @param data        user data for the callback
          * @return whether the call was successful
          */
-        default byte callback(boolean incremental, Pointer data) {
-            call(incremental);
+        default byte callback(byte incremental, Pointer data) {
+            call(incremental > 0);
             return 1;
         }
 
@@ -3473,12 +3473,12 @@ public interface Clingo extends Library {
          * @param data        user data for the callback
          * @return whether the call was successful
          */
-        default byte callback(boolean choice, Pointer headPointer, NativeSize headSizeT, Pointer bodyPointer, NativeSize bodySizeT, Pointer data) {
+        default byte callback(byte choice, Pointer headPointer, NativeSize headSizeT, Pointer bodyPointer, NativeSize bodySizeT, Pointer data) {
             int headSize = headSizeT.intValue();
             int bodySize = bodySizeT.intValue();
             int[] head = headSize == 0 ? new int[0] : headPointer.getIntArray(0, headSize);
             int[] body = bodySize == 0 ? new int[0] : bodyPointer.getIntArray(0, bodySize);
-            call(choice, head, body);
+            call(choice > 0, head, body);
             return 1;
         }
 
@@ -3499,7 +3499,7 @@ public interface Clingo extends Library {
          * @param data        user data for the callback
          * @return whether the call was successful
          */
-        default byte callback(boolean choice, Pointer headPointer, NativeSize headSizeT, int lowerBound, Pointer bodyPointer, NativeSize bodySizeT, Pointer data) {
+        default byte callback(byte choice, Pointer headPointer, NativeSize headSizeT, int lowerBound, Pointer bodyPointer, NativeSize bodySizeT, Pointer data) {
             int headSize = headSizeT.intValue();
             int bodySize = bodySizeT.intValue();
             int[] head = headSize == 0 ? new int[0] : headPointer.getIntArray(0, headSize);
@@ -3508,7 +3508,7 @@ public interface Clingo extends Library {
             for (int i = 0; i < bodySize; i++) {
                 body[i] = new WeightedLiteral(bodyPointer.share((long) i * structSize));
             }
-            call(choice, head, lowerBound, body);
+            call(choice > 0, head, lowerBound, body);
             return 1;
         }
 

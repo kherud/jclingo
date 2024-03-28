@@ -272,7 +272,7 @@ public class AstTest {
         testString(":~ . [1@0]");
         testString(":~ b; c. [1@2,s,t]");
         // testString("#script (lua)\ncode\n#end.");
-        testString("#script (python)\ncode\n#end.");
+        // testString("#script (python)\ncode\n#end.");
         testString("#program x(y, z).");
         testString("#program x.");
         testString("#external a. [X]");

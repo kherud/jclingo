@@ -3257,7 +3257,7 @@ public interface Clingo extends Library {
          * This is the last point to access symbolic and theory atoms.
          * Once the search has started, they are no longer accessible.
          *
-         * @param init initizialization object
+         * @param init initialization object
          * @param data user data for the callback
          * @return whether the call was successful
          */

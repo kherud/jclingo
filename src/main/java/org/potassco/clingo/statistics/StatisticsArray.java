@@ -70,7 +70,7 @@ public class StatisticsArray extends Statistics {
      */
     public Statistics add(StatisticsType type) {
         LongByReference longByReference = new LongByReference();
-        Clingo.INSTANCE.clingo_statistics_array_push(statistics, key, type.getValue(), longByReference);
+        Clingo.check(Clingo.INSTANCE.clingo_statistics_array_push(statistics, key, type.getValue(), longByReference));
         return Statistics.fromKey(statistics, longByReference.getValue(), type);
     }
 

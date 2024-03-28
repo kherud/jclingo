@@ -113,7 +113,7 @@ public class Trail implements Iterable<Integer> {
 
             @Override
             public Integer next() {
-                Clingo.INSTANCE.clingo_assignment_trail_at(assignment, i++, intByReference);
+                Clingo.check(Clingo.INSTANCE.clingo_assignment_trail_at(assignment, i++, intByReference));
                 return intByReference.getValue();
             }
         };

@@ -232,7 +232,7 @@ public abstract class Ast implements Comparable<Ast> {
      * @param messageLimit The maximum number of messages passed to the logger.
      */
     public static void parseString(String program, AstCallback callback, LoggerCallback logger, int messageLimit) {
-        Clingo.INSTANCE.clingo_ast_parse_string(program, callback, null, null, logger, null, messageLimit);
+        Clingo.check(Clingo.INSTANCE.clingo_ast_parse_string(program, callback, null, null, logger, null, messageLimit));
     }
 
     /**
@@ -245,7 +245,7 @@ public abstract class Ast implements Comparable<Ast> {
      * @param messageLimit The maximum number of messages passed to the logger.
      */
     public static void parseString(String program, AstCallback callback, Control control, LoggerCallback logger, int messageLimit) {
-        Clingo.INSTANCE.clingo_ast_parse_string(program, callback, control.getPointer(), null, logger, null, messageLimit);
+        Clingo.check(Clingo.INSTANCE.clingo_ast_parse_string(program, callback, control.getPointer(), null, logger, null, messageLimit));
     }
 
     /**

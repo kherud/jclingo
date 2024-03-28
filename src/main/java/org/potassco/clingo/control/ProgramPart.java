@@ -20,7 +20,6 @@
 package org.potassco.clingo.control;
 
 import com.sun.jna.Memory;
-import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import org.potassco.clingo.internal.NativeSize;
@@ -42,9 +41,10 @@ public class ProgramPart extends Structure {
     public ProgramPart(String name, Symbol... params) {
         this.name = name;
         if (params.length > 0) {
-            this.params = new Memory((long) params.length * Native.LONG_SIZE);
+            // params is an uint64_t, hence always 8 byte
+            this.params = new Memory((long) params.length * 8);
             for (int i = 0; i < params.length; i++) {
-                this.params.setLong((long) i * Native.LONG_SIZE, params[i].getLong());
+                this.params.setLong((long) i * 8, params[i].getLong());
             }
         } else {
             this.params = Pointer.NULL;

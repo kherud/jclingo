@@ -27,7 +27,7 @@ This library is available via Maven:
 <dependency>
     <groupId>org.potassco</groupId>
     <artifactId>clingo</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 

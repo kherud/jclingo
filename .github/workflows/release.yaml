@@ -8,6 +8,8 @@ on:
         default: 'no'
   release:
     types: [created]
+env:
+  CLINGO_RELEASE: "v5.7.1"
 jobs:
 
   build-linux-docker:
@@ -32,6 +34,7 @@ jobs:
           repository: potassco/clingo
           submodules: recursive
           path: clingo
+          ref: ${{ env.CLINGO_RELEASE }}
       - name: Checkout jclingo
         uses: actions/checkout@v4
         with:
@@ -76,6 +79,7 @@ jobs:
           repository: potassco/clingo
           submodules: recursive
           path: clingo
+          ref: ${{ env.CLINGO_RELEASE }}
       - name: Checkout jclingo
         uses: actions/checkout@v4
         with:
@@ -127,6 +131,7 @@ jobs:
           repository: potassco/clingo
           submodules: recursive
           path: clingo
+          ref: ${{ env.CLINGO_RELEASE }}
       - name: Checkout jclingo
         uses: actions/checkout@v4
         with:

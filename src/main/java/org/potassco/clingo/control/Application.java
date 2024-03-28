@@ -47,8 +47,6 @@ public interface Application {
      * @return Maximum number of messages defaulting to <code>20</code> passed to the logger.
      */
     default int getMessageLimit() {
-        // TODO: WHY IS THERE A SEG FAULT WITHOUT THIS PRINT??!
-        System.out.println();
         return 20;
     }
 
@@ -71,6 +69,7 @@ public interface Application {
      * @param message The message string.
      */
     default void log(WarningCode code, String message) {
+        //noinspection UseOfSystemOutOrSystemErr
         System.err.printf("[%s] %s\n", code.getValue(), message);
     }
 
@@ -80,6 +79,7 @@ public interface Application {
      * @param model The current model
      */
     default void printModel(Model model) {
+        //noinspection UseOfSystemOutOrSystemErr
         System.out.println(model);
     }
 

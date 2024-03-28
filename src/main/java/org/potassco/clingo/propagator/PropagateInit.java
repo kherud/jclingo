@@ -55,30 +55,14 @@ public class PropagateInit {
     }
 
     /**
-     * Statically adds a literal to the solver.
+     * Add a literal to the solver.
      * <p>
-     * To be able to use the variable in clauses during propagation or add
-     * watches to it, it has to be frozen. Otherwise, it might be removed
-     * during preprocessing.
+     * To be able to use the variable in clauses during propagation or add watches to it, it has to be frozen.
+     * Otherwise, it might be removed during preprocessing.
      * <p>
-     * If literals are added to the solver, subsequent calls to {@link #addClause(int[])} and
-     * {@link #propagate()} are expensive. It is best to add literals in batches.
-     *
-     * @return Returns the added literal.
-     */
-    public int addLiteral() {
-        return addLiteral(true);
-    }
-
-    /**
-     * Statically adds a literal to the solver.
-     * <p>
-     * To be able to use the variable in clauses during propagation or add
-     * watches to it, it has to be frozen. Otherwise, it might be removed
-     * during preprocessing.
-     * <p>
-     * If literals are added to the solver, subsequent calls to {@link #addClause(int[])} and
-     * {@link #propagate()} are expensive. It is best to add literals in batches.
+     * If variables were added, subsequent calls to functions adding constraints or {@link PropagateInit#propagateInit}
+     * are expensive.
+     * It is best to add variables in batches.
      *
      * @param freeze Whether to freeze the variable.
      * @return Returns the added literal.
@@ -258,6 +242,25 @@ public class PropagateInit {
      */
     public void setCheckMode(PropagatorCheckMode mode) {
         Clingo.INSTANCE.clingo_propagate_init_set_check_mode(propagateInit, mode.getValue());
+    }
+
+    /**
+     * Get the current undo mode of the propagator (see {@link Propagator#undo(PropagateControl, int[])}).
+     *
+     * @return the undo mode
+     */
+    public PropagatorUndoMode getUndoMode() {
+        int undoMode = Clingo.INSTANCE.clingo_propagate_init_get_undo_mode(propagateInit);
+        return PropagatorUndoMode.fromValue(undoMode);
+    }
+
+    /**
+     * Configure when to call the undo method of the propagator (see {@link Propagator#check(PropagateControl)}).
+     *
+     * @param mode when to call the propagator
+     */
+    public void setUndoMode(PropagatorUndoMode mode) {
+        Clingo.INSTANCE.clingo_propagate_init_set_undo_mode(propagateInit, mode.getValue());
     }
 
     /**

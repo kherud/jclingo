@@ -14,7 +14,7 @@ public interface Propagator {
      * This is the last point to access symbolic and theory atoms.
      * Once the search has started, they are no longer accessible.
      *
-     * @param init initizialization object
+     * @param init initialization object
      */
     default void init(PropagateInit init) {
 

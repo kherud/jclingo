@@ -81,7 +81,7 @@ public abstract class Ast implements Comparable<Ast> {
      * @param attribute the target attribute
      * @return the resulting type
      */
-    public AttributeType getAttributeType(Attribute attribute) {
+    public AttributeType getAttributeType(AstAttribute attribute) {
         IntByReference intByReference = new IntByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_type(ast, attribute.ordinal(), intByReference));
         return AttributeType.fromValue(intByReference.getValue());
@@ -93,7 +93,7 @@ public abstract class Ast implements Comparable<Ast> {
      * @param attribute the attribute to check
      * @return the result
      */
-    public boolean hasAttribute(Attribute attribute) {
+    public boolean hasAttribute(AstAttribute attribute) {
         ByteByReference byteByReference = new ByteByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_has_attribute(ast, attribute.ordinal(), byteByReference));
         return byteByReference.getValue() > 0;
@@ -342,6 +342,8 @@ public abstract class Ast implements Comparable<Ast> {
                 return new Defined(ast);
             case THEORY_DEFINITION:
                 return new TheoryDefinition(ast);
+			case COMMENT:
+				return new Comment(ast);
             default:
                 throw new IllegalStateException("Unknown AST type: " + type.name());
         }

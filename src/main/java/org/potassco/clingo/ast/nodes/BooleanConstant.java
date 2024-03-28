@@ -24,30 +24,27 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.symbol.Symbol;
-
-import java.util.NoSuchElementException;
 
 public class BooleanConstant extends Ast {
 
     public BooleanConstant(Pointer ast) {
         super(ast);
     }
-    
+
     public BooleanConstant(int value) {
         super(create(value));
     }
-    
+
     public int getValue() {
         IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, Attribute.VALUE.ordinal(), intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, AstAttribute.VALUE.ordinal(), intByReference));
         return intByReference.getValue();
     }
 
     public void setValue(int value) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, Attribute.VALUE.ordinal(), value));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, AstAttribute.VALUE.ordinal(), value));
     }
-    
+
     private static Pointer create(int value) {
         PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.BOOLEAN_CONSTANT.ordinal(), pointerByReference, value));

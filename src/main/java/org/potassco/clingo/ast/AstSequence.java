@@ -31,14 +31,14 @@ import java.util.stream.Collectors;
 public class AstSequence {
 
     private final Pointer ast;
-    private final Attribute attribute;
+    private final AstAttribute attribute;
 
-    public AstSequence(Pointer ast, Attribute attribute) {
+    public AstSequence(Pointer ast, AstAttribute attribute) {
         this.ast = ast;
         this.attribute = attribute;
     }
 
-    public AstSequence(Pointer ast, Attribute attribute, Ast[] elements) {
+    public AstSequence(Pointer ast, AstAttribute attribute, Ast[] elements) {
         this.ast = ast;
         this.attribute = attribute;
         assert size() == 0;
@@ -89,7 +89,7 @@ public class AstSequence {
             insert(i, insertions[i]);
     }
 
-    public Attribute getAttribute() {
+    public AstAttribute getAttribute() {
         return attribute;
     }
 

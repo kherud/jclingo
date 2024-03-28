@@ -24,7 +24,6 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
@@ -33,73 +32,73 @@ public class TheoryAtomDefinition extends Ast {
     public TheoryAtomDefinition(Pointer ast) {
         super(ast);
     }
-    
+
     public TheoryAtomDefinition(Location location, int atomType, String name, int arity, String term, Ast guard) {
         super(create(location, atomType, name, arity, term, guard));
     }
-    
+
     public Location getLocation() {
         Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, Attribute.LOCATION.ordinal(), locationByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, AstAttribute.LOCATION.ordinal(), locationByReference));
         return locationByReference;
     }
 
     public int getAtomType() {
         IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, Attribute.ATOM_TYPE.ordinal(), intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, AstAttribute.ATOM_TYPE.ordinal(), intByReference));
         return intByReference.getValue();
     }
 
     public String getName() {
         String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, Attribute.NAME.ordinal(), stringByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, AstAttribute.NAME.ordinal(), stringByReference));
         return stringByReference[0];
     }
 
     public int getArity() {
         IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, Attribute.ARITY.ordinal(), intByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(ast, AstAttribute.ARITY.ordinal(), intByReference));
         return intByReference.getValue();
     }
 
     public String getTerm() {
         String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, Attribute.TERM.ordinal(), stringByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, AstAttribute.TERM.ordinal(), stringByReference));
         return stringByReference[0];
     }
 
     public Ast getGuard() {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_optional_ast(ast, Attribute.GUARD.ordinal(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_optional_ast(ast, AstAttribute.GUARD.ordinal(), pointerByReference));
         if (pointerByReference.getValue() == null)
             throw new NoSuchElementException("there is no optional ast");
         return Ast.create(pointerByReference.getValue());
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, AstAttribute.LOCATION.ordinal(), location));
     }
 
     public void setAtomType(int atomType) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, Attribute.ATOM_TYPE.ordinal(), atomType));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, AstAttribute.ATOM_TYPE.ordinal(), atomType));
     }
 
     public void setName(String name) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.NAME.ordinal(), name));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, AstAttribute.NAME.ordinal(), name));
     }
 
     public void setArity(int arity) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, Attribute.ARITY.ordinal(), arity));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(ast, AstAttribute.ARITY.ordinal(), arity));
     }
 
     public void setTerm(String term) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.TERM.ordinal(), term));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, AstAttribute.TERM.ordinal(), term));
     }
 
     public void setGuard(Ast guard) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(this.ast, Attribute.GUARD.ordinal(), guard.getPointer()));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(this.ast, AstAttribute.GUARD.ordinal(), guard.getPointer()));
     }
-    
+
     private static Pointer create(Location location, int atomType, String name, int arity, String term, Ast guard) {
         PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.THEORY_ATOM_DEFINITION.ordinal(), pointerByReference, location, atomType, name, arity, term, guard.getPointer()));

@@ -20,83 +20,79 @@
 package org.potassco.clingo.ast.nodes;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.symbol.Symbol;
-
-import java.util.NoSuchElementException;
 
 public class Heuristic extends Ast {
 
     public Heuristic(Pointer ast) {
         super(ast);
     }
-    
+
     public Heuristic(Location location, Ast atom, AstSequence body, Ast bias, Ast priority, Ast modifier) {
         super(create(location, atom, body, bias, priority, modifier));
     }
-    
+
     public Location getLocation() {
         Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, Attribute.LOCATION.ordinal(), locationByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, AstAttribute.LOCATION.ordinal(), locationByReference));
         return locationByReference;
     }
 
     public Ast getAtom() {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, Attribute.ATOM.ordinal(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, AstAttribute.ATOM.ordinal(), pointerByReference));
         return Ast.create(pointerByReference.getValue());
     }
 
     public AstSequence getBody() {
-        return new AstSequence(ast, Attribute.BODY);
+        return new AstSequence(ast, AstAttribute.BODY);
     }
 
     public Ast getBias() {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, Attribute.BIAS.ordinal(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, AstAttribute.BIAS.ordinal(), pointerByReference));
         return Ast.create(pointerByReference.getValue());
     }
 
     public Ast getPriority() {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, Attribute.PRIORITY.ordinal(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, AstAttribute.PRIORITY.ordinal(), pointerByReference));
         return Ast.create(pointerByReference.getValue());
     }
 
     public Ast getModifier() {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, Attribute.MODIFIER.ordinal(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, AstAttribute.MODIFIER.ordinal(), pointerByReference));
         return Ast.create(pointerByReference.getValue());
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, AstAttribute.LOCATION.ordinal(), location));
     }
 
     public void setAtom(Ast atom) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.ATOM.ordinal(), atom.getPointer()));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, AstAttribute.ATOM.ordinal(), atom.getPointer()));
     }
 
     public void setBody(AstSequence body) {
-        new AstSequence(ast, Attribute.BODY).set(body);
+        new AstSequence(ast, AstAttribute.BODY).set(body);
     }
 
     public void setBias(Ast bias) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.BIAS.ordinal(), bias.getPointer()));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, AstAttribute.BIAS.ordinal(), bias.getPointer()));
     }
 
     public void setPriority(Ast priority) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.PRIORITY.ordinal(), priority.getPointer()));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, AstAttribute.PRIORITY.ordinal(), priority.getPointer()));
     }
 
     public void setModifier(Ast modifier) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.MODIFIER.ordinal(), modifier.getPointer()));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, AstAttribute.MODIFIER.ordinal(), modifier.getPointer()));
     }
-    
+
     private static Pointer create(Location location, Ast atom, AstSequence body, Ast bias, Ast priority, Ast modifier) {
         PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.HEURISTIC.ordinal(), pointerByReference, location, atom.getPointer(), body.getPointer(), new NativeSize(body.size()), bias.getPointer(), priority.getPointer(), modifier.getPointer()));

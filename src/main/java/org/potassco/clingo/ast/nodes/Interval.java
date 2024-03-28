@@ -20,54 +20,50 @@
 package org.potassco.clingo.ast.nodes;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.symbol.Symbol;
-
-import java.util.NoSuchElementException;
 
 public class Interval extends Ast {
 
     public Interval(Pointer ast) {
         super(ast);
     }
-    
+
     public Interval(Location location, Ast left, Ast right) {
         super(create(location, left, right));
     }
-    
+
     public Location getLocation() {
         Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, Attribute.LOCATION.ordinal(), locationByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, AstAttribute.LOCATION.ordinal(), locationByReference));
         return locationByReference;
     }
 
     public Ast getLeft() {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, Attribute.LEFT.ordinal(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, AstAttribute.LEFT.ordinal(), pointerByReference));
         return Ast.create(pointerByReference.getValue());
     }
 
     public Ast getRight() {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, Attribute.RIGHT.ordinal(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, AstAttribute.RIGHT.ordinal(), pointerByReference));
         return Ast.create(pointerByReference.getValue());
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, AstAttribute.LOCATION.ordinal(), location));
     }
 
     public void setLeft(Ast left) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.LEFT.ordinal(), left.getPointer()));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, AstAttribute.LEFT.ordinal(), left.getPointer()));
     }
 
     public void setRight(Ast right) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.RIGHT.ordinal(), right.getPointer()));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, AstAttribute.RIGHT.ordinal(), right.getPointer()));
     }
-    
+
     private static Pointer create(Location location, Ast left, Ast right) {
         PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.INTERVAL.ordinal(), pointerByReference, location, left.getPointer(), right.getPointer()));

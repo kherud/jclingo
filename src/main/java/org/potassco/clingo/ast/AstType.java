@@ -2,6 +2,7 @@ package org.potassco.clingo.ast;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Enumeration of signs.
@@ -59,7 +60,8 @@ public enum AstType {
     PROJECT_ATOM,
     PROJECT_SIGNATURE,
     DEFINED,
-    THEORY_DEFINITION;
+    THEORY_DEFINITION,
+    COMMENT;
 
     private static final Map<Integer, AstType> mapping = new HashMap<>();
 
@@ -73,7 +75,7 @@ public enum AstType {
 	}
 
 	public static AstType fromOrdinal(int type) {
-		return mapping.get(type);
+		return Objects.requireNonNull(mapping.get(type));
 	}
 
 }

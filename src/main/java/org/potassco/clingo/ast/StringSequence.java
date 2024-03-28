@@ -20,13 +20,9 @@
 package org.potassco.clingo.ast;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * A sequence holding strings.
@@ -34,9 +30,9 @@ import java.util.stream.Collectors;
 public class StringSequence {
 
     private final Pointer ast;
-    private final Attribute attribute;
+    private final AstAttribute attribute;
 
-    public StringSequence(Pointer ast, Attribute attribute) {
+    public StringSequence(Pointer ast, AstAttribute attribute) {
         this.ast = ast;
         this.attribute = attribute;
     }
@@ -83,7 +79,7 @@ public class StringSequence {
             insert(i, insertions[i]);
     }
 
-    public Attribute getAttribute() {
+    public AstAttribute getAttribute() {
         return attribute;
     }
 

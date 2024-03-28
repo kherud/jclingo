@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Represents a source code location marking its beginnig and end.
- *
+ * Represents a source code location marking its beginning and end.
+ * <p>
  * Not all locations refer to physical files.
  * By convention, such locations use a name put in angular brackets as filename.
  * The string members of a location object are internalized and valid for the duration of the process.
@@ -52,6 +52,7 @@ public class Location extends Structure {
 		this.end_column = new NativeSize(end_column);
 	}
 
+	@Override
 	protected List<String> getFieldOrder() {
 		return Arrays.asList("begin_file", "end_file", "begin_line", "end_line", "begin_column", "end_column");
 	}

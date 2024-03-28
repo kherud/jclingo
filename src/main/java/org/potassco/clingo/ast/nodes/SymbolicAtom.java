@@ -20,34 +20,30 @@
 package org.potassco.clingo.ast.nodes;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.symbol.Symbol;
-
-import java.util.NoSuchElementException;
 
 public class SymbolicAtom extends Ast {
 
     public SymbolicAtom(Pointer ast) {
         super(ast);
     }
-    
+
     public SymbolicAtom(Ast symbol) {
         super(create(symbol));
     }
-    
+
     public Ast getSymbol() {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, Attribute.SYMBOL.ordinal(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, AstAttribute.SYMBOL.ordinal(), pointerByReference));
         return Ast.create(pointerByReference.getValue());
     }
 
     public void setSymbol(Ast symbol) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.SYMBOL.ordinal(), symbol.getPointer()));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, AstAttribute.SYMBOL.ordinal(), symbol.getPointer()));
     }
-    
+
     private static Pointer create(Ast symbol) {
         PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.SYMBOLIC_ATOM.ordinal(), pointerByReference, symbol.getPointer()));

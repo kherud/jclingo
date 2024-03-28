@@ -4,6 +4,7 @@ import org.potassco.clingo.internal.Clingo;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Enumeration of attributes types used by the AST.
@@ -39,7 +40,7 @@ public enum AttributeType {
 	}
 
 	public static AttributeType fromValue(int type) {
-		return mapping.get(type);
+		return Objects.requireNonNull(mapping.get(type));
 	}
 
     private final int type;

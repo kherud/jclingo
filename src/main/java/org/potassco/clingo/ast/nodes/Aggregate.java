@@ -20,12 +20,10 @@
 package org.potassco.clingo.ast.nodes;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
@@ -41,44 +39,44 @@ public class Aggregate extends Ast {
 
     public Location getLocation() {
         Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, Attribute.LOCATION.ordinal(), locationByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, AstAttribute.LOCATION.ordinal(), locationByReference));
         return locationByReference;
     }
 
     public Ast getLeftGuard() {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_optional_ast(ast, Attribute.LEFT_GUARD.ordinal(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_optional_ast(ast, AstAttribute.LEFT_GUARD.ordinal(), pointerByReference));
         if (pointerByReference.getValue() == null)
             throw new NoSuchElementException("there is no optional ast");
         return Ast.create(pointerByReference.getValue());
     }
 
     public AstSequence getElements() {
-        return new AstSequence(ast, Attribute.ELEMENTS);
+        return new AstSequence(ast, AstAttribute.ELEMENTS);
     }
 
     public Ast getRightGuard() {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_optional_ast(ast, Attribute.RIGHT_GUARD.ordinal(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_optional_ast(ast, AstAttribute.RIGHT_GUARD.ordinal(), pointerByReference));
         if (pointerByReference.getValue() == null)
             throw new NoSuchElementException("there is no optional ast");
         return Ast.create(pointerByReference.getValue());
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, AstAttribute.LOCATION.ordinal(), location));
     }
 
     public void setLeftGuard(Ast leftGuard) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(this.ast, Attribute.LEFT_GUARD.ordinal(), leftGuard.getPointer()));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(this.ast, AstAttribute.LEFT_GUARD.ordinal(), leftGuard.getPointer()));
     }
 
     public void setElements(AstSequence elements) {
-        new AstSequence(ast, Attribute.ELEMENTS).set(elements);
+        new AstSequence(ast, AstAttribute.ELEMENTS).set(elements);
     }
 
     public void setRightGuard(Ast rightGuard) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(this.ast, Attribute.RIGHT_GUARD.ordinal(), rightGuard.getPointer()));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(this.ast, AstAttribute.RIGHT_GUARD.ordinal(), rightGuard.getPointer()));
     }
 
     private static Pointer create(Location location, Ast leftGuard, AstSequence elements, Ast rightGuard) {

@@ -20,14 +20,11 @@
 package org.potassco.clingo.ast.nodes;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.symbol.Symbol;
-
-import java.util.NoSuchElementException;
 
 public class SymbolicTerm extends Ast {
 
@@ -41,22 +38,22 @@ public class SymbolicTerm extends Ast {
 
     public Location getLocation() {
         Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, Attribute.LOCATION.ordinal(), locationByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, AstAttribute.LOCATION.ordinal(), locationByReference));
         return locationByReference;
     }
 
     public Symbol getSymbol() {
         LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_symbol(ast, Attribute.SYMBOL.ordinal(), longByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_symbol(ast, AstAttribute.SYMBOL.ordinal(), longByReference));
         return Symbol.fromLong(longByReference.getValue());
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, AstAttribute.LOCATION.ordinal(), location));
     }
 
     public void setSymbol(Symbol symbol) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_symbol(ast, Attribute.SYMBOL.ordinal(), symbol.getLong()));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_symbol(ast, AstAttribute.SYMBOL.ordinal(), symbol.getLong()));
     }
 
     private static Pointer create(Location location, Symbol symbol) {

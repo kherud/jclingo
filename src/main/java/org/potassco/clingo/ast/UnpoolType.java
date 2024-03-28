@@ -2,6 +2,7 @@ package org.potassco.clingo.ast;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Enumeration to configure unpooling.
@@ -27,7 +28,7 @@ public enum UnpoolType {
 	}
 
 	public static UnpoolType fromValue(int type) {
-		return mapping.get(type);
+		return Objects.requireNonNull(mapping.get(type));
 	}
 
     private final int type;

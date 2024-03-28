@@ -20,43 +20,39 @@
 package org.potassco.clingo.ast.nodes;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.symbol.Symbol;
-
-import java.util.NoSuchElementException;
 
 public class HeadAggregateElement extends Ast {
 
     public HeadAggregateElement(Pointer ast) {
         super(ast);
     }
-    
+
     public HeadAggregateElement(AstSequence terms, Ast condition) {
         super(create(terms, condition));
     }
-    
+
     public AstSequence getTerms() {
-        return new AstSequence(ast, Attribute.TERMS);
+        return new AstSequence(ast, AstAttribute.TERMS);
     }
 
     public Ast getCondition() {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, Attribute.CONDITION.ordinal(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, AstAttribute.CONDITION.ordinal(), pointerByReference));
         return Ast.create(pointerByReference.getValue());
     }
 
     public void setTerms(AstSequence terms) {
-        new AstSequence(ast, Attribute.TERMS).set(terms);
+        new AstSequence(ast, AstAttribute.TERMS).set(terms);
     }
 
     public void setCondition(Ast condition) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.CONDITION.ordinal(), condition.getPointer()));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, AstAttribute.CONDITION.ordinal(), condition.getPointer()));
     }
-    
+
     private static Pointer create(AstSequence terms, Ast condition) {
         PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.HEAD_AGGREGATE_ELEMENT.ordinal(), pointerByReference, terms.getPointer(), new NativeSize(terms.size()), condition.getPointer()));

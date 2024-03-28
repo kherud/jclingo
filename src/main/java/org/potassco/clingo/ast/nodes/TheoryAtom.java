@@ -20,12 +20,10 @@
 package org.potassco.clingo.ast.nodes;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.symbol.Symbol;
 
 import java.util.NoSuchElementException;
 
@@ -34,51 +32,51 @@ public class TheoryAtom extends Ast {
     public TheoryAtom(Pointer ast) {
         super(ast);
     }
-    
+
     public TheoryAtom(Location location, Ast term, AstSequence elements, Ast guard) {
         super(create(location, term, elements, guard));
     }
-    
+
     public Location getLocation() {
         Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, Attribute.LOCATION.ordinal(), locationByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, AstAttribute.LOCATION.ordinal(), locationByReference));
         return locationByReference;
     }
 
     public Ast getTerm() {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, Attribute.TERM.ordinal(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(ast, AstAttribute.TERM.ordinal(), pointerByReference));
         return Ast.create(pointerByReference.getValue());
     }
 
     public AstSequence getElements() {
-        return new AstSequence(ast, Attribute.ELEMENTS);
+        return new AstSequence(ast, AstAttribute.ELEMENTS);
     }
 
     public Ast getGuard() {
         PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_optional_ast(ast, Attribute.GUARD.ordinal(), pointerByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_optional_ast(ast, AstAttribute.GUARD.ordinal(), pointerByReference));
         if (pointerByReference.getValue() == null)
             throw new NoSuchElementException("there is no optional ast");
         return Ast.create(pointerByReference.getValue());
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, AstAttribute.LOCATION.ordinal(), location));
     }
 
     public void setTerm(Ast term) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, Attribute.TERM.ordinal(), term.getPointer()));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(ast, AstAttribute.TERM.ordinal(), term.getPointer()));
     }
 
     public void setElements(AstSequence elements) {
-        new AstSequence(ast, Attribute.ELEMENTS).set(elements);
+        new AstSequence(ast, AstAttribute.ELEMENTS).set(elements);
     }
 
     public void setGuard(Ast guard) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(this.ast, Attribute.GUARD.ordinal(), guard.getPointer()));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(this.ast, AstAttribute.GUARD.ordinal(), guard.getPointer()));
     }
-    
+
     private static Pointer create(Location location, Ast term, AstSequence elements, Ast guard) {
         PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.THEORY_ATOM.ordinal(), pointerByReference, location, term.getPointer(), elements.getPointer(), new NativeSize(elements.size()), guard.getPointer()));

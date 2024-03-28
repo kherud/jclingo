@@ -20,43 +20,39 @@
 package org.potassco.clingo.ast.nodes;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.symbol.Symbol;
-
-import java.util.NoSuchElementException;
 
 public class TheoryGuardDefinition extends Ast {
 
     public TheoryGuardDefinition(Pointer ast) {
         super(ast);
     }
-    
+
     public TheoryGuardDefinition(StringSequence operators, String term) {
         super(create(operators, term));
     }
-    
+
     public StringSequence getOperators() {
-        return new StringSequence(ast, Attribute.OPERATORS);
+        return new StringSequence(ast, AstAttribute.OPERATORS);
     }
 
     public String getTerm() {
         String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, Attribute.TERM.ordinal(), stringByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(ast, AstAttribute.TERM.ordinal(), stringByReference));
         return stringByReference[0];
     }
 
     public void setOperators(StringSequence operators) {
-        new StringSequence(ast, Attribute.OPERATORS).set(operators);
+        new StringSequence(ast, AstAttribute.OPERATORS).set(operators);
     }
 
     public void setTerm(String term) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, Attribute.TERM.ordinal(), term));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(ast, AstAttribute.TERM.ordinal(), term));
     }
-    
+
     private static Pointer create(StringSequence operators, String term) {
         PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.THEORY_GUARD_DEFINITION.ordinal(), pointerByReference, operators.get(), new NativeSize(operators.size()), term));

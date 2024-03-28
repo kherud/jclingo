@@ -20,41 +20,37 @@
 package org.potassco.clingo.ast.nodes;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.symbol.Symbol;
-
-import java.util.NoSuchElementException;
 
 public class TheoryAtomElement extends Ast {
 
     public TheoryAtomElement(Pointer ast) {
         super(ast);
     }
-    
+
     public TheoryAtomElement(AstSequence terms, AstSequence condition) {
         super(create(terms, condition));
     }
-    
+
     public AstSequence getTerms() {
-        return new AstSequence(ast, Attribute.TERMS);
+        return new AstSequence(ast, AstAttribute.TERMS);
     }
 
     public AstSequence getCondition() {
-        return new AstSequence(ast, Attribute.CONDITION);
+        return new AstSequence(ast, AstAttribute.CONDITION);
     }
 
     public void setTerms(AstSequence terms) {
-        new AstSequence(ast, Attribute.TERMS).set(terms);
+        new AstSequence(ast, AstAttribute.TERMS).set(terms);
     }
 
     public void setCondition(AstSequence condition) {
-        new AstSequence(ast, Attribute.CONDITION).set(condition);
+        new AstSequence(ast, AstAttribute.CONDITION).set(condition);
     }
-    
+
     private static Pointer create(AstSequence terms, AstSequence condition) {
         PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.THEORY_ATOM_ELEMENT.ordinal(), pointerByReference, terms.getPointer(), new NativeSize(terms.size()), condition.getPointer(), new NativeSize(condition.size())));

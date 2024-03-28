@@ -2,11 +2,12 @@ package org.potassco.clingo.ast;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Enumeration of attributes used by the AST.
  */
-public enum Attribute {
+public enum AstAttribute {
 
     ARGUMENT,
     ARGUMENTS,
@@ -51,12 +52,13 @@ public enum Attribute {
     TERMS,
     VALUE,
     VARIABLE,
-    WEIGHT;
+    WEIGHT,
+    COMMENT_TYPE;
 
-    private static final Map<Integer, Attribute> mapping = new HashMap<>();
+    private static final Map<Integer, AstAttribute> mapping = new HashMap<>();
 
     static {
-        for (Attribute type : Attribute.values()) {
+        for (AstAttribute type : AstAttribute.values()) {
             mapping.put(
                     type.ordinal(),
                     type
@@ -64,8 +66,8 @@ public enum Attribute {
         }
     }
 
-    public static Attribute fromOrdinal(int attribute) {
-        return mapping.get(attribute);
+    public static AstAttribute fromOrdinal(int attribute) {
+        return Objects.requireNonNull(mapping.get(attribute));
     }
 
 }

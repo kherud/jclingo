@@ -20,43 +20,39 @@
 package org.potassco.clingo.ast.nodes;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.*;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.symbol.Symbol;
-
-import java.util.NoSuchElementException;
 
 public class Pool extends Ast {
 
     public Pool(Pointer ast) {
         super(ast);
     }
-    
+
     public Pool(Location location, AstSequence arguments) {
         super(create(location, arguments));
     }
-    
+
     public Location getLocation() {
         Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, Attribute.LOCATION.ordinal(), locationByReference));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(ast, AstAttribute.LOCATION.ordinal(), locationByReference));
         return locationByReference;
     }
 
     public AstSequence getArguments() {
-        return new AstSequence(ast, Attribute.ARGUMENTS);
+        return new AstSequence(ast, AstAttribute.ARGUMENTS);
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, Attribute.LOCATION.ordinal(), location));
+        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(ast, AstAttribute.LOCATION.ordinal(), location));
     }
 
     public void setArguments(AstSequence arguments) {
-        new AstSequence(ast, Attribute.ARGUMENTS).set(arguments);
+        new AstSequence(ast, AstAttribute.ARGUMENTS).set(arguments);
     }
-    
+
     private static Pointer create(Location location, AstSequence arguments) {
         PointerByReference pointerByReference = new PointerByReference();
         Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.POOL.ordinal(), pointerByReference, location, arguments.getPointer(), new NativeSize(arguments.size())));

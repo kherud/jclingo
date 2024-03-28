@@ -19,6 +19,7 @@ import org.potassco.clingo.ast.ProgramBuilder;
 import org.potassco.clingo.ast.StringSequence;
 import org.potassco.clingo.ast.Transformer;
 import org.potassco.clingo.ast.UnpoolType;
+import org.potassco.clingo.ast.nodes.Comment;
 import org.potassco.clingo.ast.nodes.Id;
 import org.potassco.clingo.ast.nodes.Program;
 import org.potassco.clingo.ast.nodes.Rule;
@@ -92,7 +93,7 @@ public class AstTest {
         try (ProgramBuilder builder = new ProgramBuilder(control)) {
             try {
                 builder.add(copy2);
-            } catch (RuntimeException e) {
+            } catch (Exception e) {
                 String message = e.getMessage();
                 if (!message.contains("error: python support not available") ||
                         message.contains("error: lua support not available"))
@@ -163,6 +164,8 @@ public class AstTest {
         testString("1 > 2.");
         testString("1 >= 2.");
         testString("1 = 2.");
+        testString("not 1 = 2.");
+        testString("not not 1 = 2.");
         testString("1 != 2.");
         testString("#false.");
         testString("#true.");
@@ -259,6 +262,7 @@ public class AstTest {
         testString("a :- a; b.");
         testString("#const x = 10.");
         testString("#const x = 10. [override]");
+        testString("#show.");
         testString("#show p/1.");
         testString("#show -p/1.");
         testString("#defined p/1.");
@@ -294,6 +298,10 @@ public class AstTest {
                 "  &d/0: t, { }, t, any;\n" +
                 "  &e/0: t, { =, !=, + }, t, any\n" +
                 "}.");
+		testString("%* test *%");
+		testString("%* test *%\n", "%* test *%");
+		testString("% test");
+		testString("% test\n", "% test");
     }
 
     @Test
@@ -365,9 +373,15 @@ public class AstTest {
 
     @Test
     public void testUnpool() {
-        List<Ast> program = Ast.parseString(":- a(1;2): a(3;4).");
+        List<Ast> program = Ast.parseString("%comment\n:- a(1;2): a(3;4).");
+        Assert.assertEquals(3, program.size());
+
+        Comment com = ((Comment) program.get(program.size() - 2));
+        List<String> unpooled = com.unpool(UnpoolType.ALL).stream().map(Ast::toString).collect(Collectors.toList());
+        Assert.assertEquals(List.of("%comment"), unpooled);
+
         Ast lit = ((Rule) program.get(program.size()-1)).getBody().get(0);
-        List<String> unpooled = lit.unpool(UnpoolType.ALL).stream().map(Ast::toString).collect(Collectors.toList());
+        unpooled = lit.unpool(UnpoolType.ALL).stream().map(Ast::toString).collect(Collectors.toList());
         Assert.assertEquals(List.of("a(1): a(3)", "a(1): a(4)", "a(2): a(3)", "a(2): a(4)"), unpooled);
 
         unpooled = lit.unpool(UnpoolType.CONDITION).stream().map(Ast::toString).collect(Collectors.toList());
@@ -375,7 +389,46 @@ public class AstTest {
 
         unpooled = lit.unpool(UnpoolType.OTHER).stream().map(Ast::toString).collect(Collectors.toList());
         Assert.assertEquals(List.of("a(1): a(3;4)", "a(2): a(3;4)"), unpooled);
+    }
 
+    @Test
+    public void testCommentOrder() {
+        String program = "% comment before `x=10`\n" +
+                         "#const x=10.\n" +
+                         "% comment after `x=10`\n" +
+                         "a.\n" +
+                         "% comment before `y=10`\n" +
+                         "#const y=10. [override]\n" +
+                         "% comment after `y=10`\n" +
+                         "b.\n" +
+                         "% comment before `#external a`\n" +
+                         "#external a.\n" +
+                         "% comment after `#external a`\n" +
+                         "a.\n" +
+                         "% comment before `#external b`\n" +
+                         "#external b. [true]\n" +
+                         "% comment after `#external b`";
+		List<String> expected = List.of(
+				"#program base.",
+				"% comment before `x=10`",
+				"#const x = 10.",
+				"% comment after `x=10`",
+				"a.",
+				"% comment before `y=10`",
+				"#const y = 10. [override]",
+				"% comment after `y=10`",
+				"b.",
+				"% comment before `#external a`",
+				"#external a. [false]",
+				"% comment after `#external a`",
+				"a.",
+				"% comment before `#external b`",
+				"#external b. [true]",
+				"% comment after `#external b`"
+		);
+		List<String> actual = new ArrayList<>();
+		Ast.parseString(program, ast -> actual.add(ast.toString()));
+		Assert.assertEquals(expected, actual);
     }
 
     @Test
@@ -438,6 +491,7 @@ public class AstTest {
         mapping.put(AstType.PROJECT_SIGNATURE, List.of("location", "name", "arity", "positive"));
         mapping.put(AstType.DEFINED, List.of("location", "name", "arity", "positive"));
         mapping.put(AstType.THEORY_DEFINITION, List.of("location", "name", "terms", "atoms"));
+        mapping.put(AstType.COMMENT, List.of("location", "value", "commentType"));
         return mapping;
     }
 }

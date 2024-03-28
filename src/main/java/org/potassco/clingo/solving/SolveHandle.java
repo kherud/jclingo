@@ -19,15 +19,15 @@
 
 package org.potassco.clingo.solving;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSizeByReference;
-
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * Handle for solve calls.

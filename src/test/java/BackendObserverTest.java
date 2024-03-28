@@ -1,3 +1,6 @@
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.potassco.clingo.backend.Backend;
@@ -8,9 +11,6 @@ import org.potassco.clingo.control.Control;
 import org.potassco.clingo.solving.Observer;
 import org.potassco.clingo.symbol.Function;
 import org.potassco.clingo.symbol.Symbol;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class BackendObserverTest implements Observer {
 

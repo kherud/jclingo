@@ -19,11 +19,10 @@
 
 package org.potassco.clingo.control;
 
-
-import org.potassco.clingo.internal.Clingo;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.potassco.clingo.internal.Clingo;
 
 /**
  * Enumeration of warning codes.

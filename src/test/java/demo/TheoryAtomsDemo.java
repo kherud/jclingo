@@ -1,13 +1,13 @@
 package demo;
 
+import java.util.NoSuchElementException;
+
 import org.potassco.clingo.backend.Backend;
 import org.potassco.clingo.control.Control;
 import org.potassco.clingo.solving.Model;
 import org.potassco.clingo.solving.SolveEventCallback;
 import org.potassco.clingo.theory.TheoryAtom;
 import org.potassco.clingo.theory.TheoryAtoms;
-
-import java.util.NoSuchElementException;
 
 public class TheoryAtomsDemo {
 

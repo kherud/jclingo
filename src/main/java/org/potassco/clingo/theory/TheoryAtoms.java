@@ -16,15 +16,15 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.theory;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import com.sun.jna.Pointer;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSizeByReference;
-
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public class TheoryAtoms implements Iterable<TheoryAtom> {
 

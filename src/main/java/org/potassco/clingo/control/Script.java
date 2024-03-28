@@ -19,6 +19,9 @@
 
 package org.potassco.clingo.control;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -26,9 +29,6 @@ import com.sun.jna.ptr.ByteByReference;
 import org.potassco.clingo.ast.Location;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Custom scripting language to run functions during grounding.

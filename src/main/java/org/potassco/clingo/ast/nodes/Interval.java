@@ -21,7 +21,10 @@ package org.potassco.clingo.ast.nodes;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
-import org.potassco.clingo.ast.*;
+import org.potassco.clingo.ast.Ast;
+import org.potassco.clingo.ast.AstAttribute;
+import org.potassco.clingo.ast.AstType;
+import org.potassco.clingo.ast.Location;
 import org.potassco.clingo.internal.Clingo;
 
 public class Interval extends Ast {

@@ -19,14 +19,14 @@
 
 package org.potassco.clingo.solving;
 
+import java.util.NoSuchElementException;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
-import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.control.SymbolicAtoms;
+import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.symbol.Symbol;
-
-import java.util.NoSuchElementException;
 
 /**
  * Object that allows for controlling a running search.

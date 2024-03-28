@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.potassco.clingo.control.Control;
@@ -5,9 +8,6 @@ import org.potassco.clingo.propagator.PropagateControl;
 import org.potassco.clingo.propagator.Propagator;
 import org.potassco.clingo.solving.SolveResult;
 import org.potassco.clingo.symbol.Symbol;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class PropagatorCheckTest implements Propagator {
 

@@ -23,8 +23,6 @@ import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.ptr.LongByReference;
-import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.symbol.Symbol;
 

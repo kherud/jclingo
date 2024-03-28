@@ -16,8 +16,10 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.theory;
+
+import java.util.NoSuchElementException;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -27,8 +29,6 @@ import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
-
-import java.util.NoSuchElementException;
 
 /**
  * Class to represent theory atoms.

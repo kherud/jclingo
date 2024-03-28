@@ -19,6 +19,9 @@
 
 package org.potassco.clingo.solving;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 import org.potassco.clingo.ast.Location;
@@ -26,9 +29,6 @@ import org.potassco.clingo.control.ErrorCode;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.symbol.Symbol;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * Callback function to implement external functions.

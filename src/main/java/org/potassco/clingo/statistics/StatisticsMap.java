@@ -26,8 +26,6 @@ import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
 
-import java.util.ArrayList;
-
 public class StatisticsMap extends Statistics {
 
     public StatisticsMap(Pointer statistics, long key) {

@@ -19,7 +19,51 @@
 
 package org.potassco.clingo.ast;
 
-import org.potassco.clingo.ast.nodes.*;
+import org.potassco.clingo.ast.nodes.Aggregate;
+import org.potassco.clingo.ast.nodes.AggregateGuard;
+import org.potassco.clingo.ast.nodes.BinaryOperation;
+import org.potassco.clingo.ast.nodes.BodyAggregate;
+import org.potassco.clingo.ast.nodes.BodyAggregateElement;
+import org.potassco.clingo.ast.nodes.BooleanConstant;
+import org.potassco.clingo.ast.nodes.Comparison;
+import org.potassco.clingo.ast.nodes.ConditionalLiteral;
+import org.potassco.clingo.ast.nodes.Defined;
+import org.potassco.clingo.ast.nodes.Definition;
+import org.potassco.clingo.ast.nodes.Disjunction;
+import org.potassco.clingo.ast.nodes.Edge;
+import org.potassco.clingo.ast.nodes.External;
+import org.potassco.clingo.ast.nodes.Function;
+import org.potassco.clingo.ast.nodes.HeadAggregate;
+import org.potassco.clingo.ast.nodes.HeadAggregateElement;
+import org.potassco.clingo.ast.nodes.Heuristic;
+import org.potassco.clingo.ast.nodes.Id;
+import org.potassco.clingo.ast.nodes.Interval;
+import org.potassco.clingo.ast.nodes.Literal;
+import org.potassco.clingo.ast.nodes.Minimize;
+import org.potassco.clingo.ast.nodes.Pool;
+import org.potassco.clingo.ast.nodes.Program;
+import org.potassco.clingo.ast.nodes.ProjectAtom;
+import org.potassco.clingo.ast.nodes.ProjectSignature;
+import org.potassco.clingo.ast.nodes.Rule;
+import org.potassco.clingo.ast.nodes.Script;
+import org.potassco.clingo.ast.nodes.ShowSignature;
+import org.potassco.clingo.ast.nodes.ShowTerm;
+import org.potassco.clingo.ast.nodes.SymbolicAtom;
+import org.potassco.clingo.ast.nodes.SymbolicTerm;
+import org.potassco.clingo.ast.nodes.TheoryAtom;
+import org.potassco.clingo.ast.nodes.TheoryAtomDefinition;
+import org.potassco.clingo.ast.nodes.TheoryAtomElement;
+import org.potassco.clingo.ast.nodes.TheoryDefinition;
+import org.potassco.clingo.ast.nodes.TheoryFunction;
+import org.potassco.clingo.ast.nodes.TheoryGuard;
+import org.potassco.clingo.ast.nodes.TheoryGuardDefinition;
+import org.potassco.clingo.ast.nodes.TheoryOperatorDefinition;
+import org.potassco.clingo.ast.nodes.TheorySequence;
+import org.potassco.clingo.ast.nodes.TheoryTermDefinition;
+import org.potassco.clingo.ast.nodes.TheoryUnparsedTerm;
+import org.potassco.clingo.ast.nodes.TheoryUnparsedTermElement;
+import org.potassco.clingo.ast.nodes.UnaryOperation;
+import org.potassco.clingo.ast.nodes.Variable;
 
 /**
  * Utility class to transform ASTs.

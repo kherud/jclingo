@@ -1,11 +1,11 @@
 package org.potassco.clingo.ast;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import org.potassco.clingo.internal.NativeSize;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Represents a source code location marking its beginning and end.

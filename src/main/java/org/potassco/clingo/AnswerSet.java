@@ -19,10 +19,10 @@
 
 package org.potassco.clingo;
 
+import java.util.List;
+
 import org.potassco.clingo.solving.ModelType;
 import org.potassco.clingo.symbol.Symbol;
-
-import java.util.List;
 
 public class AnswerSet {
 

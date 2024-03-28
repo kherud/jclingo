@@ -19,8 +19,20 @@
 
 package org.potassco.clingo.internal;
 
-import com.sun.jna.*;
-import com.sun.jna.ptr.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import com.sun.jna.Callback;
+import com.sun.jna.LastErrorException;
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
+import com.sun.jna.ptr.ByteByReference;
+import com.sun.jna.ptr.DoubleByReference;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.AstCallback;
 import org.potassco.clingo.ast.Location;
 import org.potassco.clingo.backend.ExternalType;
@@ -28,7 +40,14 @@ import org.potassco.clingo.backend.HeuristicType;
 import org.potassco.clingo.backend.WeightedLiteral;
 import org.potassco.clingo.configuration.Configuration;
 import org.potassco.clingo.configuration.ConfigurationType;
-import org.potassco.clingo.control.*;
+import org.potassco.clingo.control.ApplicationOptions;
+import org.potassco.clingo.control.Control;
+import org.potassco.clingo.control.ErrorCode;
+import org.potassco.clingo.control.LoggerCallback;
+import org.potassco.clingo.control.ParseCallback;
+import org.potassco.clingo.control.ProgramPart;
+import org.potassco.clingo.control.Script;
+import org.potassco.clingo.control.SymbolicAtoms;
 import org.potassco.clingo.propagator.Assignment;
 import org.potassco.clingo.propagator.PropagateControl;
 import org.potassco.clingo.propagator.PropagateInit;
@@ -36,9 +55,6 @@ import org.potassco.clingo.solving.GroundCallback;
 import org.potassco.clingo.solving.ModelPrinterCallback;
 import org.potassco.clingo.solving.SolveEventCallback;
 import org.potassco.clingo.symbol.Symbol;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public interface Clingo extends Library {
 

@@ -19,30 +19,30 @@
 
 package org.potassco.clingo.control;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.LongByReference;
-import com.sun.jna.ptr.PointerByReference;
-import org.potassco.clingo.backend.ExternalType;
-import org.potassco.clingo.configuration.Configuration;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.solving.Observer;
-import org.potassco.clingo.solving.GroundCallback;
-import org.potassco.clingo.propagator.Propagator;
-import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.solving.SolveControl;
-import org.potassco.clingo.solving.SolveEventCallback;
-import org.potassco.clingo.solving.SolveMode;
-import org.potassco.clingo.backend.Backend;
-import org.potassco.clingo.solving.SolveHandle;
-import org.potassco.clingo.statistics.Statistics;
-import org.potassco.clingo.symbol.Symbol;
-import org.potassco.clingo.theory.TheoryAtoms;
-
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
+
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.ByteByReference;
+import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.ptr.PointerByReference;
+import org.potassco.clingo.backend.Backend;
+import org.potassco.clingo.backend.ExternalType;
+import org.potassco.clingo.configuration.Configuration;
+import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.propagator.Propagator;
+import org.potassco.clingo.solving.GroundCallback;
+import org.potassco.clingo.solving.Observer;
+import org.potassco.clingo.solving.SolveControl;
+import org.potassco.clingo.solving.SolveEventCallback;
+import org.potassco.clingo.solving.SolveHandle;
+import org.potassco.clingo.solving.SolveMode;
+import org.potassco.clingo.statistics.Statistics;
+import org.potassco.clingo.symbol.Symbol;
+import org.potassco.clingo.theory.TheoryAtoms;
 
 /**
  * Control object for the grounding/solving process.

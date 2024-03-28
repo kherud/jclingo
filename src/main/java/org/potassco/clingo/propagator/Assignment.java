@@ -19,14 +19,14 @@
 
 package org.potassco.clingo.propagator;
 
+import java.util.Iterator;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.solving.TruthValue;
-
-import java.util.Iterator;
 
 /**
  * Class to inspect the (parital) assignment of an associated solver.

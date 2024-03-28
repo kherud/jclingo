@@ -1,9 +1,3 @@
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.potassco.clingo.control.*;
-import org.potassco.clingo.symbol.Symbol;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,6 +6,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.potassco.clingo.control.Application;
+import org.potassco.clingo.control.ApplicationOptions;
+import org.potassco.clingo.control.Control;
+import org.potassco.clingo.control.Flag;
+import org.potassco.clingo.control.WarningCode;
+import org.potassco.clingo.symbol.Symbol;
 
 /**
  * Test application covering most of the Application related API.

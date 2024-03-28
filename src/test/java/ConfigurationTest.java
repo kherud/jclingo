@@ -1,9 +1,9 @@
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.potassco.clingo.configuration.Configuration;
 import org.potassco.clingo.control.Control;
-
-import java.util.List;
 
 public class ConfigurationTest {
 

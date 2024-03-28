@@ -19,20 +19,20 @@
 
 package org.potassco.clingo.configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import org.potassco.clingo.configuration.args.Option;
 import org.potassco.clingo.control.Control;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.configuration.args.Option;
 import org.potassco.clingo.internal.NativeSizeByReference;
 import org.potassco.clingo.statistics.Statistics;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.potassco.clingo.configuration.ConfigurationType.Type.*;
 

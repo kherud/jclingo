@@ -19,14 +19,14 @@
 
 package org.potassco.clingo.ast;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class AstSequence {
 

@@ -19,11 +19,11 @@
 
 package org.potassco.clingo.propagator;
 
+import java.util.Iterator;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import org.potassco.clingo.internal.Clingo;
-
-import java.util.Iterator;
 
 /**
  * Class to access literals assigned by the solver in chronological order.

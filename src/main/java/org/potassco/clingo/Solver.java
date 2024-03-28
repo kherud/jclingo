@@ -19,6 +19,10 @@
 
 package org.potassco.clingo;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.potassco.clingo.configuration.args.Option;
 import org.potassco.clingo.control.Control;
 import org.potassco.clingo.solving.Model;
@@ -26,10 +30,6 @@ import org.potassco.clingo.solving.ModelType;
 import org.potassco.clingo.solving.SolveHandle;
 import org.potassco.clingo.solving.SolveMode;
 import org.potassco.clingo.symbol.Symbol;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class Solver {
 

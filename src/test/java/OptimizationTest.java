@@ -1,7 +1,9 @@
 import org.junit.Assert;
 import org.junit.Test;
 import org.potassco.clingo.control.Control;
-import org.potassco.clingo.solving.*;
+import org.potassco.clingo.solving.GroundCallback;
+import org.potassco.clingo.solving.Model;
+import org.potassco.clingo.solving.SolveEventCallback;
 import org.potassco.clingo.symbol.Number;
 import org.potassco.clingo.symbol.Symbol;
 

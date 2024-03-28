@@ -1,16 +1,21 @@
-import org.junit.Assert;
-import org.junit.Test;
-import org.potassco.clingo.control.Control;
-import org.potassco.clingo.control.SymbolicAtom;
-import org.potassco.clingo.propagator.*;
-import org.potassco.clingo.solving.SolveResult;
-import org.potassco.clingo.symbol.Function;
-import org.potassco.clingo.symbol.Symbol;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.potassco.clingo.control.Control;
+import org.potassco.clingo.control.SymbolicAtom;
+import org.potassco.clingo.propagator.Assignment;
+import org.potassco.clingo.propagator.PropagateControl;
+import org.potassco.clingo.propagator.PropagateInit;
+import org.potassco.clingo.propagator.Propagator;
+import org.potassco.clingo.propagator.PropagatorCheckMode;
+import org.potassco.clingo.propagator.Trail;
+import org.potassco.clingo.solving.SolveResult;
+import org.potassco.clingo.symbol.Function;
+import org.potassco.clingo.symbol.Symbol;
 
 public class PropagatorControlTest implements Propagator {
 

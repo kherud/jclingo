@@ -19,6 +19,11 @@
 
 package org.potassco.clingo.control;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.LongByReference;
@@ -27,11 +32,6 @@ import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.internal.NativeSizeByReference;
 import org.potassco.clingo.symbol.Signature;
 import org.potassco.clingo.symbol.Symbol;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * This class provides read-only access to the atom base of the grounder.

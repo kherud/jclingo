@@ -1,10 +1,10 @@
 package org.potassco.clingo.control;
 
+import java.nio.file.Path;
+
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.solving.Model;
-
-import java.nio.file.Path;
 
 public interface Application {
 

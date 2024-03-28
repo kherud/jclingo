@@ -16,13 +16,13 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.ast;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
-import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.control.Control;
+import org.potassco.clingo.internal.Clingo;
 
 /**
  * Object to build non-ground programs.

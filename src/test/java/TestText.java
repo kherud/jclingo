@@ -1,11 +1,11 @@
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.potassco.clingo.symbol.Text;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 @RunWith(Parameterized.class)
 public class TestText {

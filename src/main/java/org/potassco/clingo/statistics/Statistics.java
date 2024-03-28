@@ -19,13 +19,13 @@
 
 package org.potassco.clingo.statistics;
 
+import java.util.NoSuchElementException;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import org.potassco.clingo.control.Control;
 import org.potassco.clingo.internal.Clingo;
-
-import java.util.NoSuchElementException;
 
 import static org.potassco.clingo.statistics.StatisticsType.fromValue;
 

@@ -1,13 +1,19 @@
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.potassco.clingo.control.LoggerCallback;
 import org.potassco.clingo.control.WarningCode;
-import org.potassco.clingo.symbol.*;
+import org.potassco.clingo.symbol.Function;
+import org.potassco.clingo.symbol.Infimum;
 import org.potassco.clingo.symbol.Number;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.potassco.clingo.symbol.Signature;
+import org.potassco.clingo.symbol.Supremum;
+import org.potassco.clingo.symbol.Symbol;
+import org.potassco.clingo.symbol.SymbolType;
+import org.potassco.clingo.symbol.Text;
 
 public class SymbolTest {
 

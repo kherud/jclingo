@@ -161,7 +161,8 @@ public abstract class Ast implements Comparable<Ast> {
     }
 
     /**
-     * Compute a hash for an AST node.
+     * Compute a native 64-bit hash for an AST node.
+     * Note that {@link #hashCode()} re-uses this method, but returns a 32-bit value.
      *
      * @return the resulting hash code
      */
@@ -267,6 +268,15 @@ public abstract class Ast implements Comparable<Ast> {
         if (!(other instanceof Ast))
             return false;
         return Clingo.INSTANCE.clingo_ast_equal(ast, ((Ast) other).getPointer()) > 0;
+    }
+
+    /**
+     * Calculates a Java hash for this object.
+     * Note, that this method relies on the native hash (see {@link #getHash()}, but consists of 32-bit only.
+     */
+    @Override
+    public int hashCode() {
+        return Long.valueOf(getHash()).hashCode();
     }
 
     /**

@@ -51,7 +51,7 @@ public class PropagatorInitTest implements Propagator {
         int litA = init.solverLiteral(a.getLiteral());
         int litB = init.solverLiteral(b.getLiteral());
         int litC = init.solverLiteral(c.getLiteral());
-        int lit = init.addLiteral();
+        int lit = init.addLiteral(true);
         init.addClause(new int[]{litA, -lit});
         init.addClause(new int[]{lit, -litA});
         init.addClause(new int[]{litB, -lit});

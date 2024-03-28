@@ -69,7 +69,7 @@ public class PropagateControl {
 
     /**
      * Adds a new positive volatile literal to the underlying solver thread.
-     *
+     * <p>
      * The literal is only valid within the current solving step and solver
      * thread. All volatile literals and clauses involving a volatile literal
      * are deleted after the current search.

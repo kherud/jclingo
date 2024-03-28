@@ -38,7 +38,7 @@ public class SymbolicAtom {
     /**
      * Creates a symbolic atom object from a pointer to a native symbolic atom set
      * and an associated iterator pointing to the specific atom.
-     *
+     * <p>
      * You probably do not want to call this explicitly, rather use the functionality of {@link SymbolicAtoms}
      *
      * @param symbolicAtoms pointer to the native symbolic atom set

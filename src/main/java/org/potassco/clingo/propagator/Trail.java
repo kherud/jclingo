@@ -95,6 +95,7 @@ public class Trail implements Iterable<Integer> {
         return intByReference.getValue();
     }
 
+    @Override
     public Iterator<Integer> iterator() {
         return iterator(0);
     }

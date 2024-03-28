@@ -16,7 +16,7 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.symbol;
 
 import com.sun.jna.ptr.LongByReference;
@@ -24,7 +24,7 @@ import org.potassco.clingo.internal.Clingo;
 
 /**
  * Represents a predicate signature.
- *
+ * <p>
  * Signatures have a name and an arity, and can be positive or negative (to
  * represent classical negation).
  */

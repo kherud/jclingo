@@ -50,7 +50,7 @@ public abstract class Symbol implements Comparable<Symbol> {
     }
 
     /**
-     * Get the type of a symbol.
+     * Get the type of symbol.
      *
      * @return the {@link SymbolType type} of the symbol
      */
@@ -105,7 +105,7 @@ public abstract class Symbol implements Comparable<Symbol> {
      * Returns a java object for the native long symbol
      *
      * @param symbol the native long id
-     * @return the java {@link Symbol}
+     * @return the java symbol
      */
     public static Symbol fromLong(long symbol) {
         int typeId = Clingo.INSTANCE.clingo_symbol_type(symbol);

@@ -36,6 +36,7 @@ import org.potassco.clingo.internal.NativeSize;
  * This class can be inherited to embed custom scripting languages into logic programs.
  */
 // TODO: think of a better concept
+@SuppressWarnings("ClassEscapesDefinedScope") // JNA structures must have public fields
 public class Script extends Structure {
 
     /**
@@ -131,6 +132,7 @@ public class Script extends Structure {
     public FreeCallback free = this::free;
     public String version;
 
+    @FunctionalInterface
     private interface ExecuteCallback extends Callback {
         /**
          * Evaluate the given source code.
@@ -148,6 +150,7 @@ public class Script extends Structure {
         void call(Location location, String code);
     }
 
+    @FunctionalInterface
     private interface CallCallback extends Callback {
         /**
          * Call the function with the given name and arguments.
@@ -169,6 +172,7 @@ public class Script extends Structure {
         void call(Location location, String name, long[] symbols, Clingo.SymbolCallback symbolCallback);
     }
 
+    @FunctionalInterface
     private interface CallableCallback extends Callback {
         /**
          * Check if the given function is callable.
@@ -187,6 +191,7 @@ public class Script extends Structure {
         boolean call(String name);
     }
 
+    @FunctionalInterface
     private interface MainCallback extends Callback {
         /**
          * Run the main function.
@@ -204,6 +209,7 @@ public class Script extends Structure {
     }
 
     // TODO: this does not seem to be a good solution
+    @FunctionalInterface
     private interface FreeCallback extends Callback {
         /**
          * This function is called once when the script is deleted.
@@ -218,6 +224,7 @@ public class Script extends Structure {
         Pointer call(Pointer data);
     }
 
+    @Override
     protected List<String> getFieldOrder() {
         return Arrays.asList("execute", "call", "callable", "main", "free", "version");
     }

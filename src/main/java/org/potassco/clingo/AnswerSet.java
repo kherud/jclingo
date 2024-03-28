@@ -30,7 +30,7 @@ public class AnswerSet {
     private final long[] cost;
     private final ModelType type;
 
-    public AnswerSet(List<Symbol> symbols, ModelType type, long[] cost) {
+    AnswerSet(List<Symbol> symbols, ModelType type, long[] cost) {
         this.symbols = symbols;
         this.type = type;
         this.cost = cost;

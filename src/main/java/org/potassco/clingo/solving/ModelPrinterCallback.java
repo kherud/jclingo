@@ -25,10 +25,12 @@ import com.sun.jna.Pointer;
 /**
  * Callback to customize model printing.
  */
+@FunctionalInterface
 public interface ModelPrinterCallback extends Callback {
     /**
      * Callback to print a model in default format.
      */
+    @FunctionalInterface
     interface DefaultModelPrinter extends Callback {
         /**
          * @param data user data for the callback

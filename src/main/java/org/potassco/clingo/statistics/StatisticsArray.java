@@ -41,6 +41,7 @@ public class StatisticsArray extends Statistics {
      *
      * @return the resulting size
      */
+    @Override
     public int size() {
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
         Clingo.check(Clingo.INSTANCE.clingo_statistics_array_size(statistics, key, nativeSizeByReference));

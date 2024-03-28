@@ -62,7 +62,7 @@ public class PropagatorControlTest implements Propagator {
         Assert.assertTrue(trail.size() >= 1);
         List<Integer> literals = new ArrayList<>();
         trail.iterator().forEachRemaining(literals::add);
-        Assert.assertTrue(literals.size() >= 1);
+		Assert.assertFalse(literals.isEmpty());
         Assert.assertEquals(-litA, (int) trail.iterator(level).next());
         Assert.assertEquals(-litA, assignment.getDecision(level));
         Assert.assertEquals(0, control.getThreadId());

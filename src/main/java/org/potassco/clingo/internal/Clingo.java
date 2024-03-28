@@ -61,8 +61,6 @@ public interface Clingo extends Library {
     Clingo INSTANCE = loadLibrary();
 
     static Clingo loadLibrary() {
-//        Map<String, Object> options = Map.of(Library.OPTION_TYPE_MAPPER, new ClingoTypeMapper());
-//        Native.setProtected(true);
         System.setProperty("jna.encoding", "UTF-8");
         return Native.load("clingo", Clingo.class);  // options
     }
@@ -3250,6 +3248,7 @@ public interface Clingo extends Library {
         public PropagatorDecideCallback decide;
     }
 
+    @FunctionalInterface
     interface PropagatorInitCallback extends Callback {
         /**
          * This function is called once before each solving step.
@@ -3270,6 +3269,7 @@ public interface Clingo extends Library {
         void call(PropagateInit init);
     }
 
+    @FunctionalInterface
     interface PropagatorPropagateCallback extends Callback {
         /**
          * Can be used to propagate solver literals given a partial assignment.
@@ -3301,6 +3301,7 @@ public interface Clingo extends Library {
         void call(PropagateControl control, int[] literals);
     }
 
+    @FunctionalInterface
     interface PropagatorUndoCallback extends Callback {
         /**
          * Called whenever a solver undoes assignments to watched solver literals.
@@ -3323,6 +3324,7 @@ public interface Clingo extends Library {
         void call(PropagateControl control, int[] changes);
     }
 
+    @FunctionalInterface
     interface PropagatorCheckCallback extends Callback {
         /**
          * This function is similar to @ref clingo_propagate_control_propagate() but is called without a change set on propagation fixpoints.
@@ -3343,6 +3345,7 @@ public interface Clingo extends Library {
         void call(PropagateControl control);
     }
 
+    @FunctionalInterface
     interface PropagatorDecideCallback extends Callback {
         /**
          * This function allows a propagator to implement domain-specific heuristics.
@@ -3404,6 +3407,7 @@ public interface Clingo extends Library {
         public ObserverTheoryAtomWithGuardCallback theoryAtomWithGuard;
     }
 
+    @FunctionalInterface
     interface ObserverInitProgramCallback extends Callback {
         /**
          * Called once in the beginning.
@@ -3422,6 +3426,7 @@ public interface Clingo extends Library {
         void call(boolean incremental);
     }
 
+    @FunctionalInterface
     interface ObserverBeginStepCallback extends Callback {
         /**
          * Marks the beginning of a block of directives passed to the solver.
@@ -3437,6 +3442,7 @@ public interface Clingo extends Library {
         void call();
     }
 
+    @FunctionalInterface
     interface ObserverEndStepCallback extends Callback {
         /**
          * Marks the end of a block of directives passed to the solver.
@@ -3454,6 +3460,7 @@ public interface Clingo extends Library {
         void call();
     }
 
+    @FunctionalInterface
     interface ObserverRuleCallback extends Callback {
         /**
          * Observe rules passed to the solver.
@@ -3478,6 +3485,7 @@ public interface Clingo extends Library {
         void call(boolean choice, int[] head, int[] body);
     }
 
+    @FunctionalInterface
     interface ObserverWeightRuleCallback extends Callback {
         /**
          * Observe weight rules passed to the solver.
@@ -3507,6 +3515,7 @@ public interface Clingo extends Library {
         void call(boolean choice, int[] head, int lowerBound, WeightedLiteral[] body);
     }
 
+    @FunctionalInterface
     interface ObserverMinimizeCallback extends Callback {
         /**
          * Observe minimize constraints (or weak constraints) passed to the solver.
@@ -3531,6 +3540,7 @@ public interface Clingo extends Library {
         void call(int priority, WeightedLiteral[] literals);
     }
 
+    @FunctionalInterface
     interface ObserverProjectCallback extends Callback {
         /**
          * Observe projection directives passed to the solver.
@@ -3550,6 +3560,7 @@ public interface Clingo extends Library {
         void call(int[] atoms);
     }
 
+    @FunctionalInterface
     interface ObserverOutputAtomCallback extends Callback {
         /**
          * Observe shown atoms passed to the solver.
@@ -3569,6 +3580,7 @@ public interface Clingo extends Library {
         void call(Symbol symbol, int atom);
     }
 
+    @FunctionalInterface
     interface ObserverOutputTermCallback extends Callback {
         /**
          * Observe shown terms passed to the solver.
@@ -3589,27 +3601,7 @@ public interface Clingo extends Library {
         void call(Symbol symbol, int[] condition);
     }
 
-    interface ObserverOutputCspCallback extends Callback {
-        /**
-         * Observe shown csp variables passed to the solver.
-         *
-         * @param symbol           the symbolic representation of the variable
-         * @param value            the value of the variable
-         * @param conditionPointer the literals of the condition
-         * @param sizeT            the size of the condition
-         * @param data             user data for the callback
-         * @return whether the call was successful
-         */
-        default byte callback(long symbol, int value, Pointer conditionPointer, NativeSize sizeT, Pointer data) {
-            int size = sizeT.intValue();
-            int[] condition = size == 0 ? new int[0] : conditionPointer.getIntArray(0, size);
-            call(Symbol.fromLong(symbol), value, condition);
-            return 1;
-        }
-
-        void call(Symbol symbol, int value, int[] condition);
-    }
-
+    @FunctionalInterface
     interface ObserverExternalCallback extends Callback {
         /**
          * Observe external statements passed to the solver.
@@ -3627,6 +3619,7 @@ public interface Clingo extends Library {
         void call(int atom, ExternalType type);
     }
 
+    @FunctionalInterface
     interface ObserverAssumeCallback extends Callback {
         /**
          * Observe assumption directives passed to the solver.
@@ -3646,6 +3639,7 @@ public interface Clingo extends Library {
         void call(int[] literals);
     }
 
+    @FunctionalInterface
     interface ObserverHeuristicCallback extends Callback {
         /**
          * Observe heuristic directives passed to the solver.
@@ -3669,6 +3663,7 @@ public interface Clingo extends Library {
         void call(int atom, HeuristicType type, int bias, int priority, int[] condition);
     }
 
+    @FunctionalInterface
     interface ObserverAcycEdgeCallback extends Callback {
         /**
          * Observe edge directives passed to the solver.
@@ -3690,6 +3685,7 @@ public interface Clingo extends Library {
         void call(int nodeU, int nodeV, int[] condition);
     }
 
+    @FunctionalInterface
     interface ObserverTheoryTermNumberCallback extends Callback {
         /**
          * Observe numeric theory terms.
@@ -3707,6 +3703,7 @@ public interface Clingo extends Library {
         void call(int termId, int number);
     }
 
+    @FunctionalInterface
     interface ObserverTheoryTermStringCallback extends Callback {
         /**
          * Observe string theory terms.
@@ -3724,6 +3721,7 @@ public interface Clingo extends Library {
         void call(int termId, String name);
     }
 
+    @FunctionalInterface
     interface ObserverTheoryTermCompoundCallback extends Callback {
         /**
          * Observe compound theory terms.
@@ -3751,6 +3749,7 @@ public interface Clingo extends Library {
         void call(int termId, int nameIdOrType, int[] arguments);
     }
 
+    @FunctionalInterface
     interface ObserverTheoryElementCallback extends Callback {
         /**
          * Observe theory elements.
@@ -3775,6 +3774,7 @@ public interface Clingo extends Library {
         void call(int elementId, int[] terms, int[] condition);
     }
 
+    @FunctionalInterface
     interface ObserverTheoryAtomCallback extends Callback {
         /**
          * Observe theory atoms without guard.
@@ -3796,6 +3796,7 @@ public interface Clingo extends Library {
         void call(int atomIdOrZero, int termId, int[] elements);
     }
 
+    @FunctionalInterface
     interface ObserverTheoryAtomWithGuardCallback extends Callback {
         /**
          * Observe theory atoms with guard.
@@ -3819,7 +3820,9 @@ public interface Clingo extends Library {
         void call(int atomIdOrZero, int termId, int[] elements, int operatorId, int rightHandSideId);
     }
 
-    // This struct contains a set of functions to customize the clingo application.
+    /**
+     * This struct contains a set of functions to customize the clingo application.
+     */
     @Structure.FieldOrder({"programName", "version", "messageLimit", "main", "logger", "modelPrinter", "registerOptions", "validateOptions"})
     class Application extends Structure {
         public ProgramNameCallback programName;
@@ -3832,7 +3835,10 @@ public interface Clingo extends Library {
         public ValidateOptionsCallback validateOptions;
     }
 
-    // callback to obtain program name
+    /**
+     * Callback to obtain program name
+     */
+    @FunctionalInterface
     interface ProgramNameCallback extends Callback {
         default String callback(Pointer data) {
             return call();
@@ -3841,7 +3847,10 @@ public interface Clingo extends Library {
         String call();
     }
 
-    // callback to obtain version information
+    /**
+     * Callback to obtain version information
+     */
+    @FunctionalInterface
     interface VersionCallback extends Callback {
         default String callback(Pointer data) {
             return call();
@@ -3850,7 +3859,10 @@ public interface Clingo extends Library {
         String call();
     }
 
-    // callback to obtain message limit
+    /**
+     * Callback to obtain message limit
+     */
+    @FunctionalInterface
     interface MessageLimitCallback extends Callback {
         default int callback(Pointer data) {
             return call();
@@ -3859,7 +3871,10 @@ public interface Clingo extends Library {
         int call();
     }
 
-    // callback to override clingo's main function
+    /**
+     * Callback to override clingo's main function
+     */
+    @FunctionalInterface
     interface MainFunctionCallback extends Callback {
         default byte callback(Pointer control, String[] files, NativeSize size, Pointer data) {
             int amountFiles = size.intValue();
@@ -3875,7 +3890,10 @@ public interface Clingo extends Library {
 
     }
 
-    // callback to register options
+    /**
+     * Callback to register options
+     */
+    @FunctionalInterface
     interface RegisterOptionsCallback extends Callback {
         default byte callback(Pointer options, Pointer data) {
             call(new ApplicationOptions(options));
@@ -3885,7 +3903,10 @@ public interface Clingo extends Library {
         void call(ApplicationOptions options);
     }
 
-    // callback validate options
+    /**
+     * Callback validate options
+     */
+    @FunctionalInterface
     interface ValidateOptionsCallback extends Callback {
         default boolean callback(Pointer data) {
             return validate();
@@ -3897,6 +3918,7 @@ public interface Clingo extends Library {
     /**
      * Callback function to inject symbols.
      */
+    @FunctionalInterface
     interface SymbolCallback extends Callback {
         /**
          * @param symbols     array of symbols

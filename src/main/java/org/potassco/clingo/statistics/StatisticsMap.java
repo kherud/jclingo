@@ -37,6 +37,7 @@ public class StatisticsMap extends Statistics {
      *
      * @return the resulting number
      */
+    @Override
     public int size() {
         NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
         Clingo.check(Clingo.INSTANCE.clingo_statistics_map_size(statistics, key, nativeSizeByReference));

@@ -47,6 +47,7 @@ public class WeightedLiteral extends Structure {
         this.weight = weight;
     }
 
+    @Override
     protected List<String> getFieldOrder() {
         return Arrays.asList("literal", "weight");
     }

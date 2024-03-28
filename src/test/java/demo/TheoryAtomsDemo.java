@@ -11,8 +11,7 @@ import org.potassco.clingo.theory.TheoryAtoms;
 
 public class TheoryAtomsDemo {
 
-    private static final String theory = "" +
-            "#theory t {\n" +
+    private static final String theory = "#theory t {\n" +
             "      term   { + : 1, binary, left };\n" +
             "      &a/0 : term, any;\n" +
             "      &b/1 : term, {=}, term, any\n" +
@@ -37,7 +36,7 @@ public class TheoryAtomsDemo {
         int literal = 0;
         // verify that theory atom b has a guard
         for (TheoryAtom theoryAtom : theoryAtoms) {
-            if (!theoryAtom.getTerm().getName().equals("b"))
+            if (!"b".equals(theoryAtom.getTerm().getName()))
                 continue;
             // get the literal associated with the theory atom
             literal = theoryAtom.getLiteral();

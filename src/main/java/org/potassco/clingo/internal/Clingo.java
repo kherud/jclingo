@@ -1105,6 +1105,22 @@ public interface Clingo extends Library {
     int clingo_propagate_init_get_check_mode(Pointer init);
 
     /**
+     * Configure when to call the undo method of the propagator (see {@link Propagator#check}).
+     *
+     * @param init the target
+     * @param mode mode when to call the propagator
+     */
+    void clingo_propagate_init_set_undo_mode(Pointer init, int mode);
+
+    /**
+     * Get the current undo mode of the propagator (see {@link Propagator#undo}).
+     *
+     * @param init the target
+     * @return the undo mode
+     */
+    int clingo_propagate_init_get_undo_mode(Pointer init);
+
+    /**
      * Get the top level assignment solver.
      *
      * @param init the target
@@ -1118,8 +1134,9 @@ public interface Clingo extends Library {
      * To be able to use the variable in clauses during propagation or add watches to it, it has to be frozen.
      * Otherwise, it might be removed during preprocessing.
      * <p>
-     * If varibales were added, subsequent calls to functions adding constraints or {@link Clingo#clingo_propagate_init_propagate} are expensive.
-     * It is best to add varables in batches.
+     * If variables were added, subsequent calls to functions adding constraints or
+     * {@link Clingo#clingo_propagate_init_propagate} are expensive.
+     * It is best to add variables in batches.
      *
      * @param init   the target
      * @param freeze whether to freeze the literal
@@ -1522,9 +1539,9 @@ public interface Clingo extends Library {
      * Add a theory atom element.
      *
      * @param backend the target backend
-     * @param tuple the array of term ids represeting the tuple
+     * @param tuple the array of term ids representing the tuple
      * @param tuple_size the size of the tuple
-     * @param condition an array of program literals represeting the condition
+     * @param condition an array of program literals representing the condition
      * @param condition_size the size of the condition
      * @param element_id the resulting element id
      * @return whether the call was successful; might set one of the following error codes:
@@ -1534,31 +1551,39 @@ public interface Clingo extends Library {
 
     /**
      * Add a theory atom without a guard.
+     * <p>
+     * If atom is set to zero, the theory atom is a directive,
+     * The atom is set to UINT32_MAX, the theory atom receives a fresh atom,
+     * and otherwise the theory atom receives the given atom id.
      *
      * @param backend the target backend
-     * @param atom_id_or_zero a program atom or zero for theory directives
+     * @param atom an undefined value, program atom, or zero for theory directives
      * @param term_id the term id of the term associated with the theory atom
      * @param elements an array of element ids for the theory atoms's elements
      * @param size the number of elements
+     * @param atom_id the final program atom of the theory atom
      * @return whether the call was successful; might set one of the following error codes:
      * Throws {@link ErrorCode#BAD_ALLOC}
      */
-    byte clingo_backend_theory_atom(Pointer backend, int atom_id_or_zero, int term_id, IntByReference elements, NativeSize size);
+    byte clingo_backend_theory_atom(Pointer backend, int atom, int term_id, int[] elements, NativeSize size, IntByReference atom_id);
 
     /**
      * Add a theory atom with a guard.
+     * <p>
+     * See the note regarding atom at {@link #clingo_backend_theory_atom}.
      *
      * @param backend the target backend
-     * @param atom_id_or_zero a program atom or zero for theory directives
+     * @param atom an undefined value, program atom, or zero for theory directives
      * @param term_id the term id of the term associated with the theory atom
      * @param elements an array of element ids for the theory atoms's elements
      * @param size the number of elements
      * @param operator_name the string representation of a theory operator
      * @param right_hand_side_id the term id of the right hand side term
+     * @param atom_id the final program atom of the theory atom
      * @return whether the call was successful; might set one of the following error codes:
      * Throws {@link ErrorCode#BAD_ALLOC}
      */
-    byte clingo_backend_theory_atom_with_guard(Pointer backend, int atom_id_or_zero, int term_id, int[] elements, NativeSize size, String operator_name, int right_hand_side_id);
+    byte clingo_backend_theory_atom_with_guard(Pointer backend, int atom, int term_id, int[] elements, NativeSize size, String operator_name, int right_hand_side_id, IntByReference atom_id);
 
     // configuration
 
@@ -1957,6 +1982,22 @@ public interface Clingo extends Library {
     byte clingo_model_is_true(Pointer model, int literal, ByteByReference result);
 
     /**
+     * Check if the given literal is a consequence.
+     * <p>
+     * While enumerating cautious or brave consequences, there is partial
+     * information about which literals are consequences. The current state of a
+     * literal can be requested using this function. If this function is used
+     * during normal model enumeration, the function just returns whether a
+     * literal is true of false in the current model.
+     *
+     * @param model the target
+     * @param literal the literal to lookup
+     * @param result whether the literal is a consequence
+     * @return whether the call was successful
+     */
+    byte clingo_model_is_consequence(Pointer model, int literal, IntByReference result);
+
+    /**
      * Get the number of cost values of a model.
      *
      * @param model the target
@@ -1977,6 +2018,22 @@ public interface Clingo extends Library {
      * </ul>
      */
     byte clingo_model_cost(Pointer model, long[] costs, NativeSize size);
+
+    /**
+     * Get the priorities of the costs.
+     * <p>
+     * The size of the array can be obtained with {@link #clingo_model_cost_size(Pointer, NativeSizeByReference)}.
+     *
+     * @param model the target
+     * @param priorities the resulting priorities
+     * @param size the number of priorities
+     * @return whether the call was successful; might set one of the following error codes:
+     * <ul>
+     * <li>{@link ErrorCode#BAD_ALLOC}</li>
+     * <li>{@link ErrorCode#RUNTIME} if the size is too small</li>
+     * </ul>
+     */
+    byte clingo_model_priority(Pointer model, int[] priorities, NativeSize size);
 
     /**
      * Whether the optimality of a model has been proven.

@@ -1,4 +1,4 @@
-![Clingo Version 5.6.2](https://img.shields.io/badge/clingo-5.6.2-informational)
+![Clingo Version 5.7.1](https://img.shields.io/badge/clingo-5.7.1-informational)
 
 # Java Bindings for [Clingo](https://github.com/potassco/clingo): A grounder and solver for logic programs
 

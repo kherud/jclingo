@@ -2,6 +2,7 @@ package org.potassco.clingo.backend;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Enumeration of different heuristic modifiers.
@@ -33,7 +34,7 @@ public enum HeuristicType {
 	}
 
 	public static HeuristicType fromValue(int type) {
-		return mapping.get(type);
+		return Objects.requireNonNull(mapping.get(type));
 	}
 
     private final int type;

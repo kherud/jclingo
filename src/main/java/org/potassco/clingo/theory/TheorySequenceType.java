@@ -21,6 +21,7 @@ package org.potassco.clingo.theory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Enumeration of theory sequence types.
@@ -31,13 +32,13 @@ public enum TheorySequenceType {
      */
     TUPLE(0),
     /**
-     * Theory lists "[t1,...,tn]".
-     */
-    LIST(1),
-    /**
      * Theory sets "{t1,...,tn}".
      */
-    SET(2);
+    SET(1),
+    /**
+     * Theory lists "[t1,...,tn]".
+     */
+    LIST(2);
 
     private static final Map<Integer, TheorySequenceType> mapping = new HashMap<>();
 
@@ -51,7 +52,7 @@ public enum TheorySequenceType {
     }
 
     public static TheorySequenceType fromValue(int type) {
-        return mapping.get(type);
+        return Objects.requireNonNull(mapping.get(type));
     }
 
     private final int type;

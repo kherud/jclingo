@@ -2,6 +2,7 @@ package org.potassco.clingo.propagator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Enumeration of clause types determining the lifetime of a clause.
@@ -41,7 +42,7 @@ public enum ClauseType {
     }
 
     public static ClauseType fromValue(int type) {
-        return mapping.get(type);
+        return Objects.requireNonNull(mapping.get(type));
     }
 
     private final int type;

@@ -3,6 +3,7 @@ package org.potassco.clingo.symbol;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Enumeration of available symbol types.
@@ -43,7 +44,7 @@ public enum SymbolType {
     }
 
     public static SymbolType fromValue(int type) {
-        return mapping.get(type);
+        return Objects.requireNonNull(mapping.get(type));
     }
 
     private final int type;

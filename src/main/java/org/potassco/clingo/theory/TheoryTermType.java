@@ -3,6 +3,7 @@ package org.potassco.clingo.theory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Enumeration of theory term types.
@@ -47,7 +48,7 @@ public enum TheoryTermType {
     }
 
     public static TheoryTermType fromValue(int type) {
-        return mapping.get(type);
+        return Objects.requireNonNull(mapping.get(type));
     }
 
     private final int type;

@@ -2,6 +2,7 @@ package org.potassco.clingo.propagator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Supported check modes for propagators.
@@ -23,7 +24,7 @@ public enum PropagatorCheckMode {
     /**
      * call {@link Propagator#check} on propagation fixpoints
      */
-    PARTIAL(2),
+    FIXPOINT(2),
     /**
      * call {@link Propagator#check} on propagation fixpoints and total assignments
      */
@@ -41,7 +42,7 @@ public enum PropagatorCheckMode {
     }
 
     public static PropagatorCheckMode fromValue(int type) {
-        return mapping.get(type);
+        return Objects.requireNonNull(mapping.get(type));
     }
 
     private final int mode;

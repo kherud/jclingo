@@ -2,6 +2,7 @@ package org.potassco.clingo.statistics;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Enumeration for entries of the statistics.
@@ -38,7 +39,7 @@ public enum StatisticsType {
     }
 
     public static StatisticsType fromValue(int type) {
-        return mapping.get(type);
+        return Objects.requireNonNull(mapping.get(type));
     }
 
     private final int type;

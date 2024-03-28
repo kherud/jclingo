@@ -3,6 +3,7 @@ package org.potassco.clingo.solving;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represents three-valued truth values.
@@ -35,7 +36,7 @@ public enum TruthValue {
     }
 
     public static TruthValue fromValue(int type) {
-        return mapping.get(type);
+        return Objects.requireNonNull(mapping.get(type));
     }
 
     private final int type;

@@ -2,6 +2,7 @@ package org.potassco.clingo.backend;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Enumeration of different external statements.
@@ -29,7 +30,7 @@ public enum ExternalType {
 	}
 
 	public static ExternalType fromValue(int type) {
-		return mapping.get(type);
+		return Objects.requireNonNull(mapping.get(type));
 	}
 
     private final int type;

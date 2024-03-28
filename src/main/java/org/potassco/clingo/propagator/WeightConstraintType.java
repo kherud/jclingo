@@ -3,6 +3,7 @@ package org.potassco.clingo.propagator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Enumeration of weight constraint types.
@@ -28,7 +29,7 @@ public enum WeightConstraintType {
 	}
 
 	public static WeightConstraintType fromValue(int type) {
-		return mapping.get(type);
+		return Objects.requireNonNull(mapping.get(type));
 	}
 
     private final int type;

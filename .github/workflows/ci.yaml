@@ -3,7 +3,7 @@
 # to speed up the process.
 
 name: Continuous Integration
-on: ["push", "workflow_dispatch"]
+on: [ "push", "workflow_dispatch" ]
 env:
   CLINGO_RELEASE: "v5.7.1"
 jobs:
@@ -46,9 +46,10 @@ jobs:
           java-version: '11'
       - name: Run tests
         shell: bash
-        run: mvn test
+        run: cd ${{ github.workspace }}/jclingo && mvn test
 
   build-and-test-windows:
+    name: Run windows-latest
     runs-on: windows-latest
     steps:
       - name: Checkout clingo
@@ -78,4 +79,4 @@ jobs:
           java-version: '11'
       - name: Run tests
         shell: cmd
-        run: mvn test
+        run: cd ${{ github.workspace }}\jclingo && mvn test

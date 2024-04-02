@@ -71,7 +71,7 @@ jobs:
       - name: Move library
         run: |
           cd ${{ github.workspace }}
-          if not exist "jclingo\src\main\resources" mkdir jclingo\src\main\resources
+          mkdir jclingo\src\main\resources
           move clingo\build\bin\Release\clingo.dll jclingo\src\main\resources
       - uses: actions/setup-java@v4
         with:

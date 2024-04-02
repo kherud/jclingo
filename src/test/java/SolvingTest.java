@@ -294,7 +294,7 @@ public class SolvingTest {
 		Assert.assertTrue(solveResult.exhausted());
 	}
 
-	static class TestCallback extends SolveEventCallback {
+	public static class TestCallback extends SolveEventCallback {
 		final List<ModelTuple> models = new ArrayList<>();
 		final List<long[]> cores = new ArrayList<>();
 		SolveResult solveResult;

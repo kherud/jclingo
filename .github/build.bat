@@ -14,6 +14,6 @@ cmake -H. -Bbuild %* ^
 cmake --build build ^
       --config Release ^
       --target libclingo ^
-      -j $(nproc)
+      -j %NUMBER_OF_PROCESSORS%
 
 if errorlevel 1 exit /b %ERRORLEVEL%

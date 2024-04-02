@@ -49,14 +49,7 @@ jobs:
         run: mvn test
 
   build-and-test-windows:
-    name: Run ${{ matrix.runner }}
-    runs-on: ${{ matrix.runner }}
-    strategy:
-      fail-fast: false
-      matrix:
-        runner:
-          - ubuntu-latest
-          - macos-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout clingo
         uses: actions/checkout@v4

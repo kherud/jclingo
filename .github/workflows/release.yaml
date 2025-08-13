@@ -53,7 +53,7 @@ jobs:
       - name: Upload clingo
         uses: actions/upload-artifact@v4
         with:
-          name: libraries
+          name: libraries-${{ matrix.target.name }}
           path: ${{ github.workspace }}/jclingo/src/main/resources/
 
 
@@ -97,7 +97,7 @@ jobs:
       - name: Upload clingo
         uses: actions/upload-artifact@v4
         with:
-          name: libraries
+          name: libraries-${{ matrix.target.name }}
           path: ${{ github.workspace }}/jclingo/src/main/resources/
 
 
@@ -149,7 +149,7 @@ jobs:
       - name: Upload clingo
         uses: actions/upload-artifact@v4
         with:
-          name: libraries
+          name: libraries-${{ matrix.target.name }}
           path: ${{ github.workspace }}\jclingo\src\main\resources\
 
 
@@ -159,9 +159,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: libraries
+          pattern: libraries*
+          merge-multiple: true
           path: ${{ github.workspace }}/src/main/resources/
       - uses: actions/setup-java@v4
         with:
@@ -178,9 +179,10 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: libraries
+          pattern: libraries*
+          merge-multiple: true
           path: ${{ github.workspace }}/src/main/resources/
       - uses: actions/setup-java@v4
         with:
@@ -197,9 +199,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: libraries
+          pattern: libraries*
+          merge-multiple: true
           path: ${{ github.workspace }}\src\main\resources\
       - uses: actions/setup-java@v4
         with:
@@ -220,9 +223,10 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: libraries
+          pattern: libraries*
+          merge-multiple: true
           path: ${{ github.workspace }}/src/main/resources/
       - uses: actions/setup-java@v3
         with:
@@ -241,9 +245,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: libraries
+          pattern: libraries*
+          merge-multiple: true
           path: ${{ github.workspace }}/src/main/resources/
       - name: Set up Maven Central Repository
         uses: actions/setup-java@v3

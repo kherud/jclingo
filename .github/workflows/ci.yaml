@@ -5,7 +5,7 @@
 name: Continuous Integration
 on: [ "push", "workflow_dispatch" ]
 env:
-  CLINGO_RELEASE: "v5.7.1"
+  CLINGO_RELEASE: "v5.8.0"
 jobs:
 
   # don't split these stages to avoid up/downloading any artefacts and immediately start testing after build

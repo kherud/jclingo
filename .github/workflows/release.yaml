@@ -51,7 +51,7 @@ jobs:
           mkdir -p jclingo/src/main/resources/${{ matrix.target.name }}
           cp -p clingo/build/bin/libclingo.so jclingo/src/main/resources/${{ matrix.target.name }}/libclingo.so
       - name: Upload clingo
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: libraries
           path: ${{ github.workspace }}/jclingo/src/main/resources/
@@ -95,7 +95,7 @@ jobs:
           mkdir -p jclingo/src/main/resources/${{ matrix.target.name }}
           cp -p clingo/build/bin/libclingo.dylib jclingo/src/main/resources/${{ matrix.target.name }}/libclingo.dylib
       - name: Upload clingo
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: libraries
           path: ${{ github.workspace }}/jclingo/src/main/resources/
@@ -147,7 +147,7 @@ jobs:
           mkdir jclingo\src\main\resources\${{ matrix.target.name }}
           move clingo\build\bin\Release\clingo.dll jclingo\src\main\resources\${{ matrix.target.name }}
       - name: Upload clingo
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: libraries
           path: ${{ github.workspace }}\jclingo\src\main\resources\

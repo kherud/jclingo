@@ -9,7 +9,7 @@ on:
   release:
     types: [created]
 env:
-  CLINGO_RELEASE: "v5.7.1"
+  CLINGO_RELEASE: "v5.8.0"
 jobs:
 
   build-linux-docker:

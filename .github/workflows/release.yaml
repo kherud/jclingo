@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       build_only:
-        description: 'Whether to only build the project and skip releasing it (yes/NO/jar)'
+        description: 'Whether to only build the project and skip releasing it (yes/NO)'
         required: false
         default: 'no'
   release:
@@ -211,7 +211,7 @@ jobs:
 
   release-github-packages:
     name: Publish to GitHub packages
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_only == 'no' || github.event.inputs.build_only == 'jar' }}
+    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_only == 'no' }}
     needs: [test-linux,test-macos,test-windows]
     runs-on: ubuntu-latest
     permissions:

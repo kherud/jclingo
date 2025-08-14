@@ -58,7 +58,7 @@ This repository provides out of the box support for the following platforms:
 
 - Linux: x86_64, arm64 (glibc)
 - MacOS: x86_64, arm64 (m1)
-- Windows: x86, x86_64, arm, arm64
+- Windows: x86, x86_64, arm64
 
 ## Setup Required
 

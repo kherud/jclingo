@@ -5,7 +5,7 @@
 
 	<groupId>org.potassco</groupId>
 	<artifactId>clingo</artifactId>
-	<version>1.1.0</version>
+	<version>5.8.0-001</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Java Bindings for Clingo: A grounder and solver for logic programs</description>

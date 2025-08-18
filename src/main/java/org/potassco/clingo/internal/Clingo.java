@@ -540,7 +540,7 @@ public interface Clingo extends Library {
      *
      * @param atoms    the target
      * @param iterator iterator to the atom
-     * @param external whether the atom is a external
+     * @param external whether the atom is an external
      * @return whether the call was successful
      */
     byte clingo_symbolic_atoms_is_external(Pointer atoms, long iterator, ByteByReference external);
@@ -961,7 +961,7 @@ public interface Clingo extends Library {
      * Check if the assignment is total, i.e. there are no free literal.
      *
      * @param assignment the target
-     * @return wheather the assignment is total
+     * @return whether the assignment is total
      */
     byte clingo_assignment_is_total(Pointer assignment);
 
@@ -994,7 +994,7 @@ public interface Clingo extends Library {
     /**
      * Returns the offset following the last literal with the given decision level.
      * <p>
-     * This function is the counter part to {@link Clingo#clingo_assignment_trail_begin}.
+     * This function is the counterpart to {@link Clingo#clingo_assignment_trail_begin}.
      *
      * @param assignment the target
      * @param level      the decision level
@@ -1066,9 +1066,10 @@ public interface Clingo extends Library {
     /**
      * Freeze the given solver literal.
      * <p>
-     * Any solver literal that is not frozen is subject to simplification and might be removed in a preprocessing step after propagator initialization.
-     * A propagator should freeze all literals over which it might add clauses during propagation.
-     * Note that any watched literal is automatically frozen and that it does not matter which phase of the literal is frozen.
+     * Any solver literal that is not frozen is subject to simplification and might be removed in a preprocessing step
+	 * after propagator initialization. A propagator should freeze all literals over which it might add clauses during
+	 * propagation. Note that any watched literal is automatically frozen and that it does not matter which phase of the
+	 * literal is frozen.
      *
      * @param init           the target
      * @param solver_literal the solver literal
@@ -1573,7 +1574,7 @@ public interface Clingo extends Library {
      * @param backend the target backend
      * @param atom an undefined value, program atom, or zero for theory directives
      * @param term_id the term id of the term associated with the theory atom
-     * @param elements an array of element ids for the theory atoms's elements
+     * @param elements an array of element ids for the theory atom's elements
      * @param size the number of elements
      * @param atom_id the final program atom of the theory atom
      * @return whether the call was successful; might set one of the following error codes:
@@ -1589,7 +1590,7 @@ public interface Clingo extends Library {
      * @param backend the target backend
      * @param atom an undefined value, program atom, or zero for theory directives
      * @param term_id the term id of the term associated with the theory atom
-     * @param elements an array of element ids for the theory atoms's elements
+     * @param elements an array of element ids for the theory atom's elements
      * @param size the number of elements
      * @param operator_name the string representation of a theory operator
      * @param right_hand_side_id the term id of the right hand side term
@@ -1682,7 +1683,7 @@ public interface Clingo extends Library {
      *
      * @param configuration the target configuration
      * @param key           the key
-     * @param name          the name to lookup the subkey
+     * @param name          the name to look up the subkey
      * @param result        whether the key is in the map
      * @return whether the call was successful
      */
@@ -1709,7 +1710,7 @@ public interface Clingo extends Library {
      *
      * @param configuration the target configuration
      * @param key           the key
-     * @param name          the name to lookup the subkey
+     * @param name          the name to look up the subkey
      * @param subkey        the resulting subkey
      * @return whether the call was successful
      */
@@ -1876,7 +1877,7 @@ public interface Clingo extends Library {
      *
      * @param statistics the target statistics
      * @param key        the key
-     * @param name       the name to lookup the subkey
+     * @param name       the name to look up the subkey
      * @param subkey     the resulting subkey
      * @return whether the call was successful
      */
@@ -2946,7 +2947,7 @@ public interface Clingo extends Library {
      * <p>
      * This function removes atoms from domains that are false and marks atoms as
      * facts that are true.  With multi-shot solving, this can result in smaller
-     * groundings because less rules have to be instantiated and more
+     * groundings because fewer rules have to be instantiated and more
      * simplifications can be applied.
      * <p>
      * It is typically not necessary to call this function manually because

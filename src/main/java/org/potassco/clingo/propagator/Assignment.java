@@ -29,7 +29,7 @@ import org.potassco.clingo.internal.NativeSize;
 import org.potassco.clingo.solving.TruthValue;
 
 /**
- * Class to inspect the (parital) assignment of an associated solver.
+ * Class to inspect the (partial) assignment of an associated solver.
  * <p>
  * Assigns truth values to solver literals.  Each solver literal is either
  * true, false, or undefined.

@@ -56,7 +56,7 @@ public class SymbolTest {
     @Test
     public void testFunction() {
         Function function = new Function("f", false, new Number(1));
-        Assert.assertArrayEquals(function.getArguments(), new Symbol[]{new Number(1)});
+        Assert.assertArrayEquals(new Symbol[]{new Number(1)}, function.getArguments());
         Assert.assertFalse(function.isPositive());
         Assert.assertTrue(function.isNegative());
         Assert.assertEquals("f", function.getName());

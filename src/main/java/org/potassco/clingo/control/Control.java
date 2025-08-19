@@ -314,6 +314,22 @@ public class Control implements AutoCloseable {
         Clingo.check(Clingo.INSTANCE.clingo_control_load(control, path.toString()));
     }
 
+	/**
+	 * Load files in aspif format. This function should be called on an empty control object. If more than one file is
+	 * given, they are merged into one file. Only the first one should have a preamble.
+	 *
+	 * @param paths A list of files to load.
+	 */
+	public void loadAspif(Path... paths) {
+		if (paths.length > 0) {
+			String[] files = new String[paths.length];
+			for (int i = 0; i < paths.length; i++) {
+				files[i] = paths[i].toString();
+			}
+			Clingo.check(Clingo.INSTANCE.clingo_control_load_aspif(control, files, new NativeSize(paths.length)));
+		}
+	}
+
     /**
      * Assign a truth value to an external atom.
      * <p>
@@ -609,6 +625,37 @@ public class Control implements AutoCloseable {
     public boolean isConflicting() {
         return Clingo.INSTANCE.clingo_control_is_conflicting(control) > 0;
     }
+
+	/**
+	 * Remove minimize constraints from the program. After this call, the program no longer contains any minimize
+	 * constraints.
+	 */
+	public void removeMinimize() {
+		Clingo.check(Clingo.INSTANCE.clingo_control_remove_minimize(control));
+	}
+
+	/**
+	 * Add, replace, or remove atoms to project on to the program:
+	 * <ul>
+	 *     <li>To add: <code>updateProject(atoms, true)</code></li>
+	 *     <li>To replace: <code>updateProject(atoms, false)</code></li>
+	 *     <li>To remove: <code>updateProject([], false)</code></li>
+	 * </ul>
+	 * @param atoms the projection atoms to add/set
+	 * @param append whether to append to (true) or replace (false) any previously added projection variables
+	 */
+	public void updateProject(SymbolicAtom[] atoms, boolean append) {
+		int[] literals = new int[atoms.length];
+		for (int i = 0; i < atoms.length; i++) {
+			literals[i] = atoms[i].getLiteral();
+		}
+		Clingo.check(Clingo.INSTANCE.clingo_control_update_project(
+				control,
+				literals,
+				new NativeSize(atoms.length),
+				append ? (byte) 1 : 0
+		));
+	}
 
     /**
      * Return the symbol for a constant definition of form <code>#const name = symbol</code>.

@@ -3023,7 +3023,7 @@ public interface Clingo extends Library {
 	 * <li>{@link ErrorCode#BAD_ALLOC}</li>
 	 * </ul>
 	 */
-	byte clingo_control_update_project(Pointer control, IntByReference atoms, NativeSize size, byte append);
+	byte clingo_control_update_project(Pointer control, int[] atoms, NativeSize size, byte append);
 
     /**
      * Register a custom propagator with the control object.

@@ -53,7 +53,7 @@ public class StatisticsTest {
         Control control = new Control("-t", "2", "--stats=2");
         control.add("1 { a; b }.");
         control.ground();
-        control.solve(onStatistics, SolveMode.NONE);
+        control.solve(onStatistics, SolveMode.NONE).getSolveResult();
         Statistics statistics = control.getStatistics();
 
         StatisticsMap map = (StatisticsMap) statistics.get("user_step.test");
@@ -80,7 +80,7 @@ public class StatisticsTest {
         Control control = new Control("-t", "2", "--stats=2");
         control.add("1 { a; b }.");
         control.ground();
-        control.solve();
+        control.solve().getSolveResult();
         Statistics statistics = control.getStatistics();
         Assert.assertTrue(statistics.get("problem.lp.atoms").get() >= 2.);
         Assert.assertTrue(statistics.get("solving.solvers.choices").get() >= 1.);

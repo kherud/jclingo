@@ -89,8 +89,7 @@ public class AstTest {
         Ast copy2 = asts.get(asts.size() - 1);
         Assert.assertEquals(alternative, copy2.toString());
 
-        Control control = new Control();
-        try (ProgramBuilder builder = new ProgramBuilder(control)) {
+        try (Control control = new Control(); ProgramBuilder builder = new ProgramBuilder(control)) {
             try {
                 builder.add(copy2);
             } catch (Exception e) {

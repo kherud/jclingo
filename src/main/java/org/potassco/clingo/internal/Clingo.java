@@ -540,7 +540,7 @@ public interface Clingo extends Library {
      *
      * @param atoms    the target
      * @param iterator iterator to the atom
-     * @param external whether the atom is a external
+     * @param external whether the atom is an external
      * @return whether the call was successful
      */
     byte clingo_symbolic_atoms_is_external(Pointer atoms, long iterator, ByteByReference external);
@@ -961,7 +961,7 @@ public interface Clingo extends Library {
      * Check if the assignment is total, i.e. there are no free literal.
      *
      * @param assignment the target
-     * @return wheather the assignment is total
+     * @return whether the assignment is total
      */
     byte clingo_assignment_is_total(Pointer assignment);
 
@@ -994,7 +994,7 @@ public interface Clingo extends Library {
     /**
      * Returns the offset following the last literal with the given decision level.
      * <p>
-     * This function is the counter part to {@link Clingo#clingo_assignment_trail_begin}.
+     * This function is the counterpart to {@link Clingo#clingo_assignment_trail_begin}.
      *
      * @param assignment the target
      * @param level      the decision level
@@ -1066,9 +1066,10 @@ public interface Clingo extends Library {
     /**
      * Freeze the given solver literal.
      * <p>
-     * Any solver literal that is not frozen is subject to simplification and might be removed in a preprocessing step after propagator initialization.
-     * A propagator should freeze all literals over which it might add clauses during propagation.
-     * Note that any watched literal is automatically frozen and that it does not matter which phase of the literal is frozen.
+     * Any solver literal that is not frozen is subject to simplification and might be removed in a preprocessing step
+	 * after propagator initialization. A propagator should freeze all literals over which it might add clauses during
+	 * propagation. Note that any watched literal is automatically frozen and that it does not matter which phase of the
+	 * literal is frozen.
      *
      * @param init           the target
      * @param solver_literal the solver literal
@@ -1573,7 +1574,7 @@ public interface Clingo extends Library {
      * @param backend the target backend
      * @param atom an undefined value, program atom, or zero for theory directives
      * @param term_id the term id of the term associated with the theory atom
-     * @param elements an array of element ids for the theory atoms's elements
+     * @param elements an array of element ids for the theory atom's elements
      * @param size the number of elements
      * @param atom_id the final program atom of the theory atom
      * @return whether the call was successful; might set one of the following error codes:
@@ -1589,7 +1590,7 @@ public interface Clingo extends Library {
      * @param backend the target backend
      * @param atom an undefined value, program atom, or zero for theory directives
      * @param term_id the term id of the term associated with the theory atom
-     * @param elements an array of element ids for the theory atoms's elements
+     * @param elements an array of element ids for the theory atom's elements
      * @param size the number of elements
      * @param operator_name the string representation of a theory operator
      * @param right_hand_side_id the term id of the right hand side term
@@ -1682,7 +1683,7 @@ public interface Clingo extends Library {
      *
      * @param configuration the target configuration
      * @param key           the key
-     * @param name          the name to lookup the subkey
+     * @param name          the name to look up the subkey
      * @param result        whether the key is in the map
      * @return whether the call was successful
      */
@@ -1709,7 +1710,7 @@ public interface Clingo extends Library {
      *
      * @param configuration the target configuration
      * @param key           the key
-     * @param name          the name to lookup the subkey
+     * @param name          the name to look up the subkey
      * @param subkey        the resulting subkey
      * @return whether the call was successful
      */
@@ -1876,7 +1877,7 @@ public interface Clingo extends Library {
      *
      * @param statistics the target statistics
      * @param key        the key
-     * @param name       the name to lookup the subkey
+     * @param name       the name to look up the subkey
      * @param subkey     the resulting subkey
      * @return whether the call was successful
      */
@@ -2177,6 +2178,20 @@ public interface Clingo extends Library {
      * </ul>
      */
     byte clingo_solve_handle_core(Pointer handle, PointerByReference core, NativeSizeByReference size);
+
+	/**
+	 * When a problem is satisfiable and the search is finished, get the last computed model. If the program is
+	 * unsatisfiable or the search is not finished, model is set to NULL.
+	 *
+	 * @param handle the target
+	 * @param model the last computed model (or NULL if the program is unsatisfiable or the search is still ongoing)
+	 * @return whether the call was successful; might set one of the following error codes:
+	 * <ul>
+	 * <li>{@link ErrorCode#BAD_ALLOC}</li>
+	 * <li>{@link ErrorCode#RUNTIME} if solving fails</li>
+	 * </ul>
+	 */
+	byte clingo_solve_handle_last(Pointer handle, PointerByReference model);
 
     /**
      * Discards the last model and starts the search for the next one.
@@ -2849,6 +2864,21 @@ public interface Clingo extends Library {
      */
     byte clingo_control_load(Pointer control, String file);
 
+	/**
+	 * Load files in aspif format. This function should be called on an empty control object. If more than one file is
+	 * given, they are merged into one file. Only the first one should have a preamble.
+	 *
+	 * @param control the target
+	 * @param files the array of files to load
+	 * @param size the size of the array
+	 * @return whether the call was successful; might set one of the following error codes:
+	 * <ul>
+	 * <li>{@link ErrorCode#BAD_ALLOC}</li>
+	 * <li>{@link ErrorCode#RUNTIME} if parsing or checking fails</li>
+	 * </ul>
+	 */
+	byte clingo_control_load_aspif(Pointer control, String[] files, NativeSize size);
+
     /**
      * Extend the logic program with the given non-ground logic program in string form.
      * <p>
@@ -2917,7 +2947,7 @@ public interface Clingo extends Library {
      * <p>
      * This function removes atoms from domains that are false and marks atoms as
      * facts that are true.  With multi-shot solving, this can result in smaller
-     * groundings because less rules have to be instantiated and more
+     * groundings because fewer rules have to be instantiated and more
      * simplifications can be applied.
      * <p>
      * It is typically not necessary to call this function manually because
@@ -2966,6 +2996,34 @@ public interface Clingo extends Library {
      * </ul>
      */
     byte clingo_control_release_external(Pointer control, int literal);
+
+	/**
+	 * Remove minimize constraints from the program. After this call, the program no longer contains any minimize
+	 * constraints.
+	 *
+	 * @param control the target
+	 * @return whether the call was successful; might set one of the following error codes:
+	 * <ul>
+	 * <li>{@link ErrorCode#BAD_ALLOC}</li>
+	 * </ul>
+	 */
+	byte clingo_control_remove_minimize(Pointer control);
+
+	/**
+	 * Add to or replace the set of projection variables. If <code>append</code> is true, the function adds the given
+	 * atoms to the set of projection variables. Otherwise, it discards any previously added projection variables and
+	 * sets the given atoms as the new set of projection variables.
+	 *
+	 * @param control the target
+	 * @param atoms the projection atoms to add/set
+	 * @param size the number of atoms
+	 * @param append whether to append to (true) or replace (false) any previously added projection variables
+	 * @return whether the call was successful; might set one of the following error codes:
+	 * <ul>
+	 * <li>{@link ErrorCode#BAD_ALLOC}</li>
+	 * </ul>
+	 */
+	byte clingo_control_update_project(Pointer control, int[] atoms, NativeSize size, byte append);
 
     /**
      * Register a custom propagator with the control object.
@@ -3151,6 +3209,22 @@ public interface Clingo extends Library {
      * @return whether the call was successful
      */
     byte clingo_control_register_observer(Pointer control, Observer observer, byte replace, Pointer data);
+
+	/**
+	 * Register a backend with the control object. This function is similar to {@link #clingo_control_register_observer}
+	 * except that clingo's internal backends can be selected.
+	 *
+	 * @param control the target
+	 * @param type the kind of backend to register
+	 * @param file the file to write the result to
+	 * @param replace just pass the grounding to the backend but not the solver
+	 * @return whether the call was successful; might set one of the following error codes:
+	 * <ul>
+	 * <li>{@link ErrorCode#BAD_ALLOC}</li>
+	 * <li>{@link ErrorCode#RUNTIME} (for example if the file could not be opened)</li>
+	 * </ul>
+	 */
+	byte clingo_control_register_backend(Pointer control, int type, String file, byte replace);
 
     // Program Modification Functions
 

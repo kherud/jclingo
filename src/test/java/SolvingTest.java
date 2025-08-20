@@ -14,6 +14,7 @@ import org.potassco.clingo.configuration.args.EnumMode;
 import org.potassco.clingo.control.Control;
 import org.potassco.clingo.control.ShowType;
 import org.potassco.clingo.control.SymbolicAtom;
+import org.potassco.clingo.control.SymbolicAtoms;
 import org.potassco.clingo.solving.ConsequenceType;
 import org.potassco.clingo.solving.Model;
 import org.potassco.clingo.solving.ModelType;
@@ -59,6 +60,26 @@ public class SolvingTest {
 				Assert.assertEquals("a", model.toString());
 			}
 		}
+	}
+
+	@Test
+	public void testSolveCallback() {
+		control.add("1 {a; b} 1. c.");
+		control.ground();
+		ModelType lastType;
+		Symbol[] lastSymbols;
+		try (SolveHandle handle = control.solve(mcb, SolveMode.NONE)) {
+			testSatisfiable(handle.getSolveResult());
+			Model last = handle.getLast();
+			lastType = last.getType();
+			lastSymbols = last.getSymbols(ShowType.shown());
+		}
+		testSatisfiable(mcb.solveResult);
+		Assert.assertEquals(2, mcb.models.size());
+		Assert.assertArrayEquals(new Symbol[] { new Function("a"), new Function("c") }, mcb.models.get(0).symbols);
+		Assert.assertArrayEquals(new Symbol[] { new Function("b"), new Function("c") }, mcb.models.get(1).symbols);
+		Assert.assertEquals(ModelType.STABLE_MODEL, lastType);
+		Assert.assertArrayEquals(mcb.models.get(1).symbols, lastSymbols);
 	}
 
 	@Test
@@ -166,7 +187,7 @@ public class SolvingTest {
 	}
 
 	@Test
-	public void testSolveEnumCautios() {
+	public void testSolveEnumCautious() {
 		Control control = new Control("0", "-e", "cautious");
 		control.add("1 {a; b} 1. c.");
 		control.ground();
@@ -206,13 +227,45 @@ public class SolvingTest {
 				Assert.assertEquals(1, model.getNumber());
 				Assert.assertFalse(model.getOptimalityProven());
 				Assert.assertArrayEquals(new long[] { 3 }, model.getCost());
+				Assert.assertArrayEquals(new int[] { 5 }, model.getPriorities());
 				model.extend(new Function("e"));
 				Assert.assertArrayEquals(new Symbol[] { new Function("e") }, model.getSymbols(ShowType.Type.THEORY));
 			}
 		};
-		control.add("a. b. c. #minimize { 1,a:a; 1,b:b; 1,c:c }.");
+		control.add("a. b. c. #minimize { 1@5,a:a; 1@5,b:b; 1@5,c:c }.");
 		control.ground();
 		control.solve(solveEventCallback, SolveMode.NONE).wait(-1.);
+	}
+
+	@Test
+	public void testConsequences() {
+		Control control = new Control("0", "-e", "cautious");
+		control.add("a. b | c.");
+		control.ground();
+		control.solve(new SolveEventCallback() {
+			@Override
+			public void onModel(Model model) {
+				SymbolicAtoms atoms = model.getContext().getSymbolicAtoms();
+				int a = atoms.get(new Function("a")).getLiteral();
+				int b = atoms.get(new Function("b")).getLiteral();
+				int c = atoms.get(new Function("c")).getLiteral();
+				ConsequenceType ca = model.getConsequenceType(a);
+				ConsequenceType cb = model.getConsequenceType(b);
+				ConsequenceType cc = model.getConsequenceType(c);
+				Assert.assertEquals(ConsequenceType.TRUE, ca);
+				if (model.getNumber() == 1) {
+					Assert.assertTrue(cb == ConsequenceType.UNKNOWN || cb == ConsequenceType.FALSE);
+					Assert.assertTrue(cc == ConsequenceType.UNKNOWN || cc == ConsequenceType.FALSE);
+					Assert.assertNotSame(cb, cc);
+				}
+				else if (model.getNumber() == 2) {
+					Assert.assertEquals(ConsequenceType.FALSE, cb);
+					Assert.assertEquals(ConsequenceType.FALSE, cc);
+				}
+			}
+		}).wait(-1.);
+
+		control.close();
 	}
 
 	@Test
@@ -231,7 +284,7 @@ public class SolvingTest {
 	}
 
 	@Test
-	public void testControlNogood() {
+	public void testControlNoGood() {
 		control.add("1 {a; b; c} 1.");
 		control.ground();
 		try (SolveHandle handle = control.solve(mcb, SolveMode.YIELD)) {
@@ -243,6 +296,45 @@ public class SolvingTest {
 			testSatisfiable(handle.getSolveResult());
 			Assert.assertEquals(2, mcb.models.size());
 		}
+	}
+
+	@Test
+	public void testRemoveMinimize() {
+		control.add("a. #minimize { 1,t : a }.");
+		control.ground();
+		control.solve(new SolveEventCallback() {
+			@Override
+			public void onModel(Model model) {
+				Assert.assertArrayEquals(new long[] { 1 }, model.getCost());
+			}
+		}).getSolveResult();
+
+		control.add("s1", "b. #minimize { 1,t : b }.");
+		control.ground("s1");
+		control.solve(new SolveEventCallback() {
+			@Override
+			public void onModel(Model model) {
+				Assert.assertArrayEquals(new long[] { 1 }, model.getCost());
+			}
+		}).getSolveResult();
+
+		control.removeMinimize();
+		control.add("s2", "c. #minimize { 1,x : c ; 1,t : c}.");
+		control.ground("s2");
+		control.solve(new SolveEventCallback() {
+			@Override
+			public void onModel(Model model) {
+				Assert.assertArrayEquals(new long[] { 2 }, model.getCost());
+			}
+		}).getSolveResult();
+
+		control.removeMinimize();
+		control.solve(new SolveEventCallback() {
+			@Override
+			public void onModel(Model model) {
+				Assert.assertArrayEquals(new long[] {}, model.getCost());
+			}
+		}).getSolveResult();
 	}
 
 	@Test
@@ -275,12 +367,57 @@ public class SolvingTest {
 					Assert.assertTrue(cb == ConsequenceType.UNKNOWN || cb == ConsequenceType.FALSE);
 					Assert.assertTrue(cc == ConsequenceType.UNKNOWN || cc == ConsequenceType.FALSE);
 					Assert.assertNotSame(cb, cc);
-				} else if (model.getNumber() == 2) {
+				}
+				else if (model.getNumber() == 2) {
 					Assert.assertEquals(ConsequenceType.FALSE, cb);
 					Assert.assertEquals(ConsequenceType.FALSE, cc);
 				}
 			}
-		});
+		}).wait(-1.);
+	}
+
+	@Test
+	public void testUpdateProjection() {
+		Configuration configuration = control.getConfiguration().get("solve");
+		configuration.set("project", "auto");
+		configuration.set("models", "0");
+		control.add("{a;b;c;d}. #project a/0. #project b/0.");
+		control.ground();
+		control.solve(mcb).getSolveResult();
+		Assert.assertEquals(4, mcb.models.size());
+		Assert.assertEquals(0, mcb.models.get(0).symbols.length);
+		Assert.assertArrayEquals(new Symbol[] { new Function("b") }, mcb.models.get(1).symbols);
+		Assert.assertArrayEquals(new Symbol[] { new Function("a") }, mcb.models.get(2).symbols);
+		Assert.assertArrayEquals(new Symbol[] { new Function("a"), new Function("b") }, mcb.models.get(3).symbols);
+
+		List<SymbolicAtom> atoms = new ArrayList<>();
+		SymbolicAtoms symbolicAtoms = control.getSymbolicAtoms();
+		symbolicAtoms.iterator(new Signature("c", 0)).forEachRemaining(atoms::add);
+		atoms.add(symbolicAtoms.get(new Function("d")));
+
+		mcb = new TestCallback();
+		control.updateProject(atoms.toArray(SymbolicAtom[]::new), false);
+		control.solve(mcb).getSolveResult();
+		Assert.assertEquals(4, mcb.models.size());
+		Assert.assertEquals(0, mcb.models.get(0).symbols.length);
+		Assert.assertArrayEquals(new Symbol[] { new Function("d") }, mcb.models.get(1).symbols);
+		Assert.assertArrayEquals(new Symbol[] { new Function("c") }, mcb.models.get(2).symbols);
+		Assert.assertArrayEquals(new Symbol[] { new Function("c"), new Function("d") }, mcb.models.get(3).symbols);
+
+		atoms = List.of(symbolicAtoms.get(new Function("a")));
+
+		mcb = new TestCallback();
+		control.updateProject(atoms.toArray(SymbolicAtom[]::new), true);
+		control.solve(mcb).getSolveResult();
+		Assert.assertEquals(8, mcb.models.size());
+		Assert.assertEquals(0, mcb.models.get(0).symbols.length);
+		Assert.assertArrayEquals(new Symbol[] { new Function("c") }, mcb.models.get(1).symbols);
+		Assert.assertArrayEquals(new Symbol[] { new Function("d") }, mcb.models.get(2).symbols);
+		Assert.assertArrayEquals(new Symbol[] { new Function("c"), new Function("d") }, mcb.models.get(3).symbols);
+		Assert.assertArrayEquals(new Symbol[] { new Function("a") }, mcb.models.get(4).symbols);
+		Assert.assertArrayEquals(new Symbol[] { new Function("a"), new Function("d") }, mcb.models.get(5).symbols);
+		Assert.assertArrayEquals(new Symbol[] { new Function("a"), new Function("c") }, mcb.models.get(6).symbols);
+		Assert.assertArrayEquals(new Symbol[] { new Function("a"), new Function("c"), new Function("d") }, mcb.models.get(7).symbols);
 	}
 
 	private int lookupLiteral(Model model, String name) {
@@ -294,7 +431,7 @@ public class SolvingTest {
 		Assert.assertTrue(solveResult.exhausted());
 	}
 
-	public static class TestCallback extends SolveEventCallback {
+	static class TestCallback extends SolveEventCallback {
 		final List<ModelTuple> models = new ArrayList<>();
 		final List<long[]> cores = new ArrayList<>();
 		SolveResult solveResult;

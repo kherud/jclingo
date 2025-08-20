@@ -133,6 +133,20 @@ public class SolveHandle implements AutoCloseable, Iterator<Model> {
         return new Model(pointerByReference.getValue());
     }
 
+	/**
+	 * When a problem is satisfiable and the search is finished, get the last computed model. If the program is
+	 * unsatisfiable or the search is not finished, this method returns null.
+	 *
+	 * @return the last computed model or null
+	 */
+	public Model getLast() {
+		PointerByReference pointerByReference = new PointerByReference();
+		Clingo.check(Clingo.INSTANCE.clingo_solve_handle_last(solveHandle, pointerByReference));
+		if (pointerByReference.getValue() == null)
+			return null;
+		return new Model(pointerByReference.getValue());
+	}
+
     @Override
     public boolean hasNext() {
         if (continueIteration) {

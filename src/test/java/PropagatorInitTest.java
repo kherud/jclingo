@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.potassco.clingo.backend.WeightedLiteral;
 import org.potassco.clingo.control.Control;
@@ -18,7 +17,6 @@ import org.potassco.clingo.solving.SolveResult;
 import org.potassco.clingo.symbol.Function;
 import org.potassco.clingo.symbol.Symbol;
 
-@Ignore
 public class PropagatorInitTest implements Propagator {
 
     @Test

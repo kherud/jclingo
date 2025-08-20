@@ -49,7 +49,7 @@ public class BackendObserverTest implements Observer {
         }
 
         Assert.assertTrue(called.contains("outputAtom"));
-        control.solve();
+        control.solve().getSolveResult();
         Assert.assertTrue(called.contains("endStep"));
 
         Assert.assertFalse(called.contains("outputTerm"));

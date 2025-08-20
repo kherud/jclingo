@@ -5,15 +5,15 @@
 
 	<groupId>org.potassco</groupId>
 	<artifactId>clingo</artifactId>
-	<version>1.1.0</version>
+	<version>5.8.0-001</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Java Bindings for Clingo: A grounder and solver for logic programs</description>
 	<url>https://github.com/kherud/jclingo</url>
 
 	<properties>
-		<clingo.version>5.7.1</clingo.version>
-		<jna.version>5.14.0</jna.version>
+		<clingo.version>5.8.0</clingo.version>
+		<jna.version>5.17.0</jna.version>
 		<junit.version>4.13.2</junit.version>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>

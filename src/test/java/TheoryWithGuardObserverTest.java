@@ -28,7 +28,7 @@ public class TheoryWithGuardObserverTest extends TheoryObserverTest {
         Assert.assertTrue(called.contains("theoryTermString: ="));
         Assert.assertTrue(called.contains("theoryAtomWithGuard"));
 
-        control.solve();
+        control.solve().getSolveResult();
 
         control.close();
     }

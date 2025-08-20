@@ -48,6 +48,14 @@ jobs:
       - name: Run tests
         shell: bash
         run: cd ${{ github.workspace }}/jclingo && mvn test
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.runner }}-output
+          path: |
+            ${{ github.workspace }}/hs_err_pid*.log
+            ${{ github.workspace }}/src/main/resources/**/*
+          if-no-files-found: warn
 
   build-and-test-windows:
     name: Run windows-latest
@@ -83,3 +91,11 @@ jobs:
       - name: Run tests
         shell: cmd
         run: cd ${{ github.workspace }}\jclingo && mvn test
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-output
+          path: |
+            ${{ github.workspace }}\hs_err_pid*.log
+            ${{ github.workspace }}/src/main/resources/**/*
+          if-no-files-found: warn

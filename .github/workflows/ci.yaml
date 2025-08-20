@@ -1,14 +1,9 @@
-# This work flow runs all Java tests after each commit.
-# Since it also has to build the Clingo shared libraries first, it only runs on the natively supported GitHub runners,
-# to speed up the process.
-
 name: Continuous Integration
 on: [ "push", "workflow_dispatch" ]
 env:
   CLINGO_RELEASE: "v5.8.0"
 jobs:
 
-  # don't split these stages to avoid up/downloading any artefacts and immediately start testing after build
   build-and-test-unix:
     name: Run ${{ matrix.runner }}
     runs-on: ${{ matrix.runner }}
@@ -20,14 +15,14 @@ jobs:
           - macos-latest
     steps:
       - name: Checkout clingo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: potassco/clingo
           submodules: recursive
           path: clingo
           ref: ${{ env.CLINGO_RELEASE }}
       - name: Checkout jclingo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: jclingo
       - name: Build clingo
@@ -40,7 +35,8 @@ jobs:
           cd ${{ github.workspace }}
           mkdir -p jclingo/src/main/resources
           mv clingo/build/bin/* jclingo/src/main/resources/
-      - uses: actions/setup-java@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '11'
@@ -53,14 +49,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout clingo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: potassco/clingo
           submodules: recursive
           path: clingo
           ref: ${{ env.CLINGO_RELEASE }}
       - name: Checkout jclingo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: jclingo
       - name: Build clingo
@@ -69,11 +65,13 @@ jobs:
           cd ${{ github.workspace }}\clingo
           ..\jclingo\.github\build.bat
       - name: Move library
+        shell: cmd
         run: |
           cd ${{ github.workspace }}
           mkdir jclingo\src\main\resources
           move clingo\build\bin\Release\clingo.dll jclingo\src\main\resources
-      - uses: actions/setup-java@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '11'

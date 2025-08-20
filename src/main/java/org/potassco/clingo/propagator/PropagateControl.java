@@ -55,7 +55,13 @@ public class PropagateControl {
      * @return This method returns false if the current propagation must be stopped.
      */
     public boolean addClause(int[] clause, boolean tag, boolean lock) {
-        ClauseType type = tag ? lock ? ClauseType.VOLATILE_STATIC : ClauseType.VOLATILE : ClauseType.LEARNT;
+		ClauseType type;
+		if (tag) {
+			type = lock ? ClauseType.VOLATILE_STATIC : ClauseType.VOLATILE;
+		} else {
+			type = lock ? ClauseType.STATIC : ClauseType.LEARNT;
+		}
+
         ByteByReference byteByReference = new ByteByReference();
         Clingo.check(Clingo.INSTANCE.clingo_propagate_control_add_clause(
                 propagateControl,

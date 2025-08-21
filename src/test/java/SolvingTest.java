@@ -86,7 +86,7 @@ public class SolvingTest {
 	public void testSolveAsync() {
 		control.add("1 {a; b} 1. c.");
 		control.ground();
-		control.solve(mcb).wait(-1.);
+		control.solve(mcb).getSolveResult();
 		testSatisfiable(mcb.solveResult);
 		Assert.assertEquals(2, mcb.models.size());
 		Assert.assertArrayEquals(new Symbol[] { new Function("a"), new Function("c") }, mcb.models.get(0).symbols);
@@ -121,7 +121,7 @@ public class SolvingTest {
 		try (SolveHandle handle = control.solve(Collections.emptyList(), mcb, SolveMode.ASYNC_YIELD)) {
 			while (true) {
 				handle.resume();
-				handle.wait(-1.);
+				handle.getSolveResult();
 				Model model = handle.getModel();
 				if (model != null) {
 					mit.onModel(model);
@@ -191,7 +191,7 @@ public class SolvingTest {
 		Control control = new Control("0", "-e", "cautious");
 		control.add("1 {a; b} 1. c.");
 		control.ground();
-		control.solve(mcb).wait(-1.);
+		control.solve(mcb).getSolveResult();
 		TestCallback.ModelTuple model = mcb.models.get(mcb.models.size() - 1);
 		Assert.assertEquals(ModelType.CAUTIOUS_CONSEQUENCES, model.type);
 		Assert.assertEquals("c", Arrays.stream(model.symbols).map(Symbol::toString).collect(Collectors.joining(" ")));
@@ -204,7 +204,7 @@ public class SolvingTest {
 		Control control = new Control("0", "-e", "brave");
 		control.add("1 {a; b} 1. c.");
 		control.ground();
-		control.solve(mcb).wait(-1.);
+		control.solve(mcb).getSolveResult();
 		TestCallback.ModelTuple model = mcb.models.get(mcb.models.size() - 1);
 		Assert.assertEquals(ModelType.BRAVE_CONSEQUENCES, model.type);
 		Assert.assertEquals("a b c", Arrays.stream(model.symbols)
@@ -234,7 +234,7 @@ public class SolvingTest {
 		};
 		control.add("a. b. c. #minimize { 1@5,a:a; 1@5,b:b; 1@5,c:c }.");
 		control.ground();
-		control.solve(solveEventCallback, SolveMode.NONE).wait(-1.);
+		control.solve(solveEventCallback, SolveMode.NONE).getSolveResult();
 	}
 
 	@Test
@@ -263,7 +263,7 @@ public class SolvingTest {
 					Assert.assertEquals(ConsequenceType.FALSE, cc);
 				}
 			}
-		}).wait(-1.);
+		}).getSolveResult();
 
 		control.close();
 	}
@@ -373,7 +373,7 @@ public class SolvingTest {
 					Assert.assertEquals(ConsequenceType.FALSE, cc);
 				}
 			}
-		}).wait(-1.);
+		}).getSolveResult();
 	}
 
 	@Test

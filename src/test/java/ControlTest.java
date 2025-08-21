@@ -157,7 +157,7 @@ public class ControlTest {
         Control control = new Control("--opt-str=usc,oll,0", "--stats=2", "0");
         control.add("1 { p(X); q(X) } 1 :- X=1..3. #minimize { 1,p,X: p(X); 1,q,X: q(X) }.");
         control.ground();
-        control.solve(callback).wait(-1.);
+        control.solve(callback).getSolveResult();
 
         Assert.assertEquals(List.of(1L, 2L, 3L), unsatSymbols);
         Assert.assertEquals(3.0, control.getStatistics().get("summary.lower").get(0).get(), 1e-5);

@@ -59,7 +59,7 @@ public class TheoryAtomsDemo {
         }
 
         // solve using a model callback
-        control.solve(onModel).wait(-1.);
+        control.solve(onModel).getSolveResult();
 
         control.close();
     }

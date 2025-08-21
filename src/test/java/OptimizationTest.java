@@ -42,7 +42,7 @@ public class OptimizationTest {
         Control control = new Control("--opt-mode=opt", "--single-shot");
         control.add(program);
         control.ground(groundCallback);
-        control.solve(solveCallback).wait(-1.);
+        control.solve(solveCallback).getSolveResult();
         control.close();
     }
 }

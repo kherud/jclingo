@@ -1,5 +1,5 @@
 ![Java Version 11+](https://img.shields.io/badge/Java-11%2B-informational)
-![Clingo Version 5.7.1](https://img.shields.io/badge/clingo-5.7.1-informational)
+![Clingo Version 5.8.0](https://img.shields.io/badge/clingo-5.8.0-informational)
 
 # Java Bindings for [Clingo](https://github.com/potassco/clingo): A grounder and solver for logic programs
 
@@ -22,7 +22,7 @@ This library is available via Maven:
 <dependency>
     <groupId>org.potassco</groupId>
     <artifactId>clingo</artifactId>
-    <version>1.1.0</version>
+    <version>5.8.0.1</version>
 </dependency>
 ```
 
@@ -57,8 +57,8 @@ public class Main {
 This repository provides out of the box support for the following platforms:
 
 - Linux: x86_64, arm64 (glibc)
-- MacOS: x86_64, arm64 (m1)
-- Windows: x86, x86_64, arm64
+- MacOS: x86_64, arm64 (m-series)
+- Windows: x86_64, arm64
 
 ## Setup Required
 

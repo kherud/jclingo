@@ -233,7 +233,7 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_SIGNING_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Publish package
-        run: mvn --batch-mode -P central deploy
+        run: mvn --batch-mode -P central -Dgpg.keyname=${{ secrets.GPG_PRIMARY_KEYID }} deploy
         env:
           MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USER }}
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASS }}

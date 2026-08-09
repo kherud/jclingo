@@ -20,7 +20,7 @@ public class PropagatorCheckTest implements Propagator {
         control.add("");
         control.ground();
         control.registerPropagator(this, false);
-        SolveResult solveResult = control.solve(mcb).getSolveResult();
+        SolveResult solveResult = control.solveResult(mcb);
 
         Assert.assertTrue(solveResult.satisfiable());
         Assert.assertFalse(solveResult.unsatisfiable());

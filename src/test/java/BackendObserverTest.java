@@ -49,7 +49,7 @@ public class BackendObserverTest implements Observer {
         }
 
         Assert.assertTrue(called.contains("outputAtom"));
-        control.solve().getSolveResult();
+        control.solveResult();
         Assert.assertTrue(called.contains("endStep"));
 
         Assert.assertFalse(called.contains("outputTerm"));
@@ -94,10 +94,10 @@ public class BackendObserverTest implements Observer {
         Assert.assertArrayEquals(new int[]{2}, head);
         Assert.assertEquals(1, lowerBound);
         Assert.assertEquals(2, body.length);
-        Assert.assertEquals(2, body[0].literal);
-        Assert.assertEquals(3, body[0].weight);
-        Assert.assertEquals(4, body[1].literal);
-        Assert.assertEquals(5, body[1].weight);
+        Assert.assertEquals(2, body[0].literal());
+        Assert.assertEquals(3, body[0].weight());
+        Assert.assertEquals(4, body[1].literal());
+        Assert.assertEquals(5, body[1].weight());
     }
 
     @Override
@@ -105,10 +105,10 @@ public class BackendObserverTest implements Observer {
         called.add("minimize");
         Assert.assertEquals(0, priority);
         Assert.assertEquals(2, literals.length);
-        Assert.assertEquals(2, literals[0].literal);
-        Assert.assertEquals(3, literals[0].weight);
-        Assert.assertEquals(4, literals[1].literal);
-        Assert.assertEquals(5, literals[1].weight);
+        Assert.assertEquals(2, literals[0].literal());
+        Assert.assertEquals(3, literals[0].weight());
+        Assert.assertEquals(4, literals[1].literal());
+        Assert.assertEquals(5, literals[1].weight());
     }
 
     @Override

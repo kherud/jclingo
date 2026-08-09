@@ -27,7 +27,7 @@ public class PropagatorInitTest implements Propagator {
         control.add("{a; b; c}.");
         control.ground();
         control.registerPropagator(this, false);
-        SolveResult solveResult = control.solve(mcb).getSolveResult();
+        SolveResult solveResult = control.solveResult(mcb);
 
         Assert.assertTrue(solveResult.satisfiable());
         Assert.assertFalse(solveResult.unsatisfiable());

@@ -24,7 +24,7 @@ public class PropagatorHeuristicTest implements Propagator {
         control.add("{a;b}.");
         control.ground();
         control.registerPropagator(this, false);
-        control.solve(mcb).getSolveResult();
+        control.solveResult(mcb);
 
         Assert.assertEquals(1, mcb.models.size());
         Assert.assertEquals("a", Arrays.stream(mcb.models.get(0).symbols).map(Symbol::toString).collect(Collectors.joining(" ")));

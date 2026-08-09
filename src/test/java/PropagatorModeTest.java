@@ -19,7 +19,7 @@ public class PropagatorModeTest implements Propagator {
 		control.add("{a; b}.");
 		control.ground();
 		control.registerPropagator(this, false);
-		SolveResult solveResult = control.solve().getSolveResult();
+		SolveResult solveResult = control.solveResult();
 
 		Assert.assertTrue(solveResult.satisfiable());
 		Assert.assertTrue(numCheck >= 3);

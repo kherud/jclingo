@@ -48,7 +48,7 @@ public class SolvingTest {
 
 	@Test
 	public void testSolveResult() {
-		Assert.assertTrue(control.solve().getSolveResult().satisfiable());
+		Assert.assertTrue(control.solveResult().satisfiable());
 	}
 
 	@Test
@@ -87,7 +87,7 @@ public class SolvingTest {
 	public void testSolveAsync() {
 		control.add("1 {a; b} 1. c.");
 		control.ground();
-		control.solve(mcb).getSolveResult();
+		control.solveResult(mcb);
 		testSatisfiable(mcb.solveResult);
 		Assert.assertEquals(2, mcb.models.size());
 		Assert.assertArrayEquals(new Symbol[] { new Function("a"), new Function("c") }, mcb.models.get(0).symbols);
@@ -177,9 +177,12 @@ public class SolvingTest {
 		}
 
 		// this unit tests differs a little from the python API due to its opaque handling of SolveMode.NONE
-		SolveHandle handle = control.solve(assumptionLiterals, null, SolveMode.NONE);
-		SolveResult result = handle.getSolveResult();
-		int[] core = handle.getCore();
+		SolveResult result;
+		int[] core;
+		try (SolveHandle handle = control.solve(assumptionLiterals, null, SolveMode.NONE)) {
+			result = handle.getSolveResult();
+			core = handle.getCore();
+		}
 
 		Assert.assertTrue(result.unsatisfiable());
 		Assert.assertTrue(core.length > 7);
@@ -192,7 +195,7 @@ public class SolvingTest {
 		Control control = new Control("0", "-e", "cautious");
 		control.add("1 {a; b} 1. c.");
 		control.ground();
-		control.solve(mcb).getSolveResult();
+		control.solveResult(mcb);
 		TestCallback.ModelTuple model = mcb.models.get(mcb.models.size() - 1);
 		Assert.assertEquals(ModelType.CAUTIOUS_CONSEQUENCES, model.type);
 		Assert.assertEquals("c", Arrays.stream(model.symbols).map(Symbol::toString).collect(Collectors.joining(" ")));
@@ -205,7 +208,7 @@ public class SolvingTest {
 		Control control = new Control("0", "-e", "brave");
 		control.add("1 {a; b} 1. c.");
 		control.ground();
-		control.solve(mcb).getSolveResult();
+		control.solveResult(mcb);
 		TestCallback.ModelTuple model = mcb.models.get(mcb.models.size() - 1);
 		Assert.assertEquals(ModelType.BRAVE_CONSEQUENCES, model.type);
 		Assert.assertEquals("a b c", Arrays.stream(model.symbols)
@@ -235,7 +238,7 @@ public class SolvingTest {
 		};
 		control.add("a. b. c. #minimize { 1@5,a:a; 1@5,b:b; 1@5,c:c }.");
 		control.ground();
-		control.solve(solveEventCallback, SolveMode.NONE).getSolveResult();
+		control.solveResult(solveEventCallback, SolveMode.NONE);
 	}
 
 	@Test
@@ -243,7 +246,7 @@ public class SolvingTest {
 		Control control = new Control("0", "-e", "cautious");
 		control.add("a. b | c.");
 		control.ground();
-		control.solve(new SolveEventCallback() {
+		control.solveResult(new SolveEventCallback() {
 			@Override
 			public void onModel(Model model) {
 				SymbolicAtoms atoms = model.getContext().getSymbolicAtoms();
@@ -264,7 +267,7 @@ public class SolvingTest {
 					Assert.assertEquals(ConsequenceType.FALSE, cc);
 				}
 			}
-		}).getSolveResult();
+		});
 
 		control.close();
 	}
@@ -303,39 +306,39 @@ public class SolvingTest {
 	public void testRemoveMinimize() {
 		control.add("a. #minimize { 1,t : a }.");
 		control.ground();
-		control.solve(new SolveEventCallback() {
+		control.solveResult(new SolveEventCallback() {
 			@Override
 			public void onModel(Model model) {
 				Assert.assertArrayEquals(new long[] { 1 }, model.getCost());
 			}
-		}).getSolveResult();
+		});
 
 		control.add("s1", "b. #minimize { 1,t : b }.");
 		control.ground("s1");
-		control.solve(new SolveEventCallback() {
+		control.solveResult(new SolveEventCallback() {
 			@Override
 			public void onModel(Model model) {
 				Assert.assertArrayEquals(new long[] { 1 }, model.getCost());
 			}
-		}).getSolveResult();
+		});
 
 		control.removeMinimize();
 		control.add("s2", "c. #minimize { 1,x : c ; 1,t : c}.");
 		control.ground("s2");
-		control.solve(new SolveEventCallback() {
+		control.solveResult(new SolveEventCallback() {
 			@Override
 			public void onModel(Model model) {
 				Assert.assertArrayEquals(new long[] { 2 }, model.getCost());
 			}
-		}).getSolveResult();
+		});
 
 		control.removeMinimize();
-		control.solve(new SolveEventCallback() {
+		control.solveResult(new SolveEventCallback() {
 			@Override
 			public void onModel(Model model) {
 				Assert.assertArrayEquals(new long[] {}, model.getCost());
 			}
-		}).getSolveResult();
+		});
 	}
 
 	@Test
@@ -344,7 +347,7 @@ public class SolvingTest {
 		configuration.set(EnumMode.Cautious);
 		control.add("a. b | c.");
 		control.ground();
-		control.solve(new SolveEventCallback() {
+		control.solveResult(new SolveEventCallback() {
 			@Override
 			public void onModel(Model model) {
 				int a = lookupLiteral(model, "a");
@@ -374,7 +377,7 @@ public class SolvingTest {
 					Assert.assertEquals(ConsequenceType.FALSE, cc);
 				}
 			}
-		}).getSolveResult();
+		});
 	}
 
 	@Test
@@ -384,7 +387,7 @@ public class SolvingTest {
 		configuration.set("models", "0");
 		control.add("{a;b;c;d}. #project a/0. #project b/0.");
 		control.ground();
-		control.solve(mcb).getSolveResult();
+		control.solveResult(mcb);
 		Assert.assertEquals(4, mcb.models.size());
 		Assert.assertEquals(0, mcb.models.get(0).symbols.length);
 		Assert.assertArrayEquals(new Symbol[] { new Function("b") }, mcb.models.get(1).symbols);
@@ -398,7 +401,7 @@ public class SolvingTest {
 
 		mcb = new TestCallback();
 		control.updateProject(atoms.toArray(SymbolicAtom[]::new), false);
-		control.solve(mcb).getSolveResult();
+		control.solveResult(mcb);
 		Assert.assertEquals(4, mcb.models.size());
 		Assert.assertEquals(0, mcb.models.get(0).symbols.length);
 		Assert.assertArrayEquals(new Symbol[] { new Function("d") }, mcb.models.get(1).symbols);
@@ -409,7 +412,7 @@ public class SolvingTest {
 
 		mcb = new TestCallback();
 		control.updateProject(atoms.toArray(SymbolicAtom[]::new), true);
-		control.solve(mcb).getSolveResult();
+		control.solveResult(mcb);
 		Assert.assertEquals(8, mcb.models.size());
 		Assert.assertEquals(0, mcb.models.get(0).symbols.length);
 		Assert.assertArrayEquals(new Symbol[] { new Function("c") }, mcb.models.get(1).symbols);
@@ -438,7 +441,7 @@ public class SolvingTest {
 		};
 		control.add("{a; b; c}.");
 		control.ground();
-		SolveResult result = control.solve(callback).getSolveResult();
+		SolveResult result = control.solveResult(callback);
 		Assert.assertTrue(result.satisfiable());
 		Assert.assertFalse(result.exhausted());
 	}

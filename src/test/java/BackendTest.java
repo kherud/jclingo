@@ -125,7 +125,7 @@ public class BackendTest {
 			control.registerBackend(BackendType.ASPIF, file);
 			control.add("a. b :- a.");
 			control.ground();
-			control.solve().getSolveResult();
+			control.solveResult();
 		}
 		finally {
 			// the backend only flushes once the control is gone

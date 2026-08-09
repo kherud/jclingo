@@ -32,13 +32,13 @@ public class PropagatorAssertingClauseTest implements Propagator {
 	@Test
 	public void testDefault() {
 		control.registerPropagator(new TestPropagator(false));
-		control.solve(SolveMode.YIELD).getSolveResult();
+		control.solveResult(SolveMode.YIELD);
 	}
 
 	@Test
 	public void testLocked() {
 		control.registerPropagator(new TestPropagator(true));
-		control.solve(SolveMode.YIELD).getSolveResult();
+		control.solveResult(SolveMode.YIELD);
 	}
 
 	private static final class TestPropagator implements Propagator {

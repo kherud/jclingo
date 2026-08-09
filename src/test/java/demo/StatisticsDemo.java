@@ -26,7 +26,7 @@ public class StatisticsDemo {
         control.add("a :- not b. b :- not a.");
         control.ground();
 
-        control.solve(callback).getSolveResult();
+        control.solveResult(callback);
 
         Statistics statistics = control.getStatistics();
 

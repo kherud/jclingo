@@ -73,7 +73,7 @@ public class ConfigurationTest {
             control.add("{a; b; c}. #minimize { 1,a: a; 1,b: b; 1,c: c }.");
             control.ground();
             SolvingTest.TestCallback callback = new SolvingTest.TestCallback();
-            control.solve(callback).getSolveResult();
+            control.solveResult(callback);
             // one model with no atom, three with a single atom and three with two atoms
             Assert.assertEquals(7, callback.models.size());
         }

@@ -64,7 +64,7 @@ public class ApplicationTest implements Application {
             control.load(filePath);
         control.ground();
         SolvingTest.TestCallback callback = new SolvingTest.TestCallback();
-        control.solve(callback).getSolveResult();
+        control.solveResult(callback);
         queue.add("model");
         for (SolvingTest.TestCallback.ModelTuple tuple : callback.models) {
             queue.add(Arrays.stream(tuple.symbols).map(Symbol::toString).collect(Collectors.joining(" ")));

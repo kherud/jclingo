@@ -164,7 +164,7 @@ public class ControlTest {
         Control control = new Control("--opt-str=usc,oll,0", "--stats=2", "0");
         control.add("1 { p(X); q(X) } 1 :- X=1..3. #minimize { 1,p,X: p(X); 1,q,X: q(X) }.");
         control.ground();
-        control.solve(callback).getSolveResult();
+        control.solveResult(callback);
 
         Assert.assertEquals(List.of(1L, 2L, 3L), unsatSymbols);
         Assert.assertEquals(3.0, control.getStatistics().get("summary.lower").get(0).get(), 1e-5);
@@ -173,7 +173,7 @@ public class ControlTest {
     }
 
     /**
-     * An exception raised by an external function has to abort grounding and reach the caller.
+     * An exception raised by an external function has to abort grounding and reach the caller unchanged.
      */
     @Test
     public void testGroundError() {
@@ -185,12 +185,11 @@ public class ControlTest {
 
         try (Control control = new Control()) {
             control.add("p(@cb_error(1)).");
-            ClingoRuntimeException exception = Assert.assertThrows(
-                    ClingoRuntimeException.class,
+            IllegalArgumentException exception = Assert.assertThrows(
+                    IllegalArgumentException.class,
                     () -> control.ground(groundCallback)
             );
-            Assert.assertEquals(ErrorCode.UNKNOWN, exception.getErrorCode());
-            Assert.assertTrue(exception.getMessage().contains("no value for 1"));
+            Assert.assertEquals("no value for 1", exception.getMessage());
         }
     }
 
@@ -335,7 +334,7 @@ public class ControlTest {
 
     private List<String> solveSymbols(Control control) {
         SolvingTest.TestCallback callback = new SolvingTest.TestCallback();
-        control.solve(callback).getSolveResult();
+        control.solveResult(callback);
         return callback.models.stream()
                 .map(model -> Arrays.stream(model.symbols).map(Symbol::toString).collect(Collectors.joining(" ")))
                 .collect(Collectors.toList());

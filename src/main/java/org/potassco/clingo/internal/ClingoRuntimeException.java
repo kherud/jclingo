@@ -14,6 +14,11 @@ public class ClingoRuntimeException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
+    public ClingoRuntimeException(ErrorCode errorCode, String message, Throwable cause) {
+        super(String.format("[%s] %s", errorCode.name(), message), cause);
+        this.errorCode = errorCode;
+    }
+
     /**
      * @return the code clingo reported, {@link ErrorCode#UNKNOWN} if it reported one this binding does not know
      */

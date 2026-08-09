@@ -3,10 +3,12 @@
 *.log
 target
 *.txt
+!scripts/*.txt
 *.gz
 .DS_Store
 *.iml
-clingo
+src/main/resources/*.h
+/clingo
 *.so
 *.dylib
 *.dll

@@ -32,15 +32,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * The detector never frees anything - clingo's handles have to be released explicitly and in a well defined order,
  * so cleaning up behind the user would only trade a leak for a crash. It exists to make the leak visible.
  * <p>
- * System properties: {@code clingo.leak.traces=true} records the allocation stack trace of every resource (slow),
- * {@code clingo.leak.throw=true} additionally records leaks for {@link #assertNoLeaks()}.
+ * Every leak is also recorded for {@link #assertNoLeaks()}, which is how the test suite asserts that it releases
+ * what it allocates. Set {@code clingo.leak.traces=true} to have the allocation site of every resource recorded as
+ * well, which makes a reported leak point at the code that created it, at the cost of a stack trace per resource.
  */
 public final class LeakDetector {
 
     private static final Logger LOGGER = System.getLogger(LeakDetector.class.getName());
     private static final Cleaner CLEANER = Cleaner.create();
     private static final boolean RECORD_TRACES = Boolean.getBoolean("clingo.leak.traces");
-    private static final boolean STRICT = Boolean.getBoolean("clingo.leak.throw");
     private static final List<String> LEAKS = new CopyOnWriteArrayList<>();
 
     private LeakDetector() {
@@ -53,7 +53,7 @@ public final class LeakDetector {
      * @param kind  a human readable description of the resource, e.g. {@code "Control"}
      */
     public static Registration register(Object owner, String kind) {
-        Warner warner = new Warner(kind, RECORD_TRACES || STRICT ? new Throwable("allocated here") : null);
+        Warner warner = new Warner(kind, RECORD_TRACES ? new Throwable("allocated here") : null);
         return new Registration(CLEANER.register(owner, warner), warner);
     }
 
@@ -61,12 +61,15 @@ public final class LeakDetector {
      * @throws IllegalStateException if any resource was garbage collected without being closed
      */
     public static void assertNoLeaks() {
-        System.gc();
-        try {
-            Thread.sleep(100);
-        }
-        catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+        for (int attempt = 0; attempt < 10 && LEAKS.isEmpty(); attempt++) {
+            System.gc();
+            try {
+                Thread.sleep(20);
+            }
+            catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
         }
         if (!LEAKS.isEmpty()) {
             String message = String.join("\n", LEAKS);
@@ -113,9 +116,7 @@ public final class LeakDetector {
             }
             String message = "clingo resource " + kind + " was garbage collected without being closed";
             LOGGER.log(Level.WARNING, message, allocationSite);
-            if (STRICT) {
-                LEAKS.add(message + (allocationSite == null ? "" : "\n" + format(allocationSite)));
-            }
+            LEAKS.add(message + (allocationSite == null ? "" : "\n" + format(allocationSite)));
         }
 
         private static String format(Throwable trace) {

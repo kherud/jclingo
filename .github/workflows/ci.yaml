@@ -1,5 +1,6 @@
 # Runs the Java test suite against a freshly built clingo library on every platform that jclingo ships, plus a
-# separate matrix covering the supported Java releases.
+# separate matrix covering the supported Java releases. The binding needs Java 22, where the foreign function API
+# is final.
 
 name: Continuous Integration
 
@@ -49,24 +50,16 @@ jobs:
         include:
           - target: linux-x86-64
             runner: ubuntu-24.04
-            java: '11'
           - target: linux-aarch64
             runner: ubuntu-24.04-arm
-            java: '11'
           - target: darwin-x86-64
             runner: macos-15-intel
-            java: '11'
           - target: darwin-aarch64
             runner: macos-15
-            java: '11'
           - target: win32-x86-64
             runner: windows-2025
-            java: '11'
-          # No vendor ships a Java 11 build for Windows on arm64, where 16 is the oldest available
-          # release, so this library is exercised on the oldest long term support release instead.
           - target: win32-aarch64
             runner: windows-11-arm
-            java: '17'
     steps:
       - uses: actions/checkout@v7
         with:
@@ -81,7 +74,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: zulu
-          java-version: ${{ matrix.java }}
+          java-version: '22'
           cache: maven
 
       - name: Run tests
@@ -98,24 +91,16 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-  # Java 25 aborts the JVM inside the statistics solve event callback, so it is reported without failing the run
-  # until the binding is fixed.
+  # 22 is the release the foreign function API became final in and hence the oldest one this binding supports.
   test-java:
     name: Test Java ${{ matrix.java }}
     needs: build
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-    continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - java: '17'
-            experimental: false
-          - java: '21'
-            experimental: false
-          - java: '25'
-            experimental: true
+        java: ['22', '25']
     steps:
       - uses: actions/checkout@v7
         with:

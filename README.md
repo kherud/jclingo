@@ -1,4 +1,4 @@
-![Java Version 11+](https://img.shields.io/badge/Java-11%2B-informational)
+![Java Version 22+](https://img.shields.io/badge/Java-22%2B-informational)
 ![Clingo Version 5.8.1](https://img.shields.io/badge/clingo-5.8.1-informational)
 
 # Java Bindings for [Clingo](https://github.com/potassco/clingo): A grounder and solver for logic programs
@@ -15,6 +15,14 @@ Please consult the following resources for further information:
 - [Potassco Clingo Page](https://potassco.org/clingo/)
 
 # Usage
+
+This library binds clingo through the Java foreign function API and therefore needs **Java 22 or newer**, the
+release that API became final in. From Java 24 on, the JVM warns about the native access it performs unless it is
+enabled explicitly:
+
+```
+java --enable-native-access=ALL-UNNAMED ...
+```
 
 This library is available via Maven:
 
@@ -65,10 +73,19 @@ This repository provides out of the box support for the following platforms:
 If your system is not in the previous list, either
 
 - Feel free to create an issue with details about your OS and CPU.
-- Compile clingo yourself (see [this](https://github.com/potassco/clingo/blob/master/INSTALL.md#build-install-and-test)) and appropriately set the JVM argument `jna.library.path`, e.g. `java -Djna.library.path=/path/to/library`.
+- Compile clingo yourself (see [this](https://github.com/potassco/clingo/blob/master/INSTALL.md#build-install-and-test)) and point the JVM argument `clingo.library.path` at it, e.g. `java -Dclingo.library.path=/path/to/libclingo.so`. Without it, the library is looked up in the platform library search path.
 
 This also applies if you get any errors of the kind:
 
 ```
 Exception in thread "main" java.lang.UnsatisfiedLinkError: ...
 ```
+
+## Releasing resources
+
+`Control`, `SolveHandle`, `Backend`, `ProgramBuilder` and the AST nodes hold native resources that have to be
+released explicitly - clingo does not count its references atomically, so the binding never leaves that to the
+garbage collector. Use them with try with resources, or close them by hand.
+
+Anything collected without having been closed is reported as a warning. Set `-Dclingo.leak.traces=true` to have the
+allocation site of every resource recorded, which makes such a warning point at the code that created it.

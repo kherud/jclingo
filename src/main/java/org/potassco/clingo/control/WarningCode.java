@@ -22,6 +22,7 @@ package org.potassco.clingo.control;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.NativeStr;
 import org.potassco.clingo.internal.ffi.ClingoH;
 
@@ -57,6 +58,10 @@ public enum WarningCode {
      * other kinds of warnings
      */
     OTHER(6);
+
+    static {
+        Clingo.init();
+    }
 
     private final int code;
 

@@ -44,6 +44,10 @@ import org.potassco.clingo.symbol.Symbol;
  */
 final class AstBuildInvokers {
 
+    static {
+        Clingo.init();
+    }
+
     private static final Map<AstType, Invoker> INVOKERS = new EnumMap<>(AstType.class);
 
     private AstBuildInvokers() {
@@ -71,7 +75,7 @@ final class AstBuildInvokers {
     /**
      * Reads the constructor arguments of {@code type} from the table clingo exports.
      */
-    private static AttributeType[] specificationOf(AstType type) {
+    static AttributeType[] specificationOf(AstType type) {
         MemorySegment table = ClingoH.g_clingo_ast_constructors();
         long constructorCount = clingo_ast_constructors.size(table);
         if (type.getValue() < 0 || type.getValue() >= constructorCount) {

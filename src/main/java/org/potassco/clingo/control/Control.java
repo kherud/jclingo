@@ -34,6 +34,7 @@ import org.potassco.clingo.configuration.Configuration;
 import org.potassco.clingo.internal.Callbacks;
 import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.internal.ErrorPolicy;
+import org.potassco.clingo.internal.LeakDetector;
 import org.potassco.clingo.internal.Out;
 import org.potassco.clingo.internal.ffi.ClingoH;
 import org.potassco.clingo.propagator.Propagator;
@@ -79,6 +80,8 @@ public class Control implements AutoCloseable {
     private final AtomicReference<Throwable> callbackError = new AtomicReference<>();
 
     private final boolean owned;
+
+    private final LeakDetector.Registration leak = LeakDetector.register(this, "Control");
 
     private Backend backend;
 
@@ -845,6 +848,7 @@ public class Control implements AutoCloseable {
         }
         finally {
             arena.close();
+            leak.close();
         }
     }
 

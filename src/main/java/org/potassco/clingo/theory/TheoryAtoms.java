@@ -22,15 +22,16 @@ package org.potassco.clingo.theory;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import com.sun.jna.Pointer;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSizeByReference;
+import java.lang.foreign.MemorySegment;
+
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 public class TheoryAtoms implements Iterable<TheoryAtom> {
 
-    private final Pointer theoryAtoms;
+    private final MemorySegment theoryAtoms;
 
-    public TheoryAtoms(Pointer theoryAtoms) {
+    public TheoryAtoms(MemorySegment theoryAtoms) {
         this.theoryAtoms = theoryAtoms;
     }
 
@@ -61,8 +62,6 @@ public class TheoryAtoms implements Iterable<TheoryAtom> {
     }
 
     public int size() {
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_size(theoryAtoms, nativeSizeByReference));
-        return (int) nativeSizeByReference.getValue();
+        return (int) Out.getLong(out -> ClingoH.clingo_theory_atoms_size(theoryAtoms, out));
     }
 }

@@ -19,37 +19,62 @@
 
 package org.potassco.clingo.control;
 
-import com.sun.jna.Memory;
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
-import org.potassco.clingo.internal.NativeSize;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.SegmentAllocator;
+import java.lang.foreign.ValueLayout;
+
+import org.potassco.clingo.internal.NativeStr;
+import org.potassco.clingo.internal.ffi.clingo_part;
 import org.potassco.clingo.symbol.Symbol;
 
-@Structure.FieldOrder({"name", "params", "size"})
-public class ProgramPart extends Structure {
-    public String name;
-    public Pointer params;
-    public NativeSize size;
+/**
+ * A program part to be grounded, i.e. a {@code #program} name together with the arguments it is instantiated with.
+ */
+public class ProgramPart {
 
-    public ProgramPart() {
-        super();
-        this.name = "base";
-        this.params = Pointer.NULL;
-        this.size = new NativeSize(0);
-    }
+    private final String name;
+    private final Symbol[] parameters;
 
-    public ProgramPart(String name, Symbol... params) {
+    public ProgramPart(String name, Symbol... parameters) {
         this.name = name;
-        if (params.length > 0) {
-            // params is an uint64_t, hence always 8 byte
-            this.params = new Memory((long) params.length * 8);
-            for (int i = 0; i < params.length; i++) {
-                this.params.setLong((long) i * 8, params[i].getLong());
-            }
-        } else {
-            this.params = Pointer.NULL;
-        }
-        this.size = new NativeSize(params.length);
+        this.parameters = parameters;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public Symbol[] getParameters() {
+        return parameters.clone();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(name).append('(');
+        for (int i = 0; i < parameters.length; i++) {
+            builder.append(i == 0 ? "" : ",").append(parameters[i]);
+        }
+        return builder.append(')').toString();
+    }
+
+    /**
+     * @return the given parts as the contiguous {@code clingo_part_t} array clingo expects
+     */
+    static MemorySegment toNative(SegmentAllocator allocator, ProgramPart[] parts) {
+        MemorySegment array = clingo_part.allocateArray(parts.length, allocator);
+        for (int i = 0; i < parts.length; i++) {
+            ProgramPart part = parts[i];
+            MemorySegment element = clingo_part.asSlice(array, i);
+            clingo_part.name(element, NativeStr.of(allocator, part.name));
+            clingo_part.size(element, part.parameters.length);
+            long[] symbols = new long[part.parameters.length];
+            for (int j = 0; j < symbols.length; j++) {
+                symbols[j] = part.parameters[j].getLong();
+            }
+            clingo_part.params(element, symbols.length == 0
+                    ? MemorySegment.NULL
+                    : allocator.allocateFrom(ValueLayout.JAVA_LONG, symbols));
+        }
+        return array;
+    }
 }

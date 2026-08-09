@@ -1,69 +1,72 @@
+/*
+ * Copyright (C) 2021 denkbares GmbH, Germany
+ *
+ * This is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This software is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
+ * site: http://www.fsf.org.
+ */
+
 package org.potassco.clingo.ast;
 
-import java.util.Arrays;
-import java.util.List;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.SegmentAllocator;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
-import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.internal.NativeStr;
+import org.potassco.clingo.internal.ffi.clingo_location;
 
 /**
  * Represents a source code location marking its beginning and end.
  * <p>
- * Not all locations refer to physical files.
- * By convention, such locations use a name put in angular brackets as filename.
- * The string members of a location object are internalized and valid for the duration of the process.
+ * Not all locations refer to physical files. By convention, such locations use a name put in angular brackets as
+ * filename.
  *
  * @author Josef Schneeberger
  */
-public class Location extends Structure {
-	public String begin_file; // the file where the location begins
-	public String end_file; // the file where the location ends
-	public NativeSize begin_line; // the line where the location begins
-	public NativeSize end_line; // the line where the location ends
-	public NativeSize begin_column; // the column where the location begins
-	public NativeSize end_column; // the column where the location ends
+public record Location(String beginFile, String endFile, long beginLine, long endLine, long beginColumn,
+                       long endColumn) {
 
-	public Location() {
+    /**
+     * Reads a location clingo handed out. The strings it points at are internalized by clingo, so the returned
+     * location stays valid after the segment is gone.
+     */
+    public static Location fromNative(MemorySegment location) {
+        return new Location(
+                NativeStr.toJava(clingo_location.begin_file(location)),
+                NativeStr.toJava(clingo_location.end_file(location)),
+                clingo_location.begin_line(location),
+                clingo_location.end_line(location),
+                clingo_location.begin_column(location),
+                clingo_location.end_column(location));
+    }
 
-	}
+    /**
+     * @return this location as a {@code clingo_location}, allocated by {@code allocator}
+     */
+    public MemorySegment toNative(SegmentAllocator allocator) {
+        MemorySegment location = clingo_location.allocate(allocator);
+        clingo_location.begin_file(location, NativeStr.of(allocator, beginFile));
+        clingo_location.end_file(location, NativeStr.of(allocator, endFile));
+        clingo_location.begin_line(location, beginLine);
+        clingo_location.end_line(location, endLine);
+        clingo_location.begin_column(location, beginColumn);
+        clingo_location.end_column(location, endColumn);
+        return location;
+    }
 
-	public Location(Pointer pointer) {
-		super(pointer);
-		read();
-	}
-
-	public Location(String begin_file, String end_file, NativeSize begin_line, NativeSize end_line, NativeSize begin_column, NativeSize end_column) {
-		super();
-		this.begin_file = begin_file;
-		this.end_file = end_file;
-		this.begin_line = begin_line;
-		this.end_line = end_line;
-		this.begin_column = begin_column;
-		this.end_column = end_column;
-	}
-
-	public Location(String begin_file, String end_file, int begin_line, int end_line, int begin_column, int end_column) {
-		this.begin_file = begin_file;
-		this.end_file = end_file;
-		this.begin_line = new NativeSize(begin_line);
-		this.end_line = new NativeSize(end_line);
-		this.begin_column = new NativeSize(begin_column);
-		this.end_column = new NativeSize(end_column);
-	}
-
-	@Override
-	protected List<String> getFieldOrder() {
-		return Arrays.asList("begin_file", "end_file", "begin_line", "end_line", "begin_column", "end_column");
-	}
-
-	public static class ByValue extends Location implements Structure.ByValue {
-		public ByValue() { }
-		public ByValue(Pointer p) { super(p); }
-	}
-	public static class ByReference extends Location implements Structure.ByReference {
-		public ByReference() { }
-		public ByReference(Pointer p) { super(p); }
-	}
-
+    @Override
+    public String toString() {
+        return beginFile + ":" + beginLine + ":" + beginColumn
+               + "-" + (beginFile.equals(endFile) ? "" : endFile + ":") + endLine + ":" + endColumn;
+    }
 }

@@ -19,9 +19,12 @@
 
 package org.potassco.clingo.symbol;
 
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.LongByReference;
-import org.potassco.clingo.internal.Clingo;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
+
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 public class Number extends Symbol {
 
@@ -29,9 +32,7 @@ public class Number extends Symbol {
 
     protected Number(long symbol) {
         super(symbol);
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_number(symbol, intByReference));
-        this.number = intByReference.getValue();
+        this.number = Out.getInt(out -> ClingoH.clingo_symbol_number(symbol, out));
     }
 
     public Number(int number) {
@@ -126,8 +127,10 @@ public class Number extends Symbol {
     }
 
     private static long create(int number) {
-        LongByReference longByReference = new LongByReference();
-        Clingo.INSTANCE.clingo_symbol_create_number(number, longByReference);
-        return longByReference.getValue();
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment out = arena.allocate(ValueLayout.JAVA_LONG);
+            ClingoH.clingo_symbol_create_number(number, out);
+            return out.get(ValueLayout.JAVA_LONG, 0);
+        }
     }
 }

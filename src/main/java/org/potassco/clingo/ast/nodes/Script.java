@@ -19,17 +19,16 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
 
 public class Script extends Ast {
 
-    public Script(Pointer ast) {
+    public Script(MemorySegment ast) {
         super(ast);
     }
 
@@ -38,39 +37,31 @@ public class Script extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public String getName() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(getPointer(), AstAttribute.NAME.getValue(), stringByReference));
-        return stringByReference[0];
+        return getString(AstAttribute.NAME);
     }
 
     public String getCode() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(getPointer(), AstAttribute.CODE.getValue(), stringByReference));
-        return stringByReference[0];
+        return getString(AstAttribute.CODE);
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setName(String name) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(getPointer(), AstAttribute.NAME.getValue(), name));
+        setString(AstAttribute.NAME, name);
     }
 
     public void setCode(String code) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(getPointer(), AstAttribute.CODE.getValue(), code));
+        setString(AstAttribute.CODE, code);
     }
 
-    private static Pointer create(Location location, String name, String code) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.SCRIPT.getValue(), pointerByReference, location, name, code));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, String name, String code) {
+        return build(AstType.SCRIPT, location, name, code);
     }
 
 }

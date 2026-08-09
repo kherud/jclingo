@@ -19,19 +19,17 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstSequence;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
 
 public class Heuristic extends Ast {
 
-    public Heuristic(Pointer ast) {
+    public Heuristic(MemorySegment ast) {
         super(ast);
     }
 
@@ -40,15 +38,11 @@ public class Heuristic extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public Ast getAtom() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.ATOM.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.ATOM);
     }
 
     public AstSequence getBody() {
@@ -56,29 +50,23 @@ public class Heuristic extends Ast {
     }
 
     public Ast getBias() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.BIAS.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.BIAS);
     }
 
     public Ast getPriority() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.PRIORITY.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.PRIORITY);
     }
 
     public Ast getModifier() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.MODIFIER.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.MODIFIER);
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setAtom(Ast atom) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.ATOM.getValue(), atom.getPointer()));
+        setAst(AstAttribute.ATOM, atom);
     }
 
     public void setBody(AstSequence body) {
@@ -86,21 +74,19 @@ public class Heuristic extends Ast {
     }
 
     public void setBias(Ast bias) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.BIAS.getValue(), bias.getPointer()));
+        setAst(AstAttribute.BIAS, bias);
     }
 
     public void setPriority(Ast priority) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.PRIORITY.getValue(), priority.getPointer()));
+        setAst(AstAttribute.PRIORITY, priority);
     }
 
     public void setModifier(Ast modifier) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.MODIFIER.getValue(), modifier.getPointer()));
+        setAst(AstAttribute.MODIFIER, modifier);
     }
 
-    private static Pointer create(Location location, Ast atom, AstSequence body, Ast bias, Ast priority, Ast modifier) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.HEURISTIC.getValue(), pointerByReference, location, atom.getPointer(), body.getPointer(), new NativeSize(body.size()), bias.getPointer(), priority.getPointer(), modifier.getPointer()));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, Ast atom, AstSequence body, Ast bias, Ast priority, Ast modifier) {
+        return build(AstType.HEURISTIC, location, atom, body, bias, priority, modifier);
     }
 
 }

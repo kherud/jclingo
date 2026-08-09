@@ -21,11 +21,11 @@ package org.potassco.clingo.statistics;
 
 import java.util.NoSuchElementException;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.LongByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.control.Control;
-import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 import static org.potassco.clingo.statistics.StatisticsType.fromValue;
 
@@ -34,10 +34,10 @@ import static org.potassco.clingo.statistics.StatisticsType.fromValue;
  */
 public abstract class Statistics {
 
-    protected final Pointer statistics;
+    protected final MemorySegment statistics;
     protected final long key;
 
-    public Statistics(Pointer statistics, long key) {
+    public Statistics(MemorySegment statistics, long key) {
         this.statistics = statistics;
         this.key = key;
     }
@@ -90,10 +90,8 @@ public abstract class Statistics {
      * @param statistics the native pointer to the statistics object
      * @return the java statistics object
      */
-    public static Statistics fromPointer(Pointer statistics) {
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_statistics_root(statistics, longByReference));
-        return fromKey(statistics, longByReference.getValue());
+    public static Statistics fromPointer(MemorySegment statistics) {
+        return fromKey(statistics, Out.getLong(out -> ClingoH.clingo_statistics_root(statistics, out)));
     }
 
     /**
@@ -103,11 +101,9 @@ public abstract class Statistics {
      * @param key the key of the object
      * @return the statistics entry
      */
-    public static Statistics fromKey(Pointer statistics, long key) {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_statistics_type(statistics, key, intByReference));
-        StatisticsType type = fromValue(intByReference.getValue());
-        return fromKey(statistics, key, type);
+    public static Statistics fromKey(MemorySegment statistics, long key) {
+        return fromKey(statistics, key,
+                fromValue(Out.getInt(out -> ClingoH.clingo_statistics_type(statistics, key, out))));
     }
 
     /**
@@ -118,7 +114,7 @@ public abstract class Statistics {
      * @param type the known type of the statistics entry
      * @return the statistics entry
      */
-    public static Statistics fromKey(Pointer statistics, long key, StatisticsType type) {
+    public static Statistics fromKey(MemorySegment statistics, long key, StatisticsType type) {
         switch (type) {
             case VALUE: return new StatisticsValue(statistics, key);
             case ARRAY: return new StatisticsArray(statistics, key);

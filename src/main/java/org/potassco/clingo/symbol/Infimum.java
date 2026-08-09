@@ -19,8 +19,11 @@
  
 package org.potassco.clingo.symbol;
 
-import com.sun.jna.ptr.LongByReference;
-import org.potassco.clingo.internal.Clingo;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
+
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 public class Infimum extends Symbol {
 
@@ -37,9 +40,11 @@ public class Infimum extends Symbol {
     }
 
     private static long create() {
-        LongByReference longByReference = new LongByReference();
-        Clingo.INSTANCE.clingo_symbol_create_infimum(longByReference);
-        return longByReference.getValue();
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment out = arena.allocate(ValueLayout.JAVA_LONG);
+            ClingoH.clingo_symbol_create_infimum(out);
+            return out.get(ValueLayout.JAVA_LONG, 0);
+        }
     }
 
 }

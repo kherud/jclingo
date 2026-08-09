@@ -19,19 +19,17 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.LongByReference;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
 import org.potassco.clingo.symbol.Symbol;
 
 public class SymbolicTerm extends Ast {
 
-    public SymbolicTerm(Pointer ast) {
+    public SymbolicTerm(MemorySegment ast) {
         super(ast);
     }
 
@@ -40,29 +38,23 @@ public class SymbolicTerm extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public Symbol getSymbol() {
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_symbol(getPointer(), AstAttribute.SYMBOL.getValue(), longByReference));
-        return Symbol.fromLong(longByReference.getValue());
+        return getSymbol(AstAttribute.SYMBOL);
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setSymbol(Symbol symbol) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_symbol(getPointer(), AstAttribute.SYMBOL.getValue(), symbol.getLong()));
+        setSymbol(AstAttribute.SYMBOL, symbol);
     }
 
-    private static Pointer create(Location location, Symbol symbol) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.SYMBOLIC_TERM.getValue(), pointerByReference, location, symbol.getLong()));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, Symbol symbol) {
+        return build(AstType.SYMBOLIC_TERM, location, symbol);
     }
 
 }

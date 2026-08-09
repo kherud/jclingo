@@ -19,10 +19,15 @@
 
 package org.potassco.clingo.solving;
 
-import com.sun.jna.Callback;
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.potassco.clingo.internal.ErrorPolicy;
+import org.potassco.clingo.internal.NativeArrays;
+import org.potassco.clingo.internal.Upcalls;
+import org.potassco.clingo.internal.ffi.clingo_solve_event_callback_t;
 import org.potassco.clingo.statistics.Statistics;
 
 /**
@@ -33,35 +38,9 @@ import org.potassco.clingo.statistics.Statistics;
  * <p>
  * You have to inherit from this class to implement your own callback.
  */
-public abstract class SolveEventCallback implements Callback {
+public abstract class SolveEventCallback {
 
-    private Throwable pendingError;
-
-    private boolean stopped;
-
-    /**
-     * @param event the current event.
-     * @param data  user data of the callback
-     * @param goon  can be set to false to stop solving
-     * @return whether the call was successful
-     */
-    public byte callback(int code, Pointer event, Pointer data, ByteByReference goon) {
-        try {
-            dispatch(code, event);
-        }
-        catch (Throwable error) {
-            // clingo exits the process when a solve event callback reports failure, so the error is remembered here
-            // and rethrown by the solve handle instead
-            if (pendingError == null) {
-                pendingError = error;
-            }
-            stopped = true;
-        }
-        if (stopped) {
-            goon.setValue((byte) 0);
-        }
-        return 1;
-    }
+    private volatile boolean stopped;
 
     /**
      * Stops the search. Can be called from any of the handlers below, but only takes effect for models and lower
@@ -69,40 +48,6 @@ public abstract class SolveEventCallback implements Callback {
      */
     protected void stop() {
         stopped = true;
-    }
-
-    /**
-     * Returns and forgets the first error a user callback raised, or null if there was none.
-     */
-    Throwable takePendingError() {
-        Throwable error = pendingError;
-        pendingError = null;
-        return error;
-    }
-
-    private void dispatch(int code, Pointer event) {
-        SolveEventType type = SolveEventType.fromValue(code);
-        switch (type) {
-            case MODEL:
-                onModel(new Model(event));
-                break;
-            case UNSAT:
-                Pointer costPointer = event.getPointer(0);
-                int costSize = getUnsatCostSize(event);
-                long[] unsatCost = costSize == 0 ? new long[0] : costPointer.getLongArray(0, costSize);
-                onUnsat(unsatCost);
-                break;
-            case STATISTICS:
-                Statistics perStep = Statistics.fromPointer(event.getPointer(0));
-                Statistics accumulated = Statistics.fromPointer(event.getPointer(Native.POINTER_SIZE));
-                onStatistics(perStep, accumulated);
-                break;
-            case FINISH:
-                onResult(new SolveResult(event.getInt(0)));
-                break;
-            default:
-                throw new IllegalStateException("unknown solve event type " + type);
-        }
     }
 
     public void onModel(Model model) {
@@ -121,17 +66,46 @@ public abstract class SolveEventCallback implements Callback {
 
     }
 
-    // TODO: check if this is implemented correctly
-    private int getUnsatCostSize(Pointer event) {
-        switch (Native.SIZE_T_SIZE) {
-            case 2:
-                return event.getShort(Native.POINTER_SIZE);
-            case 4:
-                return event.getInt(Native.POINTER_SIZE);
-            case 8:
-                return (int) event.getLong(Native.POINTER_SIZE);
-            default:
-                throw new IllegalStateException("unknown native size: " + Native.SIZE_T_SIZE);
+    /**
+     * @param callback the callback to bridge, may be {@code null}
+     * @param arena    the arena the stub lives in; the solve handle closes it when the search is over
+     * @param errors   where an error of this callback is recorded, since reporting it to clingo would exit the process
+     * @return a {@code clingo_solve_event_callback_t}, or {@link MemorySegment#NULL} if there is no callback
+     */
+    public static MemorySegment toNative(SolveEventCallback callback, Arena arena, AtomicReference<Throwable> errors) {
+        if (callback == null) {
+            return MemorySegment.NULL;
+        }
+        clingo_solve_event_callback_t.Function bridge = (type, event, data, goon) -> {
+            callback.dispatch(type, event);
+            if (callback.stopped) {
+                goon.reinterpret(1).set(ValueLayout.JAVA_BOOLEAN, 0, false);
+            }
+            return true;
+        };
+        return Upcalls.stub(clingo_solve_event_callback_t.Function.class, bridge,
+                clingo_solve_event_callback_t.descriptor(), arena, ErrorPolicy.solveEvent(errors));
+    }
+
+    private void dispatch(int code, MemorySegment event) {
+        SolveEventType type = SolveEventType.fromValue(code);
+        switch (type) {
+            case MODEL -> onModel(new Model(event));
+            case UNSAT -> {
+                // struct { int64_t const *cost; size_t size; }
+                MemorySegment unsat = event.reinterpret(ValueLayout.ADDRESS.byteSize() + Long.BYTES);
+                MemorySegment cost = unsat.get(ValueLayout.ADDRESS, 0);
+                long size = unsat.get(ValueLayout.JAVA_LONG, ValueLayout.ADDRESS.byteSize());
+                onUnsat(NativeArrays.toLongs(cost, size));
+            }
+            case STATISTICS -> {
+                // clingo_statistics_t *[2], the per step and the accumulated statistics
+                MemorySegment statistics = event.reinterpret(2 * ValueLayout.ADDRESS.byteSize());
+                onStatistics(Statistics.fromPointer(statistics.getAtIndex(ValueLayout.ADDRESS, 0)),
+                        Statistics.fromPointer(statistics.getAtIndex(ValueLayout.ADDRESS, 1)));
+            }
+            case FINISH -> onResult(new SolveResult(event.reinterpret(Integer.BYTES).get(ValueLayout.JAVA_INT, 0)));
+            default -> throw new IllegalStateException("unknown solve event type " + type);
         }
     }
 }

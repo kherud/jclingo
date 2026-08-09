@@ -19,11 +19,10 @@
 
 package org.potassco.clingo.control;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.LongByReference;
-import org.potassco.clingo.internal.Clingo;
+import java.lang.foreign.MemorySegment;
+
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 import org.potassco.clingo.symbol.Signature;
 import org.potassco.clingo.symbol.Symbol;
 
@@ -32,7 +31,7 @@ import org.potassco.clingo.symbol.Symbol;
  */
 public class SymbolicAtom {
 
-    private final Pointer symbolicAtoms;
+    private final MemorySegment symbolicAtoms;
     private final long iterator;
 
     /**
@@ -44,7 +43,7 @@ public class SymbolicAtom {
      * @param symbolicAtoms pointer to the native symbolic atom set
      * @param iterator native iterator pointing to the atom
      */
-    public SymbolicAtom(Pointer symbolicAtoms, long iterator) {
+    public SymbolicAtom(MemorySegment symbolicAtoms, long iterator) {
         this.symbolicAtoms = symbolicAtoms;
         this.iterator = iterator;
     }
@@ -53,36 +52,29 @@ public class SymbolicAtom {
      * @return Whether the atom is an external atom.
      */
     public boolean isExternal() {
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbolic_atoms_is_external(symbolicAtoms, iterator, byteByReference));
-        return byteByReference.getValue() > 0;
+        return Out.getBoolean(out -> ClingoH.clingo_symbolic_atoms_is_external(symbolicAtoms, iterator, out));
     }
 
     /**
      * @return Whether the atom is a fact.
      */
     public boolean isFact() {
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbolic_atoms_is_fact(symbolicAtoms, iterator, byteByReference));
-        return byteByReference.getValue() > 0;
+        return Out.getBoolean(out -> ClingoH.clingo_symbolic_atoms_is_fact(symbolicAtoms, iterator, out));
     }
 
     /**
      * @return The program literal associated with the atom.
      */
     public int getLiteral() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbolic_atoms_literal(symbolicAtoms, iterator, intByReference));
-        return intByReference.getValue();
+        return Out.getInt(out -> ClingoH.clingo_symbolic_atoms_literal(symbolicAtoms, iterator, out));
     }
 
     /**
      * @return The representation of the atom in form of a symbol.
      */
     public Symbol getSymbol() {
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbolic_atoms_symbol(symbolicAtoms, iterator, longByReference));
-        return Symbol.fromLong(longByReference.getValue());
+        return Symbol.fromLong(Out.getLong(out ->
+                ClingoH.clingo_symbolic_atoms_symbol(symbolicAtoms, iterator, out)));
     }
 
     @Override

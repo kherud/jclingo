@@ -19,15 +19,17 @@
 
 package org.potassco.clingo.solving;
 
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicReference;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSizeByReference;
+import org.potassco.clingo.internal.NativeResource;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 /**
  * Handle for solve calls.
@@ -36,55 +38,56 @@ import org.potassco.clingo.internal.NativeSizeByReference;
  * A <code>SolveHandle</code> is an AutoCloseable and should be used with Java's <code>try with</code> statement.
  * Alternatively it must be manually closed.
  */
-public class SolveHandle implements AutoCloseable, Iterator<Model> {
+public class SolveHandle extends NativeResource implements Iterator<Model> {
 
-    private final Pointer solveHandle;
-
-    // clingo keeps the raw function pointer of the event callback for the whole search. JNA frees a native trampoline
-    // as soon as its Java callback becomes unreachable, so the callback has to stay alive as long as the handle does.
-    private final SolveEventCallback eventCallback;
+    /**
+     * Errors of callbacks that ran on a solver thread; reporting them to clingo would have exited the process.
+     */
+    private final AtomicReference<Throwable> callbackError;
 
     private Model currentModel;
 
     private boolean continueIteration = true;
 
-    private boolean closed;
-
-    public SolveHandle(Pointer solveHandle) {
-        this(solveHandle, null);
+    public SolveHandle(MemorySegment solveHandle) {
+        this(solveHandle, Arena.ofShared(), new AtomicReference<>());
     }
 
-    public SolveHandle(Pointer solveHandle, SolveEventCallback eventCallback) {
-        this.solveHandle = solveHandle;
-        this.eventCallback = eventCallback;
+    /**
+     * @param arena         holds the solve event callback for the duration of the search
+     * @param callbackError where callbacks running on solver threads record their errors
+     */
+    public SolveHandle(MemorySegment solveHandle, Arena arena, AtomicReference<Throwable> callbackError) {
+        super(solveHandle, arena);
+        this.callbackError = callbackError;
     }
 
     /**
      * Cancel the running search.
      */
     public void cancel() {
-        Clingo.check(Clingo.INSTANCE.clingo_solve_handle_cancel(solveHandle));
+        checkOpen();
+        Clingo.check(ClingoH.clingo_solve_handle_cancel(handle));
     }
 
     /**
      * Stops the search and frees the native handle. Repeated calls have no effect.
      */
     @Override
-    public void close() {
-        if (closed) {
-            return;
-        }
-        closed = true;
-        Clingo.check(Clingo.INSTANCE.clingo_solve_handle_close(solveHandle));
-        rethrowEventCallbackError();
+    protected void free() {
+        invalidateModel();
+        Clingo.check(ClingoH.clingo_solve_handle_close(handle));
+        rethrowCallbackError();
     }
 
     /**
      * Discards the last model and starts searching for the next one.
      */
     public void resume() {
-        Clingo.check(Clingo.INSTANCE.clingo_solve_handle_resume(solveHandle));
-        rethrowEventCallbackError();
+        checkOpen();
+        invalidateModel();
+        Clingo.check(ClingoH.clingo_solve_handle_resume(handle));
+        rethrowCallbackError();
     }
 
     /**
@@ -109,9 +112,12 @@ public class SolveHandle implements AutoCloseable, Iterator<Model> {
      * @return Indicates whether the solve call has finished or the next result is ready.
      */
     public boolean wait(double timeout) {
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.INSTANCE.clingo_solve_handle_wait(solveHandle, timeout, byteByReference);
-        return byteByReference.getValue() > 0;
+        checkOpen();
+        try (Arena call = Arena.ofConfined()) {
+            MemorySegment result = call.allocate(ValueLayout.JAVA_BOOLEAN);
+            ClingoH.clingo_solve_handle_wait(handle, timeout, result);
+            return result.get(ValueLayout.JAVA_BOOLEAN, 0);
+        }
     }
 
     /**
@@ -121,31 +127,10 @@ public class SolveHandle implements AutoCloseable, Iterator<Model> {
      * @return the solve result
      */
     public SolveResult getSolveResult() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_solve_handle_get(solveHandle, intByReference));
-        rethrowEventCallbackError();
-        return new SolveResult(intByReference.getValue());
-    }
-
-    /**
-     * Propagates an exception a user event callback raised. clingo would exit the process if the callback reported the
-     * failure to it, so the error is carried over and surfaces here instead.
-     */
-    private void rethrowEventCallbackError() {
-        if (eventCallback == null) {
-            return;
-        }
-        Throwable error = eventCallback.takePendingError();
-        if (error == null) {
-            return;
-        }
-        if (error instanceof RuntimeException) {
-            throw (RuntimeException) error;
-        }
-        if (error instanceof Error) {
-            throw (Error) error;
-        }
-        throw new IllegalStateException("solve event callback failed", error);
+        checkOpen();
+        SolveResult result = new SolveResult(Out.getInt(out -> ClingoH.clingo_solve_handle_get(handle, out)));
+        rethrowCallbackError();
+        return result;
     }
 
     /**
@@ -156,11 +141,8 @@ public class SolveHandle implements AutoCloseable, Iterator<Model> {
      * @return the array of solver literals
      */
     public int[] getCore() {
-        PointerByReference pointerByReference = new PointerByReference();
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_solve_handle_core(solveHandle, pointerByReference, nativeSizeByReference));
-        int coreSize = (int) nativeSizeByReference.getValue();
-        return coreSize == 0 ? new int[coreSize] : pointerByReference.getValue().getIntArray(0, coreSize);
+        checkOpen();
+        return Out.getInts((core, size) -> ClingoH.clingo_solve_handle_core(handle, core, size));
     }
 
     /**
@@ -169,26 +151,20 @@ public class SolveHandle implements AutoCloseable, Iterator<Model> {
      * @return the current model or null
      */
     public Model getModel() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_solve_handle_model(solveHandle, pointerByReference));
-        if (pointerByReference.getValue() == null)
-            return null;
-        return new Model(pointerByReference.getValue());
+        checkOpen();
+        return model(Out.getPointer(out -> ClingoH.clingo_solve_handle_model(handle, out)));
     }
 
-	/**
-	 * When a problem is satisfiable and the search is finished, get the last computed model. If the program is
-	 * unsatisfiable or the search is not finished, this method returns null.
-	 *
-	 * @return the last computed model or null
-	 */
-	public Model getLast() {
-		PointerByReference pointerByReference = new PointerByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_solve_handle_last(solveHandle, pointerByReference));
-		if (pointerByReference.getValue() == null)
-			return null;
-		return new Model(pointerByReference.getValue());
-	}
+    /**
+     * When a problem is satisfiable and the search is finished, get the last computed model. If the program is
+     * unsatisfiable or the search is not finished, this method returns null.
+     *
+     * @return the last computed model or null
+     */
+    public Model getLast() {
+        checkOpen();
+        return model(Out.getPointer(out -> ClingoH.clingo_solve_handle_last(handle, out)));
+    }
 
     @Override
     public boolean hasNext() {
@@ -207,5 +183,35 @@ public class SolveHandle implements AutoCloseable, Iterator<Model> {
             return currentModel;
         }
         throw new NoSuchElementException();
+    }
+
+    private Model model(MemorySegment pointer) {
+        if (pointer == null || pointer.equals(MemorySegment.NULL)) {
+            return null;
+        }
+        currentModel = new Model(pointer);
+        return currentModel;
+    }
+
+    /**
+     * clingo reuses a model between search steps, so the java object handed out for the previous one must not be used
+     * any more once the search moves on.
+     */
+    private void invalidateModel() {
+        if (currentModel != null) {
+            currentModel.invalidate();
+            currentModel = null;
+        }
+    }
+
+    /**
+     * Propagates an exception a callback raised on a solver thread. clingo would exit the process if the failure of a
+     * solve event were reported to it, so the error is carried over and surfaces here instead.
+     */
+    private void rethrowCallbackError() {
+        Throwable error = callbackError.getAndSet(null);
+        if (error != null) {
+            Clingo.rethrow(error);
+        }
     }
 }

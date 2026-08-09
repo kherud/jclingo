@@ -19,16 +19,15 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstType;
-import org.potassco.clingo.internal.Clingo;
 
 public class SymbolicAtom extends Ast {
 
-    public SymbolicAtom(Pointer ast) {
+    public SymbolicAtom(MemorySegment ast) {
         super(ast);
     }
 
@@ -37,19 +36,15 @@ public class SymbolicAtom extends Ast {
     }
 
     public Ast getSymbol() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.SYMBOL.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.SYMBOL);
     }
 
     public void setSymbol(Ast symbol) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.SYMBOL.getValue(), symbol.getPointer()));
+        setAst(AstAttribute.SYMBOL, symbol);
     }
 
-    private static Pointer create(Ast symbol) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.SYMBOLIC_ATOM.getValue(), pointerByReference, symbol.getPointer()));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Ast symbol) {
+        return build(AstType.SYMBOLIC_ATOM, symbol);
     }
 
 }

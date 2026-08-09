@@ -19,11 +19,15 @@
 
 package org.potassco.clingo.backend;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.LongByReference;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
+
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.internal.NativeResource;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ScratchAllocator;
+import org.potassco.clingo.internal.ffi.ClingoH;
 import org.potassco.clingo.solving.TruthValue;
 import org.potassco.clingo.symbol.Number;
 import org.potassco.clingo.symbol.Symbol;
@@ -36,29 +40,67 @@ import org.potassco.clingo.theory.TheorySequenceType;
  * The <code>Backend</code> is a context manager and should be used with Java's <code>try with</code> statement.
  * Alternatively it must be closed manually.
  */
-public class Backend implements AutoCloseable {
+public class Backend extends NativeResource {
 
-	private final Pointer backend;
+	/**
+	 * Statements are added one after another from a single thread, so the arrays handed to clingo can share one buffer
+	 * that is reused instead of allocated per statement.
+	 */
+	private final ScratchAllocator scratch;
 
-	private boolean closed;
+	public Backend(MemorySegment backend) {
+		super(backend, Arena.ofConfined());
+		this.scratch = new ScratchAllocator(arena, 1024);
+		Clingo.check(ClingoH.clingo_backend_begin(backend));
+	}
 
-	public Backend(Pointer backend) {
-		this.backend = backend;
-		Clingo.check(Clingo.INSTANCE.clingo_backend_begin(backend));
+	private MemorySegment ints(int[] values) {
+		return scratch.allocateFrom(ValueLayout.JAVA_INT, values);
+	}
+
+	private MemorySegment string(String value) {
+		return scratch.allocateFrom(value);
+	}
+
+	/**
+	 * Runs a statement, giving its arguments the scratch buffer for the duration of the call.
+	 */
+	private void statement(Runnable body) {
+		checkOpen();
+		try {
+			body.run();
+		}
+		finally {
+			scratch.reset();
+		}
+	}
+
+	/**
+	 * Runs a statement reporting an id, giving its arguments the scratch buffer for the duration of the call.
+	 */
+	private int idStatement(Out.Call call) {
+		checkOpen();
+		try {
+			return Out.getInt(call);
+		}
+		finally {
+			scratch.reset();
+		}
 	}
 
 	/**
 	 * Add an edge directive to the program.
 	 */
 	public void addAcycEdge(int nodeU, int nodeV, int[] conditions) {
-		Clingo.check(Clingo.INSTANCE.clingo_backend_acyc_edge(backend, nodeU, nodeV, conditions, new NativeSize(conditions.length)));
+		statement(() -> Clingo.check(
+				ClingoH.clingo_backend_acyc_edge(handle, nodeU, nodeV, ints(conditions), conditions.length)));
 	}
 
 	/**
 	 * Add assumptions to the program.
 	 */
 	public void addAssume(int[] literals) {
-		Clingo.check(Clingo.INSTANCE.clingo_backend_assume(backend, literals, new NativeSize(literals.length)));
+		statement(() -> Clingo.check(ClingoH.clingo_backend_assume(handle, ints(literals), literals.length)));
 	}
 
 	/**
@@ -67,9 +109,7 @@ public class Backend implements AutoCloseable {
 	 * @return The program atom representing the atom.
 	 */
 	public int addAtom() {
-		IntByReference intByReference = new IntByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_backend_add_atom(backend, null, intByReference));
-		return intByReference.getValue();
+		return idStatement(out -> ClingoH.clingo_backend_add_atom(handle, MemorySegment.NULL, out));
 	}
 
 	/**
@@ -82,10 +122,8 @@ public class Backend implements AutoCloseable {
 	 * @return The program atom representing the atom.
 	 */
 	public int addAtom(Symbol symbol) {
-		IntByReference intByReference = new IntByReference();
-		LongByReference longByReference = new LongByReference(symbol.getLong());
-		Clingo.check(Clingo.INSTANCE.clingo_backend_add_atom(backend, longByReference, intByReference));
-		return intByReference.getValue();
+		return idStatement(out -> ClingoH.clingo_backend_add_atom(handle,
+				scratch.allocateFrom(ValueLayout.JAVA_LONG, symbol.getLong()), out));
 	}
 
 	/**
@@ -94,7 +132,7 @@ public class Backend implements AutoCloseable {
 	 * @param atom The program atom to mark as external.
 	 */
 	public void addExternal(int atom) {
-		Clingo.check(Clingo.INSTANCE.clingo_backend_external(backend, atom, ExternalType.FREE.getValue()));
+		statement(() -> Clingo.check(ClingoH.clingo_backend_external(handle, atom, ExternalType.FREE.getValue())));
 	}
 
 	/**
@@ -105,7 +143,7 @@ public class Backend implements AutoCloseable {
 	 * @param externalType The truth value.
 	 */
 	public void addExternal(int atom, ExternalType externalType) {
-		Clingo.check(Clingo.INSTANCE.clingo_backend_external(backend, atom, externalType.getValue()));
+		statement(() -> Clingo.check(ClingoH.clingo_backend_external(handle, atom, externalType.getValue())));
 	}
 
 	/**
@@ -118,15 +156,8 @@ public class Backend implements AutoCloseable {
 	 * @param priority      An unsigned integer.
 	 */
 	public void addHeuristic(int atom, int[] condition, HeuristicType heuristicType, int bias, int priority) {
-		Clingo.check(Clingo.INSTANCE.clingo_backend_heuristic(
-				backend,
-				atom,
-				heuristicType.getValue(),
-				bias,
-				priority,
-				condition,
-				new NativeSize(condition.length))
-		);
+		statement(() -> Clingo.check(ClingoH.clingo_backend_heuristic(handle, atom, heuristicType.getValue(), bias,
+				priority, ints(condition), condition.length)));
 	}
 
 	/**
@@ -136,8 +167,8 @@ public class Backend implements AutoCloseable {
 	 * @param priority Integer for the priority.
 	 */
 	public void addMinimize(WeightedLiteral[] literals, int priority) {
-		WeightedLiteral[] contiguousArray = WeightedLiteral.toContiguousArray(literals);
-		Clingo.check(Clingo.INSTANCE.clingo_backend_minimize(backend, priority, contiguousArray, new NativeSize(literals.length)));
+		statement(() -> Clingo.check(ClingoH.clingo_backend_minimize(handle, priority,
+				WeightedLiteral.toNative(scratch, literals), literals.length)));
 	}
 
 	/**
@@ -146,7 +177,7 @@ public class Backend implements AutoCloseable {
 	 * @param atoms List of program atoms to project on.
 	 */
 	public void addProject(int[] atoms) {
-		Clingo.check(Clingo.INSTANCE.clingo_backend_project(backend, atoms, new NativeSize(atoms.length)));
+		statement(() -> Clingo.check(ClingoH.clingo_backend_project(handle, ints(atoms), atoms.length)));
 	}
 
 	/**
@@ -159,14 +190,8 @@ public class Backend implements AutoCloseable {
 	 * @param choice Whether to add a disjunctive or choice rule.
 	 */
 	public void addRule(int[] head, int[] body, boolean choice) {
-		Clingo.check(Clingo.INSTANCE.clingo_backend_rule(
-				backend,
-				choice ? (byte) 1 : 0,
-				head,
-				new NativeSize(head.length),
-				body,
-				new NativeSize(body.length)
-		));
+		statement(() -> Clingo.check(ClingoH.clingo_backend_rule(handle, choice, ints(head), head.length,
+				ints(body), body.length)));
 	}
 
 	/**
@@ -178,16 +203,8 @@ public class Backend implements AutoCloseable {
 	 * @param choice     Whether to add a disjunctive or choice rule.
 	 */
 	public void addWeightRule(int[] head, int lowerBound, WeightedLiteral[] body, boolean choice) {
-		WeightedLiteral[] contiguousArray = WeightedLiteral.toContiguousArray(body);
-		Clingo.check(Clingo.INSTANCE.clingo_backend_weight_rule(
-				backend,
-				choice ? (byte) 1 : 0,
-				head,
-				new NativeSize(head.length),
-				lowerBound,
-				contiguousArray,
-				new NativeSize(body.length)
-		));
+		statement(() -> Clingo.check(ClingoH.clingo_backend_weight_rule(handle, choice, ints(head), head.length,
+				lowerBound, WeightedLiteral.toNative(scratch, body), body.length)));
 	}
 
 	/**
@@ -207,13 +224,7 @@ public class Backend implements AutoCloseable {
 	 * @return the resulting term id
 	 */
 	public int addTheoryTermNumber(int number) {
-		IntByReference intByReference = new IntByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_backend_theory_term_number(
-				backend,
-				number,
-				intByReference
-		));
-		return intByReference.getValue();
+		return idStatement(out -> ClingoH.clingo_backend_theory_term_number(handle, number, out));
 	}
 
 	/**
@@ -233,13 +244,7 @@ public class Backend implements AutoCloseable {
 	 * @return the resulting term id
 	 */
 	public int addTheoryTermString(String string) {
-		IntByReference intByReference = new IntByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_backend_theory_term_string(
-				backend,
-				string,
-				intByReference
-		));
-		return intByReference.getValue();
+		return idStatement(out -> ClingoH.clingo_backend_theory_term_string(handle, string(string), out));
 	}
 
 	/**
@@ -250,15 +255,8 @@ public class Backend implements AutoCloseable {
 	 * @return the resulting term id
 	 */
 	public int addTheoryTermSequence(TheorySequenceType type, int[] arguments) {
-		IntByReference intByReference = new IntByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_backend_theory_term_sequence(
-				backend,
-				type.getValue(),
-				arguments,
-				new NativeSize(arguments.length),
-				intByReference
-		));
-		return intByReference.getValue();
+		return idStatement(out -> ClingoH.clingo_backend_theory_term_sequence(handle, type.getValue(),
+				ints(arguments), arguments.length, out));
 	}
 
 	/**
@@ -269,15 +267,8 @@ public class Backend implements AutoCloseable {
 	 * @return the resulting term id
 	 */
 	public int addTheoryTermFunction(String name, int[] arguments) {
-		IntByReference intByReference = new IntByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_backend_theory_term_function(
-				backend,
-				name,
-				arguments,
-				new NativeSize(arguments.length),
-				intByReference
-		));
-		return intByReference.getValue();
+		return idStatement(out -> ClingoH.clingo_backend_theory_term_function(handle, string(name),
+				ints(arguments), arguments.length, out));
 	}
 
 	/**
@@ -297,13 +288,7 @@ public class Backend implements AutoCloseable {
 	 * @return the resulting term id
 	 */
 	public int addTheoryTermSymbol(long symbol) {
-		IntByReference intByReference = new IntByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_backend_theory_term_symbol(
-				backend,
-				symbol,
-				intByReference
-		));
-		return intByReference.getValue();
+		return idStatement(out -> ClingoH.clingo_backend_theory_term_symbol(handle, symbol, out));
 	}
 
 	/**
@@ -314,16 +299,8 @@ public class Backend implements AutoCloseable {
 	 * @return the resulting element id
 	 */
 	public int addTheoryElement(int[] tuple, int[] condition) {
-		IntByReference intByReference = new IntByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_backend_theory_element(
-				backend,
-				tuple,
-				new NativeSize(tuple.length),
-				condition,
-				new NativeSize(condition.length),
-				intByReference
-		));
-		return intByReference.getValue();
+		return idStatement(out -> ClingoH.clingo_backend_theory_element(handle, ints(tuple), tuple.length,
+				ints(condition), condition.length, out));
 	}
 
 	/**
@@ -342,16 +319,8 @@ public class Backend implements AutoCloseable {
 	 * @return the final program atom of the theory atom
 	 */
 	public int addTheoryAtom(int termId, int[] elements, int atom) {
-		IntByReference intByReference = new IntByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_backend_theory_atom(
-				backend,
-				atom,
-				termId,
-				elements,
-				new NativeSize(elements.length),
-				intByReference
-		));
-		return intByReference.getValue();
+		return idStatement(out -> ClingoH.clingo_backend_theory_atom(handle, atom, termId, ints(elements),
+				elements.length, out));
 	}
 
 	/**
@@ -362,16 +331,7 @@ public class Backend implements AutoCloseable {
 	 * @return the final program atom of the theory atom
 	 */
 	public int addTheoryAtom(int termId, int[] elements) {
-		IntByReference intByReference = new IntByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_backend_theory_atom(
-				backend,
-				0xffffffff,
-				termId,
-				elements,
-				new NativeSize(elements.length),
-				intByReference
-		));
-		return intByReference.getValue();
+		return addTheoryAtom(termId, elements, 0xffffffff);
 	}
 
 	/**
@@ -392,18 +352,8 @@ public class Backend implements AutoCloseable {
 	 * @return the final program atom of the theory atom
 	 */
 	public int addTheoryAtomWithGuard(int termId, int[] elements, String operatorName, int rightHandSideId, int atom) {
-		IntByReference intByReference = new IntByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_backend_theory_atom_with_guard(
-				backend,
-				atom,
-				termId,
-				elements,
-				new NativeSize(elements.length),
-				operatorName,
-				rightHandSideId,
-				intByReference
-		));
-		return intByReference.getValue();
+		return idStatement(out -> ClingoH.clingo_backend_theory_atom_with_guard(handle, atom, termId, ints(elements),
+				elements.length, string(operatorName), rightHandSideId, out));
 	}
 
 	/**
@@ -416,36 +366,14 @@ public class Backend implements AutoCloseable {
 	 * @return the final program atom of the theory atom
 	 */
 	public int addTheoryAtomWithGuard(int termId, int[] elements, String operatorName, int rightHandSideId) {
-		IntByReference intByReference = new IntByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_backend_theory_atom_with_guard(
-				backend,
-				0xffffffff,
-				termId,
-				elements,
-				new NativeSize(elements.length),
-				operatorName,
-				rightHandSideId,
-				intByReference
-		));
-		return intByReference.getValue();
+		return addTheoryAtomWithGuard(termId, elements, operatorName, rightHandSideId, 0xffffffff);
 	}
 
 	/**
-	 * @return whether the batch of statements has already been ended
-	 */
-	public boolean isClosed() {
-		return closed;
-	}
-
-	/**
-	 * Ends the batch of statements. Repeated calls have no effect.
+	 * Ends the batch of statements.
 	 */
 	@Override
-	public void close() {
-		if (closed) {
-			return;
-		}
-		closed = true;
-		Clingo.check(Clingo.INSTANCE.clingo_backend_end(backend));
+	protected void free() {
+		Clingo.check(ClingoH.clingo_backend_end(handle));
 	}
 }

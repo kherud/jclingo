@@ -21,19 +21,17 @@ package org.potassco.clingo.ast.nodes;
 
 import java.util.NoSuchElementException;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstSequence;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
 
 public class TheoryAtom extends Ast {
 
-    public TheoryAtom(Pointer ast) {
+    public TheoryAtom(MemorySegment ast) {
         super(ast);
     }
 
@@ -42,15 +40,11 @@ public class TheoryAtom extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public Ast getTerm() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.TERM.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.TERM);
     }
 
     public AstSequence getElements() {
@@ -66,11 +60,11 @@ public class TheoryAtom extends Ast {
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setTerm(Ast term) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.TERM.getValue(), term.getPointer()));
+        setAst(AstAttribute.TERM, term);
     }
 
     public void setElements(AstSequence elements) {
@@ -78,13 +72,11 @@ public class TheoryAtom extends Ast {
     }
 
     public void setGuard(Ast guard) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(getPointer(), AstAttribute.GUARD.getValue(), guard.getPointer()));
+        setOptionalAst(AstAttribute.GUARD, guard);
     }
 
-    private static Pointer create(Location location, Ast term, AstSequence elements, Ast guard) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.THEORY_ATOM.getValue(), pointerByReference, location, term.getPointer(), elements.getPointer(), new NativeSize(elements.size()), guard.getPointer()));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, Ast term, AstSequence elements, Ast guard) {
+        return build(AstType.THEORY_ATOM, location, term, elements, guard);
     }
 
 }

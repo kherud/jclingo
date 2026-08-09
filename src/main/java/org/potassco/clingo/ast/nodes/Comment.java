@@ -1,18 +1,16 @@
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.CommentType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
 
 public class Comment extends Ast {
 
-	public Comment(Pointer ast) {
+	public Comment(MemorySegment ast) {
 		super(ast);
 	}
 
@@ -21,38 +19,30 @@ public class Comment extends Ast {
 	}
 
 	public Location getLocation() {
-		Location.ByReference locationByReference = new Location.ByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-		return locationByReference;
+		return getLocation(AstAttribute.LOCATION);
 	}
 
 	public String getValue() {
-		String[] stringByRef = new String[1];
-		Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(getPointer(), AstAttribute.VALUE.getValue(), stringByRef));
-		return stringByRef[0];
+		return getString(AstAttribute.VALUE);
 	}
 
 	public CommentType getCommentType() {
-		IntByReference intByReference = new IntByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(getPointer(), AstAttribute.COMMENT_TYPE.getValue(), intByReference));
-		return CommentType.fromValue(intByReference.getValue());
+		return CommentType.fromValue(getNumber(AstAttribute.COMMENT_TYPE));
 	}
 
 	public void setLocation(Location location) {
-		Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+		setLocation(AstAttribute.LOCATION, location);
 	}
 
 	public void setValue(String value) {
-		Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(getPointer(), AstAttribute.VALUE.getValue(), value));
+		setString(AstAttribute.VALUE, value);
 	}
 
 	public void setCommentType(CommentType commentType) {
-		Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(getPointer(), AstAttribute.COMMENT_TYPE.getValue(), commentType.getValue()));
+		setNumber(AstAttribute.COMMENT_TYPE, commentType.getValue());
 	}
 
-	private static Pointer create(Location location, String value, int commentType) {
-		PointerByReference pointerByReference = new PointerByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.COMMENT.getValue(), pointerByReference, location, value, commentType));
-		return pointerByReference.getValue();
+	private static MemorySegment create(Location location, String value, int commentType) {
+		return build(AstType.COMMENT, location, value, commentType);
 	}
 }

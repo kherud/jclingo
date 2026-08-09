@@ -19,20 +19,17 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstSequence;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
 
 public class TheorySequence extends Ast {
 
-    public TheorySequence(Pointer ast) {
+    public TheorySequence(MemorySegment ast) {
         super(ast);
     }
 
@@ -41,15 +38,11 @@ public class TheorySequence extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public int getSequenceType() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(getPointer(), AstAttribute.SEQUENCE_TYPE.getValue(), intByReference));
-        return intByReference.getValue();
+        return getNumber(AstAttribute.SEQUENCE_TYPE);
     }
 
     public AstSequence getTerms() {
@@ -57,21 +50,19 @@ public class TheorySequence extends Ast {
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setSequenceType(int sequenceType) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(getPointer(), AstAttribute.SEQUENCE_TYPE.getValue(), sequenceType));
+        setNumber(AstAttribute.SEQUENCE_TYPE, sequenceType);
     }
 
     public void setTerms(AstSequence terms) {
         new AstSequence(this, AstAttribute.TERMS).set(terms);
     }
 
-    private static Pointer create(Location location, int sequenceType, AstSequence terms) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.THEORY_SEQUENCE.getValue(), pointerByReference, location, sequenceType, terms.getPointer(), new NativeSize(terms.size())));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, int sequenceType, AstSequence terms) {
+        return build(AstType.THEORY_SEQUENCE, location, sequenceType, terms);
     }
 
 }

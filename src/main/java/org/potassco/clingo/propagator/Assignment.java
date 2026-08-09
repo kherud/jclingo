@@ -22,11 +22,10 @@ package org.potassco.clingo.propagator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.IntByReference;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
+import java.lang.foreign.MemorySegment;
+
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 import org.potassco.clingo.solving.TruthValue;
 
 /**
@@ -40,9 +39,9 @@ import org.potassco.clingo.solving.TruthValue;
  */
 public class Assignment implements Iterable<Integer> {
 
-    private final Pointer assignment;
+    private final MemorySegment assignment;
 
-    public Assignment(Pointer assignment) {
+    public Assignment(MemorySegment assignment) {
         this.assignment = assignment;
     }
 
@@ -50,7 +49,7 @@ public class Assignment implements Iterable<Integer> {
      * @return The number of (positive) literals in the assignment.
      */
     public int size() {
-        return Clingo.INSTANCE.clingo_assignment_size(assignment).intValue();
+        return (int) ClingoH.clingo_assignment_size(assignment);
     }
 
     /**
@@ -58,9 +57,7 @@ public class Assignment implements Iterable<Integer> {
      * @return The (positive) literal at the given offset in the assignment.
      */
     public int get(int index) {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_assignment_at(assignment, new NativeSize(index), intByReference));
-        return intByReference.getValue();
+        return Out.getInt(out -> ClingoH.clingo_assignment_at(assignment, index, out));
     }
 
     /**
@@ -84,9 +81,7 @@ public class Assignment implements Iterable<Integer> {
      * @return a bool determining if the literal is assigned on the top level.
      */
     public TruthValue getTruthValue(int literal) {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_assignment_truth_value(assignment, literal, intByReference));
-        return TruthValue.fromValue(intByReference.getValue());
+        return TruthValue.fromValue(Out.getInt(out -> ClingoH.clingo_assignment_truth_value(assignment, literal, out)));
     }
 
     /**
@@ -95,9 +90,7 @@ public class Assignment implements Iterable<Integer> {
      * @return the decision literal of the given level.
      */
     public int getDecision(int level) {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_assignment_decision(assignment, level, intByReference));
-        return intByReference.getValue();
+        return Out.getInt(out -> ClingoH.clingo_assignment_decision(assignment, level, out));
     }
 
     /**
@@ -106,7 +99,7 @@ public class Assignment implements Iterable<Integer> {
      * @return the current decision level.
      */
     public int getDecisionLevel() {
-        return Clingo.INSTANCE.clingo_assignment_decision_level(assignment);
+        return ClingoH.clingo_assignment_decision_level(assignment);
     }
 
     /**
@@ -116,7 +109,7 @@ public class Assignment implements Iterable<Integer> {
      * @return the decision level
      */
     public int getRootLevel() {
-        return Clingo.INSTANCE.clingo_assignment_root_level(assignment);
+        return ClingoH.clingo_assignment_root_level(assignment);
     }
 
     /**
@@ -125,7 +118,7 @@ public class Assignment implements Iterable<Integer> {
      * @return whether the assignment is conflicting
      */
     public boolean isConflicting() {
-        return Clingo.INSTANCE.clingo_assignment_has_conflict(assignment) > 0;
+        return ClingoH.clingo_assignment_has_conflict(assignment);
     }
 
     /**
@@ -134,7 +127,7 @@ public class Assignment implements Iterable<Integer> {
      * @return whether the assignment is total
      */
     public boolean isTotal() {
-        return Clingo.INSTANCE.clingo_assignment_is_total(assignment) > 0;
+        return ClingoH.clingo_assignment_is_total(assignment);
     }
 
     /**
@@ -144,7 +137,7 @@ public class Assignment implements Iterable<Integer> {
      * @return a bool determining if the given literal is valid in this solver.
      */
     public boolean hasLiteral(int literal) {
-        return Clingo.INSTANCE.clingo_assignment_has_literal(assignment, literal) > 0;
+        return ClingoH.clingo_assignment_has_literal(assignment, literal);
     }
 
     /**
@@ -154,9 +147,7 @@ public class Assignment implements Iterable<Integer> {
      * @return a bool determining if the literal is false.
      */
     public boolean isFalse(int literal) {
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_assignment_is_false(assignment, literal, byteByReference));
-        return byteByReference.getValue() > 0;
+        return Out.getBoolean(out -> ClingoH.clingo_assignment_is_false(assignment, literal, out));
     }
 
     /**
@@ -166,9 +157,7 @@ public class Assignment implements Iterable<Integer> {
      * @return a bool determining if the literal is assigned on the top level.
      */
     public boolean isFixed(int literal) {
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_assignment_is_fixed(assignment, literal, byteByReference));
-        return byteByReference.getValue() > 0;
+        return Out.getBoolean(out -> ClingoH.clingo_assignment_is_fixed(assignment, literal, out));
     }
 
     /**
@@ -178,9 +167,7 @@ public class Assignment implements Iterable<Integer> {
      * @return a bool determining if the literal is true.
      */
     public boolean isTrue(int literal) {
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_assignment_is_true(assignment, literal, byteByReference));
-        return byteByReference.getValue() > 0;
+        return Out.getBoolean(out -> ClingoH.clingo_assignment_is_true(assignment, literal, out));
     }
 
     /**
@@ -200,9 +187,7 @@ public class Assignment implements Iterable<Integer> {
      * @return the resulting level
      */
     public int getLevel(int literal) {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_assignment_level(assignment, literal, intByReference));
-        return intByReference.getValue();
+        return Out.getInt(out -> ClingoH.clingo_assignment_level(assignment, literal, out));
     }
 
     /**
@@ -214,7 +199,7 @@ public class Assignment implements Iterable<Integer> {
         return new Trail(this);
     }
 
-    public Pointer getPointer() {
+    public MemorySegment getPointer() {
         return assignment;
     }
 

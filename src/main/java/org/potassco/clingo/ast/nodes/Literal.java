@@ -19,18 +19,16 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
 
 public class Literal extends Ast {
 
-    public Literal(Pointer ast) {
+    public Literal(MemorySegment ast) {
         super(ast);
     }
 
@@ -39,39 +37,31 @@ public class Literal extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public int getSign() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(getPointer(), AstAttribute.SIGN.getValue(), intByReference));
-        return intByReference.getValue();
+        return getNumber(AstAttribute.SIGN);
     }
 
     public Ast getAtom() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.ATOM.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.ATOM);
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setSign(int sign) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(getPointer(), AstAttribute.SIGN.getValue(), sign));
+        setNumber(AstAttribute.SIGN, sign);
     }
 
     public void setAtom(Ast atom) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.ATOM.getValue(), atom.getPointer()));
+        setAst(AstAttribute.ATOM, atom);
     }
 
-    private static Pointer create(Location location, int sign, Ast atom) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.LITERAL.getValue(), pointerByReference, location, sign, atom.getPointer()));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, int sign, Ast atom) {
+        return build(AstType.LITERAL, location, sign, atom);
     }
 
 }

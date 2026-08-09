@@ -19,20 +19,22 @@
 
 package org.potassco.clingo.propagator;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.IntByReference;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
+
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 /**
  * This object can be used to add clauses and to propagate them.
  */
 public class PropagateControl {
 
-    public final Pointer propagateControl;
+    public final MemorySegment propagateControl;
 
-    public PropagateControl(Pointer propagateControl) {
+    public PropagateControl(MemorySegment propagateControl) {
         this.propagateControl = propagateControl;
     }
 
@@ -62,15 +64,11 @@ public class PropagateControl {
 			type = lock ? ClauseType.STATIC : ClauseType.LEARNT;
 		}
 
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_control_add_clause(
-                propagateControl,
-                clause,
-                new NativeSize(clause.length),
-                type.getValue(),
-                byteByReference
-        ));
-        return byteByReference.getValue() > 0;
+        try (Arena call = Arena.ofConfined()) {
+            MemorySegment clause$ = call.allocateFrom(ValueLayout.JAVA_INT, clause);
+            return Out.getBoolean(out -> ClingoH.clingo_propagate_control_add_clause(
+                    propagateControl, clause$, clause.length, type.getValue(), out));
+        }
     }
 
     /**
@@ -83,9 +81,7 @@ public class PropagateControl {
      * @return The added solver literal.
      */
     public int addLiteral() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_control_add_literal(propagateControl, intByReference));
-        return intByReference.getValue();
+        return Out.getInt(out -> ClingoH.clingo_propagate_control_add_literal(propagateControl, out));
     }
 
     /**
@@ -113,7 +109,7 @@ public class PropagateControl {
      * @param literal The target solver literal.
      */
     public void addWatch(int literal) {
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_control_add_watch(propagateControl, literal));
+        Clingo.check(ClingoH.clingo_propagate_control_add_watch(propagateControl, literal));
     }
 
     /**
@@ -123,7 +119,7 @@ public class PropagateControl {
      * @return Whether the literal is watched.
      */
     public boolean hasWatch(int literal) {
-        return Clingo.INSTANCE.clingo_propagate_control_has_watch(propagateControl, literal) > 0;
+        return ClingoH.clingo_propagate_control_has_watch(propagateControl, literal);
     }
 
     /**
@@ -132,9 +128,7 @@ public class PropagateControl {
      * @return This method returns false if the current propagation must be stopped.
      */
     public boolean propagate() {
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_control_propagate(propagateControl, byteByReference));
-        return byteByReference.getValue() > 0;
+        return Out.getBoolean(out -> ClingoH.clingo_propagate_control_propagate(propagateControl, out));
     }
 
     /**
@@ -143,21 +137,20 @@ public class PropagateControl {
      * @param literal The target solver literal.
      */
     public void removeWatch(int literal) {
-        Clingo.INSTANCE.clingo_propagate_control_remove_watch(propagateControl, literal);
+        ClingoH.clingo_propagate_control_remove_watch(propagateControl, literal);
     }
 
     /**
      * @return {@link Assignment} object capturing the partial assignment of the current solver thread.
      */
     public Assignment getAssignment() {
-        Pointer assignment = Clingo.INSTANCE.clingo_propagate_control_assignment(propagateControl);
-        return new Assignment(assignment);
+        return new Assignment(ClingoH.clingo_propagate_control_assignment(propagateControl));
     }
 
     /**
      * @return The numeric id of the current solver thread.
      */
     public int getThreadId() {
-        return Clingo.INSTANCE.clingo_propagate_control_thread_id(propagateControl);
+        return ClingoH.clingo_propagate_control_thread_id(propagateControl);
     }
 }

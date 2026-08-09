@@ -22,17 +22,16 @@ package org.potassco.clingo.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.configuration.args.Option;
 import org.potassco.clingo.configuration.args.Statistics;
 import org.potassco.clingo.control.Control;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.internal.NativeSizeByReference;
+import org.potassco.clingo.internal.NativeStr;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 import static org.potassco.clingo.configuration.ConfigurationType.Type.*;
 
@@ -61,21 +60,17 @@ import static org.potassco.clingo.configuration.ConfigurationType.Type.*;
  */
 public class Configuration {
 
-    private final Pointer configuration;
+    private final MemorySegment configuration;
     private final int key;
     private ConfigurationType typeBitset;
 
     public Configuration(Control control) {
-        PointerByReference configurationRef = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_control_configuration(control.getPointer(), configurationRef));
-        this.configuration = configurationRef.getValue();
-
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_root(configuration, intByReference));
-        this.key = intByReference.getValue();
+        this.configuration = Out.getPointer(out ->
+                ClingoH.clingo_control_configuration(control.getPointer(), out));
+        this.key = Out.getInt(out -> ClingoH.clingo_configuration_root(configuration, out));
     }
 
-    public Configuration(Pointer configuration, int key) {
+    public Configuration(MemorySegment configuration, int key) {
         this.configuration = configuration;
         this.key = key;
     }
@@ -88,9 +83,8 @@ public class Configuration {
      */
     public ConfigurationType getType() {
         if (typeBitset == null) {
-            IntByReference intByReference = new IntByReference();
-            Clingo.check(Clingo.INSTANCE.clingo_configuration_type(configuration, key, intByReference));
-            typeBitset = new ConfigurationType(intByReference.getValue());
+            typeBitset = new ConfigurationType(
+                    Out.getInt(out -> ClingoH.clingo_configuration_type(configuration, key, out)));
         }
         return typeBitset;
     }
@@ -116,9 +110,7 @@ public class Configuration {
     public int arraySize() {
         if (!isArray())
             throw new IllegalStateException("configuration entry is not an array");
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_array_size(configuration, key, nativeSizeByReference));
-        return (int) nativeSizeByReference.getValue();
+        return (int) Out.getLong(out -> ClingoH.clingo_configuration_array_size(configuration, key, out));
     }
 
     /**
@@ -130,9 +122,7 @@ public class Configuration {
     public int mapSize() {
         if (!isMap())
             throw new IllegalStateException("configuration entry is not a map");
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_map_size(configuration, key, nativeSizeByReference));
-        return (int) nativeSizeByReference.getValue();
+        return (int) Out.getLong(out -> ClingoH.clingo_configuration_map_size(configuration, key, out));
     }
 
     /**
@@ -145,30 +135,20 @@ public class Configuration {
         if (!isMap())
             throw new IllegalStateException("configuration entry is not a map");
 
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_map_has_subkey(configuration, key, name, byteByReference));
-        if (byteByReference.getValue() == 0)
-            throw new IllegalStateException("configuration entry does not have option '" + name + "'");
-
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_map_at(configuration, key, name, intByReference));
-        int key = intByReference.getValue();
-
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_description(configuration, key, stringByReference));
-        return stringByReference[0];
+        int subkey = getSubkey(name);
+        return Out.getString(out -> ClingoH.clingo_configuration_description(configuration, subkey, out));
     }
 
     private int getSubkey(String name) {
         if (!isMap())
             throw new IllegalStateException("configuration entry is not a map");
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_map_has_subkey(configuration, key, name, byteByReference));
-        if (byteByReference.getValue() == 0)
-            throw new IllegalStateException("configuration entry does not have option '" + name + "'");
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_map_at(configuration, key, name, intByReference));
-        return intByReference.getValue();
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment name$ = arena.allocateFrom(name);
+            if (!Out.getBoolean(out -> ClingoH.clingo_configuration_map_has_subkey(configuration, key, name$, out))) {
+                throw new IllegalStateException("configuration entry does not have option '" + name + "'");
+            }
+            return Out.getInt(out -> ClingoH.clingo_configuration_map_at(configuration, key, name$, out));
+        }
     }
 
     /**
@@ -183,12 +163,9 @@ public class Configuration {
 
         int mapSize = mapSize();
         List<String> keys = new ArrayList<>();
-        String[] stringByReference = new String[1];
         for (int i = 0; i < mapSize; i++) {
-            Clingo.check(Clingo.INSTANCE.clingo_configuration_map_subkey_name(configuration, key, new NativeSize(i), stringByReference));
-            keys.add(stringByReference[0]);
+            keys.add(getKey(i));
         }
-
         return keys;
     }
 
@@ -201,9 +178,7 @@ public class Configuration {
     public String getKey(int index) {
         if (!isMap())
             throw new IllegalStateException("configuration entry is not a map");
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_map_subkey_name(configuration, key, new NativeSize(index), stringByReference));
-        return stringByReference[0];
+        return Out.getString(out -> ClingoH.clingo_configuration_map_subkey_name(configuration, key, index, out));
     }
 
     /**
@@ -214,9 +189,7 @@ public class Configuration {
      * @return whether the entry has a value
      */
     public boolean isAssigned() {
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_value_is_assigned(configuration, key, byteByReference));
-        return byteByReference.getValue() > 0;
+        return Out.getBoolean(out -> ClingoH.clingo_configuration_value_is_assigned(configuration, key, out));
     }
 
     /**
@@ -231,9 +204,7 @@ public class Configuration {
     public Configuration get(String name) {
         if (!isType(MAP))
             throw new IllegalStateException("Configuration entry is not a map");
-        IntByReference keyIdentifier = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_map_at(configuration, key, name, keyIdentifier));
-        return new Configuration(configuration, keyIdentifier.getValue());
+        return new Configuration(configuration, mapAt(name));
     }
 
     /**
@@ -248,9 +219,7 @@ public class Configuration {
     public Configuration get(int index) {
         if (!isType(ARRAY))
             throw new IllegalStateException("Configuration entry is not an array");
-        IntByReference keyIdentifier = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_array_at(configuration, key, new NativeSize(index), keyIdentifier));
-        return new Configuration(configuration, keyIdentifier.getValue());
+        return new Configuration(configuration, arrayAt(index));
     }
 
     /**
@@ -263,12 +232,9 @@ public class Configuration {
     public String get() {
         if (!isType(VALUE))
             throw new IllegalStateException("Configuration entry is not a value");
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_value_get_size(configuration, key, nativeSizeByReference));
-        int valueSize = (int) nativeSizeByReference.getValue();
-        byte[] valueBytes = new byte[valueSize];
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_value_get(configuration, key, valueBytes, new NativeSize(valueSize)));
-        return Native.toString(valueBytes, Clingo.STRING_ENCODING);
+        return NativeStr.getSized(
+                size -> ClingoH.clingo_configuration_value_get_size(configuration, key, size),
+                (buffer, size) -> ClingoH.clingo_configuration_value_get(configuration, key, buffer, size));
     }
 
     /**
@@ -280,9 +246,7 @@ public class Configuration {
      * @param value the value to set
      */
     public void set(String name, String value) {
-        IntByReference keyIdentifier = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_map_at(configuration, key, name, keyIdentifier));
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_value_set(configuration, keyIdentifier.getValue(), value));
+        setValue(mapAt(name), value);
     }
 
     /**
@@ -294,9 +258,24 @@ public class Configuration {
      * @param value the value to set
      */
     public void set(int index, String value) {
-        IntByReference keyIdentifier = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_array_at(configuration, key, new NativeSize(index), keyIdentifier));
-        Clingo.check(Clingo.INSTANCE.clingo_configuration_value_set(configuration, keyIdentifier.getValue(), value));
+        setValue(arrayAt(index), value);
+    }
+
+    private int mapAt(String name) {
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment name$ = arena.allocateFrom(name);
+            return Out.getInt(out -> ClingoH.clingo_configuration_map_at(configuration, key, name$, out));
+        }
+    }
+
+    private int arrayAt(int index) {
+        return Out.getInt(out -> ClingoH.clingo_configuration_array_at(configuration, key, index, out));
+    }
+
+    private void setValue(int subkey, String value) {
+        try (Arena arena = Arena.ofConfined()) {
+            Clingo.check(ClingoH.clingo_configuration_value_set(configuration, subkey, arena.allocateFrom(value)));
+        }
     }
 
     /**
@@ -383,7 +362,7 @@ public class Configuration {
         return this.isType(MAP);
     }
 
-    public Pointer getPointer() {
+    public MemorySegment getPointer() {
         return configuration;
     }
 

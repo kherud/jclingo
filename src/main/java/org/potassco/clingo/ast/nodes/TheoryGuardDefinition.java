@@ -19,18 +19,16 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.StringSequence;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
 
 public class TheoryGuardDefinition extends Ast {
 
-    public TheoryGuardDefinition(Pointer ast) {
+    public TheoryGuardDefinition(MemorySegment ast) {
         super(ast);
     }
 
@@ -43,9 +41,7 @@ public class TheoryGuardDefinition extends Ast {
     }
 
     public String getTerm() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(getPointer(), AstAttribute.TERM.getValue(), stringByReference));
-        return stringByReference[0];
+        return getString(AstAttribute.TERM);
     }
 
     public void setOperators(StringSequence operators) {
@@ -53,13 +49,11 @@ public class TheoryGuardDefinition extends Ast {
     }
 
     public void setTerm(String term) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(getPointer(), AstAttribute.TERM.getValue(), term));
+        setString(AstAttribute.TERM, term);
     }
 
-    private static Pointer create(StringSequence operators, String term) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.THEORY_GUARD_DEFINITION.getValue(), pointerByReference, operators.get(), new NativeSize(operators.size()), term));
-        return pointerByReference.getValue();
+    private static MemorySegment create(StringSequence operators, String term) {
+        return build(AstType.THEORY_GUARD_DEFINITION, operators, term);
     }
 
 }

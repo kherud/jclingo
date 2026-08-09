@@ -19,16 +19,15 @@
 
 package org.potassco.clingo.statistics;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.LongByReference;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.internal.NativeSizeByReference;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 public class StatisticsMap extends Statistics {
 
-    public StatisticsMap(Pointer statistics, long key) {
+    public StatisticsMap(MemorySegment statistics, long key) {
         super(statistics, key);
     }
 
@@ -39,9 +38,7 @@ public class StatisticsMap extends Statistics {
      */
     @Override
     public int size() {
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_statistics_map_size(statistics, key, nativeSizeByReference));
-        return (int) nativeSizeByReference.getValue();
+        return (int) Out.getLong(out -> ClingoH.clingo_statistics_map_size(statistics, key, out));
     }
 
     /**
@@ -63,9 +60,7 @@ public class StatisticsMap extends Statistics {
      * @return the resulting name
      */
     public String getKey(int index) {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_statistics_map_subkey_name(statistics, key, new NativeSize(index), stringByReference));
-        return stringByReference[0];
+        return Out.getString(out -> ClingoH.clingo_statistics_map_subkey_name(statistics, key, index, out));
     }
 
     /**
@@ -88,9 +83,10 @@ public class StatisticsMap extends Statistics {
      * @return true if the map has a subkey with the given name
      */
     public boolean hasKey(String name) {
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_statistics_map_has_subkey(statistics, key, name, byteByReference));
-        return byteByReference.getValue() > 0;
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment name$ = arena.allocateFrom(name);
+            return Out.getBoolean(out -> ClingoH.clingo_statistics_map_has_subkey(statistics, key, name$, out));
+        }
     }
 
     /**
@@ -101,10 +97,7 @@ public class StatisticsMap extends Statistics {
      * @return the resulting entry
      */
     public Statistics addKey(String name, StatisticsType type) {
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_statistics_map_add_subkey(statistics, key, name, type.getValue(), longByReference));
-        long subKey = longByReference.getValue();
-        return fromKey(statistics, subKey, type);
+        return fromKey(statistics, addSubKey(name, type), type);
     }
 
     /**
@@ -115,10 +108,7 @@ public class StatisticsMap extends Statistics {
      * @return the newly created entry
      */
     public StatisticsValue set(String name, double value) {
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_statistics_map_add_subkey(statistics, key, name, StatisticsType.VALUE.getValue(), longByReference));
-        long subKey = longByReference.getValue();
-        return new StatisticsValue(statistics, subKey, value);
+        return new StatisticsValue(statistics, addSubKey(name, StatisticsType.VALUE), value);
     }
 
     /**
@@ -129,10 +119,7 @@ public class StatisticsMap extends Statistics {
      * @return the newly created entry
      */
     public StatisticsArray set(String name, double[] values) {
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_statistics_map_add_subkey(statistics, key, name, StatisticsType.ARRAY.getValue(), longByReference));
-        long subKey = longByReference.getValue();
-        return new StatisticsArray(statistics, subKey, values);
+        return new StatisticsArray(statistics, addSubKey(name, StatisticsType.ARRAY), values);
     }
 
     /**
@@ -157,9 +144,18 @@ public class StatisticsMap extends Statistics {
      * @return the resulting subkey
      */
     private long getSubKey(String name) {
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_statistics_map_at(statistics, key, name, longByReference));
-        return longByReference.getValue();
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment name$ = arena.allocateFrom(name);
+            return Out.getLong(out -> ClingoH.clingo_statistics_map_at(statistics, key, name$, out));
+        }
+    }
+
+    private long addSubKey(String name, StatisticsType type) {
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment name$ = arena.allocateFrom(name);
+            return Out.getLong(out ->
+                    ClingoH.clingo_statistics_map_add_subkey(statistics, key, name$, type.getValue(), out));
+        }
     }
 
     /**

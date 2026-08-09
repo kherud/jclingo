@@ -19,16 +19,21 @@
 
 package org.potassco.clingo.control;
 
-import java.util.Arrays;
-import java.util.List;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 
-import com.sun.jna.Callback;
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
-import com.sun.jna.ptr.ByteByReference;
 import org.potassco.clingo.ast.Location;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.internal.ErrorPolicy;
+import org.potassco.clingo.internal.NativeArrays;
+import org.potassco.clingo.internal.NativeStr;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.Upcalls;
+import org.potassco.clingo.internal.ffi.ClingoH;
+import org.potassco.clingo.internal.ffi.clingo_script;
+import org.potassco.clingo.internal.ffi.clingo_symbol_callback_t;
+import org.potassco.clingo.symbol.Symbol;
 
 /**
  * Custom scripting language to run functions during grounding.
@@ -36,17 +41,38 @@ import org.potassco.clingo.internal.NativeSize;
  * This class can be inherited to embed custom scripting languages into logic programs.
  */
 // TODO: think of a better concept
-@SuppressWarnings("ClassEscapesDefinedScope") // JNA structures must have public fields
-public class Script extends Structure {
+public class Script {
+
+    static {
+        Clingo.init();
+    }
+
+    private final String version;
+
+    public Script() {
+        this("1.0.0");
+    }
+
+    public Script(String version) {
+        try (Arena call = Arena.ofConfined()) {
+            MemorySegment version$ = call.allocateFrom(version);
+            // clingo keeps the version string for the lifetime of the process, so it has to be internalized
+            this.version = Out.getString(out -> ClingoH.clingo_add_string(version$, out));
+        }
+    }
 
     /**
-     * Add a custom scripting language to clingo.
+     * Add a custom scripting language to clingo. It stays registered for the lifetime of the process.
      *
      * @param name   the name of the scripting language
      * @param script struct with functions implementing the language
      */
-    static void register(String name, Script script) {
-        Clingo.check(Clingo.INSTANCE.clingo_register_script(name, script, null));
+    public static void register(String name, Script script) {
+        Arena arena = Arena.global();
+        try (Arena call = Arena.ofConfined()) {
+            Clingo.check(ClingoH.clingo_register_script(call.allocateFrom(name), script.toNative(arena),
+                    MemorySegment.NULL));
+        }
     }
 
     /**
@@ -55,8 +81,10 @@ public class Script extends Structure {
      * @param name the name of the scripting language
      * @return the version
      */
-    static String getVersion(String name) {
-        return Clingo.INSTANCE.clingo_script_version(name);
+    public static String getVersion(String name) {
+        try (Arena call = Arena.ofConfined()) {
+            return NativeStr.toJava(ClingoH.clingo_script_version(call.allocateFrom(name)));
+        }
     }
 
     /**
@@ -70,13 +98,14 @@ public class Script extends Structure {
     }
 
     /**
-     * Call the function with the given name and arguments.
+     * Call the function with the given name and arguments, injecting the result through {@code symbols}.
      *
-     * @param location       the location in the logic program of the function call
-     * @param name           the name of the function
-     * @param symbolCallback callback to return a pool of symbols
+     * @param location  the location in the logic program of the function call
+     * @param name      the name of the function
+     * @param arguments the arguments of the call
+     * @param symbols   sink for the symbols the function evaluates to
      */
-    public void call(Location location, String name, long[] symbols, Clingo.SymbolCallback symbolCallback) {
+    public void call(Location location, String name, Symbol[] arguments, SymbolSink symbols) {
 
     }
 
@@ -100,127 +129,81 @@ public class Script extends Structure {
     }
 
     /**
-     * This function is called once when the script is deleted.
-     *
-     * @param data data user data as given when registering the script
-     * @return native pointer what to free
+     * @return the version of this scripting language
      */
-    public Pointer free(Pointer data) {
-        return null;
-    }
-
-    public Script() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_add_string("1.0.0", stringByReference));
-        this.version = stringByReference[0];
-    }
-
-    public Script(String version) {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_add_string(version, stringByReference));
-        this.version = stringByReference[0];
+    public String getVersion() {
+        return version;
     }
 
     /**
-     * JNA DECLARATIONS IGNORE
+     * Sink a {@link Script} injects the result of a function call into.
      */
-
-    public ExecuteCallback execute = this::execute;
-    public CallCallback call = this::call;
-    public CallableCallback callable = this::callable;
-    public MainCallback main = this::main;
-    public FreeCallback free = this::free;
-    public String version;
-
     @FunctionalInterface
-    private interface ExecuteCallback extends Callback {
-        /**
-         * Evaluate the given source code.
-         *
-         * @param location the location in the logic program of the source code
-         * @param code     the code to evaluate
-         * @param data     user data as given when registering the script
-         * @return whether the function call was successful
-         */
-        default byte callback(Pointer location, String code, Pointer data) {
-            return Clingo.guard(() -> call(new Location(location), code));
-        }
-
-        void call(Location location, String code);
+    public interface SymbolSink {
+        void add(Symbol... symbols);
     }
 
-    @FunctionalInterface
-    private interface CallCallback extends Callback {
-        /**
-         * Call the function with the given name and arguments.
-         *
-         * @param location           the location in the logic program of the function call
-         * @param name               the name of the function
-         * @param arguments          the arguments to the function
-         * @param argumentsSize      the number of arguments
-         * @param symbolCallback     callback to return a pool of symbols
-         * @param symbolCallbackData user data for the symbol callback
-         * @param data               user data as given when registering the script
-         * @return whether the function call was successful
-         */
-        default byte callback(Pointer location, String name, long[] arguments, NativeSize argumentsSize, Clingo.SymbolCallback symbolCallback, Pointer symbolCallbackData, Pointer data) {
-            return Clingo.guard(() -> call(new Location(location), name, arguments, symbolCallback));
-        }
+    /**
+     * @param arena owns the struct and its stubs; clingo uses them for the lifetime of the process
+     */
+    private MemorySegment toNative(Arena arena) {
+        MemorySegment struct = clingo_script.allocate(arena);
+        ErrorPolicy policy = ErrorPolicy.synchronous();
 
-        void call(Location location, String name, long[] symbols, Clingo.SymbolCallback symbolCallback);
+        clingo_script.execute(struct, Upcalls.stub(
+                clingo_script.execute.Function.class,
+                (location, code, data) -> {
+                    execute(Location.fromNative(location), NativeStr.toJava(code));
+                    return true;
+                },
+                clingo_script.execute.descriptor(), arena, policy));
+
+        clingo_script.call(struct, Upcalls.stub(
+                clingo_script.call.Function.class,
+                (location, name, arguments, size, symbolCallback, symbolData, data) -> {
+                    call(Location.fromNative(location), NativeStr.toJava(name), symbols(arguments, size),
+                            values -> inject(symbolCallback, symbolData, values));
+                    return true;
+                },
+                clingo_script.call.descriptor(), arena, policy));
+
+        clingo_script.callable(struct, Upcalls.stub(
+                clingo_script.callable.Function.class,
+                (name, result, data) -> {
+                    result.reinterpret(1).set(ValueLayout.JAVA_BOOLEAN, 0, callable(NativeStr.toJava(name)));
+                    return true;
+                },
+                clingo_script.callable.descriptor(), arena, policy));
+
+        clingo_script.main(struct, Upcalls.stub(
+                clingo_script.main.Function.class,
+                (control, data) -> {
+                    main(new Control(control));
+                    return true;
+                },
+                clingo_script.main.descriptor(), arena, policy));
+
+        clingo_script.version(struct, arena.allocateFrom(version));
+        return struct;
     }
 
-    @FunctionalInterface
-    private interface CallableCallback extends Callback {
-        /**
-         * Check if the given function is callable.
-         *
-         * @param name   the name of the function
-         * @param result whether the function is callable
-         * @param data   user data as given when registering the script
-         * @return whether the function call was successful
-         */
-        default byte callback(String name, ByteByReference result, Pointer data) {
-            return Clingo.guard(() -> result.setValue((byte) (call(name) ? 1 : 0)));
+    private static Symbol[] symbols(MemorySegment arguments, long size) {
+        long[] values = NativeArrays.toLongs(arguments, size);
+        Symbol[] symbols = new Symbol[values.length];
+        for (int i = 0; i < values.length; i++) {
+            symbols[i] = Symbol.fromLong(values[i]);
         }
-
-        boolean call(String name);
+        return symbols;
     }
 
-    @FunctionalInterface
-    private interface MainCallback extends Callback {
-        /**
-         * Run the main function.
-         *
-         * @param control the control object to pass to the main function
-         * @param data    user data as given when registering the script
-         * @return whether the function call was successful
-         */
-        default byte callback(Pointer control, Pointer data) {
-            return Clingo.guard(() -> call(new Control(control)));
+    private static void inject(MemorySegment callback, MemorySegment data, Symbol[] symbols) {
+        long[] values = new long[symbols.length];
+        for (int i = 0; i < symbols.length; i++) {
+            values[i] = symbols[i].getLong();
         }
-
-        void call(Control control);
-    }
-
-    // TODO: this does not seem to be a good solution
-    @FunctionalInterface
-    private interface FreeCallback extends Callback {
-        /**
-         * This function is called once when the script is deleted.
-         *
-         * @param data data user data as given when registering the script
-         * @return native pointer what to free
-         */
-        default Pointer callback(Pointer data) {
-            return null;
+        try (Arena call = Arena.ofConfined()) {
+            Clingo.check(clingo_symbol_callback_t.invoke(callback,
+                    call.allocateFrom(ValueLayout.JAVA_LONG, values), values.length, data));
         }
-
-        Pointer call(Pointer data);
-    }
-
-    @Override
-    protected List<String> getFieldOrder() {
-        return Arrays.asList("execute", "call", "callable", "main", "free", "version");
     }
 }

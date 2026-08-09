@@ -19,24 +19,18 @@
 
 package org.potassco.clingo.ast;
 
-import com.sun.jna.Callback;
-import com.sun.jna.Pointer;
-import org.potassco.clingo.internal.Clingo;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+
+import org.potassco.clingo.internal.ErrorPolicy;
+import org.potassco.clingo.internal.Upcalls;
+import org.potassco.clingo.internal.ffi.clingo_ast_callback_t;
 
 /**
  * Callback function to intercept AST nodes.
  */
 @FunctionalInterface
-public interface AstCallback extends Callback {
-    /**
-     * @param ast  the AST
-     * @param data a user data pointer
-     * @return whether the call was successful
-     */
-    default byte callback(Pointer ast, Pointer data) {
-        return Clingo.guard(() -> call(Ast.borrow(ast)));
-    }
-
+public interface AstCallback {
     /**
      * Callback function to intercept AST nodes.
      *
@@ -45,4 +39,20 @@ public interface AstCallback extends Callback {
      */
     void call(Ast ast);
 
+    /**
+     * @param callback the callback to bridge, may be {@code null}
+     * @param arena    the arena the stub lives in; the callback only runs during the call it is passed to
+     * @return a {@code clingo_ast_callback_t}, or {@link MemorySegment#NULL} if there is no callback
+     */
+    static MemorySegment toNative(AstCallback callback, Arena arena) {
+        if (callback == null) {
+            return MemorySegment.NULL;
+        }
+        clingo_ast_callback_t.Function bridge = (ast, data) -> {
+            callback.call(Ast.borrow(ast));
+            return true;
+        };
+        return Upcalls.stub(clingo_ast_callback_t.Function.class, bridge, clingo_ast_callback_t.descriptor(), arena,
+                ErrorPolicy.synchronous());
+    }
 }

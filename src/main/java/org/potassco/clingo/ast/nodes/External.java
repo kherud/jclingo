@@ -19,19 +19,17 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstSequence;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
 
 public class External extends Ast {
 
-    public External(Pointer ast) {
+    public External(MemorySegment ast) {
         super(ast);
     }
 
@@ -40,15 +38,11 @@ public class External extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public Ast getAtom() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.ATOM.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.ATOM);
     }
 
     public AstSequence getBody() {
@@ -56,17 +50,15 @@ public class External extends Ast {
     }
 
     public Ast getExternalType() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.EXTERNAL_TYPE.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.EXTERNAL_TYPE);
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setAtom(Ast atom) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.ATOM.getValue(), atom.getPointer()));
+        setAst(AstAttribute.ATOM, atom);
     }
 
     public void setBody(AstSequence body) {
@@ -74,13 +66,11 @@ public class External extends Ast {
     }
 
     public void setExternalType(Ast externalType) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.EXTERNAL_TYPE.getValue(), externalType.getPointer()));
+        setAst(AstAttribute.EXTERNAL_TYPE, externalType);
     }
 
-    private static Pointer create(Location location, Ast atom, AstSequence body, Ast externalType) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.EXTERNAL.getValue(), pointerByReference, location, atom.getPointer(), body.getPointer(), new NativeSize(body.size()), externalType.getPointer()));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, Ast atom, AstSequence body, Ast externalType) {
+        return build(AstType.EXTERNAL, location, atom, body, externalType);
     }
 
 }

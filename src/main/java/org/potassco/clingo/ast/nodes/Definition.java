@@ -19,18 +19,16 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
 
 public class Definition extends Ast {
 
-    public Definition(Pointer ast) {
+    public Definition(MemorySegment ast) {
         super(ast);
     }
 
@@ -39,49 +37,39 @@ public class Definition extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public String getName() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(getPointer(), AstAttribute.NAME.getValue(), stringByReference));
-        return stringByReference[0];
+        return getString(AstAttribute.NAME);
     }
 
     public Ast getValue() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.VALUE.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.VALUE);
     }
 
     public int getIsDefault() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(getPointer(), AstAttribute.IS_DEFAULT.getValue(), intByReference));
-        return intByReference.getValue();
+        return getNumber(AstAttribute.IS_DEFAULT);
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setName(String name) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(getPointer(), AstAttribute.NAME.getValue(), name));
+        setString(AstAttribute.NAME, name);
     }
 
     public void setValue(Ast value) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.VALUE.getValue(), value.getPointer()));
+        setAst(AstAttribute.VALUE, value);
     }
 
     public void setIsDefault(int isDefault) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(getPointer(), AstAttribute.IS_DEFAULT.getValue(), isDefault));
+        setNumber(AstAttribute.IS_DEFAULT, isDefault);
     }
 
-    private static Pointer create(Location location, String name, Ast value, int isDefault) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.DEFINITION.getValue(), pointerByReference, location, name, value.getPointer(), isDefault));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, String name, Ast value, int isDefault) {
+        return build(AstType.DEFINITION, location, name, value, isDefault);
     }
 
 }

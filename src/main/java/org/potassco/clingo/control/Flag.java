@@ -16,24 +16,43 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.control;
 
-import com.sun.jna.ptr.ByteByReference;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.SegmentAllocator;
+import java.lang.foreign.ValueLayout;
 
+/**
+ * A boolean an option can be bound to.
+ * <p>
+ * Before the flag is registered with {@link ApplicationOptions#addFlag} its value lives in this object; afterwards it
+ * lives where clingo writes it.
+ */
 public class Flag {
 
-    private final ByteByReference flag = new ByteByReference();
+    private boolean value;
+    private MemorySegment target;
 
     public boolean get() {
-        return flag.getValue() > 0;
+        return target == null ? value : target.get(ValueLayout.JAVA_BOOLEAN, 0);
     }
 
     public void set(boolean value) {
-        flag.setValue(value ? (byte) 1 : 0);
+        if (target == null) {
+            this.value = value;
+        }
+        else {
+            target.set(ValueLayout.JAVA_BOOLEAN, 0, value);
+        }
     }
 
-    public ByteByReference getFlag() {
-        return flag;
+    /**
+     * Moves this flag into memory clingo can write to. The allocator has to outlive the option parsing.
+     */
+    MemorySegment bind(SegmentAllocator allocator) {
+        target = allocator.allocate(ValueLayout.JAVA_BOOLEAN);
+        target.set(ValueLayout.JAVA_BOOLEAN, 0, value);
+        return target;
     }
 }

@@ -19,16 +19,22 @@
 
 package org.potassco.clingo.symbol;
 
-import java.lang.ref.Reference;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 
-import com.sun.jna.Native;
-import com.sun.jna.ptr.LongByReference;
 import org.potassco.clingo.control.LoggerCallback;
+import org.potassco.clingo.internal.Callbacks;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.internal.NativeSizeByReference;
+import org.potassco.clingo.internal.ErrorPolicy;
+import org.potassco.clingo.internal.NativeStr;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 public abstract class Symbol implements Comparable<Symbol> {
+
+    static {
+        Clingo.init();
+    }
 
     protected final long symbol;
 
@@ -57,8 +63,7 @@ public abstract class Symbol implements Comparable<Symbol> {
      * @return the {@link SymbolType type} of the symbol
      */
     public SymbolType getType() {
-        int typeId = Clingo.INSTANCE.clingo_symbol_type(symbol);
-        return SymbolType.fromValue(typeId);
+        return SymbolType.fromValue(ClingoH.clingo_symbol_type(symbol));
     }
 
     @Override
@@ -68,12 +73,9 @@ public abstract class Symbol implements Comparable<Symbol> {
 
     @Override
     public String toString() {
-        NativeSizeByReference nativeSizeByRef = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_to_string_size(symbol, nativeSizeByRef));
-        int length = (int) nativeSizeByRef.getValue();
-        byte[] symbolBytes = new byte[length];
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_to_string(symbol, symbolBytes, new NativeSize(length)));
-        return Native.toString(symbolBytes, Clingo.STRING_ENCODING);
+        return NativeStr.getSized(
+                size -> ClingoH.clingo_symbol_to_string_size(symbol, size),
+                (buffer, size) -> ClingoH.clingo_symbol_to_string(symbol, buffer, size));
     }
 
     /**
@@ -98,16 +100,12 @@ public abstract class Symbol implements Comparable<Symbol> {
      * @param logger optional logger to report warnings during parsing
      */
     public static Symbol fromString(String term, LoggerCallback logger) {
-        LongByReference longByReference = new LongByReference();
-        try {
-            Clingo.check(Clingo.INSTANCE.clingo_parse_term(term, logger, null, 0, longByReference));
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment term$ = arena.allocateFrom(term);
+            MemorySegment logger$ = Callbacks.logger(logger, arena, ErrorPolicy.synchronous());
+            return Symbol.fromLong(Out.getLong(out ->
+                    ClingoH.clingo_parse_term(term$, logger$, MemorySegment.NULL, 0, out)));
         }
-        finally {
-            // jna hands the native side a trampoline and keeps no reference on the callback itself, so without this the
-            // garbage collector may free the trampoline while clingo is still calling it
-            Reference.reachabilityFence(logger);
-        }
-        return Symbol.fromLong(longByReference.getValue());
     }
 
     /**
@@ -117,8 +115,7 @@ public abstract class Symbol implements Comparable<Symbol> {
      * @return the java symbol
      */
     public static Symbol fromLong(long symbol) {
-        int typeId = Clingo.INSTANCE.clingo_symbol_type(symbol);
-        SymbolType type = SymbolType.fromValue(typeId);
+        SymbolType type = SymbolType.fromValue(ClingoH.clingo_symbol_type(symbol));
         switch (type) {
             case INFIMUM:
                 return new Infimum(symbol);
@@ -147,7 +144,7 @@ public abstract class Symbol implements Comparable<Symbol> {
     public boolean equals(Object other) {
         if (!(other instanceof Symbol))
             return false;
-        return Clingo.INSTANCE.clingo_symbol_is_equal_to(symbol, ((Symbol) other).getLong()) > 0;
+        return ClingoH.clingo_symbol_is_equal_to(symbol, ((Symbol) other).getLong());
     }
 
     /**
@@ -157,7 +154,7 @@ public abstract class Symbol implements Comparable<Symbol> {
      */
     @Override
     public int hashCode() {
-        return Clingo.INSTANCE.clingo_symbol_hash(symbol).intValue();
+        return Long.hashCode(ClingoH.clingo_symbol_hash(symbol));
     }
 
     /**
@@ -171,7 +168,7 @@ public abstract class Symbol implements Comparable<Symbol> {
      * @return whether this &lt; other
      */
     public boolean lessThan(Symbol other) {
-        return Clingo.INSTANCE.clingo_symbol_is_less_than(symbol, other.getLong()) > 0;
+        return ClingoH.clingo_symbol_is_less_than(symbol, other.getLong());
     }
 
     public long getLong() {

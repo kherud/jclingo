@@ -19,37 +19,14 @@
 
 package org.potassco.clingo.solving;
 
-import com.sun.jna.Callback;
-import com.sun.jna.Pointer;
-import org.potassco.clingo.internal.Clingo;
-
 /**
  * Callback to customize model printing.
  */
 @FunctionalInterface
-public interface ModelPrinterCallback extends Callback {
-    /**
-     * Callback to print a model in default format.
-     */
-    @FunctionalInterface
-    interface DefaultModelPrinter extends Callback {
-        /**
-         * @param data user data for the callback
-         * @return whether the call was successful
-         */
-        byte callback(Pointer data);
-    }
+public interface ModelPrinterCallback {
 
     /**
-     * @param model the model
-     * @param printer the default model printer
-     * @param printerData user data for the printer
-     * @param data user data for the callback
-     * @return whether the call was successful
+     * @param model the model to print
      */
-    default byte callback(Pointer model, DefaultModelPrinter printer, Pointer printerData, Pointer data) {
-        return Clingo.guard(() -> call(new Model(model)));
-    }
-
     void call(Model model);
 }

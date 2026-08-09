@@ -19,18 +19,16 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
 
 public class BinaryOperation extends Ast {
 
-    public BinaryOperation(Pointer ast) {
+    public BinaryOperation(MemorySegment ast) {
         super(ast);
     }
 
@@ -39,49 +37,39 @@ public class BinaryOperation extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public int getOperatorType() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(getPointer(), AstAttribute.OPERATOR_TYPE.getValue(), intByReference));
-        return intByReference.getValue();
+        return getNumber(AstAttribute.OPERATOR_TYPE);
     }
 
     public Ast getLeft() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.LEFT.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.LEFT);
     }
 
     public Ast getRight() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.RIGHT.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.RIGHT);
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setOperatorType(int operatorType) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(getPointer(), AstAttribute.OPERATOR_TYPE.getValue(), operatorType));
+        setNumber(AstAttribute.OPERATOR_TYPE, operatorType);
     }
 
     public void setLeft(Ast left) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.LEFT.getValue(), left.getPointer()));
+        setAst(AstAttribute.LEFT, left);
     }
 
     public void setRight(Ast right) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.RIGHT.getValue(), right.getPointer()));
+        setAst(AstAttribute.RIGHT, right);
     }
 
-    private static Pointer create(Location location, int operatorType, Ast left, Ast right) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.BINARY_OPERATION.getValue(), pointerByReference, location, operatorType, left.getPointer(), right.getPointer()));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, int operatorType, Ast left, Ast right) {
+        return build(AstType.BINARY_OPERATION, location, operatorType, left, right);
     }
 
 }

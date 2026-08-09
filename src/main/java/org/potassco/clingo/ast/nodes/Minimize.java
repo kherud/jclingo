@@ -19,19 +19,17 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstSequence;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
 
 public class Minimize extends Ast {
 
-    public Minimize(Pointer ast) {
+    public Minimize(MemorySegment ast) {
         super(ast);
     }
 
@@ -40,21 +38,15 @@ public class Minimize extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public Ast getWeight() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.WEIGHT.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.WEIGHT);
     }
 
     public Ast getPriority() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.PRIORITY.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.PRIORITY);
     }
 
     public AstSequence getTerms() {
@@ -66,15 +58,15 @@ public class Minimize extends Ast {
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setWeight(Ast weight) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.WEIGHT.getValue(), weight.getPointer()));
+        setAst(AstAttribute.WEIGHT, weight);
     }
 
     public void setPriority(Ast priority) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.PRIORITY.getValue(), priority.getPointer()));
+        setAst(AstAttribute.PRIORITY, priority);
     }
 
     public void setTerms(AstSequence terms) {
@@ -85,10 +77,8 @@ public class Minimize extends Ast {
         new AstSequence(this, AstAttribute.BODY).set(body);
     }
 
-    private static Pointer create(Location location, Ast weight, Ast priority, AstSequence terms, AstSequence body) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.MINIMIZE.getValue(), pointerByReference, location, weight.getPointer(), priority.getPointer(), terms.getPointer(), new NativeSize(terms.size()), body.getPointer(), new NativeSize(body.size())));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, Ast weight, Ast priority, AstSequence terms, AstSequence body) {
+        return build(AstType.MINIMIZE, location, weight, priority, terms, body);
     }
 
 }

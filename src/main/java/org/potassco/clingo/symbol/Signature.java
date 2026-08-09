@@ -19,8 +19,13 @@
 
 package org.potassco.clingo.symbol;
 
-import com.sun.jna.ptr.LongByReference;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.NativeStr;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 /**
  * Represents a predicate signature.
@@ -29,6 +34,10 @@ import org.potassco.clingo.internal.Clingo;
  * represent classical negation).
  */
 public class Signature implements Comparable<Signature> {
+
+    static {
+        Clingo.init();
+    }
 
     private final String name;
     private final int arity;
@@ -57,9 +66,10 @@ public class Signature implements Comparable<Signature> {
         this.arity = arity;
         this.positive = positive;
 
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_signature_create(name, arity, positive ? (byte) 1 : 0, longByReference));
-        this.signature = longByReference.getValue();
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment name$ = arena.allocateFrom(name);
+            this.signature = Out.getLong(out -> ClingoH.clingo_signature_create(name$, arity, positive, out));
+        }
     }
 
     /**
@@ -69,9 +79,9 @@ public class Signature implements Comparable<Signature> {
      * @param signature long signature
      */
     public Signature(long signature) {
-        this.name = Clingo.INSTANCE.clingo_signature_name(signature);
-        this.arity = Clingo.INSTANCE.clingo_signature_arity(signature);
-        this.positive = Clingo.INSTANCE.clingo_signature_is_positive(signature) > 0;
+        this.name = NativeStr.toJava(ClingoH.clingo_signature_name(signature));
+        this.arity = ClingoH.clingo_signature_arity(signature);
+        this.positive = ClingoH.clingo_signature_is_positive(signature);
         this.signature = signature;
     }
 
@@ -105,7 +115,7 @@ public class Signature implements Comparable<Signature> {
      * @return Whether the signature is negative (is classically negated).
      */
     public boolean isNegative() {
-        return Clingo.INSTANCE.clingo_signature_is_negative(signature) > 0;
+        return ClingoH.clingo_signature_is_negative(signature);
     }
 
     /**
@@ -117,7 +127,7 @@ public class Signature implements Comparable<Signature> {
     public boolean equals(Object other) {
         if (!(other instanceof Signature))
             return false;
-        return Clingo.INSTANCE.clingo_signature_is_equal_to(signature, ((Signature) other).getLong()) > 0;
+        return ClingoH.clingo_signature_is_equal_to(signature, ((Signature) other).getLong());
     }
 
     /**
@@ -127,7 +137,7 @@ public class Signature implements Comparable<Signature> {
      * @return the resulting hash code
      */
     public long getHash() {
-        return Clingo.INSTANCE.clingo_signature_hash(signature).longValue();
+        return ClingoH.clingo_signature_hash(signature);
     }
 
     /**
@@ -147,7 +157,7 @@ public class Signature implements Comparable<Signature> {
      * @return whether a &lt; b
      */
     public boolean isLess(Signature other) {
-        return Clingo.INSTANCE.clingo_signature_is_less_than(signature, other.getLong()) > 0;
+        return ClingoH.clingo_signature_is_less_than(signature, other.getLong());
     }
 
     @Override

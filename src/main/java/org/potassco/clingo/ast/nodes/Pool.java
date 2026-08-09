@@ -19,19 +19,17 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstSequence;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
 
 public class Pool extends Ast {
 
-    public Pool(Pointer ast) {
+    public Pool(MemorySegment ast) {
         super(ast);
     }
 
@@ -40,9 +38,7 @@ public class Pool extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public AstSequence getArguments() {
@@ -50,17 +46,15 @@ public class Pool extends Ast {
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setArguments(AstSequence arguments) {
         new AstSequence(this, AstAttribute.ARGUMENTS).set(arguments);
     }
 
-    private static Pointer create(Location location, AstSequence arguments) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.POOL.getValue(), pointerByReference, location, arguments.getPointer(), new NativeSize(arguments.size())));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, AstSequence arguments) {
+        return build(AstType.POOL, location, arguments);
     }
 
 }

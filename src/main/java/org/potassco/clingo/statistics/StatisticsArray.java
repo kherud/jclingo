@@ -19,19 +19,19 @@
 
 package org.potassco.clingo.statistics;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.LongByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.internal.NativeSizeByReference;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 public class StatisticsArray extends Statistics {
 
-    public StatisticsArray(Pointer statistics, long key) {
+    public StatisticsArray(MemorySegment statistics, long key) {
         super(statistics, key);
     }
 
-    public StatisticsArray(Pointer statistics, long key, double[] values) {
+    public StatisticsArray(MemorySegment statistics, long key, double[] values) {
         super(statistics, key);
         add(values);
     }
@@ -43,9 +43,7 @@ public class StatisticsArray extends Statistics {
      */
     @Override
     public int size() {
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_statistics_array_size(statistics, key, nativeSizeByReference));
-        return (int) nativeSizeByReference.getValue();
+        return (int) Out.getLong(out -> ClingoH.clingo_statistics_array_size(statistics, key, out));
     }
 
 
@@ -57,9 +55,7 @@ public class StatisticsArray extends Statistics {
      */
     @Override
     public Statistics get(int index) {
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_statistics_array_at(statistics, key, new NativeSize(index), longByReference));
-        return fromKey(statistics, longByReference.getValue());
+        return fromKey(statistics, Out.getLong(out -> ClingoH.clingo_statistics_array_at(statistics, key, index, out)));
     }
 
     /**
@@ -69,9 +65,8 @@ public class StatisticsArray extends Statistics {
      * @return the resulting statistics object
      */
     public Statistics add(StatisticsType type) {
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_statistics_array_push(statistics, key, type.getValue(), longByReference));
-        return Statistics.fromKey(statistics, longByReference.getValue(), type);
+        return Statistics.fromKey(statistics,
+                Out.getLong(out -> ClingoH.clingo_statistics_array_push(statistics, key, type.getValue(), out)), type);
     }
 
     /**
@@ -80,10 +75,10 @@ public class StatisticsArray extends Statistics {
      * @param values the raw values
      */
     public void add(double[] values) {
-        LongByReference longByReference = new LongByReference();
         for (double value : values) {
-            Clingo.check(Clingo.INSTANCE.clingo_statistics_array_push(statistics, key, StatisticsType.VALUE.getValue(), longByReference));
-            Clingo.check(Clingo.INSTANCE.clingo_statistics_value_set(statistics, longByReference.getValue(), value));
+            long subKey = Out.getLong(out ->
+                    ClingoH.clingo_statistics_array_push(statistics, key, StatisticsType.VALUE.getValue(), out));
+            Clingo.check(ClingoH.clingo_statistics_value_set(statistics, subKey, value));
         }
     }
 

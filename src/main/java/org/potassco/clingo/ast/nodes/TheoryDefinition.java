@@ -19,19 +19,17 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstSequence;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
 
 public class TheoryDefinition extends Ast {
 
-    public TheoryDefinition(Pointer ast) {
+    public TheoryDefinition(MemorySegment ast) {
         super(ast);
     }
 
@@ -40,15 +38,11 @@ public class TheoryDefinition extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public String getName() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(getPointer(), AstAttribute.NAME.getValue(), stringByReference));
-        return stringByReference[0];
+        return getString(AstAttribute.NAME);
     }
 
     public AstSequence getTerms() {
@@ -60,11 +54,11 @@ public class TheoryDefinition extends Ast {
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setName(String name) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(getPointer(), AstAttribute.NAME.getValue(), name));
+        setString(AstAttribute.NAME, name);
     }
 
     public void setTerms(AstSequence terms) {
@@ -75,10 +69,8 @@ public class TheoryDefinition extends Ast {
         new AstSequence(this, AstAttribute.ATOMS).set(atoms);
     }
 
-    private static Pointer create(Location location, String name, AstSequence terms, AstSequence atoms) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.THEORY_DEFINITION.getValue(), pointerByReference, location, name, terms.getPointer(), new NativeSize(terms.size()), atoms.getPointer(), new NativeSize(atoms.size())));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, String name, AstSequence terms, AstSequence atoms) {
+        return build(AstType.THEORY_DEFINITION, location, name, terms, atoms);
     }
 
 }

@@ -19,19 +19,17 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstSequence;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
 
 public class ConditionalLiteral extends Ast {
 
-    public ConditionalLiteral(Pointer ast) {
+    public ConditionalLiteral(MemorySegment ast) {
         super(ast);
     }
 
@@ -40,15 +38,11 @@ public class ConditionalLiteral extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public Ast getLiteral() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.LITERAL.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.LITERAL);
     }
 
     public AstSequence getCondition() {
@@ -56,21 +50,19 @@ public class ConditionalLiteral extends Ast {
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setLiteral(Ast literal) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.LITERAL.getValue(), literal.getPointer()));
+        setAst(AstAttribute.LITERAL, literal);
     }
 
     public void setCondition(AstSequence condition) {
         new AstSequence(this, AstAttribute.CONDITION).set(condition);
     }
 
-    private static Pointer create(Location location, Ast literal, AstSequence condition) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.CONDITIONAL_LITERAL.getValue(), pointerByReference, location, literal.getPointer(), condition.getPointer(), new NativeSize(condition.size())));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, Ast literal, AstSequence condition) {
+        return build(AstType.CONDITIONAL_LITERAL, location, literal, condition);
     }
 
 }

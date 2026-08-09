@@ -19,17 +19,15 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstType;
-import org.potassco.clingo.internal.Clingo;
 
 public class BooleanConstant extends Ast {
 
-    public BooleanConstant(Pointer ast) {
+    public BooleanConstant(MemorySegment ast) {
         super(ast);
     }
 
@@ -38,19 +36,15 @@ public class BooleanConstant extends Ast {
     }
 
     public int getValue() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(getPointer(), AstAttribute.VALUE.getValue(), intByReference));
-        return intByReference.getValue();
+        return getNumber(AstAttribute.VALUE);
     }
 
     public void setValue(int value) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(getPointer(), AstAttribute.VALUE.getValue(), value));
+        setNumber(AstAttribute.VALUE, value);
     }
 
-    private static Pointer create(int value) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.BOOLEAN_CONSTANT.getValue(), pointerByReference, value));
-        return pointerByReference.getValue();
+    private static MemorySegment create(int value) {
+        return build(AstType.BOOLEAN_CONSTANT, value);
     }
 
 }

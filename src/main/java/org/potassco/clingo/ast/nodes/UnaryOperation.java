@@ -19,18 +19,16 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
 
 public class UnaryOperation extends Ast {
 
-    public UnaryOperation(Pointer ast) {
+    public UnaryOperation(MemorySegment ast) {
         super(ast);
     }
 
@@ -39,39 +37,31 @@ public class UnaryOperation extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public int getOperatorType() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(getPointer(), AstAttribute.OPERATOR_TYPE.getValue(), intByReference));
-        return intByReference.getValue();
+        return getNumber(AstAttribute.OPERATOR_TYPE);
     }
 
     public Ast getArgument() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.ARGUMENT.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.ARGUMENT);
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setOperatorType(int operatorType) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(getPointer(), AstAttribute.OPERATOR_TYPE.getValue(), operatorType));
+        setNumber(AstAttribute.OPERATOR_TYPE, operatorType);
     }
 
     public void setArgument(Ast argument) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.ARGUMENT.getValue(), argument.getPointer()));
+        setAst(AstAttribute.ARGUMENT, argument);
     }
 
-    private static Pointer create(Location location, int operatorType, Ast argument) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.UNARY_OPERATION.getValue(), pointerByReference, location, operatorType, argument.getPointer()));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, int operatorType, Ast argument) {
+        return build(AstType.UNARY_OPERATION, location, operatorType, argument);
     }
 
 }

@@ -19,17 +19,15 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstType;
-import org.potassco.clingo.internal.Clingo;
 
 public class AggregateGuard extends Ast {
 
-    public AggregateGuard(Pointer ast) {
+    public AggregateGuard(MemorySegment ast) {
         super(ast);
     }
 
@@ -38,29 +36,23 @@ public class AggregateGuard extends Ast {
     }
 
     public int getComparison() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_number(getPointer(), AstAttribute.COMPARISON.getValue(), intByReference));
-        return intByReference.getValue();
+        return getNumber(AstAttribute.COMPARISON);
     }
 
     public Ast getTerm() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.TERM.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.TERM);
     }
 
     public void setComparison(int comparison) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_number(getPointer(), AstAttribute.COMPARISON.getValue(), comparison));
+        setNumber(AstAttribute.COMPARISON, comparison);
     }
 
     public void setTerm(Ast term) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.TERM.getValue(), term.getPointer()));
+        setAst(AstAttribute.TERM, term);
     }
 
-    private static Pointer create(int comparison, Ast term) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.AGGREGATE_GUARD.getValue(), pointerByReference, comparison, term.getPointer()));
-        return pointerByReference.getValue();
+    private static MemorySegment create(int comparison, Ast term) {
+        return build(AstType.AGGREGATE_GUARD, comparison, term);
     }
 
 }

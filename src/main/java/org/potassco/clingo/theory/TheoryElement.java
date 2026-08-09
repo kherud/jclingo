@@ -21,13 +21,11 @@ package org.potassco.clingo.theory;
 
 import java.util.Objects;
 
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.internal.NativeSizeByReference;
+import java.lang.foreign.MemorySegment;
+
+import org.potassco.clingo.internal.NativeStr;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 import org.potassco.clingo.propagator.PropagateInit;
 
 /**
@@ -38,10 +36,10 @@ import org.potassco.clingo.propagator.PropagateInit;
  */
 public class TheoryElement implements Comparable<TheoryElement> {
 
-    private final Pointer theoryAtoms;
+    private final MemorySegment theoryAtoms;
     private final int id;
 
-    public TheoryElement(Pointer theoryAtoms, int id) {
+    public TheoryElement(MemorySegment theoryAtoms, int id) {
         this.theoryAtoms = theoryAtoms;
         this.id = id;
     }
@@ -67,25 +65,18 @@ public class TheoryElement implements Comparable<TheoryElement> {
      * @return condition literal
      */
     public int getConditionId() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_element_condition_id(theoryAtoms, id, intByReference));
-        return intByReference.getValue();
+        return Out.getInt(out -> ClingoH.clingo_theory_atoms_element_condition_id(theoryAtoms, id, out));
     }
 
     /**
      * @return The tuple of the element
      */
     public TheoryTerm[] getTerms() {
-        PointerByReference pointerByReference = new PointerByReference();
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_element_tuple(theoryAtoms, id, pointerByReference, nativeSizeByReference));
-        int amountElements = (int) nativeSizeByReference.getValue();
-        TheoryTerm[] theoryTerms = new TheoryTerm[amountElements];
-        if (amountElements > 0) {
-            int[] theoryElementInts = pointerByReference.getValue().getIntArray(0, amountElements);
-            for (int i = 0; i < amountElements; i++) {
-                theoryTerms[i] = new TheoryTerm(theoryAtoms, theoryElementInts[i]);
-            }
+        int[] ids = Out.getInts((terms, size) ->
+                ClingoH.clingo_theory_atoms_element_tuple(theoryAtoms, id, terms, size));
+        TheoryTerm[] theoryTerms = new TheoryTerm[ids.length];
+        for (int i = 0; i < ids.length; i++) {
+            theoryTerms[i] = new TheoryTerm(theoryAtoms, ids[i]);
         }
         return theoryTerms;
     }
@@ -94,12 +85,9 @@ public class TheoryElement implements Comparable<TheoryElement> {
      * @return The condition of the element in form of a list of program literals
      */
     public int[] getConditions() {
-        PointerByReference pointerByReference = new PointerByReference();
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_element_condition(theoryAtoms, id, pointerByReference, nativeSizeByReference));
-        int amountElements = (int) nativeSizeByReference.getValue();
-        return amountElements == 0 ? new int[0] : pointerByReference.getValue().getIntArray(0, amountElements);
         // TODO: return something different than ints?
+        return Out.getInts((condition, size) ->
+                ClingoH.clingo_theory_atoms_element_condition(theoryAtoms, id, condition, size));
     }
 
     /**
@@ -124,11 +112,8 @@ public class TheoryElement implements Comparable<TheoryElement> {
 
     @Override
     public String toString() {
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_element_to_string_size(theoryAtoms, id, nativeSizeByReference));
-        int stringSize = (int) nativeSizeByReference.getValue();
-        byte[] elementBytes = new byte[stringSize];
-        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_element_to_string(theoryAtoms, id, elementBytes, new NativeSize(stringSize)));
-        return Native.toString(elementBytes, Clingo.STRING_ENCODING);
+        return NativeStr.getSized(
+                size -> ClingoH.clingo_theory_atoms_element_to_string_size(theoryAtoms, id, size),
+                (buffer, size) -> ClingoH.clingo_theory_atoms_element_to_string(theoryAtoms, id, buffer, size));
     }
 }

@@ -1,48 +1,35 @@
 package org.potassco.clingo.control;
 
-import java.lang.ref.Reference;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.internal.ffi.ClingoH;
 import org.potassco.clingo.solving.Model;
 
 public interface Application {
 
     /**
-     * Run clingo with a this customized main function.
-     * Do not ovewrite this function.
+     * Run clingo with this customized main function.
+     * Do not overwrite this function.
      *
      * @param arguments command line arguments
      * @return exit code to return from main function
      */
     default int run(String... arguments) {
+        Clingo.init();
         // TODO: maybe set callbacks to null if not implemented
-        // the options object outlives registerOptions, because clingo keeps the parse callbacks and flags it holds
-        // until the run is over. The closure below anchors it in the native application struct, which stays reachable
-        // for the whole call to clingo_main.
-        List<ApplicationOptions> registeredOptions = new ArrayList<>();
-        Clingo.Application nativeApplication = new Clingo.Application();
-        nativeApplication.programName = this::getName;
-        nativeApplication.version = this::getVersion;
-        nativeApplication.messageLimit = this::getMessageLimit;
-        nativeApplication.main = this::main;
-        nativeApplication.logger = this::log;
-        nativeApplication.modelPrinter = this::printModel;
-        nativeApplication.registerOptions = options -> {
-            registeredOptions.add(options);
-            registerOptions(options);
-        };
-        nativeApplication.validateOptions = this::validateOptions;
-        try {
-            return Clingo.INSTANCE.clingo_main(nativeApplication, arguments, new NativeSize(arguments.length), null);
-        }
-        finally {
-            // jna hands the native side a trampoline per callback in the struct and keeps no reference on the callbacks
-            // themselves, so without this the garbage collector may free a trampoline while clingo is still calling it
-            Reference.reachabilityFence(nativeApplication);
+        // clingo keeps the callbacks, the parse callbacks of the options and the flags they are bound to until the
+        // run is over, and calls some of them from solver threads, so they all live in one shared arena
+        try (Arena arena = Arena.ofShared()) {
+            MemorySegment application = ApplicationBridge.of(this, arena);
+            MemorySegment arguments$ = arena.allocate(ValueLayout.ADDRESS, arguments.length);
+            for (int i = 0; i < arguments.length; i++) {
+                arguments$.setAtIndex(ValueLayout.ADDRESS, i, arena.allocateFrom(arguments[i]));
+            }
+            return ClingoH.clingo_main(application, arguments$, arguments.length, MemorySegment.NULL);
         }
     }
 

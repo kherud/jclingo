@@ -19,16 +19,15 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstType;
-import org.potassco.clingo.internal.Clingo;
 
 public class TheoryGuard extends Ast {
 
-    public TheoryGuard(Pointer ast) {
+    public TheoryGuard(MemorySegment ast) {
         super(ast);
     }
 
@@ -37,29 +36,23 @@ public class TheoryGuard extends Ast {
     }
 
     public String getOperatorName() {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string(getPointer(), AstAttribute.OPERATOR_NAME.getValue(), stringByReference));
-        return stringByReference[0];
+        return getString(AstAttribute.OPERATOR_NAME);
     }
 
     public Ast getTerm() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.TERM.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.TERM);
     }
 
     public void setOperatorName(String operatorName) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string(getPointer(), AstAttribute.OPERATOR_NAME.getValue(), operatorName));
+        setString(AstAttribute.OPERATOR_NAME, operatorName);
     }
 
     public void setTerm(Ast term) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.TERM.getValue(), term.getPointer()));
+        setAst(AstAttribute.TERM, term);
     }
 
-    private static Pointer create(String operatorName, Ast term) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.THEORY_GUARD.getValue(), pointerByReference, operatorName, term.getPointer()));
-        return pointerByReference.getValue();
+    private static MemorySegment create(String operatorName, Ast term) {
+        return build(AstType.THEORY_GUARD, operatorName, term);
     }
 
 }

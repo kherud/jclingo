@@ -19,15 +19,12 @@
 
 package org.potassco.clingo.ast;
 
-import java.lang.ref.Reference;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 import java.nio.file.Path;
 import java.util.NoSuchElementException;
 
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.ast.nodes.Aggregate;
 import org.potassco.clingo.ast.nodes.AggregateGuard;
 import org.potassco.clingo.ast.nodes.BinaryOperation;
@@ -76,9 +73,14 @@ import org.potassco.clingo.ast.nodes.UnaryOperation;
 import org.potassco.clingo.ast.nodes.Variable;
 import org.potassco.clingo.control.Control;
 import org.potassco.clingo.control.LoggerCallback;
+import org.potassco.clingo.internal.Callbacks;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.internal.NativeSizeByReference;
+import org.potassco.clingo.internal.ErrorPolicy;
+import org.potassco.clingo.internal.NativeStr;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
+import org.potassco.clingo.internal.ffi.clingo_location;
+import org.potassco.clingo.symbol.Symbol;
 
 /**
  * Represents a node in the abstract syntax tree.
@@ -112,7 +114,11 @@ import org.potassco.clingo.internal.NativeSizeByReference;
  */
 public abstract class Ast implements Comparable<Ast>, AutoCloseable {
 
-    private final Pointer ast;
+    static {
+        Clingo.init();
+    }
+
+    private final MemorySegment ast;
 
     private boolean owned = true;
 
@@ -121,27 +127,94 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
     /**
      * Adopts an existing reference on the given node, resulting in an owned node that has to be closed.
      */
-    public Ast(Pointer ast) {
+    public Ast(MemorySegment ast) {
         this.ast = ast;
+    }
+
+    /**
+     * @return the location attribute of this node
+     */
+    protected Location getLocation(AstAttribute attribute) {
+        try (Arena call = Arena.ofConfined()) {
+            MemorySegment location = clingo_location.allocate(call);
+            Clingo.check(ClingoH.clingo_ast_attribute_get_location(getPointer(), attribute.getValue(), location));
+            return Location.fromNative(location);
+        }
+    }
+
+    protected void setLocation(AstAttribute attribute, Location location) {
+        try (Arena call = Arena.ofConfined()) {
+            Clingo.check(ClingoH.clingo_ast_attribute_set_location(getPointer(), attribute.getValue(),
+                    location.toNative(call)));
+        }
+    }
+
+    /**
+     * @return the node attribute, borrowed from this node
+     */
+    protected Ast getAst(AstAttribute attribute) {
+        return Ast.borrowChild(Out.getPointer(out ->
+                ClingoH.clingo_ast_attribute_get_ast(getPointer(), attribute.getValue(), out)));
+    }
+
+    protected void setAst(AstAttribute attribute, Ast value) {
+        Clingo.check(ClingoH.clingo_ast_attribute_set_ast(getPointer(), attribute.getValue(), value.getPointer()));
+    }
+
+    protected void setOptionalAst(AstAttribute attribute, Ast value) {
+        Clingo.check(ClingoH.clingo_ast_attribute_set_optional_ast(getPointer(), attribute.getValue(),
+                value == null ? MemorySegment.NULL : value.getPointer()));
+    }
+
+    protected int getNumber(AstAttribute attribute) {
+        return Out.getInt(out -> ClingoH.clingo_ast_attribute_get_number(getPointer(), attribute.getValue(), out));
+    }
+
+    protected void setNumber(AstAttribute attribute, int value) {
+        Clingo.check(ClingoH.clingo_ast_attribute_set_number(getPointer(), attribute.getValue(), value));
+    }
+
+    protected String getString(AstAttribute attribute) {
+        return Out.getString(out -> ClingoH.clingo_ast_attribute_get_string(getPointer(), attribute.getValue(), out));
+    }
+
+    protected void setString(AstAttribute attribute, String value) {
+        try (Arena call = Arena.ofConfined()) {
+            Clingo.check(ClingoH.clingo_ast_attribute_set_string(getPointer(), attribute.getValue(),
+                    call.allocateFrom(value)));
+        }
+    }
+
+    protected Symbol getSymbol(AstAttribute attribute) {
+        return Symbol.fromLong(Out.getLong(out ->
+                ClingoH.clingo_ast_attribute_get_symbol(getPointer(), attribute.getValue(), out)));
+    }
+
+    protected void setSymbol(AstAttribute attribute, Symbol value) {
+        Clingo.check(ClingoH.clingo_ast_attribute_set_symbol(getPointer(), attribute.getValue(), value.getLong()));
+    }
+
+    /**
+     * Builds a new node of the given type. The arguments are the constructor arguments clingo declares for that type.
+     *
+     * @return the new node, owned by the caller
+     */
+    protected static MemorySegment build(AstType type, Object... arguments) {
+        return AstBuildInvokers.build(type, arguments);
     }
 
     @Override
     public String toString() {
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_to_string_size(getPointer(), nativeSizeByReference));
-        int stringSize = (int) nativeSizeByReference.getValue();
-        byte[] stringBytes = new byte[stringSize];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_to_string(getPointer(), stringBytes, new NativeSize(stringSize)));
-        return Native.toString(stringBytes, Clingo.STRING_ENCODING);
+        return NativeStr.getSized(
+                size -> ClingoH.clingo_ast_to_string_size(getPointer(), size),
+                (buffer, size) -> ClingoH.clingo_ast_to_string(getPointer(), buffer, size));
     }
 
     /**
      * @return The type of the node.
      */
     public AstType getType() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_get_type(getPointer(), intByReference));
-        return AstType.fromValue(intByReference.getValue());
+        return AstType.fromValue(Out.getInt(out -> ClingoH.clingo_ast_get_type(getPointer(), out)));
     }
 
     /**
@@ -151,9 +224,8 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
      * @return the resulting type
      */
     public AttributeType getAttributeType(AstAttribute attribute) {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_type(getPointer(), attribute.getValue(), intByReference));
-        return AttributeType.fromValue(intByReference.getValue());
+        return AttributeType.fromValue(Out.getInt(out ->
+                ClingoH.clingo_ast_attribute_type(getPointer(), attribute.getValue(), out)));
     }
 
     /**
@@ -163,9 +235,7 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
      * @return the result
      */
     public boolean hasAttribute(AstAttribute attribute) {
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_has_attribute(getPointer(), attribute.getValue(), byteByReference));
-        return byteByReference.getValue() > 0;
+        return Out.getBoolean(out -> ClingoH.clingo_ast_has_attribute(getPointer(), attribute.getValue(), out));
     }
 
     /**
@@ -175,14 +245,13 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
      * @return the result
      */
     protected boolean hasOptionalAst(AstAttribute attribute) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_optional_ast(getPointer(), attribute.getValue(), pointerByReference));
-        Pointer optional = pointerByReference.getValue();
-        if (optional == null) {
+        MemorySegment optional = Out.getPointer(out ->
+                ClingoH.clingo_ast_attribute_get_optional_ast(getPointer(), attribute.getValue(), out));
+        if (optional.equals(MemorySegment.NULL)) {
             return false;
         }
         // reading the attribute increments the reference count, and this check has no use for the node itself
-        Clingo.INSTANCE.clingo_ast_release(optional);
+        ClingoH.clingo_ast_release(optional);
         return true;
     }
 
@@ -194,12 +263,12 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
      * @throws NoSuchElementException if the attribute is not set
      */
     protected Ast getOptionalAst(AstAttribute attribute) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_optional_ast(getPointer(), attribute.getValue(), pointerByReference));
-        if (pointerByReference.getValue() == null) {
+        MemorySegment optional = Out.getPointer(out ->
+                ClingoH.clingo_ast_attribute_get_optional_ast(getPointer(), attribute.getValue(), out));
+        if (optional.equals(MemorySegment.NULL)) {
             throw new NoSuchElementException("there is no optional ast " + attribute);
         }
-        return Ast.borrowChild(pointerByReference.getValue());
+        return Ast.borrowChild(optional);
     }
 
     /**
@@ -210,14 +279,10 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
      */
     public AstList unpool(UnpoolType unpoolType) {
         AstList returnValues = new AstList();
-        AstCallback callback = ast -> returnValues.add(ast.retain());
-        try {
-            Clingo.check(Clingo.INSTANCE.clingo_ast_unpool(getPointer(), unpoolType.getValue(), callback, null));
-        }
-        finally {
-            // jna hands the native side a trampoline and keeps no reference on the callback itself, so without this the
-            // garbage collector may free the trampoline while clingo is still calling it
-            Reference.reachabilityFence(callback);
+        try (Arena call = Arena.ofConfined()) {
+            MemorySegment callback = AstCallback.toNative(ast -> returnValues.add(ast.retain()), call);
+            Clingo.check(ClingoH.clingo_ast_unpool(getPointer(), unpoolType.getValue(), callback,
+                    MemorySegment.NULL));
         }
         return returnValues;
     }
@@ -229,25 +294,21 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
      * @return the resulting hash code
      */
     public long getHash() {
-        return Clingo.INSTANCE.clingo_ast_hash(getPointer()).longValue();
+        return ClingoH.clingo_ast_hash(getPointer());
     }
 
     /**
      * @return Return an owned shallow copy of the ast.
      */
     public Ast copy() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_copy(getPointer(), pointerByReference));
-        return create(pointerByReference.getValue());
+        return create(Out.getPointer(out -> ClingoH.clingo_ast_copy(getPointer(), out)));
     }
 
     /**
      * @return Return an owned deep copy of the ast.
      */
     public Ast deepCopy() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_deep_copy(getPointer(), pointerByReference));
-        return create(pointerByReference.getValue());
+        return create(Out.getPointer(out -> ClingoH.clingo_ast_deep_copy(getPointer(), out)));
     }
 
     /**
@@ -295,12 +356,7 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
      * @param messageLimit The maximum number of messages passed to the logger.
      */
     public static void parseString(String program, AstCallback callback, LoggerCallback logger, int messageLimit) {
-        try {
-            Clingo.check(Clingo.INSTANCE.clingo_ast_parse_string(program, callback, null, null, logger, null, messageLimit));
-        }
-        finally {
-            keepAlive(callback, logger);
-        }
+        parseString(program, callback, MemorySegment.NULL, logger, messageLimit);
     }
 
     /**
@@ -313,11 +369,16 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
      * @param messageLimit The maximum number of messages passed to the logger.
      */
     public static void parseString(String program, AstCallback callback, Control control, LoggerCallback logger, int messageLimit) {
-        try {
-            Clingo.check(Clingo.INSTANCE.clingo_ast_parse_string(program, callback, control.getPointer(), null, logger, null, messageLimit));
-        }
-        finally {
-            keepAlive(callback, logger);
+        parseString(program, callback, control.getPointer(), logger, messageLimit);
+    }
+
+    private static void parseString(String program, AstCallback callback, MemorySegment control, LoggerCallback logger,
+                                    int messageLimit) {
+        // parsing happens on this thread, so the callbacks only have to live as long as the call does
+        try (Arena call = Arena.ofConfined()) {
+            Clingo.check(ClingoH.clingo_ast_parse_string(call.allocateFrom(program),
+                    AstCallback.toNative(callback, call), control, MemorySegment.NULL,
+                    Callbacks.logger(logger, call, ErrorPolicy.synchronous()), MemorySegment.NULL, messageLimit));
         }
     }
 
@@ -340,19 +401,14 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
      * @param paths        The files to parse.
      */
     public static void parseFiles(AstCallback callback, LoggerCallback logger, int messageLimit, Path... paths) {
-        String[] files = new String[paths.length];
-        for (int i = 0; i < paths.length; i++) {
-            files[i] = paths[i].toString();
-        }
-        try {
-            Clingo.check(Clingo.INSTANCE.clingo_ast_parse_files(
-                    files, new NativeSize(files.length),
-                    callback, null,
-                    null,
-                    logger, null, messageLimit));
-        }
-        finally {
-            keepAlive(callback, logger);
+        try (Arena call = Arena.ofConfined()) {
+            MemorySegment files = call.allocate(ValueLayout.ADDRESS, paths.length);
+            for (int i = 0; i < paths.length; i++) {
+                files.setAtIndex(ValueLayout.ADDRESS, i, call.allocateFrom(paths[i].toString()));
+            }
+            Clingo.check(ClingoH.clingo_ast_parse_files(files, paths.length,
+                    AstCallback.toNative(callback, call), MemorySegment.NULL, MemorySegment.NULL,
+                    Callbacks.logger(logger, call, ErrorPolicy.synchronous()), MemorySegment.NULL, messageLimit));
         }
     }
 
@@ -376,7 +432,7 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
             return;
         }
         released = true;
-        Clingo.INSTANCE.clingo_ast_release(ast);
+        ClingoH.clingo_ast_release(ast);
     }
 
     @Override
@@ -399,7 +455,7 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
             throw new IllegalStateException("this ast node was already released");
         }
         if (!owned) {
-            Clingo.INSTANCE.clingo_ast_acquire(ast);
+            ClingoH.clingo_ast_acquire(ast);
             owned = true;
         }
         return this;
@@ -422,7 +478,7 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
     public boolean equals(Object other) {
         if (!(other instanceof Ast))
             return false;
-        return Clingo.INSTANCE.clingo_ast_equal(getPointer(), ((Ast) other).getPointer()) > 0;
+        return ClingoH.clingo_ast_equal(getPointer(), ((Ast) other).getPointer());
     }
 
     /**
@@ -431,7 +487,7 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
      */
     @Override
     public int hashCode() {
-        return Long.valueOf(getHash()).hashCode();
+        return Long.hashCode(getHash());
     }
 
     /**
@@ -441,7 +497,7 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
      * @return the result of the compariso
      */
     public boolean isLess(Ast other) {
-        return Clingo.INSTANCE.clingo_ast_less_than(getPointer(), other.getPointer()) > 0;
+        return ClingoH.clingo_ast_less_than(getPointer(), other.getPointer());
     }
 
     @Override
@@ -453,7 +509,7 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
      * @return the native node behind this object
      * @throws IllegalStateException if this node was already released
      */
-    public Pointer getPointer() {
+    public MemorySegment getPointer() {
         if (released) {
             throw new IllegalStateException("this ast node was already released");
         }
@@ -461,20 +517,10 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
     }
 
     /**
-     * Keeps callbacks reachable until the native call using them has returned. jna hands the native side a trampoline
-     * and keeps no reference on the callback itself, so the garbage collector may otherwise free that trampoline while
-     * clingo is still calling it.
-     */
-    private static void keepAlive(Object callback, Object logger) {
-        Reference.reachabilityFence(callback);
-        Reference.reachabilityFence(logger);
-    }
-
-    /**
      * Wraps a node without taking a reference on it, for nodes that are kept alive by someone else for as long as they
      * are handed out, such as the arguments of an {@link AstCallback}.
      */
-    protected static Ast borrow(Pointer ast) {
+    protected static Ast borrow(MemorySegment ast) {
         Ast node = create(ast);
         node.owned = false;
         return node;
@@ -484,23 +530,20 @@ public abstract class Ast implements Comparable<Ast>, AutoCloseable {
      * Wraps a node read from an attribute of another node. Attribute accessors increment the reference count, and that
      * reference is given back right away, because the surrounding node holds one for as long as it refers to the child.
      */
-    protected static Ast borrowChild(Pointer ast) {
+    protected static Ast borrowChild(MemorySegment ast) {
         try {
             return borrow(ast);
         }
         finally {
-            Clingo.INSTANCE.clingo_ast_release(ast);
+            ClingoH.clingo_ast_release(ast);
         }
     }
 
-    protected static Ast create(Pointer ast) {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_get_type(ast, intByReference));
-        AstType type = AstType.fromValue(intByReference.getValue());
-        return create(ast, type);
+    protected static Ast create(MemorySegment ast) {
+        return create(ast, AstType.fromValue(Out.getInt(out -> ClingoH.clingo_ast_get_type(ast, out))));
     }
 
-    protected static Ast create(Pointer ast, AstType type) {
+    protected static Ast create(MemorySegment ast, AstType type) {
         switch (type) {
             case ID:
                 return new Id(ast);

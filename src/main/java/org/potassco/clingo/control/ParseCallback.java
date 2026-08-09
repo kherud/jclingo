@@ -19,24 +19,11 @@
 
 package org.potassco.clingo.control;
 
-import com.sun.jna.Callback;
-import com.sun.jna.Pointer;
-import org.potassco.clingo.internal.Clingo;
-
 /**
  * parse callback to parse the value of the option
  */
 @FunctionalInterface
-public interface ParseCallback extends Callback {
-    /**
-     * @param value the value of the option
-     * @param data  callback data
-     * @return whether the call was successful
-     */
-    default byte callback(String value, Pointer data) {
-        return Clingo.guard(() -> call(value));
-    }
-
+public interface ParseCallback {
     /**
      * parse callback to parse the value of the option
      *

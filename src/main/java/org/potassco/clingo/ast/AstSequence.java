@@ -22,11 +22,11 @@ package org.potassco.clingo.ast;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.internal.NativeSizeByReference;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 /**
  * A sequence of AST nodes held by an attribute of another node.
@@ -54,9 +54,8 @@ public class AstSequence {
     }
 
     public int size() {
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_size_ast_array(owner.getPointer(), attribute.getValue(), nativeSizeByReference));
-        return (int) nativeSizeByReference.getValue();
+        return (int) Out.getLong(out ->
+                ClingoH.clingo_ast_attribute_size_ast_array(owner.getPointer(), attribute.getValue(), out));
     }
 
     public Ast[] get() {
@@ -73,21 +72,26 @@ public class AstSequence {
      * @return the element at the given position, borrowed from the node this sequence belongs to
      */
     public Ast get(int index) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast_at(owner.getPointer(), attribute.getValue(), new NativeSize(index), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return Ast.borrowChild(at(index));
     }
 
     public void insert(int index, Ast ast) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_insert_ast_at(owner.getPointer(), attribute.getValue(), new NativeSize(index), ast.getPointer()));
+        Clingo.check(ClingoH.clingo_ast_attribute_insert_ast_at(owner.getPointer(), attribute.getValue(), index,
+                ast.getPointer()));
     }
 
     public void set(int index, Ast ast) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast_at(owner.getPointer(), attribute.getValue(), new NativeSize(index), ast.getPointer()));
+        Clingo.check(ClingoH.clingo_ast_attribute_set_ast_at(owner.getPointer(), attribute.getValue(), index,
+                ast.getPointer()));
     }
 
     public void delete(int index) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_delete_ast_at(owner.getPointer(), attribute.getValue(), new NativeSize(index)));
+        Clingo.check(ClingoH.clingo_ast_attribute_delete_ast_at(owner.getPointer(), attribute.getValue(), index));
+    }
+
+    private MemorySegment at(int index) {
+        return Out.getPointer(out ->
+                ClingoH.clingo_ast_attribute_get_ast_at(owner.getPointer(), attribute.getValue(), index, out));
     }
 
     public void set(AstSequence sequence) {
@@ -123,14 +127,13 @@ public class AstSequence {
     /**
      * @return the native nodes of this sequence, borrowed from the node this sequence belongs to
      */
-    public Pointer[] getPointer() {
+    public MemorySegment[] getPointer() {
         int size = size();
-        Pointer[] pointers = new Pointer[size];
-        PointerByReference pointerByReference = new PointerByReference();
+        MemorySegment[] pointers = new MemorySegment[size];
         for (int i = 0; i < size; i++) {
-            Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast_at(owner.getPointer(), attribute.getValue(), new NativeSize(i), pointerByReference));
-            pointers[i] = pointerByReference.getValue();
-            Clingo.INSTANCE.clingo_ast_release(pointers[i]);
+            pointers[i] = at(i);
+            // reading an element increments the reference count, and the owner holds one for as long as it refers to it
+            ClingoH.clingo_ast_release(pointers[i]);
         }
         return pointers;
     }

@@ -24,16 +24,15 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.LongByReference;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
+
 import org.potassco.clingo.control.Control;
 import org.potassco.clingo.control.ShowType;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.internal.NativeSizeByReference;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 import org.potassco.clingo.symbol.Symbol;
 
 /**
@@ -50,10 +49,25 @@ import org.potassco.clingo.symbol.Symbol;
  */
 public class Model {
 
-	private final Pointer model;
+	private final MemorySegment model;
 
-	public Model(Pointer model) {
+	private boolean valid = true;
+
+	public Model(MemorySegment model) {
 		this.model = model;
+	}
+
+	/**
+	 * clingo reuses its model between search steps, so the solve handle marks a model as gone once the search moves on.
+	 */
+	void invalidate() {
+		valid = false;
+	}
+
+	private void checkValid() {
+		if (!valid) {
+			throw new IllegalStateException("the model is only valid until the search continues");
+		}
 	}
 
 	/**
@@ -64,9 +78,8 @@ public class Model {
 	 * @return Whether the given atom is contained in the model.
 	 */
 	public boolean contains(Symbol atom) {
-		ByteByReference byteByReference = new ByteByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_model_contains(model, atom.getLong(), byteByReference));
-		return byteByReference.getValue() > 0;
+		checkValid();
+		return Out.getBoolean(out -> ClingoH.clingo_model_contains(model, atom.getLong(), out));
 	}
 
 	/**
@@ -77,8 +90,7 @@ public class Model {
 	 * @param symbols The symbols to add to the model.
 	 */
 	public void extend(Collection<Symbol> symbols) {
-		long[] symbolLongs = symbols.stream().mapToLong(Symbol::getLong).toArray();
-		Clingo.check(Clingo.INSTANCE.clingo_model_extend(model, symbolLongs, new NativeSize(symbolLongs.length)));
+		extend(symbols.stream().mapToLong(Symbol::getLong).toArray());
 	}
 
 	/**
@@ -89,8 +101,15 @@ public class Model {
 	 * @param symbol The symbol to add to the model.
 	 */
 	public void extend(Symbol symbol) {
-		long[] symbolLongs = new long[] { symbol.getLong() };
-		Clingo.check(Clingo.INSTANCE.clingo_model_extend(model, symbolLongs, new NativeSize(symbolLongs.length)));
+		extend(new long[] { symbol.getLong() });
+	}
+
+	private void extend(long[] symbols) {
+		checkValid();
+		try (Arena call = Arena.ofConfined()) {
+			Clingo.check(ClingoH.clingo_model_extend(model,
+					call.allocateFrom(ValueLayout.JAVA_LONG, symbols), symbols.length));
+		}
 	}
 
 	/**
@@ -100,9 +119,8 @@ public class Model {
 	 * @return Whether the given program literal is true.
 	 */
 	public boolean isTrue(int literal) {
-		ByteByReference byteByReference = new ByteByReference();
-		Clingo.INSTANCE.clingo_model_is_true(model, literal, byteByReference);
-		return byteByReference.getValue() > 0;
+		checkValid();
+		return Out.getBoolean(out -> ClingoH.clingo_model_is_true(model, literal, out));
 	}
 
 	/**
@@ -118,10 +136,9 @@ public class Model {
 	 * @return whether the literal is a consequence
 	 */
 	public ConsequenceType getConsequenceType(int literal) {
-		IntByReference intByReference = new IntByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_model_is_consequence(model, literal, intByReference));
-		ConsequenceType type = ConsequenceType.fromValue(intByReference.getValue());
-		return Objects.requireNonNull(type);
+		checkValid();
+		return Objects.requireNonNull(ConsequenceType.fromValue(
+				Out.getInt(out -> ClingoH.clingo_model_is_consequence(model, literal, out))));
 	}
 
 	/**
@@ -163,25 +180,18 @@ public class Model {
 	 * @return The selected symbols.
 	 */
 	public Symbol[] getSymbols(ShowType showType) {
-		NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_model_symbols_size(model, showType.getBitset(), nativeSizeByReference));
-		int modelSize = (int) nativeSizeByReference.getValue();
-		long[] modelSymbols = new long[modelSize];
-
-		Clingo.check(Clingo.INSTANCE.clingo_model_symbols(
-				model,
-				showType.getBitset(),
-				modelSymbols,
-				new NativeSize(modelSize))
-		);
-
-		Symbol[] symbols = new Symbol[modelSize];
-
-		for (int i = 0; i < modelSize; i++) {
-			symbols[i] = Symbol.fromLong(modelSymbols[i]);
+		checkValid();
+		try (Arena call = Arena.ofConfined()) {
+			long size = Out.getLong(out -> ClingoH.clingo_model_symbols_size(model, showType.getBitset(), out));
+			MemorySegment buffer = call.allocate(ValueLayout.JAVA_LONG, size);
+			Clingo.check(ClingoH.clingo_model_symbols(model, showType.getBitset(), buffer, size));
+			long[] modelSymbols = buffer.toArray(ValueLayout.JAVA_LONG);
+			Symbol[] symbols = new Symbol[modelSymbols.length];
+			for (int i = 0; i < modelSymbols.length; i++) {
+				symbols[i] = Symbol.fromLong(modelSymbols[i]);
+			}
+			return symbols;
 		}
-
-		return symbols;
 	}
 
 	@Override
@@ -194,9 +204,8 @@ public class Model {
 	 * @return Object that allows for controlling the running search.
 	 */
 	public SolveControl getContext() {
-		PointerByReference pointerByReference = new PointerByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_model_context(model, pointerByReference));
-		return new SolveControl(pointerByReference.getValue());
+		checkValid();
+		return new SolveControl(Out.getPointer(out -> ClingoH.clingo_model_context(model, out)));
 	}
 
 	/**
@@ -206,13 +215,13 @@ public class Model {
 	 * @return array of integer costs
 	 */
 	public long[] getCost() {
-		NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_model_cost_size(model, nativeSizeByReference));
-		int costSize = (int) nativeSizeByReference.getValue();
-
-		long[] costs = new long[costSize];
-		Clingo.check(Clingo.INSTANCE.clingo_model_cost(model, costs, new NativeSize(costSize)));
-		return costs;
+		checkValid();
+		try (Arena call = Arena.ofConfined()) {
+			long size = Out.getLong(out -> ClingoH.clingo_model_cost_size(model, out));
+			MemorySegment costs = call.allocate(ValueLayout.JAVA_LONG, size);
+			Clingo.check(ClingoH.clingo_model_cost(model, costs, size));
+			return costs.toArray(ValueLayout.JAVA_LONG);
+		}
 	}
 
 	/**
@@ -221,52 +230,49 @@ public class Model {
 	 * @return the resulting priorities
 	 */
 	public int[] getPriorities() {
-		NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_model_cost_size(model, nativeSizeByReference));
-		int costSize = (int) nativeSizeByReference.getValue();
-
-		int[] priorities = new int[costSize];
-		Clingo.check(Clingo.INSTANCE.clingo_model_priority(model, priorities, new NativeSize(costSize)));
-		return priorities;
+		checkValid();
+		try (Arena call = Arena.ofConfined()) {
+			long size = Out.getLong(out -> ClingoH.clingo_model_cost_size(model, out));
+			MemorySegment priorities = call.allocate(ValueLayout.JAVA_INT, size);
+			Clingo.check(ClingoH.clingo_model_priority(model, priorities, size));
+			return priorities.toArray(ValueLayout.JAVA_INT);
+		}
 	}
 
 	/**
 	 * @return The running number of the model.
 	 */
 	public long getNumber() {
-		LongByReference longByReference = new LongByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_model_number(model, longByReference));
-		return longByReference.getValue();
+		checkValid();
+		return Out.getLong(out -> ClingoH.clingo_model_number(model, out));
 	}
 
 	/**
 	 * @return Whether the optimality of the model has been proven.
 	 */
 	public boolean getOptimalityProven() {
-		ByteByReference byteByReference = new ByteByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_model_optimality_proven(model, byteByReference));
-		return byteByReference.getValue() > 0;
+		checkValid();
+		return Out.getBoolean(out -> ClingoH.clingo_model_optimality_proven(model, out));
 	}
 
 	/**
 	 * @return The id of the thread which found the model.
 	 */
 	public int getThreadId() {
-		IntByReference intByReference = new IntByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_model_thread_id(model, intByReference));
-		return intByReference.getValue();
+		checkValid();
+		return Out.getInt(out -> ClingoH.clingo_model_thread_id(model, out));
 	}
 
 	/**
 	 * @return The type of the model.
 	 */
 	public ModelType getType() {
-		IntByReference intByReference = new IntByReference();
-		Clingo.check(Clingo.INSTANCE.clingo_model_type(model, intByReference));
-		return ModelType.fromValue(intByReference.getValue());
+		checkValid();
+		return ModelType.fromValue(Out.getInt(out -> ClingoH.clingo_model_type(model, out)));
 	}
 
-	public Pointer getPointer() {
+	public MemorySegment getPointer() {
+		checkValid();
 		return model;
 	}
 }

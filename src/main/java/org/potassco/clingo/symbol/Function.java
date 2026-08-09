@@ -19,12 +19,13 @@
 
 package org.potassco.clingo.symbol;
 
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.LongByReference;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
+
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.internal.NativeSizeByReference;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 /**
  * Construct a function symbol.
@@ -79,58 +80,52 @@ public class Function extends Symbol {
      * @return Get the name of a symbol.
      */
     public String getName() {
-        String[] stringByRef = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_name(symbol, stringByRef));
-        return stringByRef[0];
+        return Out.getString(out -> ClingoH.clingo_symbol_name(symbol, out));
     }
 
     /**
      * @return Check if a function is positive (does not have a sign).
      */
     public boolean isPositive() {
-        ByteByReference byteByRef = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_is_positive(symbol, byteByRef));
-        return byteByRef.getValue() > 0;
+        return Out.getBoolean(out -> ClingoH.clingo_symbol_is_positive(symbol, out));
     }
 
     /**
      * @return boolean if a function is negative (has a sign).
      */
     public boolean isNegative() {
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_is_negative(symbol, byteByReference));
-        return byteByReference.getValue() > 0;
+        return Out.getBoolean(out -> ClingoH.clingo_symbol_is_negative(symbol, out));
     }
 
     /**
      * @return Get the symbolic arguments of the function.
      */
     public Symbol[] getArguments() {
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        PointerByReference argumentsReference = new PointerByReference();
-
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_arguments(symbol, argumentsReference, nativeSizeByReference));
-        int argCount = (int) nativeSizeByReference.getValue();
-        Symbol[] arguments = new Symbol[argCount];
-
-        if (argCount > 0) {
-            long[] argumentsLongs = argumentsReference.getValue().getLongArray(0, argCount);
-            for (int i = 0; i < argCount; i++) {
-                arguments[i] = Symbol.fromLong(argumentsLongs[i]);
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment argumentsOut = arena.allocate(ValueLayout.ADDRESS);
+            MemorySegment sizeOut = arena.allocate(ValueLayout.JAVA_LONG);
+            Clingo.check(ClingoH.clingo_symbol_arguments(symbol, argumentsOut, sizeOut));
+            int argumentCount = (int) sizeOut.get(ValueLayout.JAVA_LONG, 0);
+            long[] argumentSymbols = argumentsOut.get(ValueLayout.ADDRESS, 0)
+                    .reinterpret(argumentCount * Long.BYTES)
+                    .toArray(ValueLayout.JAVA_LONG);
+            Symbol[] arguments = new Symbol[argumentCount];
+            for (int i = 0; i < argumentCount; i++) {
+                arguments[i] = Symbol.fromLong(argumentSymbols[i]);
             }
+            return arguments;
         }
-
-        return arguments;
     }
 
     /**
      * @return The arity of the function.
      */
     public int getArity() {
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_arguments(symbol, pointerByReference, nativeSizeByReference));
-        return (int) nativeSizeByReference.getValue();
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment sizeOut = arena.allocate(ValueLayout.JAVA_LONG);
+            Clingo.check(ClingoH.clingo_symbol_arguments(symbol, arena.allocate(ValueLayout.ADDRESS), sizeOut));
+            return (int) sizeOut.get(ValueLayout.JAVA_LONG, 0);
+        }
     }
 
     /**
@@ -141,9 +136,10 @@ public class Function extends Symbol {
      * @return the newly created native function
      */
     private static long create(String name, boolean positive) {
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_create_id(name, positive ? (byte) 1 : 0, longByReference));
-        return longByReference.getValue();
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment name$ = arena.allocateFrom(name);
+            return Out.getLong(out -> ClingoH.clingo_symbol_create_id(name$, positive, out));
+        }
     }
 
     /**
@@ -159,15 +155,7 @@ public class Function extends Symbol {
         for (int i = 0; i < symbols.length; i++) {
             arguments[1 + i] = symbols[i].getLong();
         }
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_create_function(
-                "",
-                arguments,
-                new NativeSize(arguments.length),
-                (byte) 1,
-                longByReference)
-        );
-        return longByReference.getValue();
+        return create("", true, arguments);
     }
 
     /**
@@ -183,16 +171,15 @@ public class Function extends Symbol {
         for (int i = 0; i < arguments.length; i++) {
             argumentSymbols[i] = arguments[i].getLong();
         }
-        NativeSize argumentsSize = new NativeSize(arguments.length);
+        return create(name, positive, argumentSymbols);
+    }
 
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_create_function(
-                name,
-                argumentSymbols,
-                argumentsSize,
-                positive ? (byte) 1 : 0,
-                longByReference)
-        );
-        return longByReference.getValue();
+    private static long create(String name, boolean positive, long[] arguments) {
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment name$ = arena.allocateFrom(name);
+            MemorySegment arguments$ = arena.allocateFrom(ValueLayout.JAVA_LONG, arguments);
+            return Out.getLong(out ->
+                    ClingoH.clingo_symbol_create_function(name$, arguments$, arguments.length, positive, out));
+        }
     }
 }

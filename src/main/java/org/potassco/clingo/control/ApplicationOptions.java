@@ -16,25 +16,35 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
- 
+
 package org.potassco.clingo.control;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 
-import com.sun.jna.Pointer;
 import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.ErrorPolicy;
+import org.potassco.clingo.internal.NativeStr;
+import org.potassco.clingo.internal.Upcalls;
+import org.potassco.clingo.internal.ffi.ClingoH;
+import org.potassco.clingo.internal.ffi.clingo_options_add$parse;
 
+/**
+ * Registry for the command line options of an {@link Application}.
+ */
 public class ApplicationOptions {
 
-    private final Pointer options;
+    private final MemorySegment options;
 
-    // clingo keeps the raw function pointer of a parse callback and the address of a flag until the run is over. JNA
-    // frees a native trampoline as soon as its Java callback becomes unreachable, so both have to be kept alive.
-    private final List<Object> registeredCallbacks = new ArrayList<>();
+    /**
+     * clingo keeps the parse callbacks and the addresses of the flags registered here until the run is over, so they
+     * live in the arena of that run.
+     */
+    private final Arena arena;
 
-    public ApplicationOptions(Pointer pointer) {
-        this.options = pointer;
+    public ApplicationOptions(MemorySegment options, Arena arena) {
+        this.options = options;
+        this.arena = arena;
     }
 
     /**
@@ -54,17 +64,7 @@ public class ApplicationOptions {
      * @param callback    callback to parse the value of the option
      */
     public void addOption(String group, String option, String description, ParseCallback callback) {
-        registeredCallbacks.add(callback);
-        Clingo.check(Clingo.INSTANCE.clingo_options_add(
-                options,
-                group,
-                option,
-                description,
-                callback,
-                null,
-                (byte) 0,
-                null)
-        );
+        addOption(group, option, description, callback, false, null);
     }
 
     /**
@@ -85,18 +85,19 @@ public class ApplicationOptions {
      * @param multi       whether the option can appear multiple times on the command-line
      * @param argument    optional string to change the value name in the generated help output
      */
-    public void addOption(String group, String option, String description, ParseCallback callback, boolean multi, String argument) {
-        registeredCallbacks.add(callback);
-        Clingo.check(Clingo.INSTANCE.clingo_options_add(
-                options,
-                group,
-                option,
-                description,
-                callback,
-                null,
-                multi ? (byte) 1 : 0,
-                argument)
-        );
+    public void addOption(String group, String option, String description, ParseCallback callback, boolean multi,
+                          String argument) {
+        clingo_options_add$parse.Function parse = (value, data) -> {
+            callback.call(NativeStr.toJava(value));
+            return true;
+        };
+        MemorySegment parse$ = Upcalls.stub(clingo_options_add$parse.Function.class, parse,
+                clingo_options_add$parse.descriptor(), arena, ErrorPolicy.synchronous());
+        try (Arena call = Arena.ofConfined()) {
+            Clingo.check(ClingoH.clingo_options_add(options, call.allocateFrom(group), call.allocateFrom(option),
+                    call.allocateFrom(description), parse$, MemorySegment.NULL, multi,
+                    NativeStr.of(call, argument)));
+        }
     }
 
     /**
@@ -111,7 +112,10 @@ public class ApplicationOptions {
      * @param target      boolean set to true if the flag is given on the command-line
      */
     public void addFlag(String group, String option, String description, Flag target) {
-        registeredCallbacks.add(target);
-        Clingo.check(Clingo.INSTANCE.clingo_options_add_flag(options, group, option, description, target.getFlag()));
+        MemorySegment target$ = target.bind(arena);
+        try (Arena call = Arena.ofConfined()) {
+            Clingo.check(ClingoH.clingo_options_add_flag(options, call.allocateFrom(group), call.allocateFrom(option),
+                    call.allocateFrom(description), target$));
+        }
     }
 }

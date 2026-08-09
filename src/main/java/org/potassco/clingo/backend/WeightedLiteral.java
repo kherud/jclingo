@@ -19,53 +19,39 @@
 
 package org.potassco.clingo.backend;
 
-import java.util.Arrays;
-import java.util.List;
-
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.SegmentAllocator;
+import java.lang.foreign.ValueLayout;
 
 /**
  * A Literal with an associated weight.
  */
-public class WeightedLiteral extends Structure {
-    public int literal;
-    public int weight;
+public record WeightedLiteral(int literal, int weight) {
 
-    public WeightedLiteral() {
-
-    }
-
-    public WeightedLiteral(Pointer pointer) {
-        super(pointer);
-        read();
-    }
-
-    public WeightedLiteral(int literal, int weight) {
-        super();
-        this.literal = literal;
-        this.weight = weight;
-    }
-
-    @Override
-    protected List<String> getFieldOrder() {
-        return Arrays.asList("literal", "weight");
+    /**
+     * {@code clingo_weighted_literal_t} is two ints, so an array of them is just an int array of twice the length.
+     *
+     * @return the given literals in the contiguous memory clingo expects
+     */
+    public static MemorySegment toNative(SegmentAllocator allocator, WeightedLiteral[] literals) {
+        int[] values = new int[literals.length * 2];
+        for (int i = 0; i < literals.length; i++) {
+            values[2 * i] = literals[i].literal;
+            values[2 * i + 1] = literals[i].weight;
+        }
+        return allocator.allocateFrom(ValueLayout.JAVA_INT, values);
     }
 
     /**
-     * Copies the given literals into an array clingo can read, or returns null for an empty array. Structures handed to
-     * clingo have to occupy contiguous memory, which is not the case for individually allocated ones.
+     * @param literals a {@code clingo_weighted_literal_t} array
+     * @param size     the number of literals in it
      */
-    public static WeightedLiteral[] toContiguousArray(WeightedLiteral[] literals) {
-        if (literals.length == 0) {
-            return null;
+    public static WeightedLiteral[] fromNative(MemorySegment literals, int size) {
+        int[] values = literals.reinterpret(size * 2L * Integer.BYTES).toArray(ValueLayout.JAVA_INT);
+        WeightedLiteral[] result = new WeightedLiteral[size];
+        for (int i = 0; i < size; i++) {
+            result[i] = new WeightedLiteral(values[2 * i], values[2 * i + 1]);
         }
-        WeightedLiteral[] contiguousArray = (WeightedLiteral[]) new WeightedLiteral().toArray(literals.length);
-        for (int i = 0; i < literals.length; i++) {
-            contiguousArray[i].literal = literals[i].literal;
-            contiguousArray[i].weight = literals[i].weight;
-        }
-        return contiguousArray;
+        return result;
     }
-
 }

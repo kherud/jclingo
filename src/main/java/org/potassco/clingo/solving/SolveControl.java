@@ -21,11 +21,14 @@ package org.potassco.clingo.solving;
 
 import java.util.NoSuchElementException;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
+
 import org.potassco.clingo.control.SymbolicAtoms;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 import org.potassco.clingo.symbol.Symbol;
 
 /**
@@ -33,9 +36,9 @@ import org.potassco.clingo.symbol.Symbol;
  */
 public class SolveControl {
 
-    private final Pointer solveControl;
+    private final MemorySegment solveControl;
 
-    public SolveControl(Pointer solveControl) {
+    public SolveControl(MemorySegment solveControl) {
         this.solveControl = solveControl;
     }
 
@@ -49,7 +52,10 @@ public class SolveControl {
      * @param clause array of literals representing the clause
      */
     public void addClause(int[] clause) {
-        Clingo.check(Clingo.INSTANCE.clingo_solve_control_add_clause(solveControl, clause, new NativeSize(clause.length)));
+        try (Arena call = Arena.ofConfined()) {
+            Clingo.check(ClingoH.clingo_solve_control_add_clause(solveControl,
+                    call.allocateFrom(ValueLayout.JAVA_INT, clause), clause.length));
+        }
     }
 
     /**
@@ -100,8 +106,7 @@ public class SolveControl {
      * @return object to inspect the symbolic atoms.
      */
     public SymbolicAtoms getSymbolicAtoms() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_solve_control_symbolic_atoms(solveControl, pointerByReference));
-        return new SymbolicAtoms(pointerByReference.getValue());
+        return new SymbolicAtoms(Out.getPointer(out ->
+                ClingoH.clingo_solve_control_symbolic_atoms(solveControl, out)));
     }
 }

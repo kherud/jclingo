@@ -19,18 +19,16 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstSequence;
 import org.potassco.clingo.ast.AstType;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
 
 public class TheoryAtomElement extends Ast {
 
-    public TheoryAtomElement(Pointer ast) {
+    public TheoryAtomElement(MemorySegment ast) {
         super(ast);
     }
 
@@ -54,10 +52,8 @@ public class TheoryAtomElement extends Ast {
         new AstSequence(this, AstAttribute.CONDITION).set(condition);
     }
 
-    private static Pointer create(AstSequence terms, AstSequence condition) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.THEORY_ATOM_ELEMENT.getValue(), pointerByReference, terms.getPointer(), new NativeSize(terms.size()), condition.getPointer(), new NativeSize(condition.size())));
-        return pointerByReference.getValue();
+    private static MemorySegment create(AstSequence terms, AstSequence condition) {
+        return build(AstType.THEORY_ATOM_ELEMENT, terms, condition);
     }
 
 }

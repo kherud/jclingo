@@ -22,7 +22,8 @@ package org.potassco.clingo.control;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.NativeStr;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 /**
  * Enumeration of warning codes.
@@ -65,7 +66,7 @@ public enum WarningCode {
 
     @Override
     public String toString() {
-        return Clingo.INSTANCE.clingo_warning_string(code);
+        return NativeStr.toJava(ClingoH.clingo_warning_string(code));
     }
 
     private static final Map<Integer, WarningCode> mapping = new HashMap<>();

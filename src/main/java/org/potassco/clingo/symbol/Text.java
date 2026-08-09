@@ -19,8 +19,11 @@
  
 package org.potassco.clingo.symbol;
 
-import com.sun.jna.ptr.LongByReference;
-import org.potassco.clingo.internal.Clingo;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 public class Text extends Symbol {
 
@@ -28,9 +31,7 @@ public class Text extends Symbol {
 
     protected Text(long symbol) {
         super(symbol);
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_string(symbol, stringByReference));
-        this.text = stringByReference[0];
+        this.text = Out.getString(out -> ClingoH.clingo_symbol_string(symbol, out));
     }
 
     public Text(String text) {
@@ -43,8 +44,9 @@ public class Text extends Symbol {
     }
 
     private static long create(String text) {
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_symbol_create_string(text, longByReference));
-        return longByReference.getValue();
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment text$ = arena.allocateFrom(text);
+            return Out.getLong(out -> ClingoH.clingo_symbol_create_string(text$, out));
+        }
     }
 }

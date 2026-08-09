@@ -19,17 +19,19 @@
 
 package org.potassco.clingo.statistics;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.DoubleByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.internal.Clingo;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 public class StatisticsValue extends Statistics {
 
-    public StatisticsValue(Pointer statistics, long key) {
+    public StatisticsValue(MemorySegment statistics, long key) {
         super(statistics, key);
     }
 
-    public StatisticsValue(Pointer statistics, long key, double value) {
+    public StatisticsValue(MemorySegment statistics, long key, double value) {
         super(statistics, key);
         set(value);
     }
@@ -41,9 +43,7 @@ public class StatisticsValue extends Statistics {
      */
     @Override
     public double get() {
-        DoubleByReference doubleByReference = new DoubleByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_statistics_value_get(statistics, key, doubleByReference));
-        return doubleByReference.getValue();
+        return Out.getDouble(out -> ClingoH.clingo_statistics_value_get(statistics, key, out));
     }
 
     /**
@@ -52,7 +52,7 @@ public class StatisticsValue extends Statistics {
      * @param value the new value
      */
     public void set(double value) {
-        Clingo.check(Clingo.INSTANCE.clingo_statistics_value_set(statistics, key, value));
+        Clingo.check(ClingoH.clingo_statistics_value_set(statistics, key, value));
     }
 
     /**

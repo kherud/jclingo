@@ -19,18 +19,16 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstSequence;
 import org.potassco.clingo.ast.AstType;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
 
 public class HeadAggregateElement extends Ast {
 
-    public HeadAggregateElement(Pointer ast) {
+    public HeadAggregateElement(MemorySegment ast) {
         super(ast);
     }
 
@@ -43,9 +41,7 @@ public class HeadAggregateElement extends Ast {
     }
 
     public Ast getCondition() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.CONDITION.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.CONDITION);
     }
 
     public void setTerms(AstSequence terms) {
@@ -53,13 +49,11 @@ public class HeadAggregateElement extends Ast {
     }
 
     public void setCondition(Ast condition) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.CONDITION.getValue(), condition.getPointer()));
+        setAst(AstAttribute.CONDITION, condition);
     }
 
-    private static Pointer create(AstSequence terms, Ast condition) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.HEAD_AGGREGATE_ELEMENT.getValue(), pointerByReference, terms.getPointer(), new NativeSize(terms.size()), condition.getPointer()));
-        return pointerByReference.getValue();
+    private static MemorySegment create(AstSequence terms, Ast condition) {
+        return build(AstType.HEAD_AGGREGATE_ELEMENT, terms, condition);
     }
 
 }

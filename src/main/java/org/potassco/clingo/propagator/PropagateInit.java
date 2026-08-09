@@ -19,14 +19,15 @@
 
 package org.potassco.clingo.propagator;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
+
 import org.potassco.clingo.backend.WeightedLiteral;
 import org.potassco.clingo.control.SymbolicAtoms;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 import org.potassco.clingo.theory.TheoryAtoms;
 
 /**
@@ -34,9 +35,9 @@ import org.potassco.clingo.theory.TheoryAtoms;
  */
 public class PropagateInit {
 
-    private final Pointer propagateInit;
+    private final MemorySegment propagateInit;
 
-    public PropagateInit(Pointer propagateInit) {
+    public PropagateInit(MemorySegment propagateInit) {
         this.propagateInit = propagateInit;
     }
 
@@ -49,9 +50,11 @@ public class PropagateInit {
      * @return Returns false if the program becomes unsatisfiable.
      */
     public boolean addClause(int[] clause) {
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_add_clause(propagateInit, clause, new NativeSize(clause.length), byteByReference));
-        return byteByReference.getValue() > 0;
+        try (Arena call = Arena.ofConfined()) {
+            MemorySegment clause$ = call.allocateFrom(ValueLayout.JAVA_INT, clause);
+            return Out.getBoolean(out ->
+                    ClingoH.clingo_propagate_init_add_clause(propagateInit, clause$, clause.length, out));
+        }
     }
 
     /**
@@ -68,13 +71,7 @@ public class PropagateInit {
      * @return Returns the added literal.
      */
     public int addLiteral(boolean freeze) {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_add_literal(
-                propagateInit,
-                freeze ? (byte) 1 : 0,
-                intByReference)
-        );
-        return intByReference.getValue();
+        return Out.getInt(out -> ClingoH.clingo_propagate_init_add_literal(propagateInit, freeze, out));
     }
 
     /**
@@ -95,7 +92,7 @@ public class PropagateInit {
      * @param priority The priority of the literal.
      */
     public void addMinimize(int literal, int weight, int priority) {
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_add_minimize(propagateInit, literal, weight, priority));
+        Clingo.check(ClingoH.clingo_propagate_init_add_minimize(propagateInit, literal, weight, priority));
     }
 
     /**
@@ -105,7 +102,7 @@ public class PropagateInit {
      * @param literal The solver literal to watch.
      */
     public void addWatch(int literal) {
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_add_watch(propagateInit, literal));
+        Clingo.check(ClingoH.clingo_propagate_init_add_watch(propagateInit, literal));
     }
 
     /**
@@ -115,7 +112,7 @@ public class PropagateInit {
      * @param threadId The id of the thread to watch the literal.
      */
     public void addWatch(int literal, int threadId) {
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_add_watch_to_thread(propagateInit, literal, threadId));
+        Clingo.check(ClingoH.clingo_propagate_init_add_watch_to_thread(propagateInit, literal, threadId));
     }
 
     /**
@@ -125,7 +122,7 @@ public class PropagateInit {
      * @param literal The solver literal to remove the watch from.
      */
     public void removeWatch(int literal) {
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_remove_watch(propagateInit, literal));
+        Clingo.check(ClingoH.clingo_propagate_init_remove_watch(propagateInit, literal));
     }
 
     /**
@@ -135,7 +132,7 @@ public class PropagateInit {
      * @param threadId The id of the thread from which to remove the watch.
      */
     public void removeWatch(int literal, int threadId) {
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_remove_watch_from_thread(propagateInit, literal, threadId));
+        Clingo.check(ClingoH.clingo_propagate_init_remove_watch_from_thread(propagateInit, literal, threadId));
     }
 
     /**
@@ -151,7 +148,7 @@ public class PropagateInit {
      * @param literal The solver literal to freeze.
      */
     public void freezeLiteral(int literal) {
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_freeze_literal(propagateInit, literal));
+        Clingo.check(ClingoH.clingo_propagate_init_freeze_literal(propagateInit, literal));
     }
 
     /**
@@ -173,19 +170,11 @@ public class PropagateInit {
      * @return Returns false if the program became unsatisfiable.
      */
     public boolean addWeightConstraint(int literal, WeightedLiteral[] literals, int bound, WeightConstraintType type, boolean compareEqual) {
-        ByteByReference byteByReference = new ByteByReference();
-        WeightedLiteral[] weightedLiterals = WeightedLiteral.toContiguousArray(literals);
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_add_weight_constraint(
-                propagateInit,
-                literal,
-                weightedLiterals,
-                new NativeSize(literals.length),
-                bound,
-                type.getValue(),
-                compareEqual ? (byte) 1 : 0,
-                byteByReference
-        ));
-        return byteByReference.getValue() > 0;
+        try (Arena call = Arena.ofConfined()) {
+            MemorySegment literals$ = WeightedLiteral.toNative(call, literals);
+            return Out.getBoolean(out -> ClingoH.clingo_propagate_init_add_weight_constraint(propagateInit, literal,
+                    literals$, literals.length, bound, type.getValue(), compareEqual, out));
+        }
     }
 
     /**
@@ -200,9 +189,7 @@ public class PropagateInit {
      * @return Returns false if the program becomes unsatisfiable.
      */
     public boolean propagate() {
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_propagate(propagateInit, byteByReference));
-        return byteByReference.getValue() > 0;
+        return Out.getBoolean(out -> ClingoH.clingo_propagate_init_propagate(propagateInit, out));
     }
 
     /**
@@ -212,24 +199,21 @@ public class PropagateInit {
      * @return A solver literal.
      */
     public int solverLiteral(int literal) {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_solver_literal(propagateInit, literal, intByReference));
-        return intByReference.getValue();
+        return Out.getInt(out -> ClingoH.clingo_propagate_init_solver_literal(propagateInit, literal, out));
     }
 
     /**
      * @return {@link Assignment} object capturing the top level assignment.
      */
     public Assignment getAssignment() {
-        Pointer assignment = Clingo.INSTANCE.clingo_propagate_init_assignment(propagateInit);
-        return new Assignment(assignment);
+        return new Assignment(ClingoH.clingo_propagate_init_assignment(propagateInit));
     }
 
     /**
      * @return {@link PropagatorCheckMode} controlling when to call {@link org.potassco.clingo.internal.Clingo.Propagator#check(byte)}.
      */
     public PropagatorCheckMode getCheckMode() {
-        int checkMode = Clingo.INSTANCE.clingo_propagate_init_get_check_mode(propagateInit);
+        int checkMode = ClingoH.clingo_propagate_init_get_check_mode(propagateInit);
         return PropagatorCheckMode.fromValue(checkMode);
     }
 
@@ -237,7 +221,7 @@ public class PropagateInit {
      * @param mode {@link PropagatorCheckMode} controlling when to call {@link org.potassco.clingo.internal.Clingo.Propagator#check(byte)}.
      */
     public void setCheckMode(PropagatorCheckMode mode) {
-        Clingo.INSTANCE.clingo_propagate_init_set_check_mode(propagateInit, mode.getValue());
+        ClingoH.clingo_propagate_init_set_check_mode(propagateInit, mode.getValue());
     }
 
     /**
@@ -246,7 +230,7 @@ public class PropagateInit {
      * @return the undo mode
      */
     public PropagatorUndoMode getUndoMode() {
-        int undoMode = Clingo.INSTANCE.clingo_propagate_init_get_undo_mode(propagateInit);
+        int undoMode = ClingoH.clingo_propagate_init_get_undo_mode(propagateInit);
         return PropagatorUndoMode.fromValue(undoMode);
     }
 
@@ -256,32 +240,28 @@ public class PropagateInit {
      * @param mode when to call the propagator
      */
     public void setUndoMode(PropagatorUndoMode mode) {
-        Clingo.INSTANCE.clingo_propagate_init_set_undo_mode(propagateInit, mode.getValue());
+        ClingoH.clingo_propagate_init_set_undo_mode(propagateInit, mode.getValue());
     }
 
     /**
      * @return The number of solver threads used in the corresponding solve call.
      */
     public int getAmountThreads() {
-        return Clingo.INSTANCE.clingo_propagate_init_number_of_threads(propagateInit);
+        return ClingoH.clingo_propagate_init_number_of_threads(propagateInit);
     }
 
     /**
      * @return The symbolic atoms captured by a {@link SymbolicAtoms} object.
      */
     public SymbolicAtoms getSymbolicAtoms() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_symbolic_atoms(propagateInit, pointerByReference));
-        return new SymbolicAtoms(pointerByReference.getValue());
+        return new SymbolicAtoms(Out.getPointer(out -> ClingoH.clingo_propagate_init_symbolic_atoms(propagateInit, out)));
     }
 
     /**
      * @return The theory atoms captured by a {@link TheoryAtoms} object.
      */
     public TheoryAtoms getTheoryAtoms() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_propagate_init_theory_atoms(propagateInit, pointerByReference));
-        return new TheoryAtoms(pointerByReference.getValue());
+        return new TheoryAtoms(Out.getPointer(out -> ClingoH.clingo_propagate_init_theory_atoms(propagateInit, out)));
     }
 
 

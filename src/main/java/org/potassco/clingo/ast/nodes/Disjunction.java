@@ -19,19 +19,17 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstSequence;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
 
 public class Disjunction extends Ast {
 
-    public Disjunction(Pointer ast) {
+    public Disjunction(MemorySegment ast) {
         super(ast);
     }
 
@@ -40,9 +38,7 @@ public class Disjunction extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public AstSequence getElements() {
@@ -50,17 +46,15 @@ public class Disjunction extends Ast {
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setElements(AstSequence elements) {
         new AstSequence(this, AstAttribute.ELEMENTS).set(elements);
     }
 
-    private static Pointer create(Location location, AstSequence elements) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.DISJUNCTION.getValue(), pointerByReference, location, elements.getPointer(), new NativeSize(elements.size())));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, AstSequence elements) {
+        return build(AstType.DISJUNCTION, location, elements);
     }
 
 }

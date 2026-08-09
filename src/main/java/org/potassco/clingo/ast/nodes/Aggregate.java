@@ -21,19 +21,17 @@ package org.potassco.clingo.ast.nodes;
 
 import java.util.NoSuchElementException;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstSequence;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
 
 public class Aggregate extends Ast {
 
-    public Aggregate(Pointer ast) {
+    public Aggregate(MemorySegment ast) {
         super(ast);
     }
 
@@ -42,9 +40,7 @@ public class Aggregate extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public boolean hasLeftGuard() {
@@ -68,11 +64,11 @@ public class Aggregate extends Ast {
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setLeftGuard(Ast leftGuard) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(getPointer(), AstAttribute.LEFT_GUARD.getValue(), leftGuard.getPointer()));
+        setOptionalAst(AstAttribute.LEFT_GUARD, leftGuard);
     }
 
     public void setElements(AstSequence elements) {
@@ -80,13 +76,11 @@ public class Aggregate extends Ast {
     }
 
     public void setRightGuard(Ast rightGuard) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_optional_ast(getPointer(), AstAttribute.RIGHT_GUARD.getValue(), rightGuard.getPointer()));
+        setOptionalAst(AstAttribute.RIGHT_GUARD, rightGuard);
     }
 
-    private static Pointer create(Location location, Ast leftGuard, AstSequence elements, Ast rightGuard) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.AGGREGATE.getValue(), pointerByReference, location, leftGuard.getPointer(), elements.getPointer(), new NativeSize(elements.size()), rightGuard.getPointer()));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, Ast leftGuard, AstSequence elements, Ast rightGuard) {
+        return build(AstType.AGGREGATE, location, leftGuard, elements, rightGuard);
     }
 
 }

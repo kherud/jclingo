@@ -22,15 +22,14 @@ package org.potassco.clingo.theory;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import com.sun.jna.Native;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.internal.NativeSizeByReference;
+import org.potassco.clingo.internal.NativeStr;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 /**
  * Class to represent theory atoms.
@@ -40,11 +39,11 @@ import org.potassco.clingo.internal.NativeSizeByReference;
  */
 public class TheoryAtom implements Comparable<TheoryAtom> {
 
-    private final Pointer theoryAtoms;
+    private final MemorySegment theoryAtoms;
     private final int id;
 
     // TODO: abstract basic structure?
-    public TheoryAtom(Pointer theoryAtoms, int id) {
+    public TheoryAtom(MemorySegment theoryAtoms, int id) {
         this.theoryAtoms = theoryAtoms;
         this.id = id;
     }
@@ -85,18 +84,14 @@ public class TheoryAtom implements Comparable<TheoryAtom> {
      * @return The program literal associated with the atom
      */
     public int getLiteral() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_atom_literal(theoryAtoms, id, intByReference));
-        return intByReference.getValue();
+        return Out.getInt(out -> ClingoH.clingo_theory_atoms_atom_literal(theoryAtoms, id, out));
     }
 
     /**
      * @return whether the atom has a guard
      */
     public boolean hasGuard() {
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_atom_has_guard(theoryAtoms, id, byteByReference));
-        return byteByReference.getValue() > 0;
+        return Out.getBoolean(out -> ClingoH.clingo_theory_atoms_atom_has_guard(theoryAtoms, id, out));
     }
 
     /**
@@ -108,49 +103,40 @@ public class TheoryAtom implements Comparable<TheoryAtom> {
             throw new NoSuchElementException("theory atom has no guard");
         }
 
-        String[] stringByReference = new String[1];
-        IntByReference intByReference = new IntByReference();
-
-        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_atom_guard(theoryAtoms, id, stringByReference, intByReference));
-        TheoryTerm theoryTerm = new TheoryTerm(theoryAtoms, intByReference.getValue());
-        return new TheoryGuard(stringByReference[0], theoryTerm);
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment connective = arena.allocate(ValueLayout.ADDRESS);
+            MemorySegment term = arena.allocate(ValueLayout.JAVA_INT);
+            Clingo.check(ClingoH.clingo_theory_atoms_atom_guard(theoryAtoms, id, connective, term));
+            return new TheoryGuard(NativeStr.toJava(connective.get(ValueLayout.ADDRESS, 0)),
+                    new TheoryTerm(theoryAtoms, term.get(ValueLayout.JAVA_INT, 0)));
+        }
     }
 
     /**
      * @return The term of the atom
      */
     public TheoryTerm getTerm() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_atom_term(theoryAtoms, id, intByReference));
-        return new TheoryTerm(theoryAtoms, intByReference.getValue());
+        return new TheoryTerm(theoryAtoms,
+                Out.getInt(out -> ClingoH.clingo_theory_atoms_atom_term(theoryAtoms, id, out)));
     }
 
     /**
      * @return The elements of the atom
      */
     public TheoryElement[] getElements() {
-        PointerByReference pointerByReference = new PointerByReference();
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_atom_elements(theoryAtoms, id, pointerByReference, nativeSizeByReference));
-        int amountElements = (int) nativeSizeByReference.getValue();
-        TheoryElement[] theoryElements = new TheoryElement[amountElements];
-
-        if (amountElements > 0) {
-            int[] theoryElementInts = pointerByReference.getValue().getIntArray(0, amountElements);
-            for (int i = 0; i < amountElements; i++) {
-                theoryElements[i] = new TheoryElement(theoryAtoms, theoryElementInts[i]);
-            }
+        int[] ids = Out.getInts((elements, size) ->
+                ClingoH.clingo_theory_atoms_atom_elements(theoryAtoms, id, elements, size));
+        TheoryElement[] theoryElements = new TheoryElement[ids.length];
+        for (int i = 0; i < ids.length; i++) {
+            theoryElements[i] = new TheoryElement(theoryAtoms, ids[i]);
         }
         return theoryElements;
     }
 
     @Override
     public String toString() {
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_atom_to_string_size(theoryAtoms, id, nativeSizeByReference));
-        int stringSize = (int) nativeSizeByReference.getValue();
-        byte[] atomBytes = new byte[stringSize];
-        Clingo.check(Clingo.INSTANCE.clingo_theory_atoms_atom_to_string(theoryAtoms, id, atomBytes, new NativeSize(stringSize)));
-        return Native.toString(atomBytes, Clingo.STRING_ENCODING);
+        return NativeStr.getSized(
+                size -> ClingoH.clingo_theory_atoms_atom_to_string_size(theoryAtoms, id, size),
+                (buffer, size) -> ClingoH.clingo_theory_atoms_atom_to_string(theoryAtoms, id, buffer, size));
     }
 }

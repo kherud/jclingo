@@ -19,15 +19,18 @@
 
 package org.potassco.clingo.solving;
 
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.sun.jna.Callback;
-import com.sun.jna.Pointer;
 import org.potassco.clingo.ast.Location;
 import org.potassco.clingo.control.ErrorCode;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.internal.NativeArrays;
+import org.potassco.clingo.internal.NativeStr;
+import org.potassco.clingo.internal.ffi.clingo_symbol_callback_t;
 import org.potassco.clingo.symbol.Symbol;
 
 /**
@@ -40,43 +43,34 @@ import org.potassco.clingo.symbol.Symbol;
  * An exception thrown by an external function stops grounding and is reported to clingo as
  * {@link ErrorCode#UNKNOWN}.
  */
-public abstract class GroundCallback implements Callback {
+public abstract class GroundCallback {
 
     // the sink to inject symbols into is only valid while clingo is calling this object, and it is held per thread so
     // that a single instance can be used by more than one control
     private final ThreadLocal<SymbolSink> symbolSink = new ThreadLocal<>();
 
     /**
-     * @param locationPointer    location from which the external function was called
-     * @param name               name of the called external function
-     * @param argumentsPointer   arguments of the called external function
-     * @param argumentsSize      number of arguments
-     * @param data               user data of the callback
-     * @param symbolCallback     function to inject symbols
-     * @param symbolCallbackData user data for the symbol callback (must be passed untouched)
-     * @return whether the call was successful
+     * @param location       location from which the external function was called
+     * @param name           name of the called external function
+     * @param arguments      arguments of the called external function
+     * @param size           number of arguments
+     * @param symbolCallback function to inject symbols
+     * @param symbolData     user data for the symbol callback (must be passed untouched)
      */
-    public byte callback(
-            Pointer locationPointer,
-            String name,
-            Pointer argumentsPointer,
-            NativeSize argumentsSize,
-            Pointer data,
-            Clingo.SymbolCallback symbolCallback,
-            Pointer symbolCallbackData) {
-        return Clingo.guard(() -> {
-            SymbolSink previousSink = symbolSink.get();
-            symbolSink.set(new SymbolSink(symbolCallback, symbolCallbackData));
-            try {
-                ground(locationPointer, name, argumentsPointer, argumentsSize.intValue());
-            }
-            finally {
-                symbolSink.set(previousSink);
-            }
-        });
+    void ground(MemorySegment location, MemorySegment name, MemorySegment arguments, long size,
+                MemorySegment symbolCallback, MemorySegment symbolData) {
+        SymbolSink previousSink = symbolSink.get();
+        symbolSink.set(new SymbolSink(symbolCallback, symbolData));
+        try {
+            ground(Location.fromNative(location), NativeStr.toJava(name),
+                    NativeArrays.toLongs(arguments, size), (int) size);
+        }
+        finally {
+            symbolSink.set(previousSink);
+        }
     }
 
-    private void ground(Pointer locationPointer, String name, Pointer argumentsPointer, int size) {
+    private void ground(Location location, String name, long[] symbols, int size) {
 
         // create array of method argument types including the position in the file, e. g. for add(1, 1)
         // [Location.class, Symbol.class, Symbol.class]
@@ -92,8 +86,7 @@ public abstract class GroundCallback implements Callback {
         // if it was found, invoke the method and return early
         if (method != null) {
             Object[] args = new Object[1 + size];
-            args[0] = new Location(locationPointer);
-            long[] symbols = size == 0 ? new long[0] : argumentsPointer.getLongArray(0, size);
+            args[0] = location;
             for (int i = 0; i < symbols.length; i++) {
                 args[1 + i] = Symbol.fromLong(symbols[i]);
             }
@@ -123,7 +116,6 @@ public abstract class GroundCallback implements Callback {
         // else invoke the function
 
         Object[] args = new Object[size];
-        long[] symbols = size == 0 ? new long[0] : argumentsPointer.getLongArray(0, size);
         for (int i = 0; i < symbols.length; i++) {
             args[i] = Symbol.fromLong(symbols[i]);
         }
@@ -187,17 +179,15 @@ public abstract class GroundCallback implements Callback {
         for (int i = 0; i < symbols.length; i++) {
             symbolLongs[i] = symbols[i].getLong();
         }
-        Clingo.check(sink.callback.callback(symbolLongs, new NativeSize(symbols.length), sink.data));
+        try (Arena arena = Arena.ofConfined()) {
+            Clingo.check(clingo_symbol_callback_t.invoke(sink.callback,
+                    arena.allocateFrom(ValueLayout.JAVA_LONG, symbolLongs), symbolLongs.length, sink.data));
+        }
     }
 
-    private static final class SymbolSink {
-
-        private final Clingo.SymbolCallback callback;
-        private final Pointer data;
-
-        private SymbolSink(Clingo.SymbolCallback callback, Pointer data) {
-            this.callback = callback;
-            this.data = data;
-        }
+    /**
+     * The sink clingo passes in, which is only valid while it is calling this object.
+     */
+    private record SymbolSink(MemorySegment callback, MemorySegment data) {
     }
 }

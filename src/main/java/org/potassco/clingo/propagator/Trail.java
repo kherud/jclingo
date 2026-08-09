@@ -22,9 +22,10 @@ package org.potassco.clingo.propagator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import org.potassco.clingo.internal.Clingo;
+import java.lang.foreign.MemorySegment;
+
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 /**
  * Class to access literals assigned by the solver in chronological order.
@@ -37,13 +38,13 @@ import org.potassco.clingo.internal.Clingo;
  */
 public class Trail implements Iterable<Integer> {
 
-    private final Pointer assignment;
+    private final MemorySegment assignment;
 
     public Trail(Assignment assignment) {
         this.assignment = assignment.getPointer();
     }
 
-    public Trail(Pointer assignment) {
+    public Trail(MemorySegment assignment) {
         this.assignment = assignment;
     }
 
@@ -53,9 +54,7 @@ public class Trail implements Iterable<Integer> {
      * @return the number of literals in the trail
      */
     public int size() {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_assignment_trail_size(assignment, intByReference));
-        return intByReference.getValue();
+        return Out.getInt(out -> ClingoH.clingo_assignment_trail_size(assignment, out));
     }
 
     /**
@@ -72,9 +71,7 @@ public class Trail implements Iterable<Integer> {
      * @return the offset of the decision literal
      */
     public int begin(int level) {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_assignment_trail_begin(assignment, level, intByReference));
-        return intByReference.getValue();
+        return Out.getInt(out -> ClingoH.clingo_assignment_trail_begin(assignment, level, out));
     }
 
     /**
@@ -91,9 +88,7 @@ public class Trail implements Iterable<Integer> {
      * @return the offset of the decision literal
      */
     public int end(int level) {
-        IntByReference intByReference = new IntByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_assignment_trail_end(assignment, level, intByReference));
-        return intByReference.getValue();
+        return Out.getInt(out -> ClingoH.clingo_assignment_trail_end(assignment, level, out));
     }
 
     @Override
@@ -103,7 +98,6 @@ public class Trail implements Iterable<Integer> {
 
     public Iterator<Integer> iterator(int begin) {
         return new Iterator<>() {
-            private final IntByReference intByReference = new IntByReference();
             private final int size = size();
             private int i = begin;
 
@@ -117,8 +111,8 @@ public class Trail implements Iterable<Integer> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                Clingo.check(Clingo.INSTANCE.clingo_assignment_trail_at(assignment, i++, intByReference));
-                return intByReference.getValue();
+                int index = i++;
+                return Out.getInt(out -> ClingoH.clingo_assignment_trail_at(assignment, index, out));
             }
         };
     }

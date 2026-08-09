@@ -19,30 +19,34 @@
 
 package org.potassco.clingo.control;
 
-import java.lang.ref.Reference;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicReference;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.LongByReference;
-import com.sun.jna.ptr.PointerByReference;
 import org.potassco.clingo.backend.Backend;
 import org.potassco.clingo.backend.BackendType;
 import org.potassco.clingo.configuration.Configuration;
+import org.potassco.clingo.internal.Callbacks;
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
+import org.potassco.clingo.internal.ErrorPolicy;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 import org.potassco.clingo.propagator.Propagator;
+import org.potassco.clingo.propagator.PropagatorBridge;
 import org.potassco.clingo.solving.GroundCallback;
+import org.potassco.clingo.solving.GroundCallbackBridge;
 import org.potassco.clingo.solving.Observer;
+import org.potassco.clingo.solving.ObserverBridge;
 import org.potassco.clingo.solving.SolveControl;
 import org.potassco.clingo.solving.SolveEventCallback;
 import org.potassco.clingo.solving.SolveHandle;
 import org.potassco.clingo.solving.SolveMode;
+import org.potassco.clingo.solving.SolveResult;
 import org.potassco.clingo.solving.TruthValue;
 import org.potassco.clingo.statistics.Statistics;
 import org.potassco.clingo.symbol.Symbol;
@@ -57,12 +61,24 @@ import org.potassco.clingo.theory.TheoryAtoms;
  */
 public class Control implements AutoCloseable {
 
-    private final Pointer control;
+    static {
+        Clingo.init();
+    }
 
-    // clingo copies the callback structs by value but keeps the raw function pointers in them, and it keeps the logger
-    // of this control for as long as the control exists. JNA frees a native trampoline as soon as its Java callback
-    // becomes unreachable, so every callback clingo holds on to has to be kept alive here.
-    private final List<Object> registeredCallbacks = new ArrayList<>();
+    private final MemorySegment control;
+
+    /**
+     * Owns everything clingo keeps beyond a single call - the logger, propagator and observer stubs. It is shared
+     * because solver threads run those stubs, and it is closed only after the control has been freed.
+     */
+    private final Arena arena;
+
+    /**
+     * First error thrown by a callback on a solver thread, rethrown on the user thread by the {@link SolveHandle}.
+     */
+    private final AtomicReference<Throwable> callbackError = new AtomicReference<>();
+
+    private final boolean owned;
 
     private Backend backend;
 
@@ -85,20 +101,23 @@ public class Control implements AutoCloseable {
      * @param messageLimit The maximum number of messages passed to the logger.
      */
     public Control(LoggerCallback logger, int messageLimit, String... arguments) {
-        PointerByReference controlObjectRef = new PointerByReference();
-        // clingo reports messages of every later grounding step to this logger, so it must live as long as the control
-        if (logger != null) {
-            registeredCallbacks.add(logger);
+        this.arena = Arena.ofShared();
+        this.owned = true;
+        try (Arena call = Arena.ofConfined()) {
+            int size = arguments == null ? 0 : arguments.length;
+            MemorySegment arguments$ = call.allocate(ValueLayout.ADDRESS, size);
+            for (int i = 0; i < size; i++) {
+                arguments$.setAtIndex(ValueLayout.ADDRESS, i, call.allocateFrom(arguments[i]));
+            }
+            // clingo reports messages of every later grounding step to this logger, so it lives in the shared arena
+            MemorySegment logger$ = Callbacks.logger(logger, arena, ErrorPolicy.crossThread(callbackError));
+            this.control = Out.getPointer(out -> ClingoH.clingo_control_new(
+                    arguments$, size, logger$, MemorySegment.NULL, messageLimit, out));
         }
-        Clingo.check(Clingo.INSTANCE.clingo_control_new(
-                arguments,
-                new NativeSize(arguments == null ? 0 : arguments.length),
-                logger,
-                null,
-                messageLimit,
-                controlObjectRef)
-        );
-        this.control = controlObjectRef.getValue();
+        catch (RuntimeException | Error e) {
+            arena.close();
+            throw e;
+        }
     }
 
     /**
@@ -106,8 +125,17 @@ public class Control implements AutoCloseable {
      *
      * @param pointer pointer to a native control object.
      */
-    public Control(Pointer pointer) {
+    public Control(MemorySegment pointer) {
         this.control = pointer;
+        this.arena = Arena.ofShared();
+        this.owned = false;
+    }
+
+    /**
+     * @return the error a callback of this control threw on a solver thread, and forgets it
+     */
+    public Throwable takeCallbackError() {
+        return callbackError.getAndSet(null);
     }
 
     /**
@@ -137,11 +165,14 @@ public class Control implements AutoCloseable {
      * @param program    The non-ground program in string form.
      */
     public void add(String name, String program, String... parameters) {
-        Clingo.check(Clingo.INSTANCE.clingo_control_add(
-                control,
-                name,
-                parameters, new NativeSize(parameters.length),
-                program));
+        try (Arena call = Arena.ofConfined()) {
+            MemorySegment parameters$ = call.allocate(ValueLayout.ADDRESS, parameters.length);
+            for (int i = 0; i < parameters.length; i++) {
+                parameters$.setAtIndex(ValueLayout.ADDRESS, i, call.allocateFrom(parameters[i]));
+            }
+            Clingo.check(ClingoH.clingo_control_add(control, call.allocateFrom(name), parameters$, parameters.length,
+                    call.allocateFrom(program)));
+        }
     }
 
     /**
@@ -173,17 +204,7 @@ public class Control implements AutoCloseable {
      * @param name the name of the program
      */
     public void ground(String name, GroundCallback callback) {
-        ProgramPart[] programParts = (ProgramPart[]) new ProgramPart(name).toArray(1);
-        try {
-            Clingo.check(Clingo.INSTANCE.clingo_control_ground(
-                    this.control,
-                    programParts, new NativeSize(1),
-                    callback, null)
-            );
-        }
-        finally {
-            keepAlive(callback);
-        }
+        ground(callback, new ProgramPart(name));
     }
 
     /**
@@ -201,7 +222,7 @@ public class Control implements AutoCloseable {
     /**
      * Ground the selected {@link ProgramPart parts} of the current (non-ground) logic program.
      * <p>
-     * After grounding, logic programs can be solved with {@link Clingo#clingo_control_solve}.
+     * After grounding, logic programs can be solved with {@link #solve()}.
      * <p>
      * Parts of a logic program without an explicit <code>#program</code>
      * specification are by default put into a program called <code>base</code> without
@@ -212,21 +233,14 @@ public class Control implements AutoCloseable {
      * @param groundCallback callback to implement external functions
      */
     public void ground(GroundCallback groundCallback, ProgramPart programPart, ProgramPart... programParts) {
-        ProgramPart[] contiguous = (ProgramPart[]) programPart.toArray(1 + programParts.length);
-        for (int i = 0; i < programParts.length; i++) {
-            contiguous[1 + i].name = programParts[i].name;
-            contiguous[1 + i].size = programParts[i].size;
-            contiguous[1 + i].params = programParts[i].params;
-        }
-        try {
-            Clingo.check(Clingo.INSTANCE.clingo_control_ground(
-                    this.control,
-                    contiguous, new NativeSize(contiguous.length),
-                    groundCallback, control)
-            );
-        }
-        finally {
-            keepAlive(groundCallback);
+        ProgramPart[] parts = new ProgramPart[1 + programParts.length];
+        parts[0] = programPart;
+        System.arraycopy(programParts, 0, parts, 1, programParts.length);
+        // the ground callback only runs during this call, so everything it needs may live in a per-call arena
+        try (Arena call = Arena.ofConfined()) {
+            MemorySegment callback = GroundCallbackBridge.of(groundCallback, call, ErrorPolicy.synchronous());
+            Clingo.check(ClingoH.clingo_control_ground(control, ProgramPart.toNative(call, parts), parts.length,
+                    callback, MemorySegment.NULL));
         }
     }
 
@@ -319,17 +333,94 @@ public class Control implements AutoCloseable {
      * @return a solve-handle to interact with
      */
     public SolveHandle solve(int[] assumptions, SolveEventCallback callback, SolveMode solveMode) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_control_solve(
-                control,
-                solveMode.getValue(),
-                assumptions,
-                new NativeSize(assumptions.length),
-                callback,
-                control,
-                pointerByReference
-        ));
-        return new SolveHandle(pointerByReference.getValue(), callback);
+        // the solve event callback outlives this call, so it gets an arena of its own that the handle closes
+        Arena solveArena = Arena.ofShared();
+        try {
+            MemorySegment event = SolveEventCallback.toNative(callback, solveArena, callbackError);
+            MemorySegment handle;
+            try (Arena call = Arena.ofConfined()) {
+                MemorySegment assumptions$ = call.allocateFrom(ValueLayout.JAVA_INT, assumptions);
+                handle = Out.getPointer(out -> ClingoH.clingo_control_solve(control, solveMode.getValue(),
+                        assumptions$, assumptions.length, event, MemorySegment.NULL, out));
+            }
+            return new SolveHandle(handle, solveArena, callbackError);
+        }
+        catch (RuntimeException | Error e) {
+            solveArena.close();
+            throw e;
+        }
+    }
+
+    /**
+     * Runs a search to completion and releases its handle.
+     *
+     * @return the result of the search
+     */
+    public SolveResult solveResult() {
+        return solveResult(Collections.emptyList(), null, SolveMode.NONE);
+    }
+
+    /**
+     * Runs a search to completion and releases its handle.
+     *
+     * @param solveMode whether the search is blocking / non-blocking
+     * @return the result of the search
+     */
+    public SolveResult solveResult(SolveMode solveMode) {
+        return solveResult(Collections.emptyList(), null, solveMode);
+    }
+
+    /**
+     * Runs a search to completion and releases its handle.
+     *
+     * @param callback Optional callbacks for intercepting models, lower bounds during optimization,
+     *                 statistics updates, or the end of the search (implement {@link SolveEventCallback}.
+     * @return the result of the search
+     */
+    public SolveResult solveResult(SolveEventCallback callback) {
+        return solveResult(Collections.emptyList(), callback, SolveMode.ASYNC);
+    }
+
+    /**
+     * Runs a search to completion and releases its handle.
+     *
+     * @param callback  Optional callbacks for intercepting models, lower bounds during optimization,
+     *                  statistics updates, or the end of the search (implement {@link SolveEventCallback}.
+     * @param solveMode whether the search is blocking / non-blocking
+     * @return the result of the search
+     */
+    public SolveResult solveResult(SolveEventCallback callback, SolveMode solveMode) {
+        return solveResult(Collections.emptyList(), callback, solveMode);
+    }
+
+    /**
+     * Runs a search to completion and releases its handle.
+     *
+     * @param assumptions Collection of symbols
+     * @param callback    Optional callbacks for intercepting models, lower bounds during optimization,
+     *                    statistics updates, or the end of the search (implement {@link SolveEventCallback}.
+     * @param solveMode   whether the search is blocking / non-blocking
+     * @return the result of the search
+     */
+    public SolveResult solveResult(Collection<Symbol> assumptions, SolveEventCallback callback, SolveMode solveMode) {
+        try (SolveHandle handle = solve(assumptions, callback, solveMode)) {
+            return handle.getSolveResult();
+        }
+    }
+
+    /**
+     * Runs a search to completion and releases its handle.
+     *
+     * @param assumptions array of solver literals
+     * @param callback    Optional callbacks for intercepting models, lower bounds during optimization,
+     *                    statistics updates, or the end of the search (implement {@link SolveEventCallback}.
+     * @param solveMode   whether the search is blocking / non-blocking
+     * @return the result of the search
+     */
+    public SolveResult solveResult(int[] assumptions, SolveEventCallback callback, SolveMode solveMode) {
+        try (SolveHandle handle = solve(assumptions, callback, solveMode)) {
+            return handle.getSolveResult();
+        }
     }
 
     /**
@@ -338,7 +429,9 @@ public class Control implements AutoCloseable {
      * @param path The path of the file to load.
      */
     public void load(Path path) {
-        Clingo.check(Clingo.INSTANCE.clingo_control_load(control, path.toString()));
+        try (Arena call = Arena.ofConfined()) {
+            Clingo.check(ClingoH.clingo_control_load(control, call.allocateFrom(path.toString())));
+        }
     }
 
 	/**
@@ -349,11 +442,13 @@ public class Control implements AutoCloseable {
 	 */
 	public void loadAspif(Path... paths) {
 		if (paths.length > 0) {
-			String[] files = new String[paths.length];
-			for (int i = 0; i < paths.length; i++) {
-				files[i] = paths[i].toString();
+			try (Arena call = Arena.ofConfined()) {
+				MemorySegment files = call.allocate(ValueLayout.ADDRESS, paths.length);
+				for (int i = 0; i < paths.length; i++) {
+					files.setAtIndex(ValueLayout.ADDRESS, i, call.allocateFrom(paths[i].toString()));
+				}
+				Clingo.check(ClingoH.clingo_control_load_aspif(control, files, paths.length));
 			}
-			Clingo.check(Clingo.INSTANCE.clingo_control_load_aspif(control, files, new NativeSize(paths.length)));
 		}
 	}
 
@@ -374,11 +469,7 @@ public class Control implements AutoCloseable {
      * @param truthValue Fixes the external to the respective truth value.
      */
     public void assignExternal(int external, TruthValue truthValue) {
-        Clingo.check(Clingo.INSTANCE.clingo_control_assign_external(
-                control,
-                external,
-                truthValue.getValue())
-        );
+        Clingo.check(ClingoH.clingo_control_assign_external(control, external, truthValue.getValue()));
     }
 
     /**
@@ -418,7 +509,7 @@ public class Control implements AutoCloseable {
      * @param literal literal to release
      */
     public void releaseExternal(int literal) {
-        Clingo.check(Clingo.INSTANCE.clingo_control_release_external(control, literal));
+        Clingo.check(ClingoH.clingo_control_release_external(control, literal));
     }
 
     /**
@@ -462,7 +553,7 @@ public class Control implements AutoCloseable {
      * interrupted.
      */
     public void interrupt() {
-        Clingo.INSTANCE.clingo_control_interrupt(control);
+        ClingoH.clingo_control_interrupt(control);
     }
 
 
@@ -486,14 +577,14 @@ public class Control implements AutoCloseable {
      * automatic cleanups are enabled by default.
      */
     public void cleanup() {
-        Clingo.check(Clingo.INSTANCE.clingo_control_cleanup(control));
+        Clingo.check(ClingoH.clingo_control_cleanup(control));
     }
 
     /**
      * @return Check whether automatic cleanup is enabled.
      */
     public boolean getCleanupEnabled() {
-        return Clingo.INSTANCE.clingo_control_get_enable_cleanup(control) > 0;
+        return ClingoH.clingo_control_get_enable_cleanup(control);
     }
 
     /**
@@ -502,7 +593,7 @@ public class Control implements AutoCloseable {
      * @param value boolean whether to enable or disable cleanup
      */
     public void setEnableCleanup(boolean value) {
-        Clingo.check(Clingo.INSTANCE.clingo_control_set_enable_cleanup(control, value ? (byte) 1 : 0));
+        Clingo.check(ClingoH.clingo_control_set_enable_cleanup(control, value));
     }
 
     /**
@@ -525,7 +616,7 @@ public class Control implements AutoCloseable {
      * @return whether the enumeration assumption is enabled
      */
     public boolean getEnumerationAssumptionEnabled() {
-        return Clingo.INSTANCE.clingo_control_get_enable_enumeration_assumption(control) > 0;
+        return ClingoH.clingo_control_get_enable_enumeration_assumption(control);
     }
 
     /**
@@ -548,7 +639,7 @@ public class Control implements AutoCloseable {
      * @param value a boolean whether to enable or disable the enumeration assumption
      */
     public void setEnableEnumerationAssumption(boolean value) {
-        Clingo.check(Clingo.INSTANCE.clingo_control_set_enable_enumeration_assumption(control, value ? (byte) 1 : 0));
+        Clingo.check(ClingoH.clingo_control_set_enable_enumeration_assumption(control, value));
     }
 
     /**
@@ -568,37 +659,9 @@ public class Control implements AutoCloseable {
      *                 the underlying solver (or any previously registered observers).
      */
     public void registerObserver(Observer observer, boolean replace) {
-        //TODO: maybe set callbacks to null if not implemented´
-        // Class<?> clazz = observer.getClass();
-        // nativeObserver.initProgram = clazz.getMethod("initProgram", boolean.class).isDefault() ? null : observer::initProgram
-        Clingo.Observer nativeObserver = new Clingo.Observer();
-        nativeObserver.initProgram = observer::initProgram;
-        nativeObserver.beginStep = observer::beginStep;
-        nativeObserver.endStep = observer::endStep;
-        nativeObserver.rule = observer::rule;
-        nativeObserver.weightRule = observer::weightRule;
-        nativeObserver.minimize = observer::minimize;
-        nativeObserver.project = observer::project;
-        nativeObserver.outputAtom = observer::outputAtom;
-        nativeObserver.outputTerm = observer::outputTerm;
-        nativeObserver.external = observer::external;
-        nativeObserver.assume = observer::assume;
-        nativeObserver.heuristic = observer::heuristic;
-        nativeObserver.acycEdge = observer::acycEdge;
-        nativeObserver.theoryTermNumber = observer::theoryTermNumber;
-        nativeObserver.theoryTermString = observer::theoryTermString;
-        nativeObserver.theoryTermCompound = observer::theoryTermCompound;
-        nativeObserver.theoryElement = observer::theoryElement;
-        nativeObserver.theoryAtom = observer::theoryAtom;
-        nativeObserver.theoryAtomWithGuard = observer::theoryAtomWithGuard;
-        registeredCallbacks.add(nativeObserver);
-
-        Clingo.check(Clingo.INSTANCE.clingo_control_register_observer(
-                control,
-                nativeObserver,
-                replace ? (byte) 1 : 0,
-                control)
-        );
+        //TODO: maybe set callbacks to null if not implemented
+        MemorySegment nativeObserver = ObserverBridge.of(observer, arena, ErrorPolicy.crossThread(callbackError));
+        Clingo.check(ClingoH.clingo_control_register_observer(control, nativeObserver, replace, MemorySegment.NULL));
     }
 
     /**
@@ -620,12 +683,10 @@ public class Control implements AutoCloseable {
      *                    solver.
      */
     public void registerBackend(BackendType backendType, Path file, boolean replace) {
-        Clingo.check(Clingo.INSTANCE.clingo_control_register_backend(
-                control,
-                backendType.getValue(),
-                file.toString(),
-                replace ? (byte) 1 : 0)
-        );
+        try (Arena call = Arena.ofConfined()) {
+            Clingo.check(ClingoH.clingo_control_register_backend(control, backendType.getValue(),
+                    call.allocateFrom(file.toString()), replace));
+        }
     }
 
     /**
@@ -651,19 +712,9 @@ public class Control implements AutoCloseable {
      */
     public void registerPropagator(Propagator propagator, boolean sequentially) {
         // TODO: maybe set callbacks to null if not implemented
-        Clingo.Propagator nativePropagator = new Clingo.Propagator();
-        nativePropagator.init = propagator::init;
-        nativePropagator.propagate = propagator::propagate;
-        nativePropagator.undo = propagator::undo;
-        nativePropagator.check = propagator::check;
-        nativePropagator.decide = propagator::decide;
-        registeredCallbacks.add(nativePropagator);
-        Clingo.check(Clingo.INSTANCE.clingo_control_register_propagator(
-                control,
-                nativePropagator,
-                control,
-                sequentially ? (byte) 1 : 0)
-        );
+        MemorySegment nativePropagator = PropagatorBridge.of(propagator, arena, ErrorPolicy.crossThread(callbackError));
+        Clingo.check(ClingoH.clingo_control_register_propagator(control, nativePropagator, MemorySegment.NULL,
+                sequentially));
     }
 
     /**
@@ -679,7 +730,7 @@ public class Control implements AutoCloseable {
      * @return Whether the internal program representation is conflicting.
      */
     public boolean isConflicting() {
-        return Clingo.INSTANCE.clingo_control_is_conflicting(control) > 0;
+        return ClingoH.clingo_control_is_conflicting(control);
     }
 
 	/**
@@ -687,7 +738,7 @@ public class Control implements AutoCloseable {
 	 * constraints.
 	 */
 	public void removeMinimize() {
-		Clingo.check(Clingo.INSTANCE.clingo_control_remove_minimize(control));
+		Clingo.check(ClingoH.clingo_control_remove_minimize(control));
 	}
 
 	/**
@@ -705,12 +756,10 @@ public class Control implements AutoCloseable {
 		for (int i = 0; i < atoms.length; i++) {
 			literals[i] = atoms[i].getLiteral();
 		}
-		Clingo.check(Clingo.INSTANCE.clingo_control_update_project(
-				control,
-				literals,
-				new NativeSize(atoms.length),
-				append ? (byte) 1 : 0
-		));
+		try (Arena call = Arena.ofConfined()) {
+			Clingo.check(ClingoH.clingo_control_update_project(control,
+					call.allocateFrom(ValueLayout.JAVA_INT, literals), atoms.length, append));
+		}
 	}
 
     /**
@@ -720,17 +769,13 @@ public class Control implements AutoCloseable {
      * @return The constant
      */
     public Symbol getConstant(String name) {
-        ByteByReference byteByReference = new ByteByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_control_has_const(control, name, byteByReference));
-
-        if (byteByReference.getValue() == 0) {
-            throw new IllegalStateException("Constant '" + name + "' not found");
+        try (Arena call = Arena.ofConfined()) {
+            MemorySegment name$ = call.allocateFrom(name);
+            if (!Out.getBoolean(out -> ClingoH.clingo_control_has_const(control, name$, out))) {
+                throw new IllegalStateException("Constant '" + name + "' not found");
+            }
+            return Symbol.fromLong(Out.getLong(out -> ClingoH.clingo_control_get_const(control, name$, out)));
         }
-
-        LongByReference longByReference = new LongByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_control_get_const(control, name, longByReference));
-
-        return Symbol.fromLong(longByReference.getValue());
     }
 
     /**
@@ -741,9 +786,7 @@ public class Control implements AutoCloseable {
      */
     public Backend getBackend() {
         if (backend == null || backend.isClosed()) {
-            PointerByReference backendRef = new PointerByReference();
-            Clingo.check(Clingo.INSTANCE.clingo_control_backend(control, backendRef));
-            backend = new Backend(backendRef.getValue());
+            backend = new Backend(Out.getPointer(out -> ClingoH.clingo_control_backend(control, out)));
         }
         return backend;
     }
@@ -752,18 +795,14 @@ public class Control implements AutoCloseable {
      * @return An object to inspect the symbolic atoms.
      */
     public SymbolicAtoms getSymbolicAtoms() {
-        PointerByReference symbolicAtomsRef = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_control_symbolic_atoms(control, symbolicAtomsRef));
-        return new SymbolicAtoms(symbolicAtomsRef.getValue());
+        return new SymbolicAtoms(Out.getPointer(out -> ClingoH.clingo_control_symbolic_atoms(control, out)));
     }
 
     /**
      * @return The theory atoms in a program.
      */
     public TheoryAtoms getTheoryAtoms() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_control_theory_atoms(control, pointerByReference));
-        return new TheoryAtoms(pointerByReference.getValue());
+        return new TheoryAtoms(Out.getPointer(out -> ClingoH.clingo_control_theory_atoms(control, out)));
     }
 
     /**
@@ -785,9 +824,7 @@ public class Control implements AutoCloseable {
      * @return An object containing solve statistics of the last solve call.
      */
     public Statistics getStatistics() {
-        PointerByReference statisticsRef = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_control_statistics(control, statisticsRef));
-        return Statistics.fromPointer(statisticsRef.getValue());
+        return Statistics.fromPointer(Out.getPointer(out -> ClingoH.clingo_control_statistics(control, out)));
     }
 
     /**
@@ -800,20 +837,18 @@ public class Control implements AutoCloseable {
             return;
         }
         closed = true;
-        Clingo.INSTANCE.clingo_control_free(control);
+        try {
+            // the arena must outlive the control: solver threads may still be inside one of its upcall stubs
+            if (owned) {
+                ClingoH.clingo_control_free(control);
+            }
+        }
+        finally {
+            arena.close();
+        }
     }
 
-    public Pointer getPointer() {
+    public MemorySegment getPointer() {
         return control;
-    }
-
-    /**
-     * Keeps a callback reachable until the native call using it has returned. jna hands the native side a trampoline
-     * and keeps no reference on the callback itself, so the garbage collector may otherwise free that trampoline while
-     * clingo is still calling it. Callbacks clingo keeps beyond a single call need a lasting reference instead, in
-     * {@link #registeredCallbacks} or, for a solve event callback, in the {@link SolveHandle} of that search.
-     */
-    private static void keepAlive(Object callback) {
-        Reference.reachabilityFence(callback);
     }
 }

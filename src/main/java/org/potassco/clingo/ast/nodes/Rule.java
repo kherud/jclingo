@@ -19,19 +19,17 @@
 
 package org.potassco.clingo.ast.nodes;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+import java.lang.foreign.MemorySegment;
+
 import org.potassco.clingo.ast.Ast;
 import org.potassco.clingo.ast.AstAttribute;
 import org.potassco.clingo.ast.AstSequence;
 import org.potassco.clingo.ast.AstType;
 import org.potassco.clingo.ast.Location;
-import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
 
 public class Rule extends Ast {
 
-    public Rule(Pointer ast) {
+    public Rule(MemorySegment ast) {
         super(ast);
     }
 
@@ -40,15 +38,11 @@ public class Rule extends Ast {
     }
 
     public Location getLocation() {
-        Location.ByReference locationByReference = new Location.ByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_location(getPointer(), AstAttribute.LOCATION.getValue(), locationByReference));
-        return locationByReference;
+        return getLocation(AstAttribute.LOCATION);
     }
 
     public Ast getHead() {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_ast(getPointer(), AstAttribute.HEAD.getValue(), pointerByReference));
-        return Ast.borrowChild(pointerByReference.getValue());
+        return getAst(AstAttribute.HEAD);
     }
 
     public AstSequence getBody() {
@@ -56,21 +50,19 @@ public class Rule extends Ast {
     }
 
     public void setLocation(Location location) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_location(getPointer(), AstAttribute.LOCATION.getValue(), location));
+        setLocation(AstAttribute.LOCATION, location);
     }
 
     public void setHead(Ast head) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_ast(getPointer(), AstAttribute.HEAD.getValue(), head.getPointer()));
+        setAst(AstAttribute.HEAD, head);
     }
 
     public void setBody(AstSequence body) {
         new AstSequence(this, AstAttribute.BODY).set(body);
     }
 
-    private static Pointer create(Location location, Ast head, AstSequence body) {
-        PointerByReference pointerByReference = new PointerByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_build(AstType.RULE.getValue(), pointerByReference, location, head.getPointer(), body.getPointer(), new NativeSize(body.size())));
-        return pointerByReference.getValue();
+    private static MemorySegment create(Location location, Ast head, AstSequence body) {
+        return build(AstType.RULE, location, head, body);
     }
 
 }

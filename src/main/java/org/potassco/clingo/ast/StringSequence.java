@@ -19,9 +19,11 @@
 
 package org.potassco.clingo.ast;
 
+import java.lang.foreign.Arena;
+
 import org.potassco.clingo.internal.Clingo;
-import org.potassco.clingo.internal.NativeSize;
-import org.potassco.clingo.internal.NativeSizeByReference;
+import org.potassco.clingo.internal.Out;
+import org.potassco.clingo.internal.ffi.ClingoH;
 
 /**
  * A sequence holding strings.
@@ -37,9 +39,8 @@ public class StringSequence {
     }
 
     public int size() {
-        NativeSizeByReference nativeSizeByReference = new NativeSizeByReference();
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_size_string_array(owner.getPointer(), attribute.getValue(), nativeSizeByReference));
-        return (int) nativeSizeByReference.getValue();
+        return (int) Out.getLong(out ->
+                ClingoH.clingo_ast_attribute_size_string_array(owner.getPointer(), attribute.getValue(), out));
     }
 
     public String[] get() {
@@ -52,21 +53,26 @@ public class StringSequence {
 
 
     public String get(int index) {
-        String[] stringByReference = new String[1];
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_get_string_at(owner.getPointer(), attribute.getValue(), new NativeSize(index), stringByReference));
-        return stringByReference[0];
+        return Out.getString(out ->
+                ClingoH.clingo_ast_attribute_get_string_at(owner.getPointer(), attribute.getValue(), index, out));
     }
 
     public void insert(int index, String string) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_insert_string_at(owner.getPointer(), attribute.getValue(), new NativeSize(index), string));
+        try (Arena call = Arena.ofConfined()) {
+            Clingo.check(ClingoH.clingo_ast_attribute_insert_string_at(owner.getPointer(), attribute.getValue(),
+                    index, call.allocateFrom(string)));
+        }
     }
 
     public void set(int index, String string) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_set_string_at(owner.getPointer(), attribute.getValue(), new NativeSize(index), string));
+        try (Arena call = Arena.ofConfined()) {
+            Clingo.check(ClingoH.clingo_ast_attribute_set_string_at(owner.getPointer(), attribute.getValue(),
+                    index, call.allocateFrom(string)));
+        }
     }
 
     public void delete(int index) {
-        Clingo.check(Clingo.INSTANCE.clingo_ast_attribute_delete_string_at(owner.getPointer(), attribute.getValue(), new NativeSize(index)));
+        Clingo.check(ClingoH.clingo_ast_attribute_delete_string_at(owner.getPointer(), attribute.getValue(), index));
     }
 
     public void set(StringSequence sequence) {

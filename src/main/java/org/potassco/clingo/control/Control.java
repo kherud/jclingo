@@ -135,13 +135,6 @@ public class Control implements AutoCloseable {
     }
 
     /**
-     * @return the error a callback of this control threw on a solver thread, and forgets it
-     */
-    public Throwable takeCallbackError() {
-        return callbackError.getAndSet(null);
-    }
-
-    /**
      * Extend the logic program with the given non-ground logic program in string form.
      *
      * @param program The non-ground program in string form.

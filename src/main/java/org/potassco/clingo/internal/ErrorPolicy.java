@@ -58,11 +58,15 @@ public final class ErrorPolicy {
     }
 
     /**
-     * For callbacks that may run on a solver thread: the error is handed to {@code slot}, whoever consumes it.
-     * Only the first error is kept, since later ones are usually consequences of it.
+     * For callbacks that may run on a solver thread: the error is handed to {@code slot}, whoever consumes it. Only
+     * the first error is kept, since later ones are usually consequences of it. It is also remembered for the calling
+     * thread, so that a callback which did run inside a downcall of ours still surfaces at that downcall.
      */
     public static ErrorPolicy crossThread(AtomicReference<Throwable> slot) {
-        return new ErrorPolicy(error -> slot.compareAndSet(null, error), false);
+        return new ErrorPolicy(error -> {
+            slot.compareAndSet(null, error);
+            Upcalls.setPending(error);
+        }, false);
     }
 
     /**

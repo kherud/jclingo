@@ -83,7 +83,7 @@ public final class Clingo {
     }
 
     /**
-     * @return the version of the loaded clingo library, e.g. {@code "5.8.1"}
+     * @return the version of the loaded clingo library, e.g. {@code "5.8.2"}
      */
     public static String getVersion() {
         try (Arena arena = Arena.ofConfined()) {

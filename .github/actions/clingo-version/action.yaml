@@ -6,13 +6,13 @@ description: Reads the targeted clingo version from pom.xml and validates the ar
 
 outputs:
   version:
-    description: Clingo version, for example 5.8.1
+    description: Clingo version, for example 5.8.2
     value: ${{ steps.read.outputs.version }}
   ref:
-    description: Matching clingo git tag, for example v5.8.1
+    description: Matching clingo git tag, for example v5.8.2
     value: ${{ steps.read.outputs.ref }}
   project-version:
-    description: jclingo artifact version, for example 5.8.1.0
+    description: jclingo artifact version, for example 5.8.2.0
     value: ${{ steps.read.outputs.project-version }}
 
 runs:

@@ -86,10 +86,10 @@ public class ClingoH {
     public static int CLINGO_VERSION_MINOR() {
         return CLINGO_VERSION_MINOR;
     }
-    private static final int CLINGO_VERSION_REVISION = (int)1L;
+    private static final int CLINGO_VERSION_REVISION = (int)2L;
     /**
      * {@snippet lang=c :
-     * #define CLINGO_VERSION_REVISION 1
+     * #define CLINGO_VERSION_REVISION 2
      * }
      */
     public static int CLINGO_VERSION_REVISION() {
@@ -17668,13 +17668,13 @@ public class ClingoH {
     }
     /**
      * {@snippet lang=c :
-     * #define CLINGO_VERSION "5.8.1"
+     * #define CLINGO_VERSION "5.8.2"
      * }
      */
     public static MemorySegment CLINGO_VERSION() {
         class Holder {
             static final MemorySegment CLINGO_VERSION
-                = ClingoH.LIBRARY_ARENA.allocateFrom("5.8.1");
+                = ClingoH.LIBRARY_ARENA.allocateFrom("5.8.2");
         }
         return Holder.CLINGO_VERSION;
     }

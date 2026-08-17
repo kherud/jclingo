@@ -44,7 +44,7 @@ import java.util.Locale;
 public final class NativeLoader {
 
     /** The clingo release this binding was generated against. */
-    public static final String EXPECTED_VERSION = "5.8.1";
+    public static final String EXPECTED_VERSION = "5.8.2";
 
     private static final String LIBRARY_PATH_PROPERTY = "clingo.library.path";
 

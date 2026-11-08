@@ -60,6 +60,17 @@
 		</dependency>
 	</dependencies>
 
+	<build>
+		<plugins>
+			<!-- surefire 3.6.0 fails on output from native callback threads, which have no context class loader -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.5.4</version>
+			</plugin>
+		</plugins>
+	</build>
+
 	<profiles>
 		<profile>
 			<id>github</id>

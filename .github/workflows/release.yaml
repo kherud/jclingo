@@ -169,7 +169,7 @@ jobs:
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Publish package
-        run: mvn --batch-mode --no-transfer-progress -P central -Dgpg.keyname=${{ secrets.GPG_PRIMARY_KEYID }} -DskipPublishing=${{ (github.event_name == 'workflow_dispatch' && inputs.build-only) && 'true' || 'false' }} deploy
+        run: mvn --batch-mode --no-transfer-progress -P central -Dgpg.keyname=${{ secrets.GPG_PRIMARY_KEYID }} -DskipUpload=${{ (github.event_name == 'workflow_dispatch' && inputs.build-only) && 'true' || 'false' }} deploy
         env:
           MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USER }}
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASS }}

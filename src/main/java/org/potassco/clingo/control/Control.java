@@ -251,7 +251,7 @@ public class Control implements AutoCloseable {
     /**
      * Starts a search.
      *
-     * @param assumptions Collection of symbols
+     * @param assumptions symbols assumed true, an unknown atom makes the search unsatisfiable
      * @return a solve-handle to interact with
      */
     public SolveHandle solve(Collection<Symbol> assumptions) {
@@ -272,7 +272,7 @@ public class Control implements AutoCloseable {
     /**
      * Starts an asynchronous search.
      *
-     * @param assumptions Collection of symbols
+     * @param assumptions symbols assumed true, an unknown atom makes the search unsatisfiable
      * @param callback    Optional callbacks for intercepting models, lower bounds during optimization,
      *                    statistics updates, or the end of the search (implement {@link SolveEventCallback}.
      * @return a solve-handle to interact with
@@ -296,16 +296,23 @@ public class Control implements AutoCloseable {
     /**
      * Starts a search.
      *
-     * @param assumptions Collection of symbols
+     * @param assumptions symbols assumed true, an unknown atom makes the search unsatisfiable
      * @param callback    Optional callbacks for intercepting models, lower bounds during optimization,
      *                    statistics updates, or the end of the search (implement {@link SolveEventCallback}.
      * @param solveMode   whether the search is blocking / non-blocking
      * @return a solve-handle to interact with
      */
     public SolveHandle solve(Collection<Symbol> assumptions, SolveEventCallback callback, SolveMode solveMode) {
-        int[] assumptionLiterals = assumptions.stream()
-                .map(getSymbolicAtoms()::get)
-                .mapToInt(SymbolicAtom::getLiteral).toArray();
+        SymbolicAtoms symbolicAtoms = getSymbolicAtoms();
+        int[] assumptionLiterals = new int[assumptions.size()];
+        int i = 0;
+        for (Symbol assumption : assumptions) {
+            if (!symbolicAtoms.contains(assumption)) {
+                // unknown atoms are false, so assuming one is contradictory (literal 1 is always true)
+                return solve(new int[] { 1, -1 }, callback, solveMode);
+            }
+            assumptionLiterals[i++] = symbolicAtoms.get(assumption).getLiteral();
+        }
         return solve(assumptionLiterals, callback, solveMode);
     }
 

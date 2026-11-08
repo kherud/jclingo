@@ -19,7 +19,7 @@
 
 package org.potassco.clingo.solving;
 
-import java.util.NoSuchElementException;
+import java.util.Arrays;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
@@ -59,18 +59,27 @@ public class SolveControl {
      * The {@link org.potassco.clingo.propagator.Propagator} module provides a more sophisticated
      * interface to add clauses - even on partial assignments.
      *
+     * Symbols that are not atoms of the program are false.
+     *
      * @param symbols    array of symbols representing the clause
      * @param truthValue the truth value
-     * @throws NoSuchElementException if one of the symbols is not an atom of the program
      */
     public void addClause(Symbol[] symbols, TruthValue truthValue) {
+        boolean negative = truthValue == TruthValue.FALSE;
         SymbolicAtoms symbolicAtoms = getSymbolicAtoms();
         int[] literals = new int[symbols.length];
-        for (int i = 0; i < literals.length; i++) {
-            int literal = symbolicAtoms.get(symbols[i]).getLiteral();
-            literals[i] = truthValue == TruthValue.FALSE ? -literal : literal;
+        int size = 0;
+        for (Symbol symbol : symbols) {
+            if (symbolicAtoms.contains(symbol)) {
+                int literal = symbolicAtoms.get(symbol).getLiteral();
+                literals[size++] = negative ? -literal : literal;
+            }
+            // a negated unknown atom is true, which satisfies the clause, and a positive one is false, which drops out
+            else if (negative) {
+                return;
+            }
         }
-        addClause(literals);
+        addClause(Arrays.copyOf(literals, size));
     }
 
     /**

@@ -3,7 +3,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.junit.After;
@@ -444,21 +443,48 @@ public class SolvingTest {
 	}
 
 	/**
-	 * A symbol that is not an atom of the program has no literal, and turning it into one silently would extend the
-	 * clause by an unrelated literal.
+	 * A symbol that is not an atom of the program is false, so its negation satisfies the clause.
 	 */
 	@Test
-	public void testUnknownSymbolInClause() {
-		control.add("1 {a; b} 1.");
+	public void testUnknownSymbolInClauseFalse() {
+		control.add("1 {a; b; c} 1.");
 		control.ground();
-		try (SolveHandle handle = control.solve(SolveMode.YIELD)) {
-			Assert.assertTrue(handle.hasNext());
-			Model model = handle.next();
-			Assert.assertThrows(
-					NoSuchElementException.class,
-					() -> model.getContext().addClause(new Symbol[] { new Function("z") }, TruthValue.TRUE)
-			);
+		try (SolveHandle handle = control.solve(mcb, SolveMode.YIELD)) {
+			while (handle.hasNext()) {
+				handle.next().getContext().addClause(new Symbol[] { new Function("d") }, TruthValue.FALSE);
+			}
+			testSatisfiable(handle.getSolveResult());
+			Assert.assertEquals(3, mcb.models.size());
 		}
+	}
+
+	/**
+	 * A symbol that is not an atom of the program is false, so it drops out and leaves an empty clause.
+	 */
+	@Test
+	public void testUnknownSymbolInClauseTrue() {
+		control.add("1 {a; b; c} 1.");
+		control.ground();
+		try (SolveHandle handle = control.solve(mcb, SolveMode.YIELD)) {
+			while (handle.hasNext()) {
+				handle.next().getContext().addClause(new Symbol[] { new Function("d") }, TruthValue.TRUE);
+			}
+			testSatisfiable(handle.getSolveResult());
+			Assert.assertEquals(1, mcb.models.size());
+		}
+	}
+
+	@Test
+	public void testAssumeUnknownSymbol() {
+		control.add("{a}.");
+		control.ground();
+		Assert.assertTrue(control.solve(Collections.singletonList(new Function("q"))).getSolveResult().unsatisfiable());
+		Assert.assertTrue(control.solve(Collections.singletonList(new Function("a"))).getSolveResult().satisfiable());
+	}
+
+	@Test
+	public void testAssumeUnknownSymbolUngrounded() {
+		Assert.assertTrue(control.solve(Collections.singletonList(new Function("q"))).getSolveResult().unsatisfiable());
 	}
 
 	/**

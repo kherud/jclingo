@@ -137,9 +137,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  # A build-only run still stages the bundle, without uploading it, so that a bundle Central would reject shows up
+  # before a release.
   publish-maven-central:
     name: Publish to Maven Central
-    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.build-only }}
     needs: test
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -168,8 +169,18 @@ jobs:
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Publish package
-        run: mvn --batch-mode --no-transfer-progress -P central -Dgpg.keyname=${{ secrets.GPG_PRIMARY_KEYID }} deploy
+        run: mvn --batch-mode --no-transfer-progress -P central -Dgpg.keyname=${{ secrets.GPG_PRIMARY_KEYID }} -DskipPublishing=${{ (github.event_name == 'workflow_dispatch' && inputs.build-only) && 'true' || 'false' }} deploy
         env:
           MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USER }}
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASS }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      # Central only accepts files inside the version directory of the artifact.
+      - name: Check bundle
+        run: |
+          stray=$(unzip -Z1 target/central-publishing/central-bundle.zip | grep -v '^org/potassco/clingo/[^/]*/[^/]*$' || true)
+          if [ -n "$stray" ]; then
+            echo "::error::bundle contains files outside the version directory"
+            echo "$stray"
+            exit 1
+          fi
